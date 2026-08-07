@@ -1,0 +1,57 @@
+---
+title: "IVD 统计分析报告"
+author: "ivdtools-analysis"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S %Z')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: readable
+    df_print: paged
+params:
+  analysis_title: "待填写"
+  input_file: "待填写"
+  analysis_type: "待填写"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE,
+                      fig.path = "figures/", dpi = 150)
+options(stringsAsFactors = FALSE, width = 100)
+dir.create("results", showWarnings = FALSE, recursive = TRUE)
+dir.create("figures", showWarnings = FALSE, recursive = TRUE)
+```
+
+# 分析目的
+
+说明研究问题、预先规定的分析方法和接受标准。
+
+# 数据与质量检查
+
+- 输入文件：`r params$input_file`
+- 分析类型：`r params$analysis_type`
+
+报告总行数、缺失值、重复 ID、排除记录和数据转换。不得覆盖原始数据。
+
+# 方法与参数
+
+列出列映射、统计方法、置信水平、阳性类别、允许限值以及所有非默认参数。
+
+# 结果
+
+在此调用 `analysis.R` 中的代码，展示核心结果表并保存到 `results/`。
+
+# 图形
+
+保存可复现图形到 `figures/`，并在正文中解释图形所展示的统计关系。
+
+# 警告、局限与解释
+
+区分统计显著性与临床可接受性。说明缺失、异常值、模型假设、外推和验证边界。本报告不构成临床验证或监管批准。
+
+# 可复现性
+
+```{r session-info}
+sessionInfo()
+```
