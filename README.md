@@ -180,6 +180,7 @@ The `ivdtools` R package provides statistical functions, while the `ivdtools-ana
 The value of using the Skill in a conversation is not to "replace statistical judgment" but to standardize repetitive technical steps, and to save the data source, analysis parameters, excluded records, warnings, result tables, figures, and software environment together, reducing the risk of omissions and manual copy errors.
 
 在对话中使用 Skill 的价值不是“替代统计判断”，而是把重复的技术步骤标准化，并将数据 来源、分析参数、排除记录、警告、结果表、图形和软件环境一起保存，降低遗漏和手工复制 错误的风险。
+
 ---
 
 ## Dependencies · 依赖
