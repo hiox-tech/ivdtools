@@ -1,32 +1,11 @@
-<p align="center">
 
-<img src="logo.jpeg" alt="ivdtools logo" width="200"/>
+![ivdtools logo](logo.jpeg)
 
-</p>
+# R Package "ivdtools"
 
-<h1 align="center">
+*Statistical Tools for Evaluation of in Vitro Diagnostic Reagents - R Package*
 
-ivdtools
-
-</h1>
-
-<p align="center">
-
-<em>Statistical Tools for Evaluation of in Vitro Diagnostic Reagents - R Package</em>
-
-</p>
-
-<p align="center">
-
-<em>体外诊断试剂性能评估统计工具 — R 语言工具集</em>
-
-</p>
-
-<p align="center">
-
-<a href="#"><img src="https://img.shields.io/badge/R-%3E%3D%204.0-blue" alt="R &gt;= 4.0"/></a> <a href="#"><img src="https://img.shields.io/badge/CLSI-EP05%20%7C%20EP06%20%7C%20EP09%20%7C%20EP12%20%7C%20EP15%20%7C%20EP17%20%7C%20EP25%20%7C%20EP28-blueviolet" alt="CLSI standards"/></a> <a href="#"><img src="https://img.shields.io/badge/license-MIT-green" alt="License MIT"/></a>
-
-</p>
+*体外诊断试剂性能评估统计工具 — R 语言工具集*
 
 ------------------------------------------------------------------------
 
@@ -206,8 +185,7 @@ MIT License
 
 ------------------------------------------------------------------------
 
-<p align="center">
+*Built for IVD reagent performance — designed for reproducibility and clarity.*
 
-<sub>Built for IVD reagent performance — designed for reproducibility and clarity.</sub> <br> <sub>为 IVD 试剂验证构建 — 追求清晰可复现。</sub>
+*为 IVD 试剂验证构建 — 追求清晰可复现。*
 
-</p>
