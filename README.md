@@ -7,7 +7,7 @@
 
 *体外诊断试剂性能评估统计工具 — R 语言工具集*
 
-------------------------------------------------------------------------
+----
 
 ## Overview · 概述
 
@@ -15,7 +15,7 @@
 
 **ivdtools** 是一套面向**体外诊断（IVD）试剂性能验证与方法学比较**的 R 工具集，覆盖从数据探索、统计分析到可视化呈现的完整工作流。采用 **S3 泛型 + 槽位存储**设计模式，接口风格统一，分析结果自动存入对象槽位。
 
-------------------------------------------------------------------------
+----
 
 ## Modules · 模块一览
 
@@ -34,7 +34,7 @@
 | **Sample Size** | General · 通用 | — | `sample_size_bland_altman()`, `sample_size_proportion_ci()`, `sample_size_proportion()` | Bland-Altman agreement sample size (Lu et al.), single proportion CI, one-arm target value test · Bland-Altman 一致性样本量、单比例置信区间、单臂目标值检验 |
 | **Outliers & Normality** | General · 通用 | — | `outliers_test()`, `normal_test()` | Grubbs / ESD / Dixon Q / IQR outlier tests; Shapiro-Wilk / AD / Lilliefors / Cramer–von Mises normality tests with QQ plots · 离群值检测和正态性检验（含 QQ 图） |
 
-------------------------------------------------------------------------
+----
 
 ## Design Philosophy · 设计理念
 
@@ -63,7 +63,7 @@ summary()          → prints all filled slots (does not fill any itself)
 plot()             → unified plotting entry (requires prior analysis for some plot types)
 ```
 
-------------------------------------------------------------------------
+----
 
 ## Getting Started · 快速开始
 
@@ -173,7 +173,7 @@ The value of using the Skill in a conversation is not to "replace statistical ju
 | `nloptr` | Fit | Constrained optimization · 约束优化 |
 | `nls2` | Fit | Robust starting values for NLS · NLS 稳健初值 |
 
-------------------------------------------------------------------------
+----
 
 ## License · 许可
 
@@ -183,7 +183,7 @@ MIT License
 
 [hiox-tech](https://github.com/hiox-tech)
 
-------------------------------------------------------------------------
+----
 
 *Built for IVD reagent performance — designed for reproducibility and clarity.*
 
