@@ -138,7 +138,7 @@ plot(obj, type = "profile")    # precision profile · 精密度剖面图
 
 ``` r
 obj <- roc(data, cols = c("marker1", "marker2"),
-           reference = "gold_standard", ref_cutoff = 10)
+           reference = "gold_standard")
 
 obj <- describe(obj)           # data description · 数据描述
 obj <- auc(obj)                # AUC · AUC 计算
@@ -208,6 +208,6 @@ MIT License
 
 <p align="center">
 
-<sub>Built for IVD reagent verification — designed for reproducibility and clarity.</sub> <br> <sub>为 IVD 试剂验证构建 — 追求可复现与清晰。</sub>
+<sub>Built for IVD reagent performance — designed for reproducibility and clarity.</sub> <br> <sub>为 IVD 试剂验证构建 — 追求清晰可复现。</sub>
 
 </p>
