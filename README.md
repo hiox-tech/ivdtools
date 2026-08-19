@@ -185,7 +185,7 @@ MIT License
 
 ----
 
-*Built for IVD reagent performance — designed for reproducibility and clarity.*
+*Built for IVD reagent evaluation — designed for reproducibility and clarity.*
 
-*为 IVD 试剂验证构建 — 追求清晰可复现。*
+*为 IVD 试剂评估构建 — 追求清晰可复现。*
 
