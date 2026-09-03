@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>14&nbsp; ROC 曲线与 cutoff 建立 – ivdtools使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./015-ROC曲线与多元回归.html" rel="next">
+<link href="./013-定性分析.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./014-ROC曲线与cutoff建立.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-4PLC方程拟合校准曲线.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-分析灵敏度.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">分析灵敏度</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-瓶间差分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-方法学比较.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">方法学比较</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-定性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">定性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-ROC曲线与cutoff建立.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-AI自动化分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI 自动化分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">参考资料</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#分析目的" id="toc-分析目的" class="nav-link active" data-scroll-target="#分析目的"><span class="header-section-number">14.1</span> 分析目的</a></li>
+  <li><a href="#函数概述" id="toc-函数概述" class="nav-link" data-scroll-target="#函数概述"><span class="header-section-number">14.2</span> 函数概述</a></li>
+  <li><a href="#示例单标记物-roc-分析" id="toc-示例单标记物-roc-分析" class="nav-link" data-scroll-target="#示例单标记物-roc-分析"><span class="header-section-number">14.3</span> 示例：单标记物 ROC 分析</a>
+  <ul class="collapse">
+  <li><a href="#读取和核验数据" id="toc-读取和核验数据" class="nav-link" data-scroll-target="#读取和核验数据"><span class="header-section-number">14.3.1</span> 读取和核验数据</a></li>
+  <li><a href="#创建对象与描述" id="toc-创建对象与描述" class="nav-link" data-scroll-target="#创建对象与描述"><span class="header-section-number">14.3.2</span> 创建对象与描述</a></li>
+  <li><a href="#auc" id="toc-auc" class="nav-link" data-scroll-target="#auc"><span class="header-section-number">14.3.3</span> AUC</a></li>
+  <li><a href="#最优截断值" id="toc-最优截断值" class="nav-link" data-scroll-target="#最优截断值"><span class="header-section-number">14.3.4</span> 最优截断值</a></li>
+  <li><a href="#图形与汇总" id="toc-图形与汇总" class="nav-link" data-scroll-target="#图形与汇总"><span class="header-section-number">14.3.5</span> 图形与汇总</a></li>
+  </ul></li>
+  <li><a href="#结果判读要点" id="toc-结果判读要点" class="nav-link" data-scroll-target="#结果判读要点"><span class="header-section-number">14.4</span> 结果判读要点</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="分析目的" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="分析目的"><span class="header-section-number">14.1</span> 分析目的</h2>
+<p>受试者工作特征（receiver operating characteristic，ROC）曲线评价定量指标区分阳性与阴性结局的能力， 常用于建立诊断截断值（cutoff）。<code>ivdtools</code> 的 <code>roc()</code> 提供渐进式工作流：<code>roc()</code> 创建对象 → <code>describe()</code> → <code>auc()</code>（AUC 与置信区间）→ <code>cutoff()</code>（Youden 与最近拐角最优截断值）→ <code>plot()</code> 与 <code>summary()</code>。</p>
+<p>本文以一个完整的单标记物示例演示 ROC 分析全流程。参考变量必须是二分类；若原始参考为连续变量， 应先转二分类（参见《定性分析》中的 <code>continuous_to_binary()</code>）并记录阈值与阳性方向。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="函数概述" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="函数概述"><span class="header-section-number">14.2</span> 函数概述</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>主要用途</th>
+<th>关键输入或输出</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>roc()</code></td>
+<td>创建 ROC 对象</td>
+<td><code>cols</code>、<code>reference</code>、<code>id</code>、<code>positive</code></td>
+</tr>
+<tr class="even">
+<td><code>describe()</code></td>
+<td>标记物描述统计</td>
+<td>参考强制按分类处理</td>
+</tr>
+<tr class="odd">
+<td><code>auc()</code></td>
+<td>AUC 与置信区间</td>
+<td>逐标记物</td>
+</tr>
+<tr class="even">
+<td><code>cutoff()</code></td>
+<td>最优截断值</td>
+<td>Youden 与最近拐角，需先 <code>auc()</code></td>
+</tr>
+<tr class="odd">
+<td><code>plot()</code></td>
+<td>ROC 曲线</td>
+<td><code>cutpoint</code> 标出最优点</td>
+</tr>
+<tr class="even">
+<td><code>summary()</code></td>
+<td>汇总</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="示例单标记物-roc-分析" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="示例单标记物-roc-分析"><span class="header-section-number">14.3</span> 示例：单标记物 ROC 分析</h2>
+<section id="读取和核验数据" class="level3" data-number="14.3.1">
+<h3 data-number="14.3.1" class="anchored" data-anchor-id="读取和核验数据"><span class="header-section-number">14.3.1</span> 读取和核验数据</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>roc_dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/roc-example.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>roc_dat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(roc_dat)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(roc_dat)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   100 obs. of  3 variables:
+ $ sid: num  1 2 3 4 5 6 7 8 9 10 ...
+ $ ref: num  0 0 0 0 0 0 0 0 0 0 ...
+ $ x1 : num  7.59 8.31 5.89 5.59 9.57 ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(roc_dat<span class="sc">$</span>ref)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 0  1 
+50 50 </code></pre>
+</div>
+</div>
+<p>参考列 <code>ref</code> 为 0/1 二分类，正、负各 50 例。</p>
+</section>
+<section id="创建对象与描述" class="level3" data-number="14.3.2">
+<h3 data-number="14.3.2" class="anchored" data-anchor-id="创建对象与描述"><span class="header-section-number">14.3.2</span> 创建对象与描述</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">roc</span>(roc_dat, <span class="at">cols =</span> <span class="st">"x1"</span>, <span class="at">reference =</span> <span class="st">"ref"</span>, <span class="at">id =</span> <span class="st">"sid"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ro</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROC Analysis
+  Data class:        data.frame
+  Total rows:        100
+  Complete cases:    100
+  Reference:         ref (binary)
+  Positive / Neg:    50 / 50
+  Evaluation cols:   1  (x1)
+  Duplicate IDs:     none
+
+Analysis slots:
+    [ ] Describe
+    [ ] AUC
+    [ ] Cutoff
+    [ ] MLR</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">describe</span>(ro)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Descriptive Statistics
+  Variable               n     Mean       SD      Min       Q1   Median       Q3      Max  NA
+  --------------------------------------------------------------------------- 
+  x1                   100   9.2576   4.4744  -0.3894   5.8224   8.5472  12.9591  18.7295  
+
+  ref
+  Level                Count  Percent
+   -------------------------------------- 
+  0                       50    50.0%
+  1                       50    50.0%</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>参数说明：</strong> <code>roc()</code> 的 <code>cols</code> 为定量标记物列；<code>reference</code> 为二分类参考列（数值 0/1、二水平 因子或二取值字符均可）；<code>positive</code> 指定阳性水平（不给出时默认取排序后的最后一个水平）。 每个标记物的方向（<code>geq</code>/<code>leq</code>）按阳性组均值自动判断。</p>
+</blockquote>
+</section>
+<section id="auc" class="level3" data-number="14.3.3">
+<h3 data-number="14.3.3" class="anchored" data-anchor-id="auc"><span class="header-section-number">14.3.3</span> AUC</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">auc</span>(ro)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+AUC Table
+  Column               AUC          95% CI  Direction
+  ------------------------------------------------------------ 
+  x1                0.9420  [0.8940, 0.9900]       geq</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ro<span class="sc">$</span>auc_table</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Column"],"name":[1],"type":["chr"],"align":["left"]},{"label":["AUC"],"name":[2],"type":["chr"],"align":["left"]},{"label":["CI_lower"],"name":[3],"type":["chr"],"align":["left"]},{"label":["CI_upper"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Direction"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"x1","2":"0.9420","3":"0.8940","4":"0.9900","5":"geq","_rn_":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>标记物 x1 的 AUC ≈ 0.942（95% CI [0.894, 0.990]），区分能力较强。</p>
+</section>
+<section id="最优截断值" class="level3" data-number="14.3.4">
+<h3 data-number="14.3.4" class="anchored" data-anchor-id="最优截断值"><span class="header-section-number">14.3.4</span> 最优截断值</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">cutoff</span>(ro)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Optimal Cutoff Analysis
+  Column: x1
+    Youden / Corner: cutoff = 8.7617  (sens = 0.9000, spec = 0.9200, Youden = 0.8200)
+
+  Full cutoff table:
+        Cutoff      Sens      Spec     TP    FP    TN    FN    Youden
+  ---------------------------------------------------------------------- 
+          -Inf    1.0000    0.0000     50    50     0     0    0.0000
+       18.7295    0.0200    1.0000      1     0    50    49    0.0200
+       18.5675    0.0400    1.0000      2     0    50    48    0.0400
+       18.2248    0.0600    1.0000      3     0    50    47    0.0600
+       17.7837    0.0800    1.0000      4     0    50    46    0.0800
+       16.4453    0.1000    1.0000      5     0    50    45    0.1000
+       15.8893    0.1200    1.0000      6     0    50    44    0.1200
+       15.8087    0.1400    1.0000      7     0    50    43    0.1400
+       15.6058    0.1600    1.0000      8     0    50    42    0.1600
+       15.5003    0.1800    1.0000      9     0    50    41    0.1800
+       15.2855    0.2000    1.0000     10     0    50    40    0.2000
+       15.0168    0.2200    1.0000     11     0    50    39    0.2200
+       14.8639    0.2400    1.0000     12     0    50    38    0.2400
+       14.6980    0.2600    1.0000     13     0    50    37    0.2600
+       14.4757    0.2800    1.0000     14     0    50    36    0.2800
+       14.4469    0.3000    1.0000     15     0    50    35    0.3000
+       14.4042    0.3200    1.0000     16     0    50    34    0.3200
+       14.1952    0.3400    1.0000     17     0    50    33    0.3400
+       14.1938    0.3600    1.0000     18     0    50    32    0.3600
+       13.9382    0.3800    1.0000     19     0    50    31    0.3800
+       13.7845    0.4000    1.0000     20     0    50    30    0.4000
+       13.3718    0.4200    1.0000     21     0    50    29    0.4200
+       13.0699    0.4400    1.0000     22     0    50    28    0.4400
+       12.9970    0.4600    1.0000     23     0    50    27    0.4600
+       12.9854    0.4800    1.0000     24     0    50    26    0.4800
+       12.9659    0.5000    1.0000     25     0    50    25    0.5000
+       12.9569    0.5200    1.0000     26     0    50    24    0.5200
+       12.7812    0.5400    1.0000     27     0    50    23    0.5400
+       12.7534    0.5600    1.0000     28     0    50    22    0.5600
+       12.5227    0.5800    1.0000     29     0    50    21    0.5800
+       12.3440    0.6000    1.0000     30     0    50    20    0.6000
+       12.2962    0.6200    1.0000     31     0    50    19    0.6200
+       12.1394    0.6400    1.0000     32     0    50    18    0.6400
+       12.1354    0.6600    1.0000     33     0    50    17    0.6600
+       12.0393    0.6800    1.0000     34     0    50    16    0.6800
+       11.7418    0.6800    0.9800     34     1    49    16    0.6600
+       11.6642    0.7000    0.9800     35     1    49    15    0.6800
+       11.5082    0.7000    0.9600     35     2    48    15    0.6600
+       11.4038    0.7200    0.9600     36     2    48    14    0.6800
+       11.2133    0.7400    0.9600     37     2    48    13    0.7000
+       11.0696    0.7600    0.9600     38     2    48    12    0.7200
+       10.3902    0.7800    0.9600     39     2    48    11    0.7400
+       10.1719    0.8000    0.9600     40     2    48    10    0.7600
+        9.8836    0.8200    0.9600     41     2    48     9    0.7800
+        9.5685    0.8200    0.9400     41     3    47     9    0.7600
+        9.3526    0.8400    0.9400     42     3    47     8    0.7800
+        9.1944    0.8600    0.9400     43     3    47     7    0.8000
+        9.1032    0.8800    0.9400     44     3    47     6    0.8200
+        8.8558    0.8800    0.9200     44     4    46     6    0.8000
+        8.7617    0.9000    0.9200     45     4    46     5    0.8200
+        8.5538    0.9000    0.9000     45     5    45     5    0.8000
+        8.5406    0.9000    0.8800     45     6    44     5    0.7800
+        8.5296    0.9200    0.8800     46     6    44     4    0.8000
+        8.5259    0.9200    0.8600     46     7    43     4    0.7800
+        8.3125    0.9200    0.8400     46     8    42     4    0.7600
+        8.2985    0.9200    0.8200     46     9    41     4    0.7400
+        7.9078    0.9200    0.8000     46    10    40     4    0.7200
+        7.8493    0.9200    0.7800     46    11    39     4    0.7000
+        7.6187    0.9200    0.7600     46    12    38     4    0.6800
+        7.5941    0.9200    0.7400     46    13    37     4    0.6600
+        7.5556    0.9200    0.7200     46    14    36     4    0.6400
+        7.5150    0.9200    0.7000     46    15    35     4    0.6200
+        7.4355    0.9200    0.6800     46    16    34     4    0.6000
+        7.1837    0.9200    0.6600     46    17    33     4    0.5800
+        6.8235    0.9400    0.6600     47    17    33     3    0.6000
+        6.8029    0.9400    0.6400     47    18    32     3    0.5800
+        6.7765    0.9400    0.6200     47    19    31     3    0.5600
+        6.6770    0.9400    0.6000     47    20    30     3    0.5400
+        6.5446    0.9400    0.5800     47    21    29     3    0.5200
+        6.5440    0.9600    0.5800     48    21    29     2    0.5400
+        6.1603    0.9600    0.5600     48    22    28     2    0.5200
+        6.0665    0.9600    0.5400     48    23    27     2    0.5000
+        6.0554    0.9600    0.5200     48    24    26     2    0.4800
+        6.0361    0.9600    0.5000     48    25    25     2    0.4600
+        5.9000    0.9600    0.4800     48    26    24     2    0.4400
+        5.8857    0.9600    0.4600     48    27    23     2    0.4200
+        5.6326    0.9600    0.4400     48    28    22     2    0.4000
+        5.6281    0.9600    0.4200     48    29    21     2    0.3800
+        5.5851    0.9600    0.4000     48    30    20     2    0.3600
+        5.5802    0.9600    0.3800     48    31    19     2    0.3400
+        5.4514    0.9600    0.3600     48    32    18     2    0.3200
+        5.3207    0.9600    0.3400     48    33    17     2    0.3000
+        5.1582    0.9600    0.3200     48    34    16     2    0.2800
+        5.0599    0.9600    0.3000     48    35    15     2    0.2600
+        5.0167    0.9600    0.2800     48    36    14     2    0.2400
+        4.5654    0.9600    0.2600     48    37    13     2    0.2200
+        3.9706    0.9800    0.2600     49    37    13     1    0.2400
+        3.9552    0.9800    0.2400     49    38    12     1    0.2200
+        3.9103    1.0000    0.2400     50    38    12     0    0.2400
+        3.7719    1.0000    0.2200     50    39    11     0    0.2200
+        3.5881    1.0000    0.2000     50    40    10     0    0.2000
+        3.4583    1.0000    0.1800     50    41     9     0    0.1800
+        3.4422    1.0000    0.1600     50    42     8     0    0.1600
+        2.9673    1.0000    0.1400     50    43     7     0    0.1400
+        2.9111    1.0000    0.1200     50    44     6     0    0.1200
+        2.7698    1.0000    0.1000     50    45     5     0    0.1000
+        2.5203    1.0000    0.0800     50    46     4     0    0.0800
+        2.3646    1.0000    0.0600     50    47     3     0    0.0600
+        2.2596    1.0000    0.0400     50    48     2     0    0.0400
+        0.4733    1.0000    0.0200     50    49     1     0    0.0200
+       -0.3894    1.0000    0.0000     50    50     0     0    0.0000
+           Inf    0.0000    1.0000      0     0    50    50    0.0000</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ro<span class="sc">$</span>cutoff_table)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Optimal Cutoff Analysis
+  Column: x1
+    Youden / Corner: cutoff = 8.7617  (sens = 0.9000, spec = 0.9200, Youden = 0.8200)
+
+  Full cutoff table:
+        Cutoff      Sens      Spec     TP    FP    TN    FN    Youden
+  ---------------------------------------------------------------------- 
+          -Inf    1.0000    0.0000     50    50     0     0    0.0000
+       18.7295    0.0200    1.0000      1     0    50    49    0.0200
+       18.5675    0.0400    1.0000      2     0    50    48    0.0400
+       18.2248    0.0600    1.0000      3     0    50    47    0.0600
+       17.7837    0.0800    1.0000      4     0    50    46    0.0800
+       16.4453    0.1000    1.0000      5     0    50    45    0.1000
+       15.8893    0.1200    1.0000      6     0    50    44    0.1200
+       15.8087    0.1400    1.0000      7     0    50    43    0.1400
+       15.6058    0.1600    1.0000      8     0    50    42    0.1600
+       15.5003    0.1800    1.0000      9     0    50    41    0.1800
+       15.2855    0.2000    1.0000     10     0    50    40    0.2000
+       15.0168    0.2200    1.0000     11     0    50    39    0.2200
+       14.8639    0.2400    1.0000     12     0    50    38    0.2400
+       14.6980    0.2600    1.0000     13     0    50    37    0.2600
+       14.4757    0.2800    1.0000     14     0    50    36    0.2800
+       14.4469    0.3000    1.0000     15     0    50    35    0.3000
+       14.4042    0.3200    1.0000     16     0    50    34    0.3200
+       14.1952    0.3400    1.0000     17     0    50    33    0.3400
+       14.1938    0.3600    1.0000     18     0    50    32    0.3600
+       13.9382    0.3800    1.0000     19     0    50    31    0.3800
+       13.7845    0.4000    1.0000     20     0    50    30    0.4000
+       13.3718    0.4200    1.0000     21     0    50    29    0.4200
+       13.0699    0.4400    1.0000     22     0    50    28    0.4400
+       12.9970    0.4600    1.0000     23     0    50    27    0.4600
+       12.9854    0.4800    1.0000     24     0    50    26    0.4800
+       12.9659    0.5000    1.0000     25     0    50    25    0.5000
+       12.9569    0.5200    1.0000     26     0    50    24    0.5200
+       12.7812    0.5400    1.0000     27     0    50    23    0.5400
+       12.7534    0.5600    1.0000     28     0    50    22    0.5600
+       12.5227    0.5800    1.0000     29     0    50    21    0.5800
+       12.3440    0.6000    1.0000     30     0    50    20    0.6000
+       12.2962    0.6200    1.0000     31     0    50    19    0.6200
+       12.1394    0.6400    1.0000     32     0    50    18    0.6400
+       12.1354    0.6600    1.0000     33     0    50    17    0.6600
+       12.0393    0.6800    1.0000     34     0    50    16    0.6800
+       11.7418    0.6800    0.9800     34     1    49    16    0.6600
+       11.6642    0.7000    0.9800     35     1    49    15    0.6800
+       11.5082    0.7000    0.9600     35     2    48    15    0.6600
+       11.4038    0.7200    0.9600     36     2    48    14    0.6800
+       11.2133    0.7400    0.9600     37     2    48    13    0.7000
+       11.0696    0.7600    0.9600     38     2    48    12    0.7200
+       10.3902    0.7800    0.9600     39     2    48    11    0.7400
+       10.1719    0.8000    0.9600     40     2    48    10    0.7600
+        9.8836    0.8200    0.9600     41     2    48     9    0.7800
+        9.5685    0.8200    0.9400     41     3    47     9    0.7600
+        9.3526    0.8400    0.9400     42     3    47     8    0.7800
+        9.1944    0.8600    0.9400     43     3    47     7    0.8000
+        9.1032    0.8800    0.9400     44     3    47     6    0.8200
+        8.8558    0.8800    0.9200     44     4    46     6    0.8000
+        8.7617    0.9000    0.9200     45     4    46     5    0.8200
+        8.5538    0.9000    0.9000     45     5    45     5    0.8000
+        8.5406    0.9000    0.8800     45     6    44     5    0.7800
+        8.5296    0.9200    0.8800     46     6    44     4    0.8000
+        8.5259    0.9200    0.8600     46     7    43     4    0.7800
+        8.3125    0.9200    0.8400     46     8    42     4    0.7600
+        8.2985    0.9200    0.8200     46     9    41     4    0.7400
+        7.9078    0.9200    0.8000     46    10    40     4    0.7200
+        7.8493    0.9200    0.7800     46    11    39     4    0.7000
+        7.6187    0.9200    0.7600     46    12    38     4    0.6800
+        7.5941    0.9200    0.7400     46    13    37     4    0.6600
+        7.5556    0.9200    0.7200     46    14    36     4    0.6400
+        7.5150    0.9200    0.7000     46    15    35     4    0.6200
+        7.4355    0.9200    0.6800     46    16    34     4    0.6000
+        7.1837    0.9200    0.6600     46    17    33     4    0.5800
+        6.8235    0.9400    0.6600     47    17    33     3    0.6000
+        6.8029    0.9400    0.6400     47    18    32     3    0.5800
+        6.7765    0.9400    0.6200     47    19    31     3    0.5600
+        6.6770    0.9400    0.6000     47    20    30     3    0.5400
+        6.5446    0.9400    0.5800     47    21    29     3    0.5200
+        6.5440    0.9600    0.5800     48    21    29     2    0.5400
+        6.1603    0.9600    0.5600     48    22    28     2    0.5200
+        6.0665    0.9600    0.5400     48    23    27     2    0.5000
+        6.0554    0.9600    0.5200     48    24    26     2    0.4800
+        6.0361    0.9600    0.5000     48    25    25     2    0.4600
+        5.9000    0.9600    0.4800     48    26    24     2    0.4400
+        5.8857    0.9600    0.4600     48    27    23     2    0.4200
+        5.6326    0.9600    0.4400     48    28    22     2    0.4000
+        5.6281    0.9600    0.4200     48    29    21     2    0.3800
+        5.5851    0.9600    0.4000     48    30    20     2    0.3600
+        5.5802    0.9600    0.3800     48    31    19     2    0.3400
+        5.4514    0.9600    0.3600     48    32    18     2    0.3200
+        5.3207    0.9600    0.3400     48    33    17     2    0.3000
+        5.1582    0.9600    0.3200     48    34    16     2    0.2800
+        5.0599    0.9600    0.3000     48    35    15     2    0.2600
+        5.0167    0.9600    0.2800     48    36    14     2    0.2400
+        4.5654    0.9600    0.2600     48    37    13     2    0.2200
+        3.9706    0.9800    0.2600     49    37    13     1    0.2400
+        3.9552    0.9800    0.2400     49    38    12     1    0.2200
+        3.9103    1.0000    0.2400     50    38    12     0    0.2400
+        3.7719    1.0000    0.2200     50    39    11     0    0.2200
+        3.5881    1.0000    0.2000     50    40    10     0    0.2000
+        3.4583    1.0000    0.1800     50    41     9     0    0.1800
+        3.4422    1.0000    0.1600     50    42     8     0    0.1600
+        2.9673    1.0000    0.1400     50    43     7     0    0.1400
+        2.9111    1.0000    0.1200     50    44     6     0    0.1200
+        2.7698    1.0000    0.1000     50    45     5     0    0.1000
+        2.5203    1.0000    0.0800     50    46     4     0    0.0800
+        2.3646    1.0000    0.0600     50    47     3     0    0.0600
+        2.2596    1.0000    0.0400     50    48     2     0    0.0400
+        0.4733    1.0000    0.0200     50    49     1     0    0.0200
+       -0.3894    1.0000    0.0000     50    50     0     0    0.0000
+           Inf    0.0000    1.0000      0     0    50    50    0.0000</code></pre>
+</div>
+</div>
+<p><code>cutoff()</code> 给出全部候选截断值及对应的灵敏度、特异度、Youden 指数等，并用两种准则标记最优： <strong>Youden</strong>（最大化 <code>Se + Sp − 1</code>）与<strong>最近拐角</strong>（最小化到 (0,1) 的距离）。本例 Youden/Corner 最优截断值均为 8.76（灵敏度 0.90、特异度 0.92、Youden 0.82）。</p>
+<blockquote class="blockquote">
+<p><strong>参数说明：</strong> <code>cutoff()</code> 必须先于 <code>auc()</code> 执行之前完成 <code>auc()</code>；<code>plot(cutpoint=...)</code> 需要已执行 <code>cutoff()</code>。<code>cutpoint</code> 可选 <code>"Youden"</code>、<code>"Corner"</code>、<code>"all"</code> 或 <code>NULL</code>。</p>
+</blockquote>
+</section>
+<section id="图形与汇总" class="level3" data-number="14.3.5">
+<h3 data-number="14.3.5" class="anchored" data-anchor-id="图形与汇总"><span class="header-section-number">14.3.5</span> 图形与汇总</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ro, <span class="at">cutpoint =</span> <span class="st">"Youden"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-ROC曲线与cutoff建立_files/figure-html/roc-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ro)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROC Analysis -- Summary
+-------------------------------------------------- 
+
+ROC Analysis
+  Data class:        data.frame
+  Total rows:        100
+  Complete cases:    100
+  Reference:         ref (binary)
+  Positive / Neg:    50 / 50
+  Evaluation cols:   1  (x1)
+  Duplicate IDs:     none
+
+Analysis slots:
+    [x] Describe
+    [x] AUC
+    [ ] Cutoff
+    [ ] MLR
+
+
+Descriptive Statistics
+  Variable               n     Mean       SD      Min       Q1   Median       Q3      Max  NA
+  --------------------------------------------------------------------------- 
+  x1                   100   9.2576   4.4744  -0.3894   5.8224   8.5472  12.9591  18.7295  
+
+  ref
+  Level                Count  Percent
+   -------------------------------------- 
+  0                       50    50.0%
+  1                       50    50.0%
+
+
+AUC Table
+  Column               AUC          95% CI  Direction
+  ------------------------------------------------------------ 
+  x1                0.9420  [0.8940, 0.9900]       geq
+
+
+Optimal Cutoff Analysis
+  Column: x1
+    Youden / Corner: cutoff = 8.7617  (sens = 0.9000, spec = 0.9200, Youden = 0.8200)
+
+  Full cutoff table:
+        Cutoff      Sens      Spec     TP    FP    TN    FN    Youden
+  ---------------------------------------------------------------------- 
+          -Inf    1.0000    0.0000     50    50     0     0    0.0000
+       18.7295    0.0200    1.0000      1     0    50    49    0.0200
+       18.5675    0.0400    1.0000      2     0    50    48    0.0400
+       18.2248    0.0600    1.0000      3     0    50    47    0.0600
+       17.7837    0.0800    1.0000      4     0    50    46    0.0800
+       16.4453    0.1000    1.0000      5     0    50    45    0.1000
+       15.8893    0.1200    1.0000      6     0    50    44    0.1200
+       15.8087    0.1400    1.0000      7     0    50    43    0.1400
+       15.6058    0.1600    1.0000      8     0    50    42    0.1600
+       15.5003    0.1800    1.0000      9     0    50    41    0.1800
+       15.2855    0.2000    1.0000     10     0    50    40    0.2000
+       15.0168    0.2200    1.0000     11     0    50    39    0.2200
+       14.8639    0.2400    1.0000     12     0    50    38    0.2400
+       14.6980    0.2600    1.0000     13     0    50    37    0.2600
+       14.4757    0.2800    1.0000     14     0    50    36    0.2800
+       14.4469    0.3000    1.0000     15     0    50    35    0.3000
+       14.4042    0.3200    1.0000     16     0    50    34    0.3200
+       14.1952    0.3400    1.0000     17     0    50    33    0.3400
+       14.1938    0.3600    1.0000     18     0    50    32    0.3600
+       13.9382    0.3800    1.0000     19     0    50    31    0.3800
+       13.7845    0.4000    1.0000     20     0    50    30    0.4000
+       13.3718    0.4200    1.0000     21     0    50    29    0.4200
+       13.0699    0.4400    1.0000     22     0    50    28    0.4400
+       12.9970    0.4600    1.0000     23     0    50    27    0.4600
+       12.9854    0.4800    1.0000     24     0    50    26    0.4800
+       12.9659    0.5000    1.0000     25     0    50    25    0.5000
+       12.9569    0.5200    1.0000     26     0    50    24    0.5200
+       12.7812    0.5400    1.0000     27     0    50    23    0.5400
+       12.7534    0.5600    1.0000     28     0    50    22    0.5600
+       12.5227    0.5800    1.0000     29     0    50    21    0.5800
+       12.3440    0.6000    1.0000     30     0    50    20    0.6000
+       12.2962    0.6200    1.0000     31     0    50    19    0.6200
+       12.1394    0.6400    1.0000     32     0    50    18    0.6400
+       12.1354    0.6600    1.0000     33     0    50    17    0.6600
+       12.0393    0.6800    1.0000     34     0    50    16    0.6800
+       11.7418    0.6800    0.9800     34     1    49    16    0.6600
+       11.6642    0.7000    0.9800     35     1    49    15    0.6800
+       11.5082    0.7000    0.9600     35     2    48    15    0.6600
+       11.4038    0.7200    0.9600     36     2    48    14    0.6800
+       11.2133    0.7400    0.9600     37     2    48    13    0.7000
+       11.0696    0.7600    0.9600     38     2    48    12    0.7200
+       10.3902    0.7800    0.9600     39     2    48    11    0.7400
+       10.1719    0.8000    0.9600     40     2    48    10    0.7600
+        9.8836    0.8200    0.9600     41     2    48     9    0.7800
+        9.5685    0.8200    0.9400     41     3    47     9    0.7600
+        9.3526    0.8400    0.9400     42     3    47     8    0.7800
+        9.1944    0.8600    0.9400     43     3    47     7    0.8000
+        9.1032    0.8800    0.9400     44     3    47     6    0.8200
+        8.8558    0.8800    0.9200     44     4    46     6    0.8000
+        8.7617    0.9000    0.9200     45     4    46     5    0.8200
+        8.5538    0.9000    0.9000     45     5    45     5    0.8000
+        8.5406    0.9000    0.8800     45     6    44     5    0.7800
+        8.5296    0.9200    0.8800     46     6    44     4    0.8000
+        8.5259    0.9200    0.8600     46     7    43     4    0.7800
+        8.3125    0.9200    0.8400     46     8    42     4    0.7600
+        8.2985    0.9200    0.8200     46     9    41     4    0.7400
+        7.9078    0.9200    0.8000     46    10    40     4    0.7200
+        7.8493    0.9200    0.7800     46    11    39     4    0.7000
+        7.6187    0.9200    0.7600     46    12    38     4    0.6800
+        7.5941    0.9200    0.7400     46    13    37     4    0.6600
+        7.5556    0.9200    0.7200     46    14    36     4    0.6400
+        7.5150    0.9200    0.7000     46    15    35     4    0.6200
+        7.4355    0.9200    0.6800     46    16    34     4    0.6000
+        7.1837    0.9200    0.6600     46    17    33     4    0.5800
+        6.8235    0.9400    0.6600     47    17    33     3    0.6000
+        6.8029    0.9400    0.6400     47    18    32     3    0.5800
+        6.7765    0.9400    0.6200     47    19    31     3    0.5600
+        6.6770    0.9400    0.6000     47    20    30     3    0.5400
+        6.5446    0.9400    0.5800     47    21    29     3    0.5200
+        6.5440    0.9600    0.5800     48    21    29     2    0.5400
+        6.1603    0.9600    0.5600     48    22    28     2    0.5200
+        6.0665    0.9600    0.5400     48    23    27     2    0.5000
+        6.0554    0.9600    0.5200     48    24    26     2    0.4800
+        6.0361    0.9600    0.5000     48    25    25     2    0.4600
+        5.9000    0.9600    0.4800     48    26    24     2    0.4400
+        5.8857    0.9600    0.4600     48    27    23     2    0.4200
+        5.6326    0.9600    0.4400     48    28    22     2    0.4000
+        5.6281    0.9600    0.4200     48    29    21     2    0.3800
+        5.5851    0.9600    0.4000     48    30    20     2    0.3600
+        5.5802    0.9600    0.3800     48    31    19     2    0.3400
+        5.4514    0.9600    0.3600     48    32    18     2    0.3200
+        5.3207    0.9600    0.3400     48    33    17     2    0.3000
+        5.1582    0.9600    0.3200     48    34    16     2    0.2800
+        5.0599    0.9600    0.3000     48    35    15     2    0.2600
+        5.0167    0.9600    0.2800     48    36    14     2    0.2400
+        4.5654    0.9600    0.2600     48    37    13     2    0.2200
+        3.9706    0.9800    0.2600     49    37    13     1    0.2400
+        3.9552    0.9800    0.2400     49    38    12     1    0.2200
+        3.9103    1.0000    0.2400     50    38    12     0    0.2400
+        3.7719    1.0000    0.2200     50    39    11     0    0.2200
+        3.5881    1.0000    0.2000     50    40    10     0    0.2000
+        3.4583    1.0000    0.1800     50    41     9     0    0.1800
+        3.4422    1.0000    0.1600     50    42     8     0    0.1600
+        2.9673    1.0000    0.1400     50    43     7     0    0.1400
+        2.9111    1.0000    0.1200     50    44     6     0    0.1200
+        2.7698    1.0000    0.1000     50    45     5     0    0.1000
+        2.5203    1.0000    0.0800     50    46     4     0    0.0800
+        2.3646    1.0000    0.0600     50    47     3     0    0.0600
+        2.2596    1.0000    0.0400     50    48     2     0    0.0400
+        0.4733    1.0000    0.0200     50    49     1     0    0.0200
+       -0.3894    1.0000    0.0000     50    50     0     0    0.0000
+           Inf    0.0000    1.0000      0     0    50    50    0.0000</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="结果判读要点" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="结果判读要点"><span class="header-section-number">14.4</span> 结果判读要点</h2>
+<ol type="1">
+<li><strong>参考可靠</strong>：ROC 结论依赖参考标准，参考错误会传导到 AUC 与 cutoff。</li>
+<li><strong>方向确认</strong>：确认标记物的判定方向（geq/leq）符合临床意义。</li>
+<li><strong>cutoff 选择</strong>：Youden 与最近拐角是两种准则，最终 cutoff 应结合临床代价（假阴/假阳权重） 与方案确定，不能只看统计最优。</li>
+<li><strong>样本量</strong>：AUC 的置信区间随样本量与事件数变化，小样本或事件过少时谨慎解释。</li>
+<li><strong>方法限制</strong>：本工作流为经验 ROC/梯形 AUC，配对多曲线比较、部分 AUC 等需另行设计。</li>
+<li><strong>独立验证</strong>：在训练数据上的 AUC 是表观性能，推广前应在独立数据上验证。</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./013-定性分析.html" class="pagination-link" aria-label="定性分析">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">定性分析</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./015-ROC曲线与多元回归.html" class="pagination-link" aria-label="ROC 曲线与多元回归">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>16&nbsp; 算法原理简介 – ivdtools使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./017-AI自动化分析.html" rel="next">
+<link href="./015-ROC曲线与多元回归.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./016-算法原理简介.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-4PLC方程拟合校准曲线.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-分析灵敏度.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">分析灵敏度</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-瓶间差分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-方法学比较.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">方法学比较</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-定性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">定性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-ROC曲线与cutoff建立.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-算法原理简介.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-AI自动化分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI 自动化分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">参考资料</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#说明" id="toc-说明" class="nav-link active" data-scroll-target="#说明"><span class="header-section-number">16.1</span> 说明</a></li>
+  <li><a href="#通用约定与符号" id="toc-通用约定与符号" class="nav-link" data-scroll-target="#通用约定与符号"><span class="header-section-number">16.2</span> 通用约定与符号</a></li>
+  <li><a href="#异常值与分布算法" id="toc-异常值与分布算法" class="nav-link" data-scroll-target="#异常值与分布算法"><span class="header-section-number">16.3</span> 异常值与分布算法</a>
+  <ul class="collapse">
+  <li><a href="#异常值" id="toc-异常值" class="nav-link" data-scroll-target="#异常值"><span class="header-section-number">16.3.1</span> 异常值</a></li>
+  <li><a href="#正态性" id="toc-正态性" class="nav-link" data-scroll-target="#正态性"><span class="header-section-number">16.3.2</span> 正态性</a></li>
+  </ul></li>
+  <li><a href="#方法比较与定性评价算法" id="toc-方法比较与定性评价算法" class="nav-link" data-scroll-target="#方法比较与定性评价算法"><span class="header-section-number">16.4</span> 方法比较与定性评价算法</a>
+  <ul class="collapse">
+  <li><a href="#回归相关与偏差" id="toc-回归相关与偏差" class="nav-link" data-scroll-target="#回归相关与偏差"><span class="header-section-number">16.4.1</span> 回归、相关与偏差</a></li>
+  <li><a href="#四格表" id="toc-四格表" class="nav-link" data-scroll-target="#四格表"><span class="header-section-number">16.4.2</span> 四格表</a></li>
+  </ul></li>
+  <li><a href="#roc-算法" id="toc-roc-算法" class="nav-link" data-scroll-target="#roc-算法"><span class="header-section-number">16.5</span> ROC 算法</a></li>
+  <li><a href="#精密度anova-与参考区间算法" id="toc-精密度anova-与参考区间算法" class="nav-link" data-scroll-target="#精密度anova-与参考区间算法"><span class="header-section-number">16.6</span> 精密度、ANOVA 与参考区间算法</a>
+  <ul class="collapse">
+  <li><a href="#方差分量" id="toc-方差分量" class="nav-link" data-scroll-target="#方差分量"><span class="header-section-number">16.6.1</span> 方差分量</a></li>
+  <li><a href="#anova-与参考区间" id="toc-anova-与参考区间" class="nav-link" data-scroll-target="#anova-与参考区间"><span class="header-section-number">16.6.2</span> ANOVA 与参考区间</a></li>
+  </ul></li>
+  <li><a href="#qc稳定性与方程拟合算法" id="toc-qc稳定性与方程拟合算法" class="nav-link" data-scroll-target="#qc稳定性与方程拟合算法"><span class="header-section-number">16.7</span> QC、稳定性与方程拟合算法</a>
+  <ul class="collapse">
+  <li><a href="#qc-与稳定性" id="toc-qc-与稳定性" class="nav-link" data-scroll-target="#qc-与稳定性"><span class="header-section-number">16.7.1</span> QC 与稳定性</a></li>
+  <li><a href="#方程拟合" id="toc-方程拟合" class="nav-link" data-scroll-target="#方程拟合"><span class="header-section-number">16.7.2</span> 方程拟合</a></li>
+  </ul></li>
+  <li><a href="#模块与指南对应" id="toc-模块与指南对应" class="nav-link" data-scroll-target="#模块与指南对应"><span class="header-section-number">16.8</span> 模块与指南对应</a></li>
+  <li><a href="#使用边界" id="toc-使用边界" class="nav-link" data-scroll-target="#使用边界"><span class="header-section-number">16.9</span> 使用边界</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="说明" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="说明"><span class="header-section-number">16.1</span> 说明</h2>
+<p>本文综合 <code>ivdtools</code> 所依据的算法原理，供理解各分析模块的统计基础与包接口的映射关系。 涉及异常值/分布、方法比较/定性评价、ROC、精密度/ANOVA/参考区间、 QC/稳定性/方程拟合。为便于对照，方法比较统一采用候选 <span class="math inline">\(X\)</span>、参考 <span class="math inline">\(Y\)</span>、回归模型 <span class="math inline">\(Y=a+bX\)</span> 的约定；包内具体参数名与方向以 <code>ivdtools</code> 的 <code>list_equation()</code>、<code>list_sadler()</code>、<code>list_westgard()</code> 等注册表为准。</p>
+<p>公式用于说明原理，不替代教科书推导，也不替代方案中对方法选择的判断。</p>
+</section>
+<section id="通用约定与符号" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="通用约定与符号"><span class="header-section-number">16.2</span> 通用约定与符号</h2>
+<p>有序样本 <span class="math inline">\(x_{(1)}\le\cdots\le x_{(n)}\)</span>，均值 <span class="math inline">\(\bar x\)</span>，标准差 <span class="math inline">\(s\)</span>，显著性水平 <span class="math inline">\(\alpha=1-\text{level}\)</span>。多数检验要求样本近似独立；检测到的”异常”或”不服从某分布”只说明与 假设模型的冲突强度，不能量化其对最终性能估计的实际影响，也不自动触发删除。</p>
+</section>
+<section id="异常值与分布算法" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="异常值与分布算法"><span class="header-section-number">16.3</span> 异常值与分布算法</h2>
+<section id="异常值" class="level3" data-number="16.3.1">
+<h3 data-number="16.3.1" class="anchored" data-anchor-id="异常值"><span class="header-section-number">16.3.1</span> 异常值</h3>
+<ul>
+<li><strong>Grubbs</strong>：<span class="math inline">\(G=\max_i|x_i-\bar x|/s\)</span>，以 t 分布导出的临界值判断最极端点；近似正态且一次针对 一个点。映射：<code>outliers_test(method="grubbs", alpha=...)</code>。</li>
+<li><strong>广义 ESD</strong>：逐次移除最极端点，计算 <span class="math inline">\(R_i\)</span> 并与随剩余 n 改变的 <span class="math inline">\(\lambda_i\)</span> 比较；最大异常点数 由附加参数限制。</li>
+<li><strong>Dixon</strong>：用端点间隙与样本极差之比判断，临界值依赖 n，只适合小样本范围。</li>
+<li><strong>IQR</strong>：小于 <span class="math inline">\(Q_1-k\,IQR\)</span> 或大于 <span class="math inline">\(Q_3+k\,IQR\)</span> 标记，默认系数由接口实现；这是规则而非显著性 检验。</li>
+</ul>
+<p><code>outliers_test()</code> 先排除缺失、保留原始行号，再返回统计量、临界值和异常标记。常数列会使以 s 或 极差为分母的统计量无定义；多次试验会增加假阳性。</p>
+</section>
+<section id="正态性" class="level3" data-number="16.3.2">
+<h3 data-number="16.3.2" class="anchored" data-anchor-id="正态性"><span class="header-section-number">16.3.2</span> 正态性</h3>
+<ul>
+<li><strong>Shapiro–Wilk</strong>：<span class="math inline">\(W=(\sum a_i x_{(i)})^2/\sum(x_i-\bar x)^2\)</span>，权重来自正态次序统计量。</li>
+<li><strong>Anderson–Darling</strong>：经验分布与拟合正态 CDF 的加权平方距离，对尾部权重更大。</li>
+<li><strong>Lilliefors</strong>：参数由样本估计时的 Kolmogorov–Smirnov 型统计量。</li>
+<li><strong>Cramér–von Mises</strong>：经验 CDF 与理论 CDF 的整体积分平方距离。</li>
+</ul>
+<p><code>normal_test(method="auto")</code> 根据样本条件选择可用检验（n≤50 用 Shapiro–Wilk、更大用 Anderson–Darling 等），<code>level</code> 映射为拒绝阈值。图形提供 Q-Q 与直方图；p 值不能量化偏离对性能 估计的实际影响。</p>
+</section>
+</section>
+<section id="方法比较与定性评价算法" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="方法比较与定性评价算法"><span class="header-section-number">16.4</span> 方法比较与定性评价算法</h2>
+<section id="回归相关与偏差" class="level3" data-number="16.4.1">
+<h3 data-number="16.4.1" class="anchored" data-anchor-id="回归相关与偏差"><span class="header-section-number">16.4.1</span> 回归、相关与偏差</h3>
+<p>统一方向为候选 <span class="math inline">\(X\)</span>、参考 <span class="math inline">\(Y\)</span>，模型 <span class="math inline">\(Y=a+bX\)</span>。</p>
+<ul>
+<li><strong>OLS</strong> 最小化 <span class="math inline">\(\sum(y_i-a-bx_i)^2\)</span>；假设 X 误差可忽略。</li>
+<li><strong>Deming</strong> 最小化到直线的加权正交距离，误差方差比映射为 <code>lambda</code>；<span class="math inline">\(\lambda=\sigma_Y^2/\sigma_X^2\)</span> 的方向必须核对源码或方案。</li>
+<li><strong>Passing–Bablok</strong> 以两两斜率中位数估计 b，再由 <span class="math inline">\(y_i-bx_i\)</span> 中位数估计 a，对异常值较稳健，但 仍要求线性与独立样本。</li>
+<li><strong>Pearson</strong> 衡量线性相关，<strong>Spearman/Kendall</strong> 衡量秩关联；<code>correlation(method=...)</code> 回答的是 “相关”而不是”一致”，不能替代偏差与一致性限评价。</li>
+</ul>
+<p>绝对 Bland–Altman 差值记为 <span class="math inline">\(d_i=X_i-Y_i\)</span>（报告必须复核包对象实际方向），均差 <span class="math inline">\(\bar d\)</span>，一致性 界限 <span class="math inline">\(\bar d\pm z_{(1+p)/2}s_d\)</span>；相对 BA 用百分比差。<code>agree.level</code> 控制覆盖比例，<code>conf.level</code> 控制估计区间。<code>bias()</code> 将回归方程映射到指定 <code>level</code>，输出预测偏差及置信/预测区间。</p>
+</section>
+<section id="四格表" class="level3" data-number="16.4.2">
+<h3 data-number="16.4.2" class="anchored" data-anchor-id="四格表"><span class="header-section-number">16.4.2</span> 四格表</h3>
+<p>由 TP、FP、TN、FN 得：</p>
+<p><span class="math display">\[Se=\frac{TP}{TP+FN},\quad Sp=\frac{TN}{TN+FP},\quad PPV=\frac{TP}{TP+FP}.\]</span></p>
+<p>Wilson 区间用得分检验反演；精确区间用二项分布尾概率反演。Cohen <span class="math inline">\(\kappa=(P_o-P_e)/(1-P_e)\)</span>，其中 <span class="math inline">\(P_e\)</span> 由边际比例得到。McNemar 只用不一致格 b、c，渐近统计量 近似 <span class="math inline">\((b-c)^2/(b+c)\)</span>（连续性校正或精确版本以对象记录为准）。包接口映射为 <code>diagnostics()</code>、 <code>kappa()</code>、<code>mcnemar()</code>；零分母、小格数和极端患病率均需显式说明。</p>
+</section>
+</section>
+<section id="roc-算法" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="roc-算法"><span class="header-section-number">16.5</span> ROC 算法</h2>
+<p>对每个阈值 t，按指标方向计算 <span class="math inline">\(TPR(t)=Se(t)\)</span> 与 <span class="math inline">\(FPR(t)=1-Sp(t)\)</span>。经验 ROC 将所有观测值作为 候选阈值并连成阶梯/折线；AUC 用相邻点梯形求和：</p>
+<p><span class="math display">\[AUC=\sum_i \frac{TPR_i+TPR_{i+1}}{2}(FPR_{i+1}-FPR_i).\]</span></p>
+<p><code>auc(roc_obj, cols=...)</code> 保存逐指标 AUC 表；经验 AUC 可解释为随机阳性得分高于随机阴性的概率 （方向调整后）。样本相关的多曲线比较、部分 AUC 或复杂抽样不由这个点估计自动解决。</p>
+<p>Youden 指数 <span class="math inline">\(J(t)=Se(t)+Sp(t)-1\)</span>；左上角法最小化 <span class="math inline">\(\sqrt{(1-Se)^2+(1-Sp)^2}\)</span>。<code>cutoff()</code> 同时 输出两类最优点。并列阈值、测量分辨率、错判成本和临床患病率会改变实际选择，因此”数学最优”不是 自动的临床 cutoff。</p>
+<p>多指标模型为</p>
+<p><span class="math display">\[\operatorname{logit}\{P(Y=1)\}=\beta_0+\sum_j\beta_jx_j,\]</span></p>
+<p>由 <code>mlr(cols, name)</code> 通过二项 logistic 拟合；<code>predict()</code> 把线性预测量经 logistic 逆变换为概率， 默认 0.5 分类，并用模型协方差计算区间。完全分离、共线性、缺失和小事件数会导致不稳定。训练集上 重新画 ROC 是表观性能，必须区分开发与验证数据。</p>
+</section>
+<section id="精密度anova-与参考区间算法" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="精密度anova-与参考区间算法"><span class="header-section-number">16.6</span> 精密度、ANOVA 与参考区间算法</h2>
+<section id="方差分量" class="level3" data-number="16.6.1">
+<h3 data-number="16.6.1" class="anchored" data-anchor-id="方差分量"><span class="header-section-number">16.6.1</span> 方差分量</h3>
+<p>嵌套设计可写为 <span class="math inline">\(y_{ijkl}=\mu+D_i+R_{j(i)}+\varepsilon_{k(ij)}\)</span>，总方差 <span class="math inline">\(\sigma_T^2=\sigma_D^2+\sigma_R^2+\sigma_e^2\)</span>。<code>precision(form = y ~ day/run)</code> 把公式传给 <code>VCA::anovaVCA()</code>；<code>variance()</code>/<code>vc()</code> 汇总 VC、<span class="math inline">\(SD=\sqrt{VC}\)</span>、<span class="math inline">\(CV=100SD/\bar y\)</span> 与占比。 Satterthwaite 用</p>
+<p><span class="math display">\[\nu\approx\frac{(\sum c_jMS_j)^2}{\sum(c_jMS_j)^2/\nu_j}\]</span></p>
+<p>近似有效自由度，再以卡方分位数构造方差/SD 区间。负分量、低自由度和不平衡会使近似变差。</p>
+<p>Sadler 精密度轮廓把方差或 SD 表示为浓度函数；<code>list_sadler()</code> 列出 10 个候选式， <code>profile(model.no=...)</code> 调用 VFP 拟合并用 AIC 选择。不同模型对低浓度外推差异很大，必须检查浓度 覆盖和残差。</p>
+</section>
+<section id="anova-与参考区间" class="level3" data-number="16.6.2">
+<h3 data-number="16.6.2" class="anchored" data-anchor-id="anova-与参考区间"><span class="header-section-number">16.6.2</span> ANOVA 与参考区间</h3>
+<p><code>bottle_anova()</code> 用 <code>stats::aov()</code> 分解组间/组内平方和；Bartlett 检验方差齐性，残差 Shapiro–Wilk 检查正态性；Tukey HSD 用学生化极差同时控制两两比较家族错误率。</p>
+<p>参数参考区间在正态假设下近似 <span class="math inline">\(\bar x\pm z_{1-\alpha/2}s\)</span>；非参数百分位法使用 R quantile type 6， 端点由有序统计量得到，端点区间由二项次序或 bootstrap 路径计算。<code>interval</code> 是覆盖率、<code>ci</code> 是端点 置信度，二者含义不同。样本选择偏倚不能由任何区间算法修复。</p>
+</section>
+</section>
+<section id="qc稳定性与方程拟合算法" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="qc稳定性与方程拟合算法"><span class="header-section-number">16.7</span> QC、稳定性与方程拟合算法</h2>
+<section id="qc-与稳定性" class="level3" data-number="16.7.1">
+<h3 data-number="16.7.1" class="anchored" data-anchor-id="qc-与稳定性"><span class="header-section-number">16.7.1</span> QC 与稳定性</h3>
+<p>Levey–Jennings 标准化 <span class="math inline">\(z_i=(x_i-\mu_0)/\sigma_0\)</span>；Westgard 规则在单点、连续同侧/同方向或同批多 水平间组合这些 z 值。<code>qc_chart()</code> 按 <code>run</code> 顺序评价，<code>youden_plot()</code> 以两个控制品的目标均值/SD 形成象限和椭圆式判读；顺序、目标值和批次边界属于算法输入。</p>
+<p>节点相对偏差为 <span class="math inline">\(100(x_t-x_0)/x_0\)</span>（relative）或 <span class="math inline">\(x_t-x_0\)</span>（absolute）。<code>stability_regression()</code> 拟合时间趋势，<code>stability_time()</code> 求置信边界/趋势与允许限的交点。MKT 由 Arrhenius 加权温度历程：</p>
+<p><span class="math display">\[T_k=-\frac{E_a}{R}\left[\log\left\{\sum_i w_i\exp(-E_a/RT_i)\right\}\right]^{-1}.\]</span></p>
+<p>Arrhenius 关系 <span class="math inline">\(k=Ae^{-E_a/(RT)}\)</span>；零级 <span class="math inline">\(C_t=C_0-kt\)</span>，一级 <span class="math inline">\(\log C_t=\log C_0-kt\)</span>。<code>mkt(ea=83.144)</code>、 <code>arrhenius(order, target_temp, limit)</code> 映射这些量。温度必须转为 Kelvin 参与公式，外推受反应机制 不变假设限制。</p>
+</section>
+<section id="方程拟合" class="level3" data-number="16.7.2">
+<h3 data-number="16.7.2" class="anchored" data-anchor-id="方程拟合"><span class="header-section-number">16.7.2</span> 方程拟合</h3>
+<p>线性/多项式以最小二乘估计；指数和 4PL/5PL 由 <code>nlsLM</code>/约束优化。典型 4PL 为</p>
+<p><span class="math display">\[y=d+\frac{a-d}{1+(x/c)^b},\]</span></p>
+<p>5PL 再增加不对称指数 g，但包内具体参数名和方向以 <code>list_equation()</code> 为准。加权拟合最小化 <span class="math inline">\(\sum w_i(y_i-f(x_i,\theta))^2\)</span>。AIC 近似 <span class="math inline">\(-2\log L+2k\)</span>；残差揭示异方差、曲率和异常点。</p>
+<p>均值置信区间反映 <span class="math inline">\(E(Y|X)\)</span> 的不确定性，预测区间还含单次观测误差。非线性逆预测需要数值求根， 平坦平台附近的微小信号误差可转成巨大浓度误差。初值、边界、权重、方程版本、收敛码和失败模型都应 进入审计记录。</p>
+</section>
+</section>
+<section id="模块与指南对应" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="模块与指南对应"><span class="header-section-number">16.8</span> 模块与指南对应</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>主要函数</th>
+<th>对应 CLSI 指南</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>异常值与正态性</td>
+<td><code>outliers_test()</code>、<code>normal_test()</code></td>
+<td>通用（EP 各指南的分析前步骤）</td>
+</tr>
+<tr class="even">
+<td>方法比较</td>
+<td><code>mcr()</code> 系列</td>
+<td>EP09</td>
+</tr>
+<tr class="odd">
+<td>定性评价</td>
+<td><code>fourfold_table</code> 系列</td>
+<td>EP12</td>
+</tr>
+<tr class="even">
+<td>ROC</td>
+<td><code>roc()</code> 系列</td>
+<td>EP24（参考）</td>
+</tr>
+<tr class="odd">
+<td>精密度</td>
+<td><code>precision()</code> 系列</td>
+<td>EP05</td>
+</tr>
+<tr class="even">
+<td>瓶/批 ANOVA</td>
+<td><code>bottle_anova()</code></td>
+<td>EP15</td>
+</tr>
+<tr class="odd">
+<td>参考区间</td>
+<td><code>reference_interval()</code></td>
+<td>EP28-A3c</td>
+</tr>
+<tr class="even">
+<td>稳定性</td>
+<td><code>stability_*()</code>、<code>arrhenius()</code>、<code>mkt()</code></td>
+<td>EP25</td>
+</tr>
+<tr class="odd">
+<td>QC</td>
+<td><code>qc_chart()</code>、<code>youden_plot()</code></td>
+<td>Westgard 规则</td>
+</tr>
+<tr class="even">
+<td>方程拟合</td>
+<td><code>fit_equation()</code> 系列</td>
+<td>EP06</td>
+</tr>
+<tr class="odd">
+<td>分析特异性</td>
+<td><code>lob_lod_loq()</code></td>
+<td>EP17</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="使用边界" class="level2" data-number="16.9">
+<h2 data-number="16.9" class="anchored" data-anchor-id="使用边界"><span class="header-section-number">16.9</span> 使用边界</h2>
+<ul>
+<li>公式与统计量只在合理假设下有效；假设不满足时结果不能机械套用。</li>
+<li>“统计显著”“数学最优”不等于”临床/产品可接受”；接受标准必须在分析前确定。</li>
+<li>训练数据上的性能（如 ROC AUC、回归拟合优度）是表观性能，推广前应在独立数据上验证。</li>
+<li>所有计算应在方案、标准与专业判断指导下进行，并由合适的人员复核。</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./015-ROC曲线与多元回归.html" class="pagination-link" aria-label="ROC 曲线与多元回归">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./017-AI自动化分析.html" class="pagination-link" aria-label="AI 自动化分析">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI 自动化分析</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

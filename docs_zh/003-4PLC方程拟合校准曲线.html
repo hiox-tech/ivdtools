@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; 4PLC 方程拟合校准曲线 – ivdtools使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./004-稳定性研究.html" rel="next">
+<link href="./002-分析环境安装与使用.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./003-4PLC方程拟合校准曲线.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-4PLC方程拟合校准曲线.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-分析灵敏度.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">分析灵敏度</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-瓶间差分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-方法学比较.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">方法学比较</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-定性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">定性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-ROC曲线与cutoff建立.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-AI自动化分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI 自动化分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">参考资料</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#分析目的" id="toc-分析目的" class="nav-link active" data-scroll-target="#分析目的"><span class="header-section-number">3.1</span> 分析目的</a></li>
+  <li><a href="#plc-模型与主要函数" id="toc-plc-模型与主要函数" class="nav-link" data-scroll-target="#plc-模型与主要函数"><span class="header-section-number">3.2</span> 4PLC 模型与主要函数</a></li>
+  <li><a href="#示例一基本拟合流程" id="toc-示例一基本拟合流程" class="nav-link" data-scroll-target="#示例一基本拟合流程"><span class="header-section-number">3.3</span> 示例一：基本拟合流程</a>
+  <ul class="collapse">
+  <li><a href="#读取和核验数据" id="toc-读取和核验数据" class="nav-link" data-scroll-target="#读取和核验数据"><span class="header-section-number">3.3.1</span> 读取和核验数据</a></li>
+  <li><a href="#拟合并检查收敛" id="toc-拟合并检查收敛" class="nav-link" data-scroll-target="#拟合并检查收敛"><span class="header-section-number">3.3.2</span> 拟合并检查收敛</a></li>
+  <li><a href="#残差与图形" id="toc-残差与图形" class="nav-link" data-scroll-target="#残差与图形"><span class="header-section-number">3.3.3</span> 残差与图形</a></li>
+  <li><a href="#由浓度预测响应" id="toc-由浓度预测响应" class="nav-link" data-scroll-target="#由浓度预测响应"><span class="header-section-number">3.3.4</span> 由浓度预测响应</a></li>
+  <li><a href="#由响应逆向估计浓度" id="toc-由响应逆向估计浓度" class="nav-link" data-scroll-target="#由响应逆向估计浓度"><span class="header-section-number">3.3.5</span> 由响应逆向估计浓度</a></li>
+  </ul></li>
+  <li><a href="#示例二夹心法与权重" id="toc-示例二夹心法与权重" class="nav-link" data-scroll-target="#示例二夹心法与权重"><span class="header-section-number">3.4</span> 示例二：夹心法与权重</a>
+  <ul class="collapse">
+  <li><a href="#等权重拟合" id="toc-等权重拟合" class="nav-link" data-scroll-target="#等权重拟合"><span class="header-section-number">3.4.1</span> 等权重拟合</a></li>
+  <li><a href="#反响应平方权重拟合" id="toc-反响应平方权重拟合" class="nav-link" data-scroll-target="#反响应平方权重拟合"><span class="header-section-number">3.4.2</span> 反响应平方权重拟合</a></li>
+  </ul></li>
+  <li><a href="#示例三竞争法" id="toc-示例三竞争法" class="nav-link" data-scroll-target="#示例三竞争法"><span class="header-section-number">3.5</span> 示例三：竞争法</a></li>
+  <li><a href="#结果判读要点" id="toc-结果判读要点" class="nav-link" data-scroll-target="#结果判读要点"><span class="header-section-number">3.6</span> 结果判读要点</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="分析目的" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="分析目的"><span class="header-section-number">3.1</span> 分析目的</h2>
+<p>本文演示如何使用 <code>ivdtools</code> 包的 <code>fit_equation()</code> 拟合四参数 Logistic （four-parameter logistic，4PLC）校准曲线，并检查收敛状态、残差、权重影响以及 正向和逆向预测。</p>
+<p>4PLC 是非线性模型。成功返回拟合对象并不等同于模型适用；正式分析还应结合校准点设计、 上下平台覆盖、参数稳定性、残差结构、重复测量精密度及预先规定的接受标准进行判断。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="plc-模型与主要函数" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="plc-模型与主要函数"><span class="header-section-number">3.2</span> 4PLC 模型与主要函数</h2>
+<p><code>ivdtools</code> 中 4PLC 对应 <code>E07</code>，也可以使用名称 <code>"4PLC"</code> 调用：</p>
+<p><span class="math display">\[y = A + \frac{B-A}{1 + (x/C)^D}\]</span></p>
+<p>其中，<span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 表示两个渐近平台，<span class="math inline">\(C\)</span> 表示曲线中点对应的浓度尺度，<span class="math inline">\(D\)</span> 控制曲线 方向和陡峭程度。参数含义应结合实际信号方向解释。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>list_equation()</code></td>
+<td>查看内置方程注册表</td>
+</tr>
+<tr class="even">
+<td><code>replicate_to_mean()</code></td>
+<td>汇总重复测量并可计算权重</td>
+</tr>
+<tr class="odd">
+<td><code>fit_equation()</code></td>
+<td>拟合内置或自定义方程</td>
+</tr>
+<tr class="even">
+<td><code>coef()</code></td>
+<td>提取模型参数</td>
+</tr>
+<tr class="odd">
+<td><code>residuals()</code></td>
+<td>提取观测值减拟合值的残差</td>
+</tr>
+<tr class="even">
+<td><code>predict()</code></td>
+<td>正向预测响应值或逆向估计浓度</td>
+</tr>
+<tr class="odd">
+<td><code>plot()</code></td>
+<td>绘制观测点、拟合曲线和区间</td>
+</tr>
+<tr class="even">
+<td><code>compare_equation()</code></td>
+<td>比较候选方程</td>
+</tr>
+</tbody>
+</table>
+<p>查看响应曲线模型：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list_equation</span>(<span class="at">category =</span> <span class="st">"Response"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ID       Name                         Formula        Params nP Engine
+-----------------------------------------------------------------------
+ E01     Linear                         a + b*x          a, b  2     lm
+ E02  Quadratic                 a + b*x + c*x^2       a, b, c  3     lm
+ E03 ExpoGrowth                  a * exp(b * x)          a, b  2    nls
+ E04  ExpoDecay                 a * exp(-b * x)          a, b  2    nls
+ E05      Power                         a * x^b          a, b  2    nls
+ E06        Log                  a + b * log(x)          a, b  2     lm
+ E07       4PLC   A + (B - A) / (1 + (x / C)^D)    A, B, C, D  4    nls
+ E08       5PLC A + (B - A) / (1 + (x / C)^D)^E A, B, C, D, E  5    nls
+ E09   Gaussian a * exp(-(x - b)^2 / (2 * c^2))       a, b, c  3    nls
+ E10  Michaelis             Vmax * x / (Km + x)      Vmax, Km  2    nls
+ E11 Sinusoidal          a * sin(b * x + c) + d    a, b, c, d  4    nls
+ E12      Cubic         a + b*x + c*x^2 + d*x^3    a, b, c, d  4     lm </code></pre>
+</div>
+</div>
+<p><code>fit_equation()</code> 可以使用自动初值，也可以通过 <code>start</code> 指定初值；<code>lower</code>、<code>upper</code> 和 <code>constraints</code> 可设置参数边界或约束。<code>weights</code> 接受数值向量或内置方案 <code>"equal"</code>、<code>"1/y"</code>、<code>"1/y^2"</code>、<code>"1/x"</code>、<code>"1/x^2"</code>。</p>
+<blockquote class="blockquote">
+<p><strong>注意：</strong> 权重应反映测量误差或方差结构，不能只根据曲线是正相关还是负相关来选择。 最好依据重复测量精密度、残差诊断或研究方案预先确定权重。</p>
+</blockquote>
+</section>
+<section id="示例一基本拟合流程" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="示例一基本拟合流程"><span class="header-section-number">3.3</span> 示例一：基本拟合流程</h2>
+<section id="读取和核验数据" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="读取和核验数据"><span class="header-section-number">3.3.1</span> 读取和核验数据</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>u1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/4PLC-U1.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>u1</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Sample"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Con"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["RLU"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"s1","2":"0.00","3":"1581"},{"1":"s2","2":"4.08","3":"3857"},{"1":"s3","2":"24.93","3":"12931"},{"1":"s4","2":"92.75","3":"36153"},{"1":"s5","2":"338.54","3":"106083"},{"1":"s6","2":"1017.55","3":"303726"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(u1)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [6 × 3] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Sample: chr [1:6] "s1" "s2" "s3" "s4" ...
+ $ Con   : num [1:6] 0 4.08 24.93 92.75 338.54 ...
+ $ RLU   : num [1:6] 1581 3857 12931 36153 106083 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   Sample = col_character(),
+  ..   Con = col_double(),
+  ..   RLU = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(u1[<span class="fu">c</span>(<span class="st">"Con"</span>, <span class="st">"RLU"</span>)])</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Con                RLU        
+ Min.   :   0.000   Min.   :  1581  
+ 1st Qu.:   9.293   1st Qu.:  6126  
+ Median :  58.840   Median : 24542  
+ Mean   : 246.308   Mean   : 77388  
+ 3rd Qu.: 277.092   3rd Qu.: 88600  
+ Max.   :1017.550   Max.   :303726  </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anyDuplicated</span>(u1<span class="sc">$</span>Sample)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.finite</span>(u1<span class="sc">$</span>Con) <span class="sc">|</span> <span class="sc">!</span><span class="fu">is.finite</span>(u1<span class="sc">$</span>RLU))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>该数据包含 6 个浓度水平。4PLC 需要估计 4 个参数，因此剩余自由度很少；同时最高浓度 仍未清楚覆盖上平台，模型参数可能不稳定。本例主要用于说明操作流程，不应直接作为正式 校准设计范例。</p>
+<p>如果每个浓度包含重复测量，可以直接拟合全部观测，也可以先使用 <code>replicate_to_mean()</code> 汇总。是否汇总及如何加权应在分析方案中说明。</p>
+</section>
+<section id="拟合并检查收敛" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="拟合并检查收敛"><span class="header-section-number">3.3.2</span> 拟合并检查收敛</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit_u1 <span class="ot">&lt;-</span> <span class="fu">fit_equation</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"4PLC"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> u1,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"Con"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"RLU"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_u1)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>E07 (4PLC)
+Formula: A + (B - A) / (1 + (x / C)^D)
+
+Call:
+  fit_equation(eq = "4PLC", data = u1, x = "Con", y = "RLU")
+
+Residuals:
+      Min       1Q   Median       3Q      Max
+    -1991.214  -1335.541  -252.849  960.620  2652.956
+
+Coefficients:
+      Estimate  Std. Error  t value Pr(&gt;|t|)  
+A  3.10445e+03 2.09875e+03  1.47919 0.277197  
+B  6.13447e+07 2.60964e+09  0.02351 0.983380  
+C  2.60778e+05 1.18118e+07  0.02208 0.984391  
+D -9.58182e-01 1.20691e-01 -7.93917 0.015498 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2775.94 on 2 degrees of freedom
+AIC: 115.58  Iterations: 50</code></pre>
+</div>
+</div>
+<p>不要忽略优化器的收敛信息：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fit_u1<span class="sc">$</span>fit<span class="sc">$</span>convInfo[<span class="fu">c</span>(<span class="st">"isConv"</span>, <span class="st">"finIter"</span>, <span class="st">"stopCode"</span>, <span class="st">"stopMessage"</span>)]</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$isConv
+[1] FALSE
+
+$finIter
+[1] 50
+
+$stopCode
+[1] -1
+
+$stopMessage
+[1] "Number of iterations has reached `maxiter' == 50."</code></pre>
+</div>
+</div>
+<p>本数据的默认拟合达到迭代次数上限且未声明收敛。增加最大迭代次数有时有帮助，但不能解决 校准范围未覆盖平台或参数不可辨识的问题。遇到未收敛时，应依次检查数据、模型方向、初值、 参数边界和校准点设计，而不是仅凭曲线外观接受结果。</p>
+</section>
+<section id="残差与图形" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="残差与图形"><span class="header-section-number">3.3.3</span> 残差与图形</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>u1_diagnostics <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sample =</span> u1<span class="sc">$</span>Sample,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Con =</span> u1<span class="sc">$</span>Con,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">RLU =</span> u1<span class="sc">$</span>RLU,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Residual =</span> <span class="fu">residuals</span>(fit_u1),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Relative_residual_pct =</span> <span class="fu">residuals</span>(fit_u1) <span class="sc">/</span> u1<span class="sc">$</span>RLU <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(u1_diagnostics, <span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample</th>
+<th style="text-align: right;">Con</th>
+<th style="text-align: right;">RLU</th>
+<th style="text-align: right;">Residual</th>
+<th style="text-align: right;">Relative_residual_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">s1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1581</td>
+<td style="text-align: right;">-1523.45</td>
+<td style="text-align: right;">-96.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">s2</td>
+<td style="text-align: right;">4.08</td>
+<td style="text-align: right;">3857</td>
+<td style="text-align: right;">-771.83</td>
+<td style="text-align: right;">-20.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">s3</td>
+<td style="text-align: right;">24.93</td>
+<td style="text-align: right;">12931</td>
+<td style="text-align: right;">1192.12</td>
+<td style="text-align: right;">9.22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">s4</td>
+<td style="text-align: right;">92.75</td>
+<td style="text-align: right;">36153</td>
+<td style="text-align: right;">2652.96</td>
+<td style="text-align: right;">7.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">s5</td>
+<td style="text-align: right;">338.54</td>
+<td style="text-align: right;">106083</td>
+<td style="text-align: right;">-1991.21</td>
+<td style="text-align: right;">-1.88</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">s6</td>
+<td style="text-align: right;">1017.55</td>
+<td style="text-align: right;">303726</td>
+<td style="text-align: right;">266.13</td>
+<td style="text-align: right;">0.09</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_u1, <span class="at">interval =</span> <span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="003-4PLC方程拟合校准曲线_files/figure-html/plot-u1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>残差应同时在原始响应尺度和相对尺度上检查，并结合重复测量方差判断。对跨越多个数量级的 响应，仅查看原始残差可能使高信号点主导判断。</p>
+</section>
+<section id="由浓度预测响应" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="由浓度预测响应"><span class="header-section-number">3.3.4</span> 由浓度预测响应</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  fit_u1,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">Con =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">200</span>, <span class="dv">1000</span>)),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="st">"confidence"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="fl">0.95</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    x         y   y_ci_lwr  y_ci_upr
+   20  10095.70   5194.229  14997.17
+  200  66540.68  59494.141  73587.22
+ 1000 298518.29 289967.527 307069.05</code></pre>
+</div>
+</div>
+<p>均值置信区间描述拟合均值的不确定性；预测区间还包含单次观测误差，通常更宽：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  fit_u1,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">Con =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">200</span>, <span class="dv">1000</span>)),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="st">"prediction"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="fl">0.95</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    x         y      y_pi_lwr  y_pi_upr
+   20  10095.70     -7.215948  20198.61
+  200  66540.68  55240.318293  77841.05
+ 1000 298518.29 286223.575001 310813.01</code></pre>
+</div>
+</div>
+</section>
+<section id="由响应逆向估计浓度" class="level3" data-number="3.3.5">
+<h3 data-number="3.3.5" class="anchored" data-anchor-id="由响应逆向估计浓度"><span class="header-section-number">3.3.5</span> 由响应逆向估计浓度</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  fit_u1,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">RLU =</span> <span class="fu">c</span>(<span class="dv">20000</span>, <span class="dv">100000</span>, <span class="dv">250000</span>)),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">inverse =</span> <span class="cn">TRUE</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        x      y
+  50.2395  20000
+ 311.3672 100000
+ 828.5559 250000</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>预测边界：</strong> 应避免超出校准浓度范围外推。逆向预测在平台区对响应误差非常敏感， 非单调模型还可能出现多解。当前示例拟合未可靠收敛，因此预测仅用于演示接口，不能用于 定量结论。</p>
+</blockquote>
+</section>
+</section>
+<section id="示例二夹心法与权重" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="示例二夹心法与权重"><span class="header-section-number">3.4</span> 示例二：夹心法与权重</h2>
+<section id="等权重拟合" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="等权重拟合"><span class="header-section-number">3.4.1</span> 等权重拟合</h3>
+<p>夹心法数据通常表现为浓度增加、信号升高。本例先进行等权重拟合：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>u2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/4PLC-U2.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>fit_u2_equal <span class="ot">&lt;-</span> <span class="fu">fit_equation</span>(</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"4PLC"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> u2,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"Con"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"RLU"</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_u2_equal)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>E07 (4PLC)
+Formula: A + (B - A) / (1 + (x / C)^D)
+
+Call:
+  fit_equation(eq = "4PLC", data = u2, x = "Con", y = "RLU")
+
+Residuals:
+      Min       1Q   Median       3Q      Max
+    -1034493.852  -58331.509  17644.023  45830.410  785037.098
+
+Coefficients:
+      Estimate  Std. Error  t value   Pr(&gt;|t|)    
+A -4.19069e+04 2.74298e+05 -0.15278 0.88288329    
+B  4.01980e+08 9.51404e+08  0.42251 0.68532695    
+C  1.12895e+03 3.16059e+03  0.35720 0.73147078    
+D -1.02539e+00 1.32241e-01 -7.75390 0.00011121 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 565331 on 7 degrees of freedom
+AIC: 327.64  Iterations: 24</code></pre>
+</div>
+</div>
+</section>
+<section id="反响应平方权重拟合" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="反响应平方权重拟合"><span class="header-section-number">3.4.2</span> 反响应平方权重拟合</h3>
+<p>当响应方差随信号增大而明显增大时，可以评估反响应平方权重：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_u2_weighted <span class="ot">&lt;-</span> <span class="fu">fit_equation</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"4PLC"</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> u2,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"Con"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"RLU"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="st">"1/y^2"</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_u2_weighted)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>E07 (4PLC)
+Formula: A + (B - A) / (1 + (x / C)^D)
+
+Call:
+  fit_equation(eq = "4PLC", data = u2, x = "Con", y = "RLU", weights = "1/y^2")
+
+Residuals:
+      Min       1Q   Median       3Q      Max
+    -1038926.254  -2031.562  491.283  35707.649  809345.965
+
+Coefficients:
+      Estimate  Std. Error    t value   Pr(&gt;|t|)    
+A  5.66828e+03 2.30614e+02   24.57907 4.7016e-08 ***
+B  2.00185e+08 6.72603e+07    2.97627   0.020624 *  
+C  4.83741e+02 1.74222e+02    2.77658   0.027433 *  
+D -1.08082e+00 1.02400e-02 -105.54858 1.8062e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.042025 on 7 degrees of freedom
+AIC: 265.29  Iterations: 7</code></pre>
+</div>
+</div>
+<p>比较两个模型在各校准点的相对残差：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>u2_comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sample =</span> u2<span class="sc">$</span>Sample,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Con =</span> u2<span class="sc">$</span>Con,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">RLU =</span> u2<span class="sc">$</span>RLU,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Equal_weight_pct =</span> <span class="fu">residuals</span>(fit_u2_equal) <span class="sc">/</span> u2<span class="sc">$</span>RLU <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Inverse_y2_weight_pct =</span> <span class="fu">residuals</span>(fit_u2_weighted) <span class="sc">/</span> u2<span class="sc">$</span>RLU <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(u2_comparison, <span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample</th>
+<th style="text-align: right;">Con</th>
+<th style="text-align: right;">RLU</th>
+<th style="text-align: right;">Equal_weight_pct</th>
+<th style="text-align: right;">Inverse_y2_weight_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">c1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">5637</td>
+<td style="text-align: right;">843.43</td>
+<td style="text-align: right;">-0.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c2</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">16014</td>
+<td style="text-align: right;">275.49</td>
+<td style="text-align: right;">3.07</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c3</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">47520</td>
+<td style="text-align: right;">67.84</td>
+<td style="text-align: right;">-4.70</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c4</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">125038</td>
+<td style="text-align: right;">14.11</td>
+<td style="text-align: right;">-1.46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c5</td>
+<td style="text-align: right;">1.03</td>
+<td style="text-align: right;">277621</td>
+<td style="text-align: right;">4.57</td>
+<td style="text-align: right;">4.70</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c6</td>
+<td style="text-align: right;">5.19</td>
+<td style="text-align: right;">1498023</td>
+<td style="text-align: right;">-4.39</td>
+<td style="text-align: right;">0.98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c7</td>
+<td style="text-align: right;">10.92</td>
+<td style="text-align: right;">3334387</td>
+<td style="text-align: right;">-1.53</td>
+<td style="text-align: right;">1.70</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c8</td>
+<td style="text-align: right;">20.83</td>
+<td style="text-align: right;">6148959</td>
+<td style="text-align: right;">-6.53</td>
+<td style="text-align: right;">-5.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c9</td>
+<td style="text-align: right;">49.90</td>
+<td style="text-align: right;">16515788</td>
+<td style="text-align: right;">4.75</td>
+<td style="text-align: right;">4.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c10</td>
+<td style="text-align: right;">95.47</td>
+<td style="text-align: right;">28504677</td>
+<td style="text-align: right;">-3.63</td>
+<td style="text-align: right;">-3.64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c11</td>
+<td style="text-align: right;">112.18</td>
+<td style="text-align: right;">35017203</td>
+<td style="text-align: right;">1.75</td>
+<td style="text-align: right;">2.31</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> <span class="fu">c</span>(<span class="st">"等权重"</span>, <span class="st">"1/y^2 权重"</span>),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Median_absolute_relative_residual_pct =</span> <span class="fu">c</span>(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">median</span>(<span class="fu">abs</span>(u2_comparison<span class="sc">$</span>Equal_weight_pct)),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">median</span>(<span class="fu">abs</span>(u2_comparison<span class="sc">$</span>Inverse_y2_weight_pct))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Maximum_absolute_relative_residual_pct =</span> <span class="fu">c</span>(</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">max</span>(<span class="fu">abs</span>(u2_comparison<span class="sc">$</span>Equal_weight_pct)),</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">max</span>(<span class="fu">abs</span>(u2_comparison<span class="sc">$</span>Inverse_y2_weight_pct))</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 43%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">Median_absolute_relative_residual_pct</th>
+<th style="text-align: right;">Maximum_absolute_relative_residual_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">等权重</td>
+<td style="text-align: right;">4.75</td>
+<td style="text-align: right;">843.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/y^2 权重</td>
+<td style="text-align: right;">3.07</td>
+<td style="text-align: right;">5.30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>在本示例数据中，<code>1/y^2</code> 权重明显降低了低信号点的相对残差；这只能说明该权重更符合 本数据所采用的相对误差评价目标。正式选择仍需结合各浓度重复测量的方差、回算浓度偏差、 模型参数稳定性和预设接受标准。不同权重下的残差标准误和 AIC 具有不同尺度，不宜脱离 误差模型直接比较。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_u2_weighted, <span class="at">interval =</span> <span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="003-4PLC方程拟合校准曲线_files/figure-html/plot-u2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="示例三竞争法" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="示例三竞争法"><span class="header-section-number">3.5</span> 示例三：竞争法</h2>
+<p>竞争法数据通常表现为浓度增加、信号降低：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>u3 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/4PLC-U3.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>fit_u3 <span class="ot">&lt;-</span> <span class="fu">fit_equation</span>(</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"4PLC"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> u3,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"Con"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"RLU"</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_u3)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>E07 (4PLC)
+Formula: A + (B - A) / (1 + (x / C)^D)
+
+Call:
+  fit_equation(eq = "4PLC", data = u3, x = "Con", y = "RLU")
+
+Residuals:
+      Min       1Q   Median       3Q      Max
+    -1937.581  -454.210  -28.126  625.582  1807.765
+
+Coefficients:
+      Estimate  Std. Error   t value   Pr(&gt;|t|)    
+A -2.81576e+04 2.17005e+03  -12.9755 1.1793e-06 ***
+B  1.40035e+06 1.08896e+03 1285.9562 &lt; 2.22e-16 ***
+C  1.29783e+02 6.49733e-01  199.7479 4.4162e-16 ***
+D  7.82733e-01 2.79342e-03  280.2058 &lt; 2.22e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1093.1 on 8 degrees of freedom
+AIC: 207.11  Iterations: 5</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fit_u3<span class="sc">$</span>fit<span class="sc">$</span>convInfo[<span class="fu">c</span>(<span class="st">"isConv"</span>, <span class="st">"finIter"</span>, <span class="st">"stopCode"</span>, <span class="st">"stopMessage"</span>)]</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$isConv
+[1] TRUE
+
+$finIter
+[1] 5
+
+$stopCode
+[1] 1
+
+$stopMessage
+[1] "Relative error in the sum of squares is at most `ftol'."</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>u3_diagnostics <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sample =</span> u3<span class="sc">$</span>Sample,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Con =</span> u3<span class="sc">$</span>Con,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">RLU =</span> u3<span class="sc">$</span>RLU,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Relative_residual_pct =</span> <span class="fu">residuals</span>(fit_u3) <span class="sc">/</span> u3<span class="sc">$</span>RLU <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(u3_diagnostics, <span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample</th>
+<th style="text-align: right;">Con</th>
+<th style="text-align: right;">RLU</th>
+<th style="text-align: right;">Relative_residual_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">m1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1400548</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m2</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">991716</td>
+<td style="text-align: right;">-0.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m3</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">897247</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m4</td>
+<td style="text-align: right;">79</td>
+<td style="text-align: right;">822749</td>
+<td style="text-align: right;">-0.05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m5</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">669646</td>
+<td style="text-align: right;">0.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m6</td>
+<td style="text-align: right;">187</td>
+<td style="text-align: right;">585293</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m7</td>
+<td style="text-align: right;">297</td>
+<td style="text-align: right;">462119</td>
+<td style="text-align: right;">-0.07</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m8</td>
+<td style="text-align: right;">523</td>
+<td style="text-align: right;">330399</td>
+<td style="text-align: right;">-0.19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m9</td>
+<td style="text-align: right;">737</td>
+<td style="text-align: right;">263095</td>
+<td style="text-align: right;">-0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m10</td>
+<td style="text-align: right;">1266</td>
+<td style="text-align: right;">177260</td>
+<td style="text-align: right;">-0.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m11</td>
+<td style="text-align: right;">1608</td>
+<td style="text-align: right;">146827</td>
+<td style="text-align: right;">0.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m12</td>
+<td style="text-align: right;">2218</td>
+<td style="text-align: right;">112252</td>
+<td style="text-align: right;">0.61</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_u3, <span class="at">interval =</span> <span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="003-4PLC方程拟合校准曲线_files/figure-html/plot-u3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>本例等权重拟合已经收敛且样本内相对残差较小，但仍应依据重复测量方差决定是否需要权重。 信号方向本身不是选择等权重或加权拟合的依据。</p>
+</section>
+<section id="结果判读要点" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="结果判读要点"><span class="header-section-number">3.6</span> 结果判读要点</h2>
+<ol type="1">
+<li><strong>校准设计</strong>：浓度点应覆盖预期工作区间，并尽可能提供上下平台信息。</li>
+<li><strong>收敛状态</strong>：检查 <code>convInfo</code>，不能把达到最大迭代次数直接视为成功收敛。</li>
+<li><strong>参数合理性</strong>：结合平台、曲线中点、方向、标准误和参数相关性判断稳定性。</li>
+<li><strong>残差结构</strong>：同时检查原始残差、相对残差及其随浓度或拟合值的变化。</li>
+<li><strong>权重依据</strong>：优先使用重复测量估计的方差结构，并在分析前规定选择规则。</li>
+<li><strong>回算表现</strong>：按项目要求评价各校准点的回算浓度偏差和精密度。</li>
+<li><strong>预测范围</strong>：避免外推，尤其避免在平台区进行不稳定的逆向预测。</li>
+<li><strong>可复现性</strong>：保存原始数据、代码、模型参数、包版本、图形和完整会话信息。</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./002-分析环境安装与使用.html" class="pagination-link" aria-label="分析环境安装与使用">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./004-稳定性研究.html" class="pagination-link" aria-label="稳定性研究">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>
