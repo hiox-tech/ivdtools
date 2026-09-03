@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>16&nbsp; Introduction to Algorithm Principles – ivdtools handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./017-ai-automated-analysis.html" rel="next">
+<link href="./015-roc-curve-and-multivariate-regression.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./016-introduction-to-algorithm-principles.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools-package-overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-installing-and-using-the-analysis-environment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-4plc-calibration-curve-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC Equation Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-stability-studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-precision-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-linearity-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-analytical-sensitivity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Analytical Sensitivity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-bottle-to-bottle-variability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variability Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-reference-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-quality-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-sample-size-calculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Sample Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-method-comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Method Comparison</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-qualitative-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Qualitative Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-roc-curve-and-cutoff-determination.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC Curve and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-roc-curve-and-multivariate-regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC Curve and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-introduction-to-algorithm-principles.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-ai-automated-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI-Automated Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">References</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">16.1</span> Introduction</a></li>
+  <li><a href="#general-conventions-and-notation" id="toc-general-conventions-and-notation" class="nav-link" data-scroll-target="#general-conventions-and-notation"><span class="header-section-number">16.2</span> General Conventions and Notation</a></li>
+  <li><a href="#outlier-and-distribution-algorithms" id="toc-outlier-and-distribution-algorithms" class="nav-link" data-scroll-target="#outlier-and-distribution-algorithms"><span class="header-section-number">16.3</span> Outlier and Distribution Algorithms</a>
+  <ul class="collapse">
+  <li><a href="#outliers" id="toc-outliers" class="nav-link" data-scroll-target="#outliers"><span class="header-section-number">16.3.1</span> Outliers</a></li>
+  <li><a href="#normality" id="toc-normality" class="nav-link" data-scroll-target="#normality"><span class="header-section-number">16.3.2</span> Normality</a></li>
+  </ul></li>
+  <li><a href="#method-comparison-and-qualitative-evaluation-algorithms" id="toc-method-comparison-and-qualitative-evaluation-algorithms" class="nav-link" data-scroll-target="#method-comparison-and-qualitative-evaluation-algorithms"><span class="header-section-number">16.4</span> Method Comparison and Qualitative Evaluation Algorithms</a>
+  <ul class="collapse">
+  <li><a href="#regression-correlation-and-bias" id="toc-regression-correlation-and-bias" class="nav-link" data-scroll-target="#regression-correlation-and-bias"><span class="header-section-number">16.4.1</span> Regression, Correlation, and Bias</a></li>
+  <li><a href="#four-fold-table" id="toc-four-fold-table" class="nav-link" data-scroll-target="#four-fold-table"><span class="header-section-number">16.4.2</span> Four-Fold Table</a></li>
+  </ul></li>
+  <li><a href="#roc-algorithms" id="toc-roc-algorithms" class="nav-link" data-scroll-target="#roc-algorithms"><span class="header-section-number">16.5</span> ROC Algorithms</a></li>
+  <li><a href="#precision-anova-and-reference-interval-algorithms" id="toc-precision-anova-and-reference-interval-algorithms" class="nav-link" data-scroll-target="#precision-anova-and-reference-interval-algorithms"><span class="header-section-number">16.6</span> Precision, ANOVA, and Reference Interval Algorithms</a>
+  <ul class="collapse">
+  <li><a href="#variance-components" id="toc-variance-components" class="nav-link" data-scroll-target="#variance-components"><span class="header-section-number">16.6.1</span> Variance Components</a></li>
+  <li><a href="#anova-and-reference-intervals" id="toc-anova-and-reference-intervals" class="nav-link" data-scroll-target="#anova-and-reference-intervals"><span class="header-section-number">16.6.2</span> ANOVA and Reference Intervals</a></li>
+  </ul></li>
+  <li><a href="#qc-stability-and-equation-fitting-algorithms" id="toc-qc-stability-and-equation-fitting-algorithms" class="nav-link" data-scroll-target="#qc-stability-and-equation-fitting-algorithms"><span class="header-section-number">16.7</span> QC, Stability, and Equation Fitting Algorithms</a>
+  <ul class="collapse">
+  <li><a href="#qc-and-stability" id="toc-qc-and-stability" class="nav-link" data-scroll-target="#qc-and-stability"><span class="header-section-number">16.7.1</span> QC and Stability</a></li>
+  <li><a href="#equation-fitting" id="toc-equation-fitting" class="nav-link" data-scroll-target="#equation-fitting"><span class="header-section-number">16.7.2</span> Equation Fitting</a></li>
+  </ul></li>
+  <li><a href="#module-to-guideline-mapping" id="toc-module-to-guideline-mapping" class="nav-link" data-scroll-target="#module-to-guideline-mapping"><span class="header-section-number">16.8</span> Module-to-Guideline Mapping</a></li>
+  <li><a href="#scope-of-use" id="toc-scope-of-use" class="nav-link" data-scroll-target="#scope-of-use"><span class="header-section-number">16.9</span> Scope of Use</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">16.1</span> Introduction</h2>
+<p>This document summarizes the algorithm principles underlying <code>ivdtools</code>, to support understanding of the statistical basis of each analysis module and the mapping with the package interface. It covers outliers/distribution, method comparison/qualitative evaluation, ROC, precision/ANOVA/reference intervals, and QC/stability/equation fitting. For ease of cross-reference, method comparison uniformly adopts the convention of candidate <span class="math inline">\(X\)</span>, reference <span class="math inline">\(Y\)</span>, and regression model <span class="math inline">\(Y=a+bX\)</span>; the specific parameter names and directions in the package are governed by the registries such as <code>list_equation()</code>, <code>list_sadler()</code>, and <code>list_westgard()</code> in <code>ivdtools</code>.</p>
+<p>The formulas are used to illustrate the principles; they do not replace textbook derivations, nor do they replace the judgment about method selection in the protocol.</p>
+</section>
+<section id="general-conventions-and-notation" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="general-conventions-and-notation"><span class="header-section-number">16.2</span> General Conventions and Notation</h2>
+<p>Ordered samples <span class="math inline">\(x_{(1)}\le\cdots\le x_{(n)}\)</span>, mean <span class="math inline">\(\bar x\)</span>, standard deviation <span class="math inline">\(s\)</span>, significance level <span class="math inline">\(\alpha=1-\text{level}\)</span>. Most tests require approximately independent samples; a detected “outlier” or “failure to follow some distribution” only indicates the strength of conflict with the assumed model, cannot quantify its actual effect on the final performance estimate, and does not automatically trigger deletion.</p>
+</section>
+<section id="outlier-and-distribution-algorithms" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="outlier-and-distribution-algorithms"><span class="header-section-number">16.3</span> Outlier and Distribution Algorithms</h2>
+<section id="outliers" class="level3" data-number="16.3.1">
+<h3 data-number="16.3.1" class="anchored" data-anchor-id="outliers"><span class="header-section-number">16.3.1</span> Outliers</h3>
+<ul>
+<li><strong>Grubbs</strong>: <span class="math inline">\(G=\max_i|x_i-\bar x|/s\)</span>, judged against a critical value derived from the t distribution for the most extreme point; approximately normal and applies to one point at a time. Mapping: <code>outliers_test(method="grubbs", alpha=...)</code>.</li>
+<li><strong>Generalized ESD</strong>: successively removes the most extreme point, computes <span class="math inline">\(R_i\)</span> and compares it with <span class="math inline">\(\lambda_i\)</span> that changes with the remaining n; the maximum number of outliers is limited by an additional parameter.</li>
+<li><strong>Dixon</strong>: uses the ratio of the endpoint gap to the sample range; the critical value depends on n and is suitable only for a small-sample range.</li>
+<li><strong>IQR</strong>: marks values less than <span class="math inline">\(Q_1-k\,IQR\)</span> or greater than <span class="math inline">\(Q_3+k\,IQR\)</span>; the default coefficient is determined by the interface implementation; this is a rule rather than a significance test.</li>
+</ul>
+<p><code>outliers_test()</code> first excludes missing values and retains the original row numbers, then returns the statistic, critical value, and outlier flag. A constant column makes statistics with s or the range as the denominator undefined; multiple testing increases false positives.</p>
+</section>
+<section id="normality" class="level3" data-number="16.3.2">
+<h3 data-number="16.3.2" class="anchored" data-anchor-id="normality"><span class="header-section-number">16.3.2</span> Normality</h3>
+<ul>
+<li><strong>Shapiro–Wilk</strong>: <span class="math inline">\(W=(\sum a_i x_{(i)})^2/\sum(x_i-\bar x)^2\)</span>, with weights from the normal order statistics.</li>
+<li><strong>Anderson–Darling</strong>: the weighted squared distance between the empirical distribution and the fitted normal CDF, with greater weight on the tails.</li>
+<li><strong>Lilliefors</strong>: a Kolmogorov–Smirnov-type statistic when parameters are estimated from the sample.</li>
+<li><strong>Cramér–von Mises</strong>: the overall integrated squared distance between the empirical CDF and the theoretical CDF.</li>
+</ul>
+<p><code>normal_test(method="auto")</code> selects an available test based on the sample conditions (Shapiro–Wilk for n≤50, Anderson–Darling for larger samples), and <code>level</code> maps to the rejection threshold. Graphics provide Q-Q and histogram; the p-value cannot quantify the actual effect of the deviation on the performance estimate.</p>
+</section>
+</section>
+<section id="method-comparison-and-qualitative-evaluation-algorithms" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="method-comparison-and-qualitative-evaluation-algorithms"><span class="header-section-number">16.4</span> Method Comparison and Qualitative Evaluation Algorithms</h2>
+<section id="regression-correlation-and-bias" class="level3" data-number="16.4.1">
+<h3 data-number="16.4.1" class="anchored" data-anchor-id="regression-correlation-and-bias"><span class="header-section-number">16.4.1</span> Regression, Correlation, and Bias</h3>
+<p>The unified direction is candidate <span class="math inline">\(X\)</span>, reference <span class="math inline">\(Y\)</span>, model <span class="math inline">\(Y=a+bX\)</span>.</p>
+<ul>
+<li><strong>OLS</strong> minimizes <span class="math inline">\(\sum(y_i-a-bx_i)^2\)</span>; assumes the X error is negligible.</li>
+<li><strong>Deming</strong> minimizes the weighted orthogonal distance to the line; the error variance ratio maps to <code>lambda</code>; the direction of <span class="math inline">\(\lambda=\sigma_Y^2/\sigma_X^2\)</span> must be checked against the source code or protocol.</li>
+<li><strong>Passing–Bablok</strong> estimates b from the median of all pairwise slopes, then estimates a from the median of <span class="math inline">\(y_i-bx_i\)</span>; it is robust to outliers but still requires linearity and independent samples.</li>
+<li><strong>Pearson</strong> measures linear correlation; <strong>Spearman/Kendall</strong> measure rank association; <code>correlation(method=...)</code> answers “correlation” rather than “agreement” and cannot replace bias and agreement-limit evaluation.</li>
+</ul>
+<p>The absolute Bland–Altman difference is recorded as <span class="math inline">\(d_i=X_i-Y_i\)</span> (the report must re-check the actual direction in the package object), with mean difference <span class="math inline">\(\bar d\)</span> and agreement limits <span class="math inline">\(\bar d\pm z_{(1+p)/2}s_d\)</span>; relative BA uses percentage differences. <code>agree.level</code> controls the coverage proportion and <code>conf.level</code> controls the estimation interval. <code>bias()</code> maps the regression equation to the specified <code>level</code> and outputs the predicted bias and confidence/prediction intervals.</p>
+</section>
+<section id="four-fold-table" class="level3" data-number="16.4.2">
+<h3 data-number="16.4.2" class="anchored" data-anchor-id="four-fold-table"><span class="header-section-number">16.4.2</span> Four-Fold Table</h3>
+<p>From TP, FP, TN, FN:</p>
+<p><span class="math display">\[Se=\frac{TP}{TP+FN},\quad Sp=\frac{TN}{TN+FP},\quad PPV=\frac{TP}{TP+FP}.\]</span></p>
+<p>The Wilson interval is inverted from a score test; the exact interval is inverted from binomial tail probabilities. Cohen <span class="math inline">\(\kappa=(P_o-P_e)/(1-P_e)\)</span>, where <span class="math inline">\(P_e\)</span> is obtained from the marginal proportions. McNemar uses only the discordant cells b and c, with the asymptotic statistic approximately <span class="math inline">\((b-c)^2/(b+c)\)</span> (with the continuity correction or exact version as recorded in the object). The package interfaces map to <code>diagnostics()</code>, <code>kappa()</code>, and <code>mcnemar()</code>; zero denominators, small cell counts, and extreme prevalence all require explicit explanation.</p>
+</section>
+</section>
+<section id="roc-algorithms" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="roc-algorithms"><span class="header-section-number">16.5</span> ROC Algorithms</h2>
+<p>For each threshold t, compute <span class="math inline">\(TPR(t)=Se(t)\)</span> and <span class="math inline">\(FPR(t)=1-Sp(t)\)</span> according to the marker direction. The empirical ROC treats all observations as candidate thresholds and connects them as a step/broken line; the AUC is summed by the trapezoidal rule over adjacent points:</p>
+<p><span class="math display">\[AUC=\sum_i \frac{TPR_i+TPR_{i+1}}{2}(FPR_{i+1}-FPR_i).\]</span></p>
+<p><code>auc(roc_obj, cols=...)</code> saves the per-marker AUC table; the empirical AUC can be interpreted as the probability that a random positive score exceeds a random negative score (after direction adjustment). Sample-correlated multi-curve comparison, partial AUC, or complex sampling are not automatically resolved by this point estimate.</p>
+<p>The Youden index <span class="math inline">\(J(t)=Se(t)+Sp(t)-1\)</span>; the closest-corner method minimizes <span class="math inline">\(\sqrt{(1-Se)^2+(1-Sp)^2}\)</span>. <code>cutoff()</code> outputs both types of optimal points. Tied thresholds, measurement resolution, misclassification costs, and clinical prevalence change the actual choice, so “mathematically optimal” is not an automatic clinical cutoff.</p>
+<p>The multi-marker model is</p>
+<p><span class="math display">\[\operatorname{logit}\{P(Y=1)\}=\beta_0+\sum_j\beta_jx_j,\]</span></p>
+<p>fitted by binomial logistic regression via <code>mlr(cols, name)</code>; <code>predict()</code> transforms the linear predictor into a probability through the logistic inverse, classifies at the default 0.5, and computes intervals using the model covariance. Perfect separation, collinearity, missingness, and small event counts lead to instability. Re-drawing the ROC on the training set is an apparent performance; development and validation data must be distinguished.</p>
+</section>
+<section id="precision-anova-and-reference-interval-algorithms" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="precision-anova-and-reference-interval-algorithms"><span class="header-section-number">16.6</span> Precision, ANOVA, and Reference Interval Algorithms</h2>
+<section id="variance-components" class="level3" data-number="16.6.1">
+<h3 data-number="16.6.1" class="anchored" data-anchor-id="variance-components"><span class="header-section-number">16.6.1</span> Variance Components</h3>
+<p>A nested design can be written as <span class="math inline">\(y_{ijkl}=\mu+D_i+R_{j(i)}+\varepsilon_{k(ij)}\)</span>, with total variance <span class="math inline">\(\sigma_T^2=\sigma_D^2+\sigma_R^2+\sigma_e^2\)</span>. <code>precision(form = y ~ day/run)</code> passes the formula to <code>VCA::anovaVCA()</code>; <code>variance()</code>/<code>vc()</code> summarize the VC, <span class="math inline">\(SD=\sqrt{VC}\)</span>, <span class="math inline">\(CV=100SD/\bar y\)</span>, and proportions. Satterthwaite uses</p>
+<p><span class="math display">\[\nu\approx\frac{(\sum c_jMS_j)^2}{\sum(c_jMS_j)^2/\nu_j}\]</span></p>
+<p>to approximate the effective degrees of freedom, then constructs variance/SD intervals from chi-square quantiles. Negative components, low degrees of freedom, and imbalance degrade the approximation.</p>
+<p>The Sadler precision profile expresses the variance or SD as a function of concentration; <code>list_sadler()</code> lists 10 candidate forms, and <code>profile(model.no=...)</code> calls the VFP fit and selects by AIC. Different models extrapolate very differently at low concentrations; the concentration coverage and residuals must be checked.</p>
+</section>
+<section id="anova-and-reference-intervals" class="level3" data-number="16.6.2">
+<h3 data-number="16.6.2" class="anchored" data-anchor-id="anova-and-reference-intervals"><span class="header-section-number">16.6.2</span> ANOVA and Reference Intervals</h3>
+<p><code>bottle_anova()</code> uses <code>stats::aov()</code> to decompose the between-group/within-group sums of squares; Bartlett tests variance homogeneity, the residual Shapiro–Wilk checks normality; Tukey HSD uses the studentized range to control the family-wise error rate of all pairwise comparisons at once.</p>
+<p>The parametric reference interval is approximated as <span class="math inline">\(\bar x\pm z_{1-\alpha/2}s\)</span> under the normality assumption; the nonparametric percentile method uses R quantile type 6, with endpoints from the order statistics and endpoint intervals computed by binomial ordering or bootstrap paths. <code>interval</code> is the coverage and <code>ci</code> is the endpoint confidence; the two have different meanings. Sample selection bias cannot be repaired by any interval algorithm.</p>
+</section>
+</section>
+<section id="qc-stability-and-equation-fitting-algorithms" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="qc-stability-and-equation-fitting-algorithms"><span class="header-section-number">16.7</span> QC, Stability, and Equation Fitting Algorithms</h2>
+<section id="qc-and-stability" class="level3" data-number="16.7.1">
+<h3 data-number="16.7.1" class="anchored" data-anchor-id="qc-and-stability"><span class="header-section-number">16.7.1</span> QC and Stability</h3>
+<p>The Levey–Jennings standardization is <span class="math inline">\(z_i=(x_i-\mu_0)/\sigma_0\)</span>; the Westgard rules combine these z values across single points, consecutive same-side/same-direction runs, or multiple levels in the same batch. <code>qc_chart()</code> evaluates in <code>run</code> order, and <code>youden_plot()</code> uses the target means/SDs of two control materials to form quadrant and ellipse-style judgments; the order, target values, and lot boundaries are inputs to the algorithm.</p>
+<p>The node relative bias is <span class="math inline">\(100(x_t-x_0)/x_0\)</span> (relative) or <span class="math inline">\(x_t-x_0\)</span> (absolute). <code>stability_regression()</code> fits a time trend, and <code>stability_time()</code> finds the intersection of the confidence boundary/trend with the allowable limit. MKT is the Arrhenius-weighted temperature history:</p>
+<p><span class="math display">\[T_k=-\frac{E_a}{R}\left[\log\left\{\sum_i w_i\exp(-E_a/RT_i)\right\}\right]^{-1}.\]</span></p>
+<p>The Arrhenius relationship is <span class="math inline">\(k=Ae^{-E_a/(RT)}\)</span>; zero-order is <span class="math inline">\(C_t=C_0-kt\)</span>, first-order is <span class="math inline">\(\log C_t=\log C_0-kt\)</span>. <code>mkt(ea=83.144)</code>, <code>arrhenius(order, target_temp, limit)</code> map these quantities. Temperature must be converted to Kelvin for the formulas, and extrapolation is limited by the assumption of an unchanged reaction mechanism.</p>
+</section>
+<section id="equation-fitting" class="level3" data-number="16.7.2">
+<h3 data-number="16.7.2" class="anchored" data-anchor-id="equation-fitting"><span class="header-section-number">16.7.2</span> Equation Fitting</h3>
+<p>Linear/polynomial are estimated by least squares; exponential and 4PL/5PL use <code>nlsLM</code>/constrained optimization. A typical 4PL is</p>
+<p><span class="math display">\[y=d+\frac{a-d}{1+(x/c)^b},\]</span></p>
+<p>and 5PL adds an asymmetry exponent g, but the specific parameter names and directions in the package are governed by <code>list_equation()</code>. Weighted fitting minimizes <span class="math inline">\(\sum w_i(y_i-f(x_i,\theta))^2\)</span>. AIC approximates <span class="math inline">\(-2\log L+2k\)</span>; residuals reveal heteroscedasticity, curvature, and anomalous points.</p>
+<p>The mean confidence interval reflects the uncertainty of <span class="math inline">\(E(Y|X)\)</span>, while the prediction interval also includes single-observation error. Nonlinear inverse prediction requires numerical root-finding; small signal errors near a flat plateau can translate into enormous concentration errors. Starting values, bounds, weights, equation versions, convergence codes, and failed models should all enter the audit record.</p>
+</section>
+</section>
+<section id="module-to-guideline-mapping" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="module-to-guideline-mapping"><span class="header-section-number">16.8</span> Module-to-Guideline Mapping</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Main functions</th>
+<th>Corresponding CLSI guideline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Outliers and normality</td>
+<td><code>outliers_test()</code>, <code>normal_test()</code></td>
+<td>General (pre-analysis steps of the EP guidelines)</td>
+</tr>
+<tr class="even">
+<td>Method comparison</td>
+<td><code>mcr()</code> series</td>
+<td>EP09</td>
+</tr>
+<tr class="odd">
+<td>Qualitative evaluation</td>
+<td><code>fourfold_table</code> series</td>
+<td>EP12</td>
+</tr>
+<tr class="even">
+<td>ROC</td>
+<td><code>roc()</code> series</td>
+<td>EP24 (reference)</td>
+</tr>
+<tr class="odd">
+<td>Precision</td>
+<td><code>precision()</code> series</td>
+<td>EP05</td>
+</tr>
+<tr class="even">
+<td>Bottle/lot ANOVA</td>
+<td><code>bottle_anova()</code></td>
+<td>EP15</td>
+</tr>
+<tr class="odd">
+<td>Reference intervals</td>
+<td><code>reference_interval()</code></td>
+<td>EP28-A3c</td>
+</tr>
+<tr class="even">
+<td>Stability</td>
+<td><code>stability_*()</code>, <code>arrhenius()</code>, <code>mkt()</code></td>
+<td>EP25</td>
+</tr>
+<tr class="odd">
+<td>QC</td>
+<td><code>qc_chart()</code>, <code>youden_plot()</code></td>
+<td>Westgard rules</td>
+</tr>
+<tr class="even">
+<td>Equation fitting</td>
+<td><code>fit_equation()</code> series</td>
+<td>EP06</td>
+</tr>
+<tr class="odd">
+<td>Analytical specificity</td>
+<td><code>lob_lod_loq()</code></td>
+<td>EP17</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="scope-of-use" class="level2" data-number="16.9">
+<h2 data-number="16.9" class="anchored" data-anchor-id="scope-of-use"><span class="header-section-number">16.9</span> Scope of Use</h2>
+<ul>
+<li>Formulas and statistics are valid only under reasonable assumptions; when assumptions are not met, the results cannot be applied mechanically.</li>
+<li>“Statistically significant” and “mathematically optimal” are not the same as “clinically/product acceptable”; acceptance criteria must be defined before analysis.</li>
+<li>Performance on training data (such as ROC AUC, regression goodness of fit) is apparent performance; it should be validated on independent data before generalization.</li>
+<li>All computations should be conducted under the guidance of the protocol, standards, and professional judgment, and reviewed by appropriate personnel.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./015-roc-curve-and-multivariate-regression.html" class="pagination-link" aria-label="ROC Curve and Multivariate Regression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC Curve and Multivariate Regression</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./017-ai-automated-analysis.html" class="pagination-link" aria-label="AI-Automated Analysis">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI-Automated Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

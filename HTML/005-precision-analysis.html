@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Precision Analysis – ivdtools handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./006-linearity-analysis.html" rel="next">
+<link href="./004-stability-studies.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-precision-analysis.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Precision Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools-package-overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-installing-and-using-the-analysis-environment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-4plc-calibration-curve-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC Equation Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-stability-studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-precision-analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-linearity-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-analytical-sensitivity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Analytical Sensitivity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-bottle-to-bottle-variability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variability Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-reference-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-quality-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-sample-size-calculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Sample Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-method-comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Method Comparison</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-qualitative-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Qualitative Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-roc-curve-and-cutoff-determination.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC Curve and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-roc-curve-and-multivariate-regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC Curve and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-introduction-to-algorithm-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-ai-automated-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI-Automated Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">References</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#analysis-objectives" id="toc-analysis-objectives" class="nav-link active" data-scroll-target="#analysis-objectives"><span class="header-section-number">5.1</span> Analysis Objectives</a></li>
+  <li><a href="#overview-of-functions" id="toc-overview-of-functions" class="nav-link" data-scroll-target="#overview-of-functions"><span class="header-section-number">5.2</span> Overview of Functions</a></li>
+  <li><a href="#example-1-ep05-2022-single-sample-precision" id="toc-example-1-ep05-2022-single-sample-precision" class="nav-link" data-scroll-target="#example-1-ep05-2022-single-sample-precision"><span class="header-section-number">5.3</span> Example 1: EP05 20×2×2 Single-Sample Precision</a>
+  <ul class="collapse">
+  <li><a href="#reading-and-validating-data" id="toc-reading-and-validating-data" class="nav-link" data-scroll-target="#reading-and-validating-data"><span class="header-section-number">5.3.1</span> Reading and Validating Data</a></li>
+  <li><a href="#creating-the-analysis-object-and-pre-check" id="toc-creating-the-analysis-object-and-pre-check" class="nav-link" data-scroll-target="#creating-the-analysis-object-and-pre-check"><span class="header-section-number">5.3.2</span> Creating the Analysis Object and Pre-Check</a></li>
+  <li><a href="#variance-components-and-confidence-intervals" id="toc-variance-components-and-confidence-intervals" class="nav-link" data-scroll-target="#variance-components-and-confidence-intervals"><span class="header-section-number">5.3.3</span> Variance Components and Confidence Intervals</a></li>
+  <li><a href="#converting-to-an-ep05-terminology-table" id="toc-converting-to-an-ep05-terminology-table" class="nav-link" data-scroll-target="#converting-to-an-ep05-terminology-table"><span class="header-section-number">5.3.4</span> Converting to an EP05 Terminology Table</a></li>
+  <li><a href="#graphics" id="toc-graphics" class="nav-link" data-scroll-target="#graphics"><span class="header-section-number">5.3.5</span> Graphics</a></li>
+  </ul></li>
+  <li><a href="#example-2-multi-sample-35-and-sadler-profile" id="toc-example-2-multi-sample-35-and-sadler-profile" class="nav-link" data-scroll-target="#example-2-multi-sample-35-and-sadler-profile"><span class="header-section-number">5.4</span> Example 2: Multi-Sample 3×5 and Sadler Profile</a>
+  <ul class="collapse">
+  <li><a href="#reading-data" id="toc-reading-data" class="nav-link" data-scroll-target="#reading-data"><span class="header-section-number">5.4.1</span> Reading Data</a></li>
+  <li><a href="#per-sample-variance-components" id="toc-per-sample-variance-components" class="nav-link" data-scroll-target="#per-sample-variance-components"><span class="header-section-number">5.4.2</span> Per-Sample Variance Components</a></li>
+  <li><a href="#precision-profile" id="toc-precision-profile" class="nav-link" data-scroll-target="#precision-profile"><span class="header-section-number">5.4.3</span> Precision Profile</a></li>
+  </ul></li>
+  <li><a href="#example-3-multi-sample-multi-site-site-precision" id="toc-example-3-multi-sample-multi-site-site-precision" class="nav-link" data-scroll-target="#example-3-multi-sample-multi-site-site-precision"><span class="header-section-number">5.5</span> Example 3: Multi-Sample Multi-Site (Site) Precision</a>
+  <ul class="collapse">
+  <li><a href="#reading-data-1" id="toc-reading-data-1" class="nav-link" data-scroll-target="#reading-data-1"><span class="header-section-number">5.5.1</span> Reading Data</a></li>
+  <li><a href="#multi-column-grouping" id="toc-multi-column-grouping" class="nav-link" data-scroll-target="#multi-column-grouping"><span class="header-section-number">5.5.2</span> Multi-Column Grouping</a></li>
+  <li><a href="#splitting-by-site-for-separate-analysis" id="toc-splitting-by-site-for-separate-analysis" class="nav-link" data-scroll-target="#splitting-by-site-for-separate-analysis"><span class="header-section-number">5.5.3</span> Splitting by Site for Separate Analysis</a></li>
+  </ul></li>
+  <li><a href="#example-4-custom-more-complex-models" id="toc-example-4-custom-more-complex-models" class="nav-link" data-scroll-target="#example-4-custom-more-complex-models"><span class="header-section-number">5.6</span> Example 4: Custom More Complex Models</a>
+  <ul class="collapse">
+  <li><a href="#reading-data-2" id="toc-reading-data-2" class="nav-link" data-scroll-target="#reading-data-2"><span class="header-section-number">5.6.1</span> Reading Data</a></li>
+  <li><a href="#fitting-and-interpretation" id="toc-fitting-and-interpretation" class="nav-link" data-scroll-target="#fitting-and-interpretation"><span class="header-section-number">5.6.2</span> Fitting and Interpretation</a></li>
+  </ul></li>
+  <li><a href="#key-points-for-interpreting-results" id="toc-key-points-for-interpreting-results" class="nav-link" data-scroll-target="#key-points-for-interpreting-results"><span class="header-section-number">5.7</span> Key Points for Interpreting Results</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Precision Analysis</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="analysis-objectives" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="analysis-objectives"><span class="header-section-number">5.1</span> Analysis Objectives</h2>
+<p>Precision evaluates the degree of agreement among results measured on the same sample by the same measurement system under repeatable conditions, usually expressed as the standard deviation (SD) or coefficient of variation (CV%). CLSI EP05 subdivides precision into variance components by condition, such as within-run, between-run, and between-day, and provides estimates, confidence intervals, and acceptance limits for judging each component.</p>
+<p>This document demonstrates how to use the <code>precision()</code> function in the <code>ivdtools</code> package to establish a precision variance-component analysis, complete outlier checking, normality assessment, estimation of variance components and confidence intervals, Sadler precision profile fitting, and rearrangement of the results into an EP05-style variance component table. The example data are deterministic teaching data used only to demonstrate the analysis workflow; formal studies must use the experimental design, acceptance criteria, and analysis parameters pre-specified in the protocol or standard.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<blockquote class="blockquote">
+<p><strong>Data format requirement:</strong> <code>precision()</code> ultimately calls <code>VCA::anovaVCA()</code>, which requires a plain <code>data.frame</code>. Since <code>readr::read_csv()</code> reads in a tibble, this document consistently converts to a <code>data.frame</code> first, then converts the experimental factor columns (day, run, replicate, etc.) to factors.</p>
+</blockquote>
+</section>
+<section id="overview-of-functions" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="overview-of-functions"><span class="header-section-number">5.2</span> Overview of Functions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Main purpose</th>
+<th>Key input or output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>precision()</code></td>
+<td>Create a precision variance-component analysis object</td>
+<td>Nested formula, <code>by</code> grouping, balance check</td>
+</tr>
+<tr class="even">
+<td><code>outlier()</code></td>
+<td>Per-sample outlier detection</td>
+<td>Grubbs or IQR method</td>
+</tr>
+<tr class="odd">
+<td><code>normal()</code></td>
+<td>Per-sample normality test</td>
+<td>Shapiro-Wilk etc., <code>level</code> controls the confidence level</td>
+</tr>
+<tr class="even">
+<td><code>variance()</code> / <code>vc()</code></td>
+<td>Estimate variance components</td>
+<td>VC, %Total, SD, CV%, <code>NegVC</code> passed here</td>
+</tr>
+<tr class="odd">
+<td><code>ci()</code></td>
+<td>Confidence intervals for SD/CV of each component</td>
+<td>Satterthwaite approximation</td>
+</tr>
+<tr class="even">
+<td><code>profile()</code></td>
+<td>Sadler precision profile fitting</td>
+<td>10 candidate models, AIC selection</td>
+</tr>
+<tr class="odd">
+<td><code>list_sadler()</code></td>
+<td>View the 10 Sadler models</td>
+<td>Model formula and type</td>
+</tr>
+<tr class="even">
+<td><code>summary()</code> / <code>plot()</code></td>
+<td>Summarize and plot</td>
+<td><code>plot(type=...)</code> selects the graphic</td>
+</tr>
+</tbody>
+</table>
+<p>After <code>precision()</code> creates the object, analysis results accumulate into the object step by step through <code>outlier()</code>, <code>normal()</code>, <code>variance()</code>, <code>ci()</code>, and <code>profile()</code>, and <strong>must be reassigned</strong>:</p>
+<pre class="text"><code>precision() -&gt; outlier() -&gt; normal() -&gt; variance() -&gt; ci() -&gt; profile()</code></pre>
+<p>Only analyses that have been executed appear in <code>summary()</code>, and some <code>plot()</code> graphics depend on prior analyses.</p>
+</section>
+<section id="example-1-ep05-2022-single-sample-precision" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="example-1-ep05-2022-single-sample-precision"><span class="header-section-number">5.3</span> Example 1: EP05 20×2×2 Single-Sample Precision</h2>
+<section id="reading-and-validating-data" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="reading-and-validating-data"><span class="header-section-number">5.3.1</span> Reading and Validating Data</h3>
+<p>20×2×2 means 20 days, 2 runs per day, and 2 replicates per run, for a total of 80 results; it is one of the classic EP05 designs:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ep05 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/precision-ep05.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ep05 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ep05)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(ep05)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   80 obs. of  4 variables:
+ $ day  : num  1 1 1 1 2 2 2 2 3 3 ...
+ $ run  : num  1 1 2 2 1 1 2 2 1 1 ...
+ $ rep  : num  1 2 1 2 1 2 1 2 1 2 ...
+ $ value: num  96.9 93.5 99.3 101.5 103 ...</code></pre>
+</div>
+</div>
+<p>The experimental factor columns are integers in the CSV and are converted to factors after reading:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>day)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>run)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>rep)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(ep05)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 80  4</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ep05<span class="sc">$</span>value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  86.06   94.83   99.33   99.11  103.53  115.01 </code></pre>
+</div>
+</div>
+<p><code>value ~ day/run</code> means the variance components are nested layer by layer as between-day (day) -&gt; within-day run (run). <code>/</code> is the nesting notation, equivalent to treating each deeper factor as a factor nested within the factor above it.</p>
+</section>
+<section id="creating-the-analysis-object-and-pre-check" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="creating-the-analysis-object-and-pre-check"><span class="header-section-number">5.3.2</span> Creating the Analysis Object and Pre-Check</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep05, value <span class="sc">~</span> day<span class="sc">/</span>run)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision analysis object
+  Data class          : data.frame
+  Total rows          : 80
+  Formula             : value ~ day/run
+  Samples             : 1
+
+Factor levels
+  day         : 1 (4), 2 (4), 3 (4), 4 (4), 5 (4), 6 (4), 7 (4), 8 (4), 9 (4), 10 (4), 11 (4), 12 (4), 13 (4), 14 (4), 15 (4), 16 (4), 17 (4), 18 (4), 19 (4), 20 (4)
+  run         : 1 (40), 2 (40)
+  rep         : 1 (40), 2 (40)
+
+Analysis status
+
+  [ ] outlier
+  [ ] normal
+  [ ] variance
+  [ ] ci
+  [ ] profile</code></pre>
+</div>
+</div>
+<p>The balance check output reports the ratio of the largest to smallest cell size; when the data are highly unbalanced, <code>VCA</code> will suggest switching to REML.</p>
+<p>Perform per-sample outlier detection and normality testing:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">outlier</span>(p, <span class="at">method =</span> <span class="st">"grubbs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Outlier detection -- Grubbs (alpha = 0.05)
+  No outliers detected.</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">normal</span>(p, <span class="at">method =</span> <span class="st">"shapiro"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Normality test -- Shapiro-Wilk
+  Sample               n           W  p-value
+  ---------------------------------------------
+  all                 80      0.9868  0.5858</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Parameter notes:</strong> The <code>method</code> of <code>outlier()</code> can be <code>"grubbs"</code> (default) or <code>"iqr"</code>, and <code>alpha</code> is the Grubbs significance level. For <code>normal()</code>, <code>method="auto"</code> selects the test based on sample size (Shapiro-Wilk for n≤50, Anderson-Darling for larger samples); when <code>method="shapiro"</code> is specified, the reported <code>W</code> column is the true Shapiro-Wilk W statistic. For single-sample data with n=80, either approach is acceptable; this example specifies it explicitly for illustration.</p>
+</blockquote>
+</section>
+<section id="variance-components-and-confidence-intervals" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="variance-components-and-confidence-intervals"><span class="header-section-number">5.3.3</span> Variance Components and Confidence Intervals</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">variance</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component      VC %Total     SD  CV[%]
+----------------------------------------------
+    all       day 18.8358   42.6 4.3400 4.3788
+    all   day:run 17.4343   39.4 4.1754 4.2128
+    all     error  7.9482   18.0 2.8193 2.8445 </code></pre>
+</div>
+</div>
+<p>The <code>NegVC</code> parameter needs to be passed at <code>variance()</code>:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">variance</span>(p, <span class="at">NegVC =</span> <span class="cn">TRUE</span>)   <span class="co"># allow negative variance components (default FALSE)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ci</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.6497 5.4288 8.5842
+    all       day   4.3400 0.0000 6.2255
+    all   day:run   4.1754 2.0129 5.5513
+    all     error   2.8193 2.3147 3.6073 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.7091 5.4773 8.6609
+    all       day   4.3788 0.0000 6.2812
+    all   day:run   4.2128 2.0309 5.6009
+    all     error   2.8445 2.3353 3.6395 </code></pre>
+</div>
+</div>
+<p><code>ci()</code> uses the Satterthwaite effective-degrees-of-freedom approximation to compute confidence intervals for the SD and CV of each component.</p>
+</section>
+<section id="converting-to-an-ep05-terminology-table" class="level3" data-number="5.3.4">
+<h3 data-number="5.3.4" class="anchored" data-anchor-id="converting-to-an-ep05-terminology-table"><span class="header-section-number">5.3.4</span> Converting to an EP05 Terminology Table</h3>
+<p>Classify the variance components into within-run, between-run, and between-day by the nesting depth of the component name, compute the total SD/CV, and further merge the component confidence intervals to form a complete EP05 report table with intervals. <strong>Whether the statistical results are acceptable must be judged against the precision limits pre-specified in the protocol.</strong></p>
+</section>
+<section id="graphics" class="level3" data-number="5.3.5">
+<h3 data-number="5.3.5" class="anchored" data-anchor-id="graphics"><span class="header-section-number">5.3.5</span> Graphics</h3>
+<p>A scatter plot can be used to quickly identify test anomalies and the distribution of measurements:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p, <span class="at">type =</span> <span class="st">"dot"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-precision-analysis_files/figure-html/plot-dot-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p, <span class="at">type =</span> <span class="st">"qq"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-precision-analysis_files/figure-html/plot-qq-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Graphic dependencies:</strong> <code>plot(type="dot")</code> is a scatter plot by run order (no prior analysis needed), <code>type="his"</code> is a standard histogram; <code>type="var"</code> requires <code>variance()</code> to have been run, <code>type="qq"</code> requires <code>normal()</code>, and <code>type="profile"</code> requires <code>profile()</code>. Confirm that the corresponding analysis has been run before plotting.</p>
+</blockquote>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Precision analysis -- summary
+---------------------------------------- 
+
+Precision analysis object
+  Data class          : data.frame
+  Total rows          : 80
+  Formula             : value ~ day/run
+  Samples             : 1
+
+Factor levels
+  day         : 1 (4), 2 (4), 3 (4), 4 (4), 5 (4), 6 (4), 7 (4), 8 (4), 9 (4), 10 (4), 11 (4), 12 (4), 13 (4), 14 (4), 15 (4), 16 (4), 17 (4), 18 (4), 19 (4), 20 (4)
+  run         : 1 (40), 2 (40)
+  rep         : 1 (40), 2 (40)
+
+Analysis status
+
+  [x] outlier
+  [x] normal
+  [x] variance
+  [x] ci
+  [ ] profile
+
+Outlier detection -- Grubbs (alpha = 0.05)
+  No outliers detected.
+
+Normality test -- Shapiro-Wilk
+  Sample               n           W  p-value
+  ---------------------------------------------
+  all                 80      0.9868  0.5858
+
+Variance components
+ sample component      VC %Total     SD  CV[%]
+----------------------------------------------
+    all       day 18.8358   42.6 4.3400 4.3788
+    all   day:run 17.4343   39.4 4.1754 4.2128
+    all     error  7.9482   18.0 2.8193 2.8445 
+
+Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.6497 5.4288 8.5842
+    all       day   4.3400 0.0000 6.2255
+    all   day:run   4.1754 2.0129 5.5513
+    all     error   2.8193 2.3147 3.6073 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.7091 5.4773 8.6609
+    all       day   4.3788 0.0000 6.2812
+    all   day:run   4.2128 2.0309 5.6009
+    all     error   2.8445 2.3353 3.6395 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="example-2-multi-sample-35-and-sadler-profile" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="example-2-multi-sample-35-and-sadler-profile"><span class="header-section-number">5.4</span> Example 2: Multi-Sample 3×5 and Sadler Profile</h2>
+<section id="reading-data" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="reading-data"><span class="header-section-number">5.4.1</span> Reading Data</h3>
+<p>When multiple concentration levels need to be evaluated, use <code>by</code> to specify the sample grouping column, and estimate the variance components separately for each sample:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>profile_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/precision-profile.csv"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>sample)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>day)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>rep)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="per-sample-variance-components" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="per-sample-variance-components"><span class="header-section-number">5.4.2</span> Per-Sample Variance Components</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">precision</span>(profile_data, value <span class="sc">~</span> day, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%]
+------------------------------------------------
+     L1       day   0.6376   63.0  0.7985 3.9446
+     L1     error   0.3750   37.0  0.6124 3.0250
+     L2       day   5.7139   75.1  2.3904 4.7584
+     L2     error   1.8937   24.9  1.3761 2.7393
+     L3       day   3.3913   15.7  1.8415 1.8088
+     L3     error  18.1466   84.3  4.2599 4.1840
+     L4       day  30.5549   54.6  5.5276 2.7529
+     L4     error  25.4525   45.4  5.0451 2.5126
+     L5       day   0.0000    0.0  0.0000 0.0000
+     L5     error 171.7986  100.0 13.1072 3.3003 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ci</span>(p2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower   upper
+-----------------------------------------
+     L1     total   1.0063 0.6007  2.9368
+     L1       day   0.7985 0.0000  1.4267
+     L1     error   0.6124 0.4391  1.0108
+     L2     total   2.7582 1.5714  9.9889
+     L2       day   2.3904 0.0000  4.2023
+     L2     error   1.3761 0.9868  2.2716
+     L3     total   4.6409 3.2872  7.8819
+     L3       day   1.8415 0.0000  4.1779
+     L3     error   4.2599 3.0547  7.0319
+     L4     total   7.4838 4.6166 19.1652
+     L4       day   5.5276 0.0000 10.0268
+     L4     error   5.0451 3.6177  8.3280
+     L5     total  13.1072 9.5629 20.8255
+     L5       day   0.0000     NA      NA
+     L5     error  13.1072 9.3990 21.6365 
+
+Confidence intervals (%CV)
+ sample component estimate  lower   upper
+-----------------------------------------
+     L1     total   4.9710 2.9673 14.5079
+     L1       day   3.9446 0.0000  7.0480
+     L1     error   3.0250 2.1692  4.9936
+     L2     total   5.4905 3.1281 19.8843
+     L2       day   4.7584 0.0000  8.3652
+     L2     error   2.7393 1.9643  4.5219
+     L3     total   4.5583 3.2287  7.7416
+     L3       day   1.8088 0.0000  4.1035
+     L3     error   4.1840 3.0003  6.9067
+     L4     total   3.7271 2.2992  9.5447
+     L4       day   2.7529 0.0000  4.9936
+     L4     error   2.5126 1.8017  4.1476
+     L5     total   3.3003 2.4078  5.2436
+     L5       day   0.0000     NA      NA
+     L5     error   3.3003 2.3666  5.4478 </code></pre>
+</div>
+</div>
+<p>Comparing the proportion of variability across samples can be used for product optimization and testing scheme design:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">"var"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-precision-analysis_files/figure-html/plot-var-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="precision-profile" class="level3" data-number="5.4.3">
+<h3 data-number="5.4.3" class="anchored" data-anchor-id="precision-profile"><span class="header-section-number">5.4.3</span> Precision Profile</h3>
+<p><code>profile()</code> fits the Sadler model family to each variance component and selects the best model by AIC:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list_sadler</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sadler Precision Profile Models
+
+   1  Constant SD           sigma^2 = b1
+   2  Constant CV           sigma^2 = b1 * mu^2
+   3  Linear (variance)     sigma^2 = b1 + b2 * mu
+   4  Power (fixed K)       sigma^2 = b1 * mu^K
+   5  Power (fixed K, +intercept)  sigma^2 = b1 + b2 * mu^K
+   6  Linear (SD)           sigma = b1 + b2 * mu
+   7  Power (SD)            sigma = b1 + b2 * mu^b3
+   8  Power (variance)      sigma^2 = b1 + b2 * mu^b3
+   9  Exponential (log-log)  log(sigma^2) = b1 + b2 * log(mu)
+  10  Power (full)          sigma^2 = b1 * mu^b2</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">profile</span>(p2, <span class="at">model.no =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision profiles -- Sadler
+  total: sigma = 0.0000 + 0.0086 * mu^1.6702  (AIC = 56.45, R^2 = 0.9847)
+  day: sigma = 0.0000 + 0.0095 * mu^1.4951  (AIC = 43.46, R^2 = 0.8919)
+  error: sigma^2 = 0.0010 * mu^2  (AIC = 55.96, R^2 = 0.9806)</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">"profile"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-precision-analysis_files/figure-html/profile-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Parameter notes:</strong> <code>profile(model.no = 1:10)</code> specifies the candidate model numbers; <code>...</code> can be passed to the internal Sadler fit (for example <code>K</code>). Each variance component requires at least 3 samples with a finite SD to be fitted, so a multi-sample design should include at least 3 concentration levels. The profile can be used, for example, in functional-sensitivity analyses to predict the SD/CV at any concentration (see 《Functional Sensitivity》).</p>
+</blockquote>
+<p>In this example, the best models for the total and day components are power-function type (model 7), and the day:rep component is a constant-CV type (model 2), consistent with the common setting where “SD increases with concentration while CV is relatively stable”.</p>
+</section>
+</section>
+<section id="example-3-multi-sample-multi-site-site-precision" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="example-3-multi-sample-multi-site-site-precision"><span class="header-section-number">5.5</span> Example 3: Multi-Sample Multi-Site (Site) Precision</h2>
+<section id="reading-data-1" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="reading-data-1"><span class="header-section-number">5.5.1</span> Reading Data</h3>
+<p>The data contain 2 sites, 3 samples, and per site per sample 3 days × 3 runs × 5 replicates:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>sites_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/precision-sites.csv"</span>,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>sites_data[] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(sites_data, <span class="cf">function</span>(x)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.numeric</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">all</span>(x <span class="sc">==</span> <span class="fu">round</span>(x))) <span class="fu">factor</span>(x) <span class="cf">else</span> x)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sites_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   270 obs. of  6 variables:
+ $ site  : chr  "A" "A" "A" "A" ...
+ $ sample: chr  "S1" "S1" "S1" "S1" ...
+ $ day   : Factor w/ 3 levels "1","2","3": 1 1 1 1 1 1 1 1 1 1 ...
+ $ run   : Factor w/ 3 levels "1","2","3": 1 1 1 1 1 2 2 2 2 2 ...
+ $ rep   : Factor w/ 5 levels "1","2","3","4",..: 1 2 3 4 5 1 2 3 4 5 ...
+ $ value : num  49.2 52.3 48.8 49.4 51.5 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="multi-column-grouping" class="level3" data-number="5.5.2">
+<h3 data-number="5.5.2" class="anchored" data-anchor-id="multi-column-grouping"><span class="header-section-number">5.5.2</span> Multi-Column Grouping</h3>
+<p><code>by</code> can accept multiple column names and groups internally by the interaction, obtaining all site × sample combinations at once:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">precision</span>(sites_data, value <span class="sc">~</span> day<span class="sc">/</span>run, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"sample"</span>, <span class="st">"site"</span>))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component      VC %Total     SD  CV[%]
+----------------------------------------------
+   S1.A       day  0.0000    0.0 0.0000 0.0000
+   S1.A   day:run  0.1646    6.8 0.4057 0.8231
+   S1.A     error  2.2677   93.2 1.5059 3.0553
+   S2.A       day  0.3241    4.3 0.5693 0.5602
+   S2.A   day:run  0.1523    2.0 0.3903 0.3840
+   S2.A     error  7.0483   93.7 2.6549 2.6124
+   S3.A       day  4.4871   15.6 2.1183 1.0420
+   S3.A   day:run  1.7006    5.9 1.3041 0.6415
+   S3.A     error 22.5797   78.5 4.7518 2.3375
+   S1.B       day  0.0000    0.0 0.0000 0.0000
+   S1.B   day:run  0.5459   23.5 0.7389 1.4758
+   S1.B     error  1.7784   76.5 1.3335 2.6637
+   S2.B       day  0.0000    0.0 0.0000 0.0000
+   S2.B   day:run  1.6690   21.5 1.2919 1.2891
+   S2.B     error  6.0856   78.5 2.4669 2.4616
+   S3.B       day  0.7633    2.3 0.8737 0.4448
+   S3.B   day:run  0.0000    0.0 0.0000 0.0000
+   S3.B     error 31.8033   97.7 5.6394 2.8709 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(p3<span class="sc">$</span>results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "S1.A" "S2.A" "S3.A" "S1.B" "S2.B" "S3.B"</code></pre>
+</div>
+</div>
+</section>
+<section id="splitting-by-site-for-separate-analysis" class="level3" data-number="5.5.3">
+<h3 data-number="5.5.3" class="anchored" data-anchor-id="splitting-by-site-for-separate-analysis"><span class="header-section-number">5.5.3</span> Splitting by Site for Separate Analysis</h3>
+<p>An equivalent approach is to first <code>split()</code> by site and then run the same analysis parameters on each site subset. When the variance-component structure is expected to differ between sites, or separate reports are needed, splitting and analyzing separately is clearer:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>)) {</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  sub <span class="ot">&lt;-</span> sites_data[sites_data<span class="sc">$</span>site <span class="sc">==</span> s, ]</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  ps <span class="ot">&lt;-</span> <span class="fu">precision</span>(sub, value <span class="sc">~</span> day<span class="sc">/</span>run, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  ps <span class="ot">&lt;-</span> <span class="fu">variance</span>(ps)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  ps <span class="ot">&lt;-</span> <span class="fu">ci</span>(ps)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<blockquote class="blockquote">
+<p><strong>Note:</strong> Multi-center studies should unify the analysis plan, variance-component model, and reporting convention; when “reporting per center first and then combining”, be sure to record whether each center’s raw data were included, and whether the exclusion criteria and factor definitions are consistent.</p>
+</blockquote>
+</section>
+</section>
+<section id="example-4-custom-more-complex-models" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="example-4-custom-more-complex-models"><span class="header-section-number">5.6</span> Example 4: Custom More Complex Models</h2>
+<section id="reading-data-2" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="reading-data-2"><span class="header-section-number">5.6.1</span> Reading Data</h3>
+<p>Besides the standard day/run/replicate nesting, the <code>precision()</code> formula can be any VCA nested structure, for example adding an operator level: <code>value ~ operator/day/run</code>, i.e., nested layer by layer as operator -&gt; day -&gt; run:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>custom_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/precision-custom.csv"</span>,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>custom_data[] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(custom_data, <span class="cf">function</span>(x)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.numeric</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">all</span>(x <span class="sc">==</span> <span class="fu">round</span>(x))) <span class="fu">factor</span>(x) <span class="cf">else</span> x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="fitting-and-interpretation" class="level3" data-number="5.6.2">
+<h3 data-number="5.6.2" class="anchored" data-anchor-id="fitting-and-interpretation"><span class="header-section-number">5.6.2</span> Fitting and Interpretation</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">precision</span>(custom_data, value <span class="sc">~</span> operator<span class="sc">/</span>day<span class="sc">/</span>run)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample        component     VC %Total     SD  CV[%]
+----------------------------------------------------
+    all         operator 2.2914   11.8 1.5137 1.4898
+    all     operator:day 6.3159   32.4 2.5132 2.4734
+    all operator:day:run 3.2463   16.7 1.8017 1.7733
+    all            error 7.6322   39.2 2.7627 2.7190 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="key-points-for-interpreting-results" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="key-points-for-interpreting-results"><span class="header-section-number">5.7</span> Key Points for Interpreting Results</h2>
+<ol type="1">
+<li><strong>Design match</strong>: First clarify the nesting structure of the study design; the <code>precision()</code> formula must faithfully reflect the experimental hierarchy.</li>
+<li><strong>Data format</strong>: After <code>read_csv</code>, convert to <code>data.frame</code> and explicitly convert factor columns to factor to avoid VCA errors or ambiguity.</li>
+<li><strong>Call order</strong>: <code>outlier → normal → variance → ci → profile</code>, reassign after each analysis; plotting depends on prior analyses.</li>
+<li><strong>Negative components</strong>: When a factor has too few levels or the data happen to be nearly identical, a variance component may be set to zero; interpret carefully and specify the handling approach in the protocol.</li>
+<li><strong>CI applicability</strong>: The Satterthwaite approximation becomes less accurate with very few variance components or unbalanced data; note the method in the report.</li>
+<li><strong>Terminology table</strong>: Rearrange the numeric quantities in <code>$results</code> (<code>sd_comp</code>/<code>cv_comp</code>/<code>vc</code>) into an EP05 terminology table; do not directly use the display-oriented string <code>$vc</code>.</li>
+<li><strong>Acceptability judgment</strong>: Statistical estimates do not automatically constitute a pass/fail determination; they should be compared with pre-specified precision limits and reviewed by professionals.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./004-stability-studies.html" class="pagination-link" aria-label="Stability Studies">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./006-linearity-analysis.html" class="pagination-link" aria-label="Linearity Analysis">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

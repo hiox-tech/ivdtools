@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>8&nbsp; Bottle-to-Bottle Variability Analysis – ivdtools handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./009-reference-intervals.html" rel="next">
+<link href="./007-analytical-sensitivity.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./008-bottle-to-bottle-variability.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variability Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools-package-overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-installing-and-using-the-analysis-environment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-4plc-calibration-curve-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC Equation Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-stability-studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-precision-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-linearity-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-analytical-sensitivity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Analytical Sensitivity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-bottle-to-bottle-variability.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variability Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-reference-intervals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-quality-control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-sample-size-calculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Sample Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-method-comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Method Comparison</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-qualitative-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Qualitative Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-roc-curve-and-cutoff-determination.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC Curve and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-roc-curve-and-multivariate-regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC Curve and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-introduction-to-algorithm-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-ai-automated-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI-Automated Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">References</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#analysis-objectives" id="toc-analysis-objectives" class="nav-link active" data-scroll-target="#analysis-objectives"><span class="header-section-number">8.1</span> Analysis Objectives</a></li>
+  <li><a href="#overview-of-functions" id="toc-overview-of-functions" class="nav-link" data-scroll-target="#overview-of-functions"><span class="header-section-number">8.2</span> Overview of Functions</a></li>
+  <li><a href="#example-1-bottle-to-bottle-difference-of-15-bottles-5-measurements" id="toc-example-1-bottle-to-bottle-difference-of-15-bottles-5-measurements" class="nav-link" data-scroll-target="#example-1-bottle-to-bottle-difference-of-15-bottles-5-measurements"><span class="header-section-number">8.3</span> Example 1: Bottle-to-Bottle Difference of 15 Bottles × 5 Measurements</a>
+  <ul class="collapse">
+  <li><a href="#reading-and-validating-data" id="toc-reading-and-validating-data" class="nav-link" data-scroll-target="#reading-and-validating-data"><span class="header-section-number">8.3.1</span> Reading and Validating Data</a></li>
+  <li><a href="#step-1-test-for-significant-difference" id="toc-step-1-test-for-significant-difference" class="nav-link" data-scroll-target="#step-1-test-for-significant-difference"><span class="header-section-number">8.3.2</span> Step 1: Test for Significant Difference</a></li>
+  <li><a href="#pairwise-comparison" id="toc-pairwise-comparison" class="nav-link" data-scroll-target="#pairwise-comparison"><span class="header-section-number">8.3.3</span> Pairwise Comparison</a></li>
+  <li><a href="#step-2-whether-the-difference-magnitude-meets-expectations" id="toc-step-2-whether-the-difference-magnitude-meets-expectations" class="nav-link" data-scroll-target="#step-2-whether-the-difference-magnitude-meets-expectations"><span class="header-section-number">8.3.4</span> Step 2: Whether the Difference Magnitude Meets Expectations</a></li>
+  </ul></li>
+  <li><a href="#example-2-different-reagent-lots-measuring-the-same-quality-control-material" id="toc-example-2-different-reagent-lots-measuring-the-same-quality-control-material" class="nav-link" data-scroll-target="#example-2-different-reagent-lots-measuring-the-same-quality-control-material"><span class="header-section-number">8.4</span> Example 2: Different Reagent Lots Measuring the Same Quality-Control Material</a>
+  <ul class="collapse">
+  <li><a href="#reading-data" id="toc-reading-data" class="nav-link" data-scroll-target="#reading-data"><span class="header-section-number">8.4.1</span> Reading Data</a></li>
+  <li><a href="#testing-the-between-lot-difference" id="toc-testing-the-between-lot-difference" class="nav-link" data-scroll-target="#testing-the-between-lot-difference"><span class="header-section-number">8.4.2</span> Testing the Between-Lot Difference</a></li>
+  </ul></li>
+  <li><a href="#key-points-for-interpreting-results" id="toc-key-points-for-interpreting-results" class="nav-link" data-scroll-target="#key-points-for-interpreting-results"><span class="header-section-number">8.5</span> Key Points for Interpreting Results</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variability Analysis</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="analysis-objectives" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="analysis-objectives"><span class="header-section-number">8.1</span> Analysis Objectives</h2>
+<p>Bottle-to-bottle variability evaluates the differences in measurement results among different bottles (or different lots) of the same product. The analysis is usually done in two steps: first, use <code>bottle_anova()</code> to test whether the means of the bottles (or lots) differ statistically, and then use variance-component analysis to separate the between-bottle variability from the within-bottle variability, judging whether the magnitude of the difference meets the pre-specified precision limits. This document demonstrates both scenarios: the bottle-to-bottle difference of 15 bottles × 5 measurements, and the between-lot difference when different reagent lots measure the same quality-control material.</p>
+<p>The example data are deterministic teaching data; statistical significance is not equivalent to product unacceptability; judgments can only be made against the acceptance limits pre-specified in the protocol.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="overview-of-functions" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="overview-of-functions"><span class="header-section-number">8.2</span> Overview of Functions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Main purpose</th>
+<th>Key input or output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>bottle_anova()</code></td>
+<td>One-way or nested ANOVA</td>
+<td><code>value ~ batch</code> or <code>value ~ batch/vial</code></td>
+</tr>
+<tr class="even">
+<td><code>tukey()</code></td>
+<td>Tukey HSD pairwise comparison and compact letters</td>
+<td><code>term</code> specifies the effect</td>
+</tr>
+<tr class="odd">
+<td><code>precision()</code> / <code>variance()</code></td>
+<td>Split between-bottle/within-bottle variance components</td>
+<td><code>value ~ bottle</code> one-way</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="example-1-bottle-to-bottle-difference-of-15-bottles-5-measurements" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="example-1-bottle-to-bottle-difference-of-15-bottles-5-measurements"><span class="header-section-number">8.3</span> Example 1: Bottle-to-Bottle Difference of 15 Bottles × 5 Measurements</h2>
+<section id="reading-and-validating-data" class="level3" data-number="8.3.1">
+<h3 data-number="8.3.1" class="anchored" data-anchor-id="reading-and-validating-data"><span class="header-section-number">8.3.1</span> Reading and Validating Data</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bottle <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/bottle-difference.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bottle <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(bottle)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>bottle<span class="sc">$</span>bottle <span class="ot">&lt;-</span> <span class="fu">factor</span>(bottle<span class="sc">$</span>bottle)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(bottle)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   75 obs. of  3 variables:
+ $ bottle   : Factor w/ 15 levels "B01","B02","B03",..: 1 1 1 1 1 2 2 2 2 2 ...
+ $ replicate: num  1 2 3 4 5 1 2 3 4 5 ...
+ $ value    : num  97.5 100.5 98.8 97.5 97.8 ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(bottle)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 75  3</code></pre>
+</div>
+</div>
+</section>
+<section id="step-1-test-for-significant-difference" class="level3" data-number="8.3.2">
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="step-1-test-for-significant-difference"><span class="header-section-number">8.3.2</span> Step 1: Test for Significant Difference</h3>
+<p>The one-way model <code>value ~ bottle</code> tests whether the means of the 15 bottles are equal:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ba <span class="ot">&lt;-</span> <span class="fu">bottle_anova</span>(bottle, value <span class="sc">~</span> bottle)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ba)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bottle ANOVA Analysis
+  Response:        value
+  Group variable:  bottle (15 groups)
+  Complete cases:  75 / 75
+  Confidence level: 0.95
+
+  Descriptive Statistics:
+ ------------------------------------------------------------
+  bottle              n      Mean        SD
+ ------------------------------------------------------------
+  B01                 5   98.4520    1.2739
+  B02                 5  101.7140    0.9360
+  B03                 5   99.8060    0.8153
+  B04                 5  102.7980    0.4992
+  B05                 5   98.7520    0.8662
+  B06                 5  100.0960    1.4971
+  B07                 5  100.7180    0.8466
+  B08                 5  100.5000    1.3179
+  B09                 5   99.8160    1.0246
+  B10                 5  101.6400    0.8034
+  B11                 5   99.3300    0.9360
+  B12                 5   98.4700    1.0884
+  B13                 5   99.7440    1.1004
+  B14                 5  100.9040    0.4803
+  B15                 5   99.7920    1.4477
+
+  ANOVA Table:
+ ------------------------------------------------------------
+  Term              Df    Sum Sq    Mean Sq   F-value    p-value  Sig
+ ------------------------------------------------------------
+  bottle            14  107.7233     7.6945    7.1460     0.0000  ***
+  Residuals         60   64.6057     1.0768                       
+ ------------------------------------------------------------
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+  Assumption Checks:
+    Bartlett test: K-squared = 9.9325, df = 14, p-value = 0.7671 (OK)
+    Shapiro-Wilk:  W = 0.9828, p-value = 0.4011 (OK)
+
+  Post-hoc: use tukey() for pairwise comparisons</code></pre>
+</div>
+</div>
+<p>The ANOVA table gives the between-bottle F test; the <code>assumptions</code> section reports the Bartlett variance-homogeneity and Shapiro-Wilk normality tests.</p>
+</section>
+<section id="pairwise-comparison" class="level3" data-number="8.3.3">
+<h3 data-number="8.3.3" class="anchored" data-anchor-id="pairwise-comparison"><span class="header-section-number">8.3.3</span> Pairwise Comparison</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>posthoc <span class="ot">&lt;-</span> <span class="fu">tukey</span>(ba)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>posthoc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tukey HSD Post-hoc Test
+  Response:        value
+  Complete cases:  75 / 75
+  Confidence level: 0.95
+
+  Term: bottle 
+ ------------------------------------------------------------
+  Comparison                Diff       lwr       upr   p-value  Sig
+ ------------------------------------------------------------
+  B02-B01                 3.2620    0.9412    5.5828    0.0005  ***
+  B03-B01                 1.3540   -0.9668    3.6748    0.7526  
+  B04-B01                 4.3460    2.0252    6.6668    0.0000  ***
+  B05-B01                 0.3000   -2.0208    2.6208    1.0000  
+  B06-B01                 1.6440   -0.6768    3.9648    0.4526  
+  B07-B01                 2.2660   -0.0548    4.5868    0.0624  
+  B08-B01                 2.0480   -0.2728    4.3688    0.1408  
+  B09-B01                 1.3640   -0.9568    3.6848    0.7431  
+  B10-B01                 3.1880    0.8672    5.5088    0.0008  ***
+  B11-B01                 0.8780   -1.4428    3.1988    0.9896  
+  B12-B01                 0.0180   -2.3028    2.3388    1.0000  
+  B13-B01                 1.2920   -1.0288    3.6128    0.8078  
+  B14-B01                 2.4520    0.1312    4.7728    0.0287  *
+  B15-B01                 1.3400   -0.9808    3.6608    0.7656  
+  B03-B02                -1.9080   -4.2288    0.4128    0.2229  
+  B04-B02                 1.0840   -1.2368    3.4048    0.9391  
+  B05-B02                -2.9620   -5.2828   -0.6412    0.0026  **
+  B06-B02                -1.6180   -3.9388    0.7028    0.4794  
+  B07-B02                -0.9960   -3.3168    1.3248    0.9686  
+  B08-B02                -1.2140   -3.5348    1.1068    0.8674  
+  B09-B02                -1.8980   -4.2188    0.4228    0.2298  
+  B10-B02                -0.0740   -2.3948    2.2468    1.0000  
+  B11-B02                -2.3840   -4.7048   -0.0632    0.0384  *
+  B12-B02                -3.2440   -5.5648   -0.9232    0.0006  ***
+  B13-B02                -1.9700   -4.2908    0.3508    0.1830  
+  B14-B02                -0.8100   -3.1308    1.5108    0.9952  
+  B15-B02                -1.9220   -4.2428    0.3988    0.2134  
+  B04-B03                 2.9920    0.6712    5.3128    0.0022  **
+  B05-B03                -1.0540   -3.3748    1.2668    0.9507  
+  B06-B03                 0.2900   -2.0308    2.6108    1.0000  
+  B07-B03                 0.9120   -1.4088    3.2328    0.9852  
+  B08-B03                 0.6940   -1.6268    3.0148    0.9990  
+  B09-B03                 0.0100   -2.3108    2.3308    1.0000  
+  B10-B03                 1.8340   -0.4868    4.1548    0.2778  
+  B11-B03                -0.4760   -2.7968    1.8448    1.0000  
+  B12-B03                -1.3360   -3.6568    0.9848    0.7693  
+  B13-B03                -0.0620   -2.3828    2.2588    1.0000  
+  B14-B03                 1.0980   -1.2228    3.4188    0.9330  
+  B15-B03                -0.0140   -2.3348    2.3068    1.0000  
+  B05-B04                -4.0460   -6.3668   -1.7252    0.0000  ***
+  B06-B04                -2.7020   -5.0228   -0.3812    0.0092  **
+  B07-B04                -2.0800   -4.4008    0.2408    0.1258  
+  B08-B04                -2.2980   -4.6188    0.0228    0.0549  
+  B09-B04                -2.9820   -5.3028   -0.6612    0.0023  **
+  B10-B04                -1.1580   -3.4788    1.1628    0.9026  
+  B11-B04                -3.4680   -5.7888   -1.1472    0.0002  ***
+  B12-B04                -4.3280   -6.6488   -2.0072    0.0000  ***
+  B13-B04                -3.0540   -5.3748   -0.7332    0.0016  **
+  B14-B04                -1.8940   -4.2148    0.4268    0.2326  
+  B15-B04                -3.0060   -5.3268   -0.6852    0.0020  **
+  B06-B05                 1.3440   -0.9768    3.6648    0.7619  
+  B07-B05                 1.9660   -0.3548    4.2868    0.1854  
+  B08-B05                 1.7480   -0.5728    4.0688    0.3515  
+  B09-B05                 1.0640   -1.2568    3.3848    0.9470  
+  B10-B05                 2.8880    0.5672    5.2088    0.0037  **
+  B11-B05                 0.5780   -1.7428    2.8988    0.9999  
+  B12-B05                -0.2820   -2.6028    2.0388    1.0000  
+  B13-B05                 0.9920   -1.3288    3.3128    0.9696  
+  B14-B05                 2.1520   -0.1688    4.4728    0.0968  
+  B15-B05                 1.0400   -1.2808    3.3608    0.9556  
+  B07-B06                 0.6220   -1.6988    2.9428    0.9997  
+  B08-B06                 0.4040   -1.9168    2.7248    1.0000  
+  B09-B06                -0.2800   -2.6008    2.0408    1.0000  
+  B10-B06                 1.5440   -0.7768    3.8648    0.5576  
+  B11-B06                -0.7660   -3.0868    1.5548    0.9972  
+  B12-B06                -1.6260   -3.9468    0.6948    0.4711  
+  B13-B06                -0.3520   -2.6728    1.9688    1.0000  
+  B14-B06                 0.8080   -1.5128    3.1288    0.9953  
+  B15-B06                -0.3040   -2.6248    2.0168    1.0000  
+  B08-B07                -0.2180   -2.5388    2.1028    1.0000  
+  B09-B07                -0.9020   -3.2228    1.4188    0.9866  
+  B10-B07                 0.9220   -1.3988    3.2428    0.9837  
+  B11-B07                -1.3880   -3.7088    0.9328    0.7199  
+  B12-B07                -2.2480   -4.5688    0.0728    0.0670  
+  B13-B07                -0.9740   -3.2948    1.3468    0.9739  
+  B14-B07                 0.1860   -2.1348    2.5068    1.0000  
+  B15-B07                -0.9260   -3.2468    1.3948    0.9831  
+  B09-B08                -0.6840   -3.0048    1.6368    0.9992  
+  B10-B08                 1.1400   -1.1808    3.4608    0.9125  
+  B11-B08                -1.1700   -3.4908    1.1508    0.8956  
+  B12-B08                -2.0300   -4.3508    0.2908    0.1498  
+  B13-B08                -0.7560   -3.0768    1.5648    0.9976  
+  B14-B08                 0.4040   -1.9168    2.7248    1.0000  
+  B15-B08                -0.7080   -3.0288    1.6128    0.9988  
+  B10-B09                 1.8240   -0.4968    4.1448    0.2859  
+  B11-B09                -0.4860   -2.8068    1.8348    1.0000  
+  B12-B09                -1.3460   -3.6668    0.9748    0.7601  
+  B13-B09                -0.0720   -2.3928    2.2488    1.0000  
+  B14-B09                 1.0880   -1.2328    3.4088    0.9374  
+  B15-B09                -0.0240   -2.3448    2.2968    1.0000  
+  B11-B10                -2.3100   -4.6308    0.0108    0.0523  
+  B12-B10                -3.1700   -5.4908   -0.8492    0.0009  ***
+  B13-B10                -1.8960   -4.2168    0.4248    0.2312  
+  B14-B10                -0.7360   -3.0568    1.5848    0.9982  
+  B15-B10                -1.8480   -4.1688    0.4728    0.2668  
+  B12-B11                -0.8600   -3.1808    1.4608    0.9914  
+  B13-B11                 0.4140   -1.9068    2.7348    1.0000  
+  B14-B11                 1.5740   -0.7468    3.8948    0.5257  
+  B15-B11                 0.4620   -1.8588    2.7828    1.0000  
+  B13-B12                 1.2740   -1.0468    3.5948    0.8226  
+  B14-B12                 2.4340    0.1132    4.7548    0.0311  *
+  B15-B12                 1.3220   -0.9988    3.6428    0.7819  
+  B14-B13                 1.1600   -1.1608    3.4808    0.9015  
+  B15-B13                 0.0480   -2.2728    2.3688    1.0000  
+  B15-B14                -1.1120   -3.4328    1.2088    0.9266  
+ ------------------------------------------------------------
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+  Compact Letter Display:
+ ------------------------------------------------------------
+    B04: a
+    B02: a
+    B10: a
+    B14: a
+    B07: ab
+    B08: ab
+    B06: b
+    B09: b
+    B03: b
+    B15: b
+    B13: b
+    B11: b
+    B05: b
+    B12: b
+    B01: b</code></pre>
+</div>
+</div>
+<p>Tukey HSD gives all pairwise comparisons and compact letter displays; bottles with different letters differ significantly in mean. In this example, there are many bottles, so some significant pairwise differences are normal; the key question is whether the <strong>magnitude of the difference</strong> is acceptable.</p>
+</section>
+<section id="step-2-whether-the-difference-magnitude-meets-expectations" class="level3" data-number="8.3.4">
+<h3 data-number="8.3.4" class="anchored" data-anchor-id="step-2-whether-the-difference-magnitude-meets-expectations"><span class="header-section-number">8.3.4</span> Step 2: Whether the Difference Magnitude Meets Expectations</h3>
+<p>Use <code>precision(value ~ bottle)</code> to split the total variability into the between-bottle component (bottle) and the within-bottle component (error):</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>bp <span class="ot">&lt;-</span> <span class="fu">precision</span>(bottle, value <span class="sc">~</span> bottle)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>bp <span class="ot">&lt;-</span> <span class="fu">variance</span>(bp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%]
+---------------------------------------------
+    all    bottle 1.3236   55.1 1.1505 1.1485
+    all     error 1.0768   44.9 1.0377 1.0359 </code></pre>
+</div>
+</div>
+<p>The between-bottle SD is ≈ 1.15, CV ≈ 1.15%, and the within-bottle SD is ≈ 1.04, CV ≈ 1.04%. Assuming the protocol specifies a total precision limit of 2% (CV), the between-bottle difference is within the limit. <strong>Note:</strong> The “limit” here is only an example; formal studies must use the limits specified in the protocol or standard, and should compare the total CV (including between- and within-bottle) and each component separately.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>bp <span class="ot">&lt;-</span> <span class="fu">ci</span>(bp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   1.5493 1.2449 2.0519
+    all    bottle   1.1505 0.4254 1.5704
+    all     error   1.0377 0.8807 1.2633 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   1.5467 1.2428 2.0485
+    all    bottle   1.1485 0.4246 1.5678
+    all     error   1.0359 0.8792 1.2612 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="example-2-different-reagent-lots-measuring-the-same-quality-control-material" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="example-2-different-reagent-lots-measuring-the-same-quality-control-material"><span class="header-section-number">8.4</span> Example 2: Different Reagent Lots Measuring the Same Quality-Control Material</h2>
+<section id="reading-data" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="reading-data"><span class="header-section-number">8.4.1</span> Reading Data</h3>
+<p>Three reagent lots (L1, L2, L3) each measure the same quality-control material 15 times:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>lot_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/reagent-lot.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lot_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(lot_data)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>lot_data<span class="sc">$</span>lot <span class="ot">&lt;-</span> <span class="fu">factor</span>(lot_data<span class="sc">$</span>lot)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(lot_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   45 obs. of  3 variables:
+ $ lot      : Factor w/ 3 levels "L1","L2","L3": 1 1 1 1 1 1 1 1 1 1 ...
+ $ replicate: num  1 2 3 4 5 6 7 8 9 10 ...
+ $ value    : num  100 102 101 102 101 ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lot_summary <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(value <span class="sc">~</span> lot, lot_data, <span class="cf">function</span>(x) <span class="fu">c</span>(<span class="at">n =</span> <span class="fu">length</span>(x), <span class="at">mean =</span> <span class="fu">mean</span>(x), <span class="at">sd =</span> <span class="fu">sd</span>(x)))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>lot_summary <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lot =</span> lot_summary<span class="sc">$</span>lot, lot_summary<span class="sc">$</span>value)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>lot_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["lot"],"name":[1],"type":["fct"],"align":["left"]},{"label":["n"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["sd"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"L1","2":"15","3":"100.8173","4":"1.1626353"},{"1":"L2","2":"15","3":"101.2760","4":"1.4271040"},{"1":"L3","2":"15","3":"100.5673","4":"0.7829201"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="testing-the-between-lot-difference" class="level3" data-number="8.4.2">
+<h3 data-number="8.4.2" class="anchored" data-anchor-id="testing-the-between-lot-difference"><span class="header-section-number">8.4.2</span> Testing the Between-Lot Difference</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ba_lot <span class="ot">&lt;-</span> <span class="fu">bottle_anova</span>(lot_data, value <span class="sc">~</span> lot)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ba_lot)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bottle ANOVA Analysis
+  Response:        value
+  Group variable:  lot (3 groups)
+  Complete cases:  45 / 45
+  Confidence level: 0.95
+
+  Descriptive Statistics:
+ ------------------------------------------------------------
+  lot                 n      Mean        SD
+ ------------------------------------------------------------
+  L1                 15  100.8173    1.1626
+  L2                 15  101.2760    1.4271
+  L3                 15  100.5673    0.7829
+
+  ANOVA Table:
+ ------------------------------------------------------------
+  Term              Df    Sum Sq    Mean Sq   F-value    p-value  Sig
+ ------------------------------------------------------------
+  lot                2    3.8754     1.9377    1.4528     0.2454   
+  Residuals         42   56.0183     1.3338                       
+ ------------------------------------------------------------
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+  Assumption Checks:
+    Bartlett test: K-squared = 4.6245, df = 2, p-value = 0.0990 (OK)
+    Shapiro-Wilk:  W = 0.9817, p-value = 0.6870 (OK)
+
+  Post-hoc: use tukey() for pairwise comparisons</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tukey</span>(ba_lot)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tukey HSD Post-hoc Test
+  Response:        value
+  Complete cases:  45 / 45
+  Confidence level: 0.95
+
+  Term: lot 
+ ------------------------------------------------------------
+  Comparison                Diff       lwr       upr   p-value  Sig
+ ------------------------------------------------------------
+  L2-L1                   0.4587   -0.5659    1.4832    0.5269  
+  L3-L1                  -0.2500   -1.2745    0.7745    0.8247  
+  L3-L2                  -0.7087   -1.7332    0.3159    0.2245  
+ ------------------------------------------------------------
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+  Compact Letter Display:
+ ------------------------------------------------------------
+    L2: a
+    L1: a
+    L3: a</code></pre>
+</div>
+</div>
+<p>The compact letter display shows between which lots the means differ significantly and in which direction. Even if the between-lot mean difference is statistically significant, it must still be judged against the pre-specified acceptable bias (for example, the allowable target-value range of the quality-control material) to determine whether it is within the acceptable range; do not draw conclusions from the p-value alone.</p>
+</section>
+</section>
+<section id="key-points-for-interpreting-results" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="key-points-for-interpreting-results"><span class="header-section-number">8.5</span> Key Points for Interpreting Results</h2>
+<ol type="1">
+<li><strong>Set acceptance limits first</strong>: Before analysis, specify the allowable difference magnitude between lots/bottles (SD/CV or mean-bias limit).</li>
+<li><strong>Significance ≠ acceptability</strong>: ANOVA/Tukey test whether there is a difference; whether the magnitude is acceptable is determined by the limits.</li>
+<li><strong>Variance decomposition</strong>: Use variance components to separate between-bottle/lot and within-bottle variability, and evaluate the contribution of each component separately.</li>
+<li><strong>Pairwise-comparison scale</strong>: With many bottles, the number of pairwise comparisons is large; use the compact letter display to focus on the difference structure.</li>
+<li><strong>Consistent conditions</strong>: Between-lot comparisons should keep conditions such as method, instrument, operator, and time constant, with only the lot varying.</li>
+<li><strong>Complete records</strong>: Report the mean, SD of each bottle/lot, the ANOVA table, Tukey results, variance components, and limit judgments.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./007-analytical-sensitivity.html" class="pagination-link" aria-label="Analytical Sensitivity">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Analytical Sensitivity</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./009-reference-intervals.html" class="pagination-link" aria-label="Reference Intervals">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
