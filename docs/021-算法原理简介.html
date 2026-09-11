@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>21&nbsp; Introduction to Algorithm Principles – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./022-标准对应关系.html" rel="next">
+<link href="./020-异常值与正态检验.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./021-算法原理简介.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#replicates-multiple-samples-and-statistical-units" id="toc-replicates-multiple-samples-and-statistical-units" class="nav-link active" data-scroll-target="#replicates-multiple-samples-and-statistical-units"><span class="header-section-number">21.1</span> Replicates, Multiple Samples, and Statistical Units</a>
+  <ul>
+  <li><a href="#first-decide-what-one-row-represents" id="toc-first-decide-what-one-row-represents" class="nav-link" data-scroll-target="#first-decide-what-one-row-represents"><span class="header-section-number">21.1.1</span> First Decide What One Row Represents</a></li>
+  <li><a href="#joint-or-separate-analysis-for-multiple-samples" id="toc-joint-or-separate-analysis-for-multiple-samples" class="nav-link" data-scroll-target="#joint-or-separate-analysis-for-multiple-samples"><span class="header-section-number">21.1.2</span> Joint or Separate Analysis for Multiple Samples</a></li>
+  </ul></li>
+  <li><a href="#outliers-and-normality" id="toc-outliers-and-normality" class="nav-link" data-scroll-target="#outliers-and-normality"><span class="header-section-number">21.2</span> Outliers and Normality</a>
+  <ul>
+  <li><a href="#grubbs-test" id="toc-grubbs-test" class="nav-link" data-scroll-target="#grubbs-test"><span class="header-section-number">21.2.1</span> Grubbs Test</a></li>
+  <li><a href="#generalized-esd" id="toc-generalized-esd" class="nav-link" data-scroll-target="#generalized-esd"><span class="header-section-number">21.2.2</span> Generalized ESD</a></li>
+  <li><a href="#dixon-and-iqr" id="toc-dixon-and-iqr" class="nav-link" data-scroll-target="#dixon-and-iqr"><span class="header-section-number">21.2.3</span> Dixon and IQR</a></li>
+  <li><a href="#automatic-normality-branch" id="toc-automatic-normality-branch" class="nav-link" data-scroll-target="#automatic-normality-branch"><span class="header-section-number">21.2.4</span> Automatic Normality Branch</a></li>
+  </ul></li>
+  <li><a href="#method-comparison-and-reference-material-bias" id="toc-method-comparison-and-reference-material-bias" class="nav-link" data-scroll-target="#method-comparison-and-reference-material-bias"><span class="header-section-number">21.3</span> Method Comparison and Reference-Material Bias</a>
+  <ul>
+  <li><a href="#direction-units-and-preprocessing" id="toc-direction-units-and-preprocessing" class="nav-link" data-scroll-target="#direction-units-and-preprocessing"><span class="header-section-number">21.3.1</span> Direction, Units, and Preprocessing</a></li>
+  <li><a href="#correlation-options" id="toc-correlation-options" class="nav-link" data-scroll-target="#correlation-options"><span class="header-section-number">21.3.2</span> Correlation Options</a></li>
+  <li><a href="#regression-methods" id="toc-regression-methods" class="nav-link" data-scroll-target="#regression-methods"><span class="header-section-number">21.3.3</span> Regression Methods</a></li>
+  <li><a href="#confidence-intervals-and-blandaltman" id="toc-confidence-intervals-and-blandaltman" class="nav-link" data-scroll-target="#confidence-intervals-and-blandaltman"><span class="header-section-number">21.3.4</span> Confidence Intervals and Bland–Altman</a></li>
+  <li><a href="#reference-material-bias" id="toc-reference-material-bias" class="nav-link" data-scroll-target="#reference-material-bias"><span class="header-section-number">21.3.5</span> Reference-Material Bias</a></li>
+  </ul></li>
+  <li><a href="#reference-material-commutability" id="toc-reference-material-commutability" class="nav-link" data-scroll-target="#reference-material-commutability"><span class="header-section-number">21.4</span> Reference-Material Commutability</a></li>
+  <li><a href="#qualitative-performance-c5c95-and-roc" id="toc-qualitative-performance-c5c95-and-roc" class="nav-link" data-scroll-target="#qualitative-performance-c5c95-and-roc"><span class="header-section-number">21.5</span> Qualitative Performance, C5/C95, and ROC</a></li>
+  <li><a href="#precision-bottle-variation-and-reference-intervals" id="toc-precision-bottle-variation-and-reference-intervals" class="nav-link" data-scroll-target="#precision-bottle-variation-and-reference-intervals"><span class="header-section-number">21.6</span> Precision, Bottle Variation, and Reference Intervals</a></li>
+  <li><a href="#response-equation-fitting-and-linearity" id="toc-response-equation-fitting-and-linearity" class="nav-link" data-scroll-target="#response-equation-fitting-and-linearity"><span class="header-section-number">21.7</span> Response-Equation Fitting and Linearity</a></li>
+  <li><a href="#interference-dilution-spike-recovery-and-hook-effect" id="toc-interference-dilution-spike-recovery-and-hook-effect" class="nav-link" data-scroll-target="#interference-dilution-spike-recovery-and-hook-effect"><span class="header-section-number">21.8</span> Interference, Dilution, Spike Recovery, and Hook Effect</a></li>
+  <li><a href="#analytical-sensitivity" id="toc-analytical-sensitivity" class="nav-link" data-scroll-target="#analytical-sensitivity"><span class="header-section-number">21.9</span> Analytical Sensitivity</a></li>
+  <li><a href="#quality-control-and-stability" id="toc-quality-control-and-stability" class="nav-link" data-scroll-target="#quality-control-and-stability"><span class="header-section-number">21.10</span> Quality Control and Stability</a></li>
+  <li><a href="#measurement-uncertainty-and-traceability" id="toc-measurement-uncertainty-and-traceability" class="nav-link" data-scroll-target="#measurement-uncertainty-and-traceability"><span class="header-section-number">21.11</span> Measurement Uncertainty and Traceability</a></li>
+  <li><a href="#parameter-choices-change-the-estimand" id="toc-parameter-choices-change-the-estimand" class="nav-link" data-scroll-target="#parameter-choices-change-the-estimand"><span class="header-section-number">21.12</span> Parameter Choices Change the Estimand</a></li>
+  <li><a href="#detailed-algorithm-specification" id="toc-detailed-algorithm-specification" class="nav-link" data-scroll-target="#detailed-algorithm-specification"><span class="header-section-number">21.13</span> Detailed Algorithm Specification</a>
+  <ul>
+  <li><a href="#ols-and-wls-point-estimates" id="toc-ols-and-wls-point-estimates" class="nav-link" data-scroll-target="#ols-and-wls-point-estimates"><span class="header-section-number">21.13.1</span> OLS and WLS Point Estimates</a></li>
+  <li><a href="#deming-regression-and-lambda" id="toc-deming-regression-and-lambda" class="nav-link" data-scroll-target="#deming-regression-and-lambda"><span class="header-section-number">21.13.2</span> Deming Regression and lambda</a></li>
+  <li><a href="#three-weighted-deming-variants" id="toc-three-weighted-deming-variants" class="nav-link" data-scroll-target="#three-weighted-deming-variants"><span class="header-section-number">21.13.3</span> Three Weighted-Deming Variants</a></li>
+  <li><a href="#regression-parameter-confidence-intervals" id="toc-regression-parameter-confidence-intervals" class="nav-link" data-scroll-target="#regression-parameter-confidence-intervals"><span class="header-section-number">21.13.4</span> Regression-Parameter Confidence Intervals</a></li>
+  <li><a href="#passingbablok" id="toc-passingbablok" class="nav-link" data-scroll-target="#passingbablok"><span class="header-section-number">21.13.5</span> Passing–Bablok</a></li>
+  <li><a href="#differences-percentage-differences-and-outlier-analysis" id="toc-differences-percentage-differences-and-outlier-analysis" class="nav-link" data-scroll-target="#differences-percentage-differences-and-outlier-analysis"><span class="header-section-number">21.13.6</span> Differences, Percentage Differences, and Outlier Analysis</a></li>
+  <li><a href="#blandaltman-axis-center-and-limits-of-agreement" id="toc-blandaltman-axis-center-and-limits-of-agreement" class="nav-link" data-scroll-target="#blandaltman-axis-center-and-limits-of-agreement"><span class="header-section-number">21.13.7</span> Bland–Altman Axis, Center, and Limits of Agreement</a></li>
+  <li><a href="#bias-at-medical-decision-levels-and-prediction-intervals" id="toc-bias-at-medical-decision-levels-and-prediction-intervals" class="nav-link" data-scroll-target="#bias-at-medical-decision-levels-and-prediction-intervals"><span class="header-section-number">21.13.8</span> Bias at Medical Decision Levels and Prediction Intervals</a></li>
+  <li><a href="#reference-material-bias-1" id="toc-reference-material-bias-1" class="nav-link" data-scroll-target="#reference-material-bias-1"><span class="header-section-number">21.13.9</span> Reference-Material Bias</a></li>
+  </ul></li>
+  <li><a href="#reference-material-commutability-1" id="toc-reference-material-commutability-1" class="nav-link" data-scroll-target="#reference-material-commutability-1"><span class="header-section-number">21.14</span> Reference-Material Commutability</a>
+  <ul>
+  <li><a href="#ep14-style-prediction-interval" id="toc-ep14-style-prediction-interval" class="nav-link" data-scroll-target="#ep14-style-prediction-interval"><span class="header-section-number">21.14.1</span> EP14-Style Prediction Interval</a></li>
+  <li><a href="#ifcc-style-difference-evaluation" id="toc-ifcc-style-difference-evaluation" class="nav-link" data-scroll-target="#ifcc-style-difference-evaluation"><span class="header-section-number">21.14.2</span> IFCC-Style Difference Evaluation</a></li>
+  </ul></li>
+  <li><a href="#qualitative-performance-c5c95-and-roc-1" id="toc-qualitative-performance-c5c95-and-roc-1" class="nav-link" data-scroll-target="#qualitative-performance-c5c95-and-roc-1"><span class="header-section-number">21.15</span> Qualitative Performance, C5/C95, and ROC</a>
+  <ul>
+  <li><a href="#four-fold-proportions-and-intervals" id="toc-four-fold-proportions-and-intervals" class="nav-link" data-scroll-target="#four-fold-proportions-and-intervals"><span class="header-section-number">21.15.1</span> Four-Fold Proportions and Intervals</a></li>
+  <li><a href="#likelihood-ratios-agreement-and-mcnemar" id="toc-likelihood-ratios-agreement-and-mcnemar" class="nav-link" data-scroll-target="#likelihood-ratios-agreement-and-mcnemar"><span class="header-section-number">21.15.2</span> Likelihood Ratios, Agreement, and McNemar</a></li>
+  <li><a href="#c5c95" id="toc-c5c95" class="nav-link" data-scroll-target="#c5c95"><span class="header-section-number">21.15.3</span> C5/C95</a></li>
+  <li><a href="#empirical-roc-auc-and-multivariable-models" id="toc-empirical-roc-auc-and-multivariable-models" class="nav-link" data-scroll-target="#empirical-roc-auc-and-multivariable-models"><span class="header-section-number">21.15.4</span> Empirical ROC, AUC, and Multivariable Models</a></li>
+  </ul></li>
+  <li><a href="#precision-bottle-variation-and-reference-intervals-1" id="toc-precision-bottle-variation-and-reference-intervals-1" class="nav-link" data-scroll-target="#precision-bottle-variation-and-reference-intervals-1"><span class="header-section-number">21.16</span> Precision, Bottle Variation, and Reference Intervals</a>
+  <ul>
+  <li><a href="#variance-components-and-precision-profiles" id="toc-variance-components-and-precision-profiles" class="nav-link" data-scroll-target="#variance-components-and-precision-profiles"><span class="header-section-number">21.16.1</span> Variance Components and Precision Profiles</a></li>
+  <li><a href="#bottle-variation" id="toc-bottle-variation" class="nav-link" data-scroll-target="#bottle-variation"><span class="header-section-number">21.16.2</span> Bottle Variation</a></li>
+  <li><a href="#reference-intervals" id="toc-reference-intervals" class="nav-link" data-scroll-target="#reference-intervals"><span class="header-section-number">21.16.3</span> Reference Intervals</a></li>
+  </ul></li>
+  <li><a href="#response-equation-fitting-and-linearity-1" id="toc-response-equation-fitting-and-linearity-1" class="nav-link" data-scroll-target="#response-equation-fitting-and-linearity-1"><span class="header-section-number">21.17</span> Response-Equation Fitting and Linearity</a>
+  <ul>
+  <li><a href="#twelve-registered-response-equations" id="toc-twelve-registered-response-equations" class="nav-link" data-scroll-target="#twelve-registered-response-equations"><span class="header-section-number">21.17.1</span> Twelve Registered Response Equations</a></li>
+  <li><a href="#linearity-design-quantities-and-regression-comparison" id="toc-linearity-design-quantities-and-regression-comparison" class="nav-link" data-scroll-target="#linearity-design-quantities-and-regression-comparison"><span class="header-section-number">21.17.2</span> Linearity Design Quantities and Regression Comparison</a></li>
+  </ul></li>
+  <li><a href="#interference-dilution-spike-recovery-and-hook-effect-1" id="toc-interference-dilution-spike-recovery-and-hook-effect-1" class="nav-link" data-scroll-target="#interference-dilution-spike-recovery-and-hook-effect-1"><span class="header-section-number">21.18</span> Interference, Dilution, Spike Recovery, and Hook Effect</a>
+  <ul>
+  <li><a href="#two-group-interference-and-difference-in-differences" id="toc-two-group-interference-and-difference-in-differences" class="nav-link" data-scroll-target="#two-group-interference-and-difference-in-differences"><span class="header-section-number">21.18.1</span> Two-Group Interference and Difference-in-Differences</a></li>
+  <li><a href="#dilution-recovery" id="toc-dilution-recovery" class="nav-link" data-scroll-target="#dilution-recovery"><span class="header-section-number">21.18.2</span> Dilution Recovery</a></li>
+  <li><a href="#spike-recovery-and-hook-effect" id="toc-spike-recovery-and-hook-effect" class="nav-link" data-scroll-target="#spike-recovery-and-hook-effect"><span class="header-section-number">21.18.3</span> Spike Recovery and Hook Effect</a></li>
+  </ul></li>
+  <li><a href="#analytical-sensitivity-1" id="toc-analytical-sensitivity-1" class="nav-link" data-scroll-target="#analytical-sensitivity-1"><span class="header-section-number">21.19</span> Analytical Sensitivity</a>
+  <ul>
+  <li><a href="#limits-of-blank-and-detection" id="toc-limits-of-blank-and-detection" class="nav-link" data-scroll-target="#limits-of-blank-and-detection"><span class="header-section-number">21.19.1</span> Limits of Blank and Detection</a></li>
+  <li><a href="#limit-of-quantitation-and-limit-verification" id="toc-limit-of-quantitation-and-limit-verification" class="nav-link" data-scroll-target="#limit-of-quantitation-and-limit-verification"><span class="header-section-number">21.19.2</span> Limit of Quantitation and Limit Verification</a></li>
+  </ul></li>
+  <li><a href="#quality-control-and-stability-1" id="toc-quality-control-and-stability-1" class="nav-link" data-scroll-target="#quality-control-and-stability-1"><span class="header-section-number">21.20</span> Quality Control and Stability</a>
+  <ul>
+  <li><a href="#leveyjennings-and-westgard" id="toc-leveyjennings-and-westgard" class="nav-link" data-scroll-target="#leveyjennings-and-westgard"><span class="header-section-number">21.20.1</span> Levey–Jennings and Westgard</a></li>
+  <li><a href="#node-bias-time-regression-and-time-to-limit" id="toc-node-bias-time-regression-and-time-to-limit" class="nav-link" data-scroll-target="#node-bias-time-regression-and-time-to-limit"><span class="header-section-number">21.20.2</span> Node Bias, Time Regression, and Time to Limit</a></li>
+  <li><a href="#mean-kinetic-temperature-and-arrhenius" id="toc-mean-kinetic-temperature-and-arrhenius" class="nav-link" data-scroll-target="#mean-kinetic-temperature-and-arrhenius"><span class="header-section-number">21.20.3</span> Mean Kinetic Temperature and Arrhenius</a></li>
+  </ul></li>
+  <li><a href="#measurement-uncertainty-and-traceability-1" id="toc-measurement-uncertainty-and-traceability-1" class="nav-link" data-scroll-target="#measurement-uncertainty-and-traceability-1"><span class="header-section-number">21.21</span> Measurement Uncertainty and Traceability</a>
+  <ul>
+  <li><a href="#type-a-and-type-b-standardization" id="toc-type-a-and-type-b-standardization" class="nav-link" data-scroll-target="#type-a-and-type-b-standardization"><span class="header-section-number">21.21.1</span> Type A and Type B Standardization</a></li>
+  <li><a href="#iqc-homogeneity-stability-and-characterization" id="toc-iqc-homogeneity-stability-and-characterization" class="nav-link" data-scroll-target="#iqc-homogeneity-stability-and-characterization"><span class="header-section-number">21.21.2</span> IQC, Homogeneity, Stability, and Characterization</a></li>
+  <li><a href="#first-order-combination-and-effective-degrees-of-freedom" id="toc-first-order-combination-and-effective-degrees-of-freedom" class="nav-link" data-scroll-target="#first-order-combination-and-effective-degrees-of-freedom"><span class="header-section-number">21.21.3</span> First-Order Combination and Effective Degrees of Freedom</a></li>
+  <li><a href="#general-measurement-models-and-monte-carlo" id="toc-general-measurement-models-and-monte-carlo" class="nav-link" data-scroll-target="#general-measurement-models-and-monte-carlo"><span class="header-section-number">21.21.4</span> General Measurement Models and Monte Carlo</a></li>
+  <li><a href="#stepwise-traceability" id="toc-stepwise-traceability" class="nav-link" data-scroll-target="#stepwise-traceability"><span class="header-section-number">21.21.5</span> Stepwise Traceability</a></li>
+  </ul></li>
+  <li><a href="#sample-size-and-power" id="toc-sample-size-and-power" class="nav-link" data-scroll-target="#sample-size-and-power"><span class="header-section-number">21.22</span> Sample Size and Power</a>
+  <ul>
+  <li><a href="#blandaltman-agreement" id="toc-blandaltman-agreement" class="nav-link" data-scroll-target="#blandaltman-agreement"><span class="header-section-number">21.22.1</span> Bland–Altman Agreement</a></li>
+  <li><a href="#proportion-intervals-and-target-tests" id="toc-proportion-intervals-and-target-tests" class="nav-link" data-scroll-target="#proportion-intervals-and-target-tests"><span class="header-section-number">21.22.2</span> Proportion Intervals and Target Tests</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This chapter explains how to choose statistical units, connect the main <code>ivdtools</code> workflows, and understand what key arguments change mathematically. It is intended as a bridge between function documentation and audit of the implementation.</p>
+<section id="replicates-multiple-samples-and-statistical-units" class="level2" data-number="21.1">
+<h2 data-number="21.1" class="anchored" data-anchor-id="replicates-multiple-samples-and-statistical-units"><span class="header-section-number">21.1</span> Replicates, Multiple Samples, and Statistical Units</h2>
+<section id="first-decide-what-one-row-represents" class="level3" data-number="21.1.1">
+<h3 data-number="21.1.1" class="anchored" data-anchor-id="first-decide-what-one-row-represents"><span class="header-section-number">21.1.1</span> First Decide What One Row Represents</h3>
+<p>Before choosing a function, identify whether one row is a patient/sample result, a replicate measurement, a run, a bottle, a time point, or a paired method result. Replicates are not automatically independent subjects. If a function expects sample-level means, aggregate according to the protocol and preserve replicate count and SD.</p>
+<p>Functions that can receive replicate results directly include <code>precision()</code>, <code>linearity()</code>, <code>interference_*()</code>, <code>dilution_recovery()</code>, <code>spike_recovery()</code>, <code>sensitivity_*()</code>, and <code>c5_c95()</code> when their grouping arguments are supplied. Functions that require paired or sample-level results include <code>mcr()</code>, <code>roc()</code>, <code>raw_to_table()</code>, <code>reference_interval()</code>, and many sample-size calculations. Check the help page and define the analysis unit before reshaping data.</p>
+</section>
+<section id="joint-or-separate-analysis-for-multiple-samples" class="level3" data-number="21.1.2">
+<h3 data-number="21.1.2" class="anchored" data-anchor-id="joint-or-separate-analysis-for-multiple-samples"><span class="header-section-number">21.1.2</span> Joint or Separate Analysis for Multiple Samples</h3>
+<p>Use <code>by</code> when the function is designed to estimate every sample or concentration separately, such as <code>precision(..., by="sample")</code>. Use a common model only when the scientific question and variance structure require pooling. <code>split_by_factors()</code> and <code>split_by_cutpoints()</code> create named data lists for independent, prespecified analyses; they must not be used repeatedly to search for a favorable result.</p>
+</section>
+</section>
+<section id="outliers-and-normality" class="level2" data-number="21.2">
+<h2 data-number="21.2" class="anchored" data-anchor-id="outliers-and-normality"><span class="header-section-number">21.2</span> Outliers and Normality</h2>
+<section id="grubbs-test" class="level3" data-number="21.2.1">
+<h3 data-number="21.2.1" class="anchored" data-anchor-id="grubbs-test"><span class="header-section-number">21.2.1</span> Grubbs Test</h3>
+<p>For a finite sample, the Grubbs statistic is</p>
+<p><span class="math display">\[G=\frac{\max_i|x_i-\bar x|}{s}.\]</span></p>
+<p>The test generally identifies at most one point per call and assumes independent, approximately normal observations. A flagged observation is a candidate for investigation, not an instruction to delete it.</p>
+</section>
+<section id="generalized-esd" class="level3" data-number="21.2.2">
+<h3 data-number="21.2.2" class="anchored" data-anchor-id="generalized-esd"><span class="header-section-number">21.2.2</span> Generalized ESD</h3>
+<p>Generalized ESD removes the most extreme standardized observation sequentially and compares each <span class="math inline">\(R_i\)</span> with a critical value. <code>r</code> is the maximum number of candidate points; it does not mean that <code>r</code> points will be removed.</p>
+</section>
+<section id="dixon-and-iqr" class="level3" data-number="21.2.3">
+<h3 data-number="21.2.3" class="anchored" data-anchor-id="dixon-and-iqr"><span class="header-section-number">21.2.3</span> Dixon and IQR</h3>
+<p>Dixon uses an endpoint spacing divided by the range and is limited to small samples, currently <span class="math inline">\(3\le n\le30\)</span> with <code>alpha</code> 0.01 or 0.05. IQR flags values below <span class="math inline">\(Q_1-kIQR\)</span> or above <span class="math inline">\(Q_3+kIQR\)</span> and is descriptive rather than a probability test.</p>
+</section>
+<section id="automatic-normality-branch" class="level3" data-number="21.2.4">
+<h3 data-number="21.2.4" class="anchored" data-anchor-id="automatic-normality-branch"><span class="header-section-number">21.2.4</span> Automatic Normality Branch</h3>
+<p><code>normal_test(method="auto")</code> uses a deterministic sample-size rule:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Sample size</th>
+<th>Test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(n&lt;3\)</span></td>
+<td>No test</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(3\le n\le50\)</span></td>
+<td>Shapiro–Wilk</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(51\le n\le5000\)</span></td>
+<td>Anderson–Darling</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(n&gt;5000\)</span></td>
+<td>Lilliefors</td>
+</tr>
+</tbody>
+</table>
+<p>P values depend strongly on sample size. Interpret them with Q-Q plots, histograms, experimental records, and the assumptions of the downstream model.</p>
+</section>
+</section>
+<section id="method-comparison-and-reference-material-bias" class="level2" data-number="21.3">
+<h2 data-number="21.3" class="anchored" data-anchor-id="method-comparison-and-reference-material-bias"><span class="header-section-number">21.3</span> Method Comparison and Reference-Material Bias</h2>
+<section id="direction-units-and-preprocessing" class="level3" data-number="21.3.1">
+<h3 data-number="21.3.1" class="anchored" data-anchor-id="direction-units-and-preprocessing"><span class="header-section-number">21.3.1</span> Direction, Units, and Preprocessing</h3>
+<p>In <code>mcr()</code>, the candidate is Y and the reference is X; candidate-minus-reference differences and percent denominators must be recorded. A log transformation, unit conversion, or prespecified cutpoint changes the estimand and should be treated as a separate analysis.</p>
+</section>
+<section id="correlation-options" class="level3" data-number="21.3.2">
+<h3 data-number="21.3.2" class="anchored" data-anchor-id="correlation-options"><span class="header-section-number">21.3.2</span> Correlation Options</h3>
+<p>Pearson measures linear co-variation, Spearman measures monotone rank association, and Kendall measures concordance of ranks. None is an agreement measure. Use regression and Bland–Altman methods for bias and agreement.</p>
+</section>
+<section id="regression-methods" class="level3" data-number="21.3.3">
+<h3 data-number="21.3.3" class="anchored" data-anchor-id="regression-methods"><span class="header-section-number">21.3.3</span> Regression Methods</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>X error</th>
+<th>Y variance</th>
+<th>Point-estimate principle</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ols</code></td>
+<td>Negligible</td>
+<td>Constant or optional weights</td>
+<td>Minimize vertical squared residuals</td>
+<td>Reference X has negligible error</td>
+</tr>
+<tr class="even">
+<td><code>wls</code></td>
+<td>Negligible</td>
+<td>Changes with concentration</td>
+<td>Weighted vertical residuals</td>
+<td>Difference SD/CV changes with concentration</td>
+</tr>
+<tr class="odd">
+<td><code>deming</code></td>
+<td>Included</td>
+<td>Constant error ratio <span class="math inline">\(λ\)</span></td>
+<td>Errors-in-variables regression</td>
+<td>Both procedures have measurement error</td>
+</tr>
+<tr class="even">
+<td><code>wdeming</code></td>
+<td>Included</td>
+<td>Common weights, constant CV, or precision profiles</td>
+<td>Weighted/iterative errors-in-variables fit</td>
+<td>Error changes with concentration</td>
+</tr>
+<tr class="odd">
+<td><code>pb</code></td>
+<td>Included</td>
+<td>No normal-error assumption</td>
+<td>Rank estimate of pairwise slopes</td>
+<td>Linear relation with outliers or mixed variation</td>
+</tr>
+</tbody>
+</table>
+<p>OLS minimizes <span class="math inline">\(\sum_i(y_i-a-bx_i)^2\)</span>. Weighted regression minimizes a weighted version. Deming uses the relative error variance <span class="math inline">\(λ\)</span> and should estimate it from independent precision evidence. Passing–Bablok is robust to some outliers but is not a guarantee against every data problem.</p>
+<p>Common WLS weights include <code>1/y</code>, <code>1/y^2</code>, <code>1/x</code>, <code>1/x^2</code>, <code>constant_cv</code>, <code>residual</code>, and a user-supplied nonnegative finite column. <code>1/x^2</code> represents constant CV on the reference scale; <code>residual</code> updates a concentration-dependent residual SD and is iterative.</p>
+</section>
+<section id="confidence-intervals-and-blandaltman" class="level3" data-number="21.3.4">
+<h3 data-number="21.3.4" class="anchored" data-anchor-id="confidence-intervals-and-blandaltman"><span class="header-section-number">21.3.4</span> Confidence Intervals and Bland–Altman</h3>
+<p><code>ci_method="auto"</code> uses analytic covariance for OLS/WLS, jackknife refitting for Deming variants, and rank intervals for Passing–Bablok. Bootstrap methods require enough replicates and a fixed seed for reproducibility. Bland–Altman center, SD, and LoA describe the distribution of paired differences; <code>agree.level</code> controls the proportion covered by LoA, whereas <code>conf.level</code> controls uncertainty in the estimated LoA.</p>
+</section>
+<section id="reference-material-bias" class="level3" data-number="21.3.5">
+<h3 data-number="21.3.5" class="anchored" data-anchor-id="reference-material-bias"><span class="header-section-number">21.3.5</span> Reference-Material Bias</h3>
+<p>Reference-material bias is not the same as clinical-sample method-comparison bias. <code>reference_bias()</code> combines the measurement-mean uncertainty and assigned-value uncertainty when supplied. State the assigned-value source, its uncertainty, the bias direction, and whether the material is commutable.</p>
+</section>
+</section>
+<section id="reference-material-commutability" class="level2" data-number="21.4">
+<h2 data-number="21.4" class="anchored" data-anchor-id="reference-material-commutability"><span class="header-section-number">21.4</span> Reference-Material Commutability</h2>
+<p>EP14/EP30 methods compare materials with the clinical-sample procedure relationship, usually using Deming prediction intervals. IFCC Part 2 compares reference-material bias with clinical-sample bias and combines uncertainty. IFCC Part 3 evaluates before/after calibration. Different paths can produce different conclusions because they target different estimands.</p>
+</section>
+<section id="qualitative-performance-c5c95-and-roc" class="level2" data-number="21.5">
+<h2 data-number="21.5" class="anchored" data-anchor-id="qualitative-performance-c5c95-and-roc"><span class="header-section-number">21.5</span> Qualitative Performance, C5/C95, and ROC</h2>
+<p>For a four-fold table <span class="math inline">\(a=TP,b=FP,c=FN,d=TN\)</span>,</p>
+<p><span class="math display">\[Se=\frac{a}{a+c},\quad Sp=\frac{d}{b+d},\quad
+PPV=\frac{a}{a+b},\quad NPV=\frac{d}{c+d}.\]</span></p>
+<p>Kappa adjusts observed agreement for marginal agreement; PABAK uses <span class="math inline">\(2P_o-1\)</span> and is not the same estimand. McNemar uses discordant pairs. C5/C95 solve for mean responses whose modeled positive probability is 0.05 or 0.95, using a precision profile. ROC AUC is the probability of correctly ranking a random positive above a random negative under the selected direction; it is not accuracy at a cutoff.</p>
+</section>
+<section id="precision-bottle-variation-and-reference-intervals" class="level2" data-number="21.6">
+<h2 data-number="21.6" class="anchored" data-anchor-id="precision-bottle-variation-and-reference-intervals"><span class="header-section-number">21.6</span> Precision, Bottle Variation, and Reference Intervals</h2>
+<p>For nested precision designs, total variance is the sum of variance components. <code>variance()</code> estimates components, <code>ci()</code> estimates intervals, and <code>profile()</code> models concentration-related SD/CV. Bottle ANOVA tests group means; it does not quantify whether a difference is practically acceptable. <code>uncertainty_homogeneity()</code> produces a standard uncertainty component.</p>
+<p>Reference intervals have two independent settings: central coverage <code>interval</code> and endpoint confidence <code>ci</code>. Nonparametric, biweight, type-6, parametric, and Huber methods make different distributional and robust-estimation assumptions. A normality or outlier test is not an automatic method-selection or deletion rule.</p>
+</section>
+<section id="response-equation-fitting-and-linearity" class="level2" data-number="21.7">
+<h2 data-number="21.7" class="anchored" data-anchor-id="response-equation-fitting-and-linearity"><span class="header-section-number">21.7</span> Response-Equation Fitting and Linearity</h2>
+<p><code>fit_equation()</code> fits registered response equations such as linear, quadratic, exponential, power, 4PLC, 5PLC, Gaussian, Michaelis–Menten, sinusoidal, and cubic forms. Equation fitting describes calibration response and should not be confused with EP06 method linearity. <code>linearity()</code> specifically evaluates level means, residuals, weights, and ADL. A high calibration <span class="math inline">\(R^2\)</span> does not establish method linearity.</p>
+</section>
+<section id="interference-dilution-spike-recovery-and-hook-effect" class="level2" data-number="21.8">
+<h2 data-number="21.8" class="anchored" data-anchor-id="interference-dilution-spike-recovery-and-hook-effect"><span class="header-section-number">21.8</span> Interference, Dilution, Spike Recovery, and Hook Effect</h2>
+<p>Paired interference estimates a test-minus-control effect; dose response estimates how that effect changes with interferent concentration; patient-sample comparison assesses method differences in the presence of a factor. Dilution recovery corrects results by the dilution factor, spike recovery compares an observed increment with a theoretical mass-balance increment, and hook-effect analysis uses raw response at known high concentrations.</p>
+</section>
+<section id="analytical-sensitivity" class="level2" data-number="21.9">
+<h2 data-number="21.9" class="anchored" data-anchor-id="analytical-sensitivity"><span class="header-section-number">21.9</span> Analytical Sensitivity</h2>
+<p>LoB describes the blank upper tail, LoD describes distinguishability from blank, and LoQ adds a precision or total-error criterion. <code>sensitivity_lob()</code>, <code>sensitivity_lod()</code>, <code>sensitivity_loq()</code>, and <code>sensitivity_verify()</code> keep establishment and verification separate. A reported LoQ is constrained not to be below LoD when LoD is supplied.</p>
+</section>
+<section id="quality-control-and-stability" class="level2" data-number="21.10">
+<h2 data-number="21.10" class="anchored" data-anchor-id="quality-control-and-stability"><span class="header-section-number">21.10</span> Quality Control and Stability</h2>
+<p>For QC, <span class="math inline">\(z_i=(x_i-\mu_0)/\sigma_0\)</span>. The current rules use strict <span class="math inline">\(&gt;2\)</span>, <span class="math inline">\(&gt;3\)</span>, and <span class="math inline">\(&gt;1\)</span> thresholds for <code>1-2s</code>, <code>1-3s</code>, and <code>4-1s</code>, while <code>R-4s</code> uses <span class="math inline">\(|z|\ge2\)</span> and a range <span class="math inline">\(|\Delta z|\ge4\)</span>. <code>qc_chart()</code> scans one sequence in row order; it does not implement cross-level multirule decisions. Stability functions estimate node bias, time trends, time to a limit, Arrhenius acceleration, and MKT; they do not turn a model extrapolation into observed evidence.</p>
+</section>
+<section id="measurement-uncertainty-and-traceability" class="level2" data-number="21.11">
+<h2 data-number="21.11" class="anchored" data-anchor-id="measurement-uncertainty-and-traceability"><span class="header-section-number">21.11</span> Measurement Uncertainty and Traceability</h2>
+<p>Type A components come from statistical repeatability or replication; Type B components come from certificates, limits, distributions, or prior information. <code>uncertainty_combine()</code> combines standard uncertainties, <code>uncertainty_propagate()</code> applies a measurement model, and <code>uncertainty_traceability()</code> accumulates components across a traceability chain. Record the input quantity, standard uncertainty, sensitivity coefficient, degrees of freedom, covariance assumptions, and coverage factor.</p>
+</section>
+<section id="parameter-choices-change-the-estimand" class="level2" data-number="21.12">
+<h2 data-number="21.12" class="anchored" data-anchor-id="parameter-choices-change-the-estimand"><span class="header-section-number">21.12</span> Parameter Choices Change the Estimand</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Mathematical object changed</th>
+<th>Not changed</th>
+<th>Selection principle</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>method</code></td>
+<td>Loss function or rank estimator</td>
+<td>X/Y direction</td>
+<td>Match error and difference structure</td>
+</tr>
+<tr class="even">
+<td><code>lambda</code></td>
+<td>Relative Deming penalty</td>
+<td>Raw observations</td>
+<td>Estimate independently, never tune to slope</td>
+</tr>
+<tr class="odd">
+<td><code>weights</code></td>
+<td>Contribution or concentration-dependent variance</td>
+<td>Difference direction</td>
+<td>Support with precision evidence</td>
+</tr>
+<tr class="even">
+<td><code>ci_method</code></td>
+<td>Parameter uncertainty estimator</td>
+<td>Point estimates</td>
+<td>Prespecify the default or sensitivity path</td>
+</tr>
+<tr class="odd">
+<td><code>conf.level</code></td>
+<td>Coverage of parameter/center/LoA interval</td>
+<td><code>agree.level</code></td>
+<td>Usually 0.95</td>
+</tr>
+<tr class="even">
+<td><code>agree.level</code></td>
+<td>Fraction of individual differences within LoA</td>
+<td>CI confidence</td>
+<td>Define agreement clinically</td>
+</tr>
+<tr class="odd">
+<td><code>percent_denominator</code></td>
+<td>Percent-difference denominator</td>
+<td>Absolute difference</td>
+<td>Choose reference or symmetric mean deliberately</td>
+</tr>
+<tr class="even">
+<td><code>bootstrap_replicates</code></td>
+<td>Monte Carlo error</td>
+<td>Target distribution</td>
+<td>Use enough replicates and a fixed seed</td>
+</tr>
+<tr class="odd">
+<td>cutpoints</td>
+<td>Data ranges analyzed</td>
+<td>Downstream estimator</td>
+<td>Define clinical intervals before results</td>
+</tr>
+</tbody>
+</table>
+<p>The safest audit trail records the data snapshot, analysis unit, transformations, function arguments, package version, random seed, complete output, and any deviations from the standard algorithm.</p>
+</section>
+<section id="detailed-algorithm-specification" class="level2" data-number="21.13">
+<h2 data-number="21.13" class="anchored" data-anchor-id="detailed-algorithm-specification"><span class="header-section-number">21.13</span> Detailed Algorithm Specification</h2>
+<section id="ols-and-wls-point-estimates" class="level3" data-number="21.13.1">
+<h3 data-number="21.13.1" class="anchored" data-anchor-id="ols-and-wls-point-estimates"><span class="header-section-number">21.13.1</span> OLS and WLS Point Estimates</h3>
+<p>Ordinary least squares minimizes</p>
+<p><span class="math display">\[
+Q(a,b)=\sum_{i=1}^n(y_i-a-bx_i)^2.
+\]</span></p>
+<p>Weighted least squares minimizes</p>
+<p><span class="math display">\[
+Q_w(a,b)=\sum_{i=1}^n w_i(y_i-a-bx_i)^2.
+\]</span></p>
+<p>Let</p>
+<p><span class="math display">\[
+W=\sum_iw_i,\qquad
+\bar x_w=\frac{\sum_iw_ix_i}{W},\qquad
+\bar y_w=\frac{\sum_iw_iy_i}{W},
+\]</span></p>
+<p><span class="math display">\[
+S_{xx,w}=\sum_iw_i(x_i-\bar x_w)^2,\qquad
+S_{xy,w}=\sum_iw_i(x_i-\bar x_w)(y_i-\bar y_w).
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[
+\hat b=\frac{S_{xy,w}}{S_{xx,w}},\qquad
+\hat a=\bar y_w-\hat b\bar x_w.
+\]</span></p>
+<p>OLS is the special case w_i = 1. The weight choices change the assumed concentration dependence of the error variance:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 30%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>weights</th>
+<th style="text-align: right;">Actual weight</th>
+<th>Implied variance shape</th>
+<th>Main distinction</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>NULL</td>
+<td style="text-align: right;">unweighted</td>
+<td>Var(Y</td>
+<td>X) is constant under OLS</td>
+</tr>
+<tr class="even">
+<td>equal</td>
+<td style="text-align: right;">1</td>
+<td>Same as OLS</td>
+<td>Explicit entry to the WLS interface</td>
+</tr>
+<tr class="odd">
+<td>1/y</td>
+<td style="text-align: right;">1/abs(y_i)</td>
+<td>Var(Y_i) proportional to abs(y_i)</td>
+<td>Depends on candidate observations</td>
+</tr>
+<tr class="even">
+<td>1/y^2</td>
+<td style="text-align: right;">1/y_i^2</td>
+<td>SD(Y_i) proportional to abs(y_i)</td>
+<td>Empirical constant-CV candidate weighting</td>
+</tr>
+<tr class="odd">
+<td>1/x</td>
+<td style="text-align: right;">1/abs(x_i)</td>
+<td>Var(Y_i) proportional to abs(x_i)</td>
+<td>Depends on reference observations</td>
+</tr>
+<tr class="even">
+<td>1/x^2</td>
+<td style="text-align: right;">1/x_i^2</td>
+<td>SD(Y_i) proportional to abs(x_i)</td>
+<td>Empirical constant-CV reference weighting</td>
+</tr>
+<tr class="odd">
+<td>constant_cv</td>
+<td style="text-align: right;">1/x_i^2</td>
+<td>Same as above</td>
+<td>Requires x_i &gt; 0 in WLS</td>
+</tr>
+<tr class="even">
+<td>residual</td>
+<td style="text-align: right;">1 / estimated SD_i^2</td>
+<td>SD described by a linear function of concentration</td>
+<td>WLS only; iteratively updated</td>
+</tr>
+<tr class="odd">
+<td>user column</td>
+<td style="text-align: right;">user-supplied w_i</td>
+<td>Defined by the user</td>
+<td>Must be finite and nonnegative; zero excludes the point from the objective</td>
+</tr>
+</tbody>
+</table>
+<p>Generic built-in weights such as 1/x protect division by zero with a machine-precision floor; this prevents a computational failure but does not make a relative-error model scientifically meaningful at zero concentration. constant_cv therefore rejects nonpositive concentrations directly.</p>
+<p>Residual weighting first fits OLS. With residual e_i^(k) at iteration k, it fits</p>
+<p><span class="math display">\[
+|e_i^{(k)}|=\gamma_0^{(k)}+\gamma_1^{(k)}x_i+\varepsilon_i,
+\qquad
+w_i^{(k+1)}=\frac{1}{\left(\hat\gamma_0^{(k)}+
+\hat\gamma_1^{(k)}x_i\right)^2}.
+\]</span></p>
+<p>It then refits WLS. weight_iterations is the number of updates and defaults to four. Changing it can change the final weights and regression coefficients, but should not be used to match a published interval. A nonpositive or nonfinite predicted SD stops the procedure.</p>
+<p>The analytic OLS/WLS covariance is</p>
+<p><span class="math display">\[
+\hat\sigma_w^2=\frac{\sum_iw_ie_i^2}{n-2},\qquad
+\widehat{\operatorname{Cov}}(\hat a,\hat b)
+=\hat\sigma_w^2(\mathbf X^\mathsf T\mathbf W\mathbf X)^{-1},
+\]</span></p>
+<p>and coefficient intervals are</p>
+<p><span class="math display">\[
+\hat\theta\pm t_{1-\alpha/2,n-2}SE(\hat\theta).
+\]</span></p>
+<p>This is equivalent to the EP09c Appendix H calculation when the same final weights are used. YY/T 1789.2 Equation (8) does not multiply the medical-decision-level bias interval by the weighted residual scale; the two expressions need no residual-scale adjustment only when the weights are known absolute inverse variances.</p>
+</section>
+<section id="deming-regression-and-lambda" class="level3" data-number="21.13.2">
+<h3 data-number="21.13.2" class="anchored" data-anchor-id="deming-regression-and-lambda"><span class="header-section-number">21.13.2</span> Deming Regression and lambda</h3>
+<p>Deming regression defines</p>
+<p><span class="math display">\[
+S_{xx}=\sum_i(x_i-\bar x)^2,\quad
+S_{yy}=\sum_i(y_i-\bar y)^2,\quad
+S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y).
+\]</span></p>
+<p>In the source, lambda is the ratio of Y-error variance to X-error variance. The slope and intercept are</p>
+<p><span class="math display">\[
+U=S_{yy}-\lambda S_{xx},\qquad
+b=\frac{U+\sqrt{U^2+4\lambda S_{xy}^2}}{2S_{xy}},
+\qquad a=\bar y-b\bar x.
+\]</span></p>
+<p>Thus</p>
+<p><span class="math display">\[
+\lambda=\frac{\sigma_Y^2}{\sigma_X^2}.
+\]</span></p>
+<p>lambda = 1 means equal error variances; lambda &gt; 1 means the candidate Y has greater error; lambda &lt; 1 means the reference X has greater error. Reversing the ratio changes the Deming slope, so always enter candidate variance divided by reference variance. The reciprocal required by the lower-level algorithm is handled inside the package and does not change the user interface.</p>
+<p>lambda = “replicates” estimates the variance ratio from summarized replicate SDs. If sample i has n_Xi and n_Yi replicates, first calculate degrees-of-freedom-pooled single-measurement variances:</p>
+<p><span class="math display">\[
+s_{p,X}^2=
+\frac{\sum_i(n_{Xi}-1)s_{Xi}^2}{\sum_i(n_{Xi}-1)},\qquad
+s_{p,Y}^2=
+\frac{\sum_i(n_{Yi}-1)s_{Yi}^2}{\sum_i(n_{Yi}-1)}.
+\]</span></p>
+<p>Because the regression uses sample means, the input variance ratio is</p>
+<p><span class="math display">\[
+\hat\lambda_{\bar X,\bar Y}
+=\frac{s_{p,Y}^2/n_Y}{s_{p,X}^2/n_X}
+=\frac{s_{p,Y}^2}{s_{p,X}^2}\frac{n_X}{n_Y}.
+\]</span></p>
+<p>The two methods may have different replicate counts, but each method’s count must be constant across samples. Otherwise one scalar lambda cannot describe different sample-mean variances and a precision profile should be used. Without replicate counts, the source assumes equal counts and n_X/n_Y cancels. lambda is estimated once; jackknife and bootstrap refits treat it as fixed external input rather than re-estimating it in each subsample.</p>
+</section>
+<section id="three-weighted-deming-variants" class="level3" data-number="21.13.3">
+<h3 data-number="21.13.3" class="anchored" data-anchor-id="three-weighted-deming-variants"><span class="header-section-number">21.13.3</span> Three Weighted-Deming Variants</h3>
+<p>For fixed observation weights, method = “wdeming” first sets w_tilde_i = w_i / sum_j w_j and replaces the ordinary central moments with</p>
+<p><span class="math display">\[
+\bar x_w=\sum_i\tilde w_ix_i,\quad
+\bar y_w=\sum_i\tilde w_iy_i,
+\]</span></p>
+<p><span class="math display">\[
+S_{xx,w}=\sum_i\tilde w_i(x_i-\bar x_w)^2,\quad
+S_{yy,w}=\sum_i\tilde w_i(y_i-\bar y_w)^2,\quad
+S_{xy,w}=\sum_i\tilde w_i(x_i-\bar x_w)(y_i-\bar y_w),
+\]</span></p>
+<p>then applies the closed-form Deming solution. This gives one common weight to each pair and cannot represent separate concentration-dependent variance functions for X and Y.</p>
+<p>constant_cv in WLS is simply 1/x_i^2; in weighted Deming it calls Linnet’s iterative constant-CV algorithm. At iteration k, the weight is formed from the mean of the two latent readings:</p>
+<p><span class="math display">\[
+w_i^{(k)}=\left(\frac{x_i^{*(k)}+y_i^{*(k)}}{2}\right)^{-2}.
+\]</span></p>
+<p>The Deming line is updated with this weight. If d_i = y_i - a - b x_i and lambda = sigma_Y^2 / sigma_X^2, the latent updates are</p>
+<p><span class="math display">\[
+x_i^*=x_i+\frac{b\,d_i}{\lambda+b^2},\qquad
+y_i^*=y_i-\frac{\lambda d_i}{\lambda+b^2}.
+\]</span></p>
+<p>Weights, line, and latent values are updated until relative change is below epsilon. Both concentrations must be strictly positive. After deleting a sample or drawing a bootstrap sample, the complete iteration starts again rather than reusing full-data weights.</p>
+<p>precision_profile permits separate variance functions</p>
+<p><span class="math display">\[
+g(\mu)=\operatorname{Var}(X\mid\mu),\qquad
+h(\eta)=\operatorname{Var}(Y\mid\eta),\quad \eta=a+b\mu.
+\]</span></p>
+<p>For each latent true value mu_i, the algorithm minimizes</p>
+<p><span class="math display">\[
+L(a,b,\boldsymbol\mu)=
+\sum_i\left[
+\frac{(x_i-\mu_i)^2}{g(\mu_i)}+
+\frac{(y_i-a-b\mu_i)^2}{h(a+b\mu_i)}+
+\log\{g(\mu_i)h(a+b\mu_i)\}
+\right].
+\]</span></p>
+<p>Given a and b and current variances, the latent value update is</p>
+<p><span class="math display">\[
+\mu_i=
+\frac{h_i x_i+g_i b(y_i-a)}{h_i+g_i b^2}.
+\]</span></p>
+<p>variance_models can contain variance-returning functions or precision objects that have already been processed by variance() and profile(). profile_components selects the variance component on each side; the default is “total” for both sides, and the predicted SD from the VFP is squared to obtain variance. Choosing “error”, “day”, or another component changes g or h directly; the available names depend on the precision() formula and must match the intended error layer. Values outside the precision-study range generate an extrapolation warning, while nonpositive or nonfinite predicted variances stop the fit. External precision profiles remain fixed during resampling.</p>
+<p>These three variants are not interchangeable: fixed weights change each point’s empirical influence, constant-CV Deming models relative error on both axes, and precision-profile Deming allows different nonconstant variance functions on the two axes.</p>
+</section>
+<section id="regression-parameter-confidence-intervals" class="level3" data-number="21.13.4">
+<h3 data-number="21.13.4" class="anchored" data-anchor-id="regression-parameter-confidence-intervals"><span class="header-section-number">21.13.4</span> Regression-Parameter Confidence Intervals</h3>
+<p>ci_method determines the uncertainty algorithm for the intercept and slope. The auto mapping is:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Regression method</th>
+<th>auto method</th>
+<th>Main basis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OLS, WLS</td>
+<td>analytic</td>
+<td>Analytic covariance from the regression design</td>
+</tr>
+<tr class="even">
+<td>Deming, constant-CV Deming, precision-profile Deming</td>
+<td>jackknife</td>
+<td>EP09c Appendix K1</td>
+</tr>
+<tr class="odd">
+<td>Passing–Bablok</td>
+<td>rank</td>
+<td>EP09c Appendix I</td>
+</tr>
+</tbody>
+</table>
+<p>Jackknife deletes observation i and completely refits, producing theta_(−i) = (a_(−i), b_(−i))^T. Its covariance is</p>
+<p><span class="math display">\[
+\widehat{\operatorname{Cov}}_{\mathrm{jack}}(\hat{\boldsymbol\theta})
+=\frac{n-1}{n}\sum_{i=1}^n
+(\hat{\boldsymbol\theta}_{(-i)}-\bar{\boldsymbol\theta}_{(-\cdot)})
+(\hat{\boldsymbol\theta}_{(-i)}-\bar{\boldsymbol\theta}_{(-\cdot)})^\mathsf T.
+\]</span></p>
+<p>The interval remains centered on the full-data estimate:</p>
+<p><span class="math display">\[
+\hat\theta\pm t_{1-\alpha/2,n-2}SE_{\mathrm{jack}}(\hat\theta).
+\]</span></p>
+<p>Bootstrap always samples complete (x_i, y_i) pairs with replacement. Because mcr() accepts one row per ID, there is no splitting of replicate rows from the same sample. Every bootstrap sample completely refits the regression. For bootstrap parameter estimates theta_star^(r),</p>
+<p><span class="math display">\[
+CI_{\mathrm{percentile}}
+=\left[q_{\alpha/2}(\hat\theta^*),
+q_{1-\alpha/2}(\hat\theta^*)\right],
+\]</span></p>
+<p><span class="math display">\[
+SE_{\mathrm{boot}}(\hat\theta)=SD(\hat\theta^*),\qquad
+CI_{\mathrm{standard}}
+=\hat\theta\pm t_{1-\alpha/2,n-2}SE_{\mathrm{boot}}(\hat\theta).
+\]</span></p>
+<p>Both methods also use the joint bootstrap intercept–slope draws to calculate bias at any medical decision level. The source requires at least 5,000 replicates; seed controls reproducibility and is not a tuning parameter. Failed fits are removed and counted; the process stops if fewer than half or fewer than 100 fits are valid.</p>
+<p>analytic is allowed only for OLS/WLS, and rank only for Passing–Bablok. Although other methods can explicitly request jackknife or bootstrap, that changes the interval question and should not be selected merely because it is closer to a published value.</p>
+</section>
+<section id="passingbablok" class="level3" data-number="21.13.5">
+<h3 data-number="21.13.5" class="anchored" data-anchor-id="passingbablok"><span class="header-section-number">21.13.5</span> Passing–Bablok</h3>
+<p>The source forms all pairwise slopes with x_j not equal to x_i:</p>
+<p><span class="math display">\[
+b_{ij}=\frac{y_j-y_i}{x_j-x_i}.
+\]</span></p>
+<p>Exactly identical pairs contribute no slope; vertical pairs are retained as signed infinities. Algorithm I first counts slopes below −1 as K, removes slopes exactly equal to −1, and cyclically shifts the ranks of the point estimate and interval by K. The shifted median is b_hat, and</p>
+<p><span class="math display">\[
+\hat a=\operatorname{median}_i(y_i-\hat b x_i).
+\]</span></p>
+<p>If m valid slopes remain, define</p>
+<p><span class="math display">\[
+C_\gamma=z_{1-\alpha/2}
+\sqrt{\frac{n(n-1)(2n+5)}{18}},\qquad
+M_1=\max\left\{1,\operatorname{round}\left(\frac{m-C_\gamma}{2}\right)\right\},
+\]</span></p>
+<p>and M_2 = m - M_1 + 1. The slope limits are the shifted M_1-th and M_2-th ordered slopes; intercept limits are</p>
+<p><span class="math display">\[
+a_L=\operatorname{median}_i(y_i-b_Ux_i),\qquad
+a_U=\operatorname{median}_i(y_i-b_Lx_i).
+\]</span></p>
+<p>This is ci_method = “rank” for regression parameters. A rank interval does not directly provide a joint interval for bias at a medical decision level. Therefore bias() and predict() use paired percentile bootstrap for Passing–Bablok under ci_method = “auto”, rather than the jackknife excluded by EP09c Appendix K1. The object may retain a jackknife parameter covariance for explicitly requested extended prediction calculations, but it is not the default Passing–Bablok bias interval.</p>
+</section>
+<section id="differences-percentage-differences-and-outlier-analysis" class="level3" data-number="21.13.6">
+<h3 data-number="21.13.6" class="anchored" data-anchor-id="differences-percentage-differences-and-outlier-analysis"><span class="header-section-number">21.13.6</span> Differences, Percentage Differences, and Outlier Analysis</h3>
+<p>Absolute differences always use candidate minus reference:</p>
+<p><span class="math display">\[
+d_i=y_i-x_i.
+\]</span></p>
+<p>The three percent_denominator choices target different estimands:</p>
+<p><span class="math display">\[
+p_{i,\mathrm{reference}}=100\frac{y_i-x_i}{x_i},\qquad
+p_{i,\mathrm{mean}}=100\frac{y_i-x_i}{(x_i+y_i)/2},\qquad
+p_{i,\mathrm{candidate}}=100\frac{y_i-x_i}{y_i}.
+\]</span></p>
+<p>reference answers how far the candidate is above or below the reference and is the default. mean changes only sign when the two methods are exchanged and is useful without a natural reference. candidate uses the candidate as the denominator. The denominator changes the value, distribution, and outlier status, not just the plot label. outlier(type = “percent”) and bland_altman(type = “percent”) use the same options so the detected quantity and difference plot remain aligned.</p>
+<p>outlier(type = “difference”) tests d_i; type = “percent” tests the selected p_i. method calls the Grubbs, generalized ESD, Dixon, or IQR rule described earlier. The first three use alpha; IQR uses coef for the fence width. Outlier tests flag observations and do not automatically remove them from later regression or Bland–Altman analyses.</p>
+</section>
+<section id="blandaltman-axis-center-and-limits-of-agreement" class="level3" data-number="21.13.7">
+<h3 data-number="21.13.7" class="anchored" data-anchor-id="blandaltman-axis-center-and-limits-of-agreement"><span class="header-section-number">21.13.7</span> Bland–Altman Axis, Center, and Limits of Agreement</h3>
+<p>x_axis changes only the horizontal coordinate:</p>
+<p><span class="math display">\[
+m_i=\frac{x_i+y_i}{2},\qquad x_i,\qquad y_i
+\]</span></p>
+<p>for mean, reference, and candidate, respectively; it does not change the vertical difference. type selects</p>
+<p><span class="math display">\[
+\text{difference}:y_i-x_i,\qquad
+\text{ratio}:\frac{y_i}{x_i},\qquad
+\text{percent}:p_i.
+\]</span></p>
+<p>The parametric method centers on the mean:</p>
+<p><span class="math display">\[
+\hat\delta=\bar d,\qquad
+CI_\delta=\bar d\pm t_{1-\alpha/2,n-1}\frac{s_d}{\sqrt n}.
+\]</span></p>
+<p>For agreement level p, let z_p = z_(1+p)/2. The limits of agreement are</p>
+<p><span class="math display">\[
+L_-=\bar d-z_ps_d,\qquad L_+=\bar d+z_ps_d.
+\]</span></p>
+<p>The standard error and interval for each limit are</p>
+<p><span class="math display">\[
+SE_L=s_d\sqrt{\frac1n+\frac{z_p^2}{2(n-1)}},\qquad
+CI(L_\pm)=L_\pm\pm t_{1-\alpha/2,n-1}SE_L.
+\]</span></p>
+<p>agree.level controls the proportion of individual differences intended to lie within the LoA; conf.level controls statistical confidence in the center and LoA estimates. They have different meanings: changing agree.level from 0.95 to 0.99 widens the LoA, while changing conf.level from 0.95 to 0.99 primarily widens the confidence bands around the LoA.</p>
+<p>The nonparametric method uses the ordinary sample median d_(ceil(n/2)), averaging the two middle values for even n.&nbsp;median_ci_method = “order_statistic” finds the largest k whose binomial coverage</p>
+<p><span class="math display">\[
+C(k)=1-2P\{\operatorname{Bin}(n,0.5)\le k-1\}
+\]</span></p>
+<p>is at least conf.level, and reports</p>
+<p><span class="math display">\[
+[d_{(k)},d_{(n-k+1)}].
+\]</span></p>
+<p>This reaches at least the requested coverage and is usually conservative. interpolated uses the EP09c Appendix F continuous-rank normal approximation</p>
+<p><span class="math display">\[
+r_L=\frac{n+1-z_{1-\alpha/2}\sqrt n}{2},\qquad
+r_U=\frac{n+1+z_{1-\alpha/2}\sqrt n}{2}.
+\]</span></p>
+<p>If r = j + q with j = floor(r) and 0 &lt;= q &lt; 1, linear interpolation gives</p>
+<p><span class="math display">\[
+d_{(r)}=d_{(j)}+q\{d_{(j+1)}-d_{(j)}\}.
+\]</span></p>
+<p>The interpolated interval has nominal coverage and its endpoint need not equal an observed value; the order-statistic interval is discrete and conservative.</p>
+<p>method = “hodges_lehmann” uses the median of all Walsh averages rather than the ordinary median:</p>
+<p><span class="math display">\[
+\hat\delta_{HL}=\operatorname{median}_{i\le j}\left(\frac{d_i+d_j}{2}\right).
+\]</span></p>
+<p>Its center interval uses a Wilcoxon/Tukey normal approximation without continuity correction. The HL estimator is a pseudomedian of the difference distribution; it has an interpretation similar to the ordinary median only under conditions such as symmetry, and hl_estimate should not be labeled median_diff.</p>
+<p>Nonparametric and HL LoA use empirical quantiles</p>
+<p><span class="math display">\[
+L_-=Q_{(1-p)/2}(d),\qquad L_+=Q_{1-(1-p)/2}(d),
+\]</span></p>
+<p>with R type-7 linear quantiles. LoA confidence intervals are obtained by resampling d_i with replacement, recalculating both empirical quantiles, and taking bootstrap percentiles. bootstrap_replicates defaults to 5,000 with a minimum of 100; seed is only for reproducibility. These empirical LoA and bootstrap intervals are ivdtools extensions and should not be confused with the center-estimation intervals in EP09c Appendix F.</p>
+</section>
+<section id="bias-at-medical-decision-levels-and-prediction-intervals" class="level3" data-number="21.13.8">
+<h3 data-number="21.13.8" class="anchored" data-anchor-id="bias-at-medical-decision-levels-and-prediction-intervals"><span class="header-section-number">21.13.8</span> Bias at Medical Decision Levels and Prediction Intervals</h3>
+<p>For x_0, the fitted response is y_hat_0 = a_hat + b_hat x_0, with fitted-mean variance</p>
+<p><span class="math display">\[
+V_{\mathrm{fit}}(x_0)=
+SE_a^2+x_0^2SE_b^2+2x_0\operatorname{Cov}(a,b).
+\]</span></p>
+<p>The mean interval uses sqrt(V_fit), while a single-result prediction interval uses sqrt(V_fit + s_e^2). Candidate-minus-reference bias is</p>
+<p><span class="math display">\[
+\widehat{\operatorname{bias}}(x_0)
+=(\hat a+\hat b x_0)-x_0
+=\hat a+(\hat b-1)x_0.
+\]</span></p>
+<p>Subtracting fixed x_0 adds no variance, so under analytic or jackknife parameter covariance</p>
+<p><span class="math display">\[
+SE\{\widehat{\operatorname{bias}}(x_0)\}
+=\sqrt{SE_a^2+x_0^2SE_b^2+2x_0\operatorname{Cov}(a,b)}.
+\]</span></p>
+<p>Percentile bootstrap calculates B_star^(r)(x_0) = a_star^(r) + [b_star^(r) - 1] x_0 for each parameter draw and takes its quantiles. Standard bootstrap uses the SD of these bias draws and t_(n-2). With ci_method = “auto”, bias() and predict() use percentile bootstrap for Passing–Bablok and reuse the regression object’s selected analytic, jackknife, or bootstrap uncertainty for other methods. Existing compatible bootstrap samples are reused.</p>
+<p>interval = “confidence” describes uncertainty in the mean regression relation or mean bias at x_0; interval = “prediction” adds s_e^2 and describes the scatter of one future candidate result; “both” returns both. Prediction intervals are an ivdtools extension and are not EP09c regression-parameter or bias-confidence intervals.</p>
+</section>
+<section id="reference-material-bias-1" class="level3" data-number="21.13.9">
+<h3 data-number="21.13.9" class="anchored" data-anchor-id="reference-material-bias-1"><span class="header-section-number">21.13.9</span> Reference-Material Bias</h3>
+<p>At each level, bias is the measurement mean minus the assigned reference value:</p>
+<p><span class="math display">\[
+b=\bar x-x_{\mathrm{ref}},\qquad
+u_{\bar x}=\frac{s}{\sqrt n},\qquad
+U_{\bar x}=k u_{\bar x}.
+\]</span></p>
+<p>The source combines the supplied reference-value uncertainty directly with U_xbar:</p>
+<p><span class="math display">\[
+h=\sqrt{U_{\bar x}^2+U_{\mathrm{ref}}^2},\qquad
+[b-h,b+h].
+\]</span></p>
+<p>It does not divide reference uncertainty by an additional coverage factor. Relative bias is 100 b / x_ref; a zero reference value returns missing.</p>
+</section>
+</section>
+<section id="reference-material-commutability-1" class="level2" data-number="21.14">
+<h2 data-number="21.14" class="anchored" data-anchor-id="reference-material-commutability-1"><span class="header-section-number">21.14</span> Reference-Material Commutability</h2>
+<section id="ep14-style-prediction-interval" class="level3" data-number="21.14.1">
+<h3 data-number="21.14.1" class="anchored" data-anchor-id="ep14-style-prediction-interval"><span class="header-section-number">21.14.1</span> EP14-Style Prediction Interval</h3>
+<p>For each clinical sample, first calculate replicate means and SDs in both procedures. The pooled repeatability variance for a procedure is</p>
+<p><span class="math display">\[
+s_p^2=
+\frac{\sum_j(n_j-1)s_j^2}{\sum_j(n_j-1)}.
+\]</span></p>
+<p>The source sets lambda = s_p,Y^2 / s_p,X^2 and fits a Deming line to clinical-sample means, using population central moments divided by n.&nbsp;The slope variance is</p>
+<p><span class="math display">\[
+\operatorname{Var}(\hat b)=
+\frac{\hat b^2\max(0,S_{xx}S_{yy}-S_{xy}^2)}{nS_{xy}^2}.
+\]</span></p>
+<p>At reference material x_R, the prediction variance is</p>
+<p><span class="math display">\[
+V_R=(x_R-\bar x)^2\operatorname{Var}(\hat b)
++\left(1+\frac1n\right)
+\left(\frac{\hat b^2s_{p,X}^2}{n_{R,X}}
++\frac{s_{p,Y}^2}{n_{R,Y}}\right).
+\]</span></p>
+<p>Degrees of freedom are the smaller integer among the two procedures’ pooled repeatability degrees of freedom. The material is labeled commutable when its Y mean lies within a_hat + b_hat x_R +/- t sqrt(V_R).</p>
+</section>
+<section id="ifcc-style-difference-evaluation" class="level3" data-number="21.14.2">
+<h3 data-number="21.14.2" class="anchored" data-anchor-id="ifcc-style-difference-evaluation"><span class="header-section-number">21.14.2</span> IFCC-Style Difference Evaluation</h3>
+<p>Clinical-sample bias is b_i = y_i - x_i. When a reference measurement procedure is specified, the sorting coordinate is x_i; otherwise it is (x_i + y_i) / 2. After sorting, calculate</p>
+<p><span class="math display">\[
+s_{\mathrm{MSSD}}
+=\sqrt{\frac{\sum_{i=1}^{n-1}(b_{i+1}-b_i)^2}{2(n-1)}}.
+\]</span></p>
+<p>The difference between reference-material bias and the selected clinical-sample mean bias is</p>
+<p><span class="math display">\[
+d=(y_R-x_R)-\bar b_C.
+\]</span></p>
+<p>The clinical subset may be all samples, the q closest samples, or half on either side of the target. Its standard uncertainty is</p>
+<p><span class="math display">\[
+u_d=\sqrt{\frac{s_{X,R}^2}{p_X}+\frac{s_{Y,R}^2}{p_Y}
++\frac{s_C^2}{q}}.
+\]</span></p>
+<p>The expanded interval is d +/- k u_d, with k = 1.9 by default. If the complete interval is within [-Delta, Delta], the material is commutable; if it is entirely on one side outside the allowable band, it is noncommutable; otherwise the result is indeterminate.</p>
+</section>
+</section>
+<section id="qualitative-performance-c5c95-and-roc-1" class="level2" data-number="21.15">
+<h2 data-number="21.15" class="anchored" data-anchor-id="qualitative-performance-c5c95-and-roc-1"><span class="header-section-number">21.15</span> Qualitative Performance, C5/C95, and ROC</h2>
+<section id="four-fold-proportions-and-intervals" class="level3" data-number="21.15.1">
+<h3 data-number="21.15.1" class="anchored" data-anchor-id="four-fold-proportions-and-intervals"><span class="header-section-number">21.15.1</span> Four-Fold Proportions and Intervals</h3>
+<p>The source treats the first row and first column as positive in the four-fold table and calculates</p>
+<p><span class="math display">\[
+Se=\frac{TP}{TP+FN},\quad
+Sp=\frac{TN}{TN+FP},\quad
+PPV=\frac{TP}{TP+FP},\quad
+NPV=\frac{TN}{TN+FN},
+\]</span></p>
+<p><span class="math display">\[
+Acc=\frac{TP+TN}{n},\qquad Prev=\frac{TP+FN}{n}.
+\]</span></p>
+<p>For x successes, the Wald interval is</p>
+<p><span class="math display">\[
+\hat p\pm z_{1-\alpha/2}\sqrt{\frac{\hat p(1-\hat p)}n};
+\]</span></p>
+<p>the continuity-corrected version adds 1/(2n) to the half-width. The Wilson center and half-width are</p>
+<p><span class="math display">\[
+c=\frac{\hat p+z^2/(2n)}{1+z^2/n},\qquad
+h=\frac{z}{1+z^2/n}
+\sqrt{\frac{\hat p(1-\hat p)}n+\frac{z^2}{4n^2}}.
+\]</span></p>
+<p>Wilson continuity correction subtracts and adds 1/(2n) outside c +/- h. Agresti–Coull uses</p>
+<p><span class="math display">\[
+\tilde n=n+z^2,\qquad
+\tilde p=\frac{x+z^2/2}{\tilde n},\qquad
+\tilde p\pm z\sqrt{\frac{\tilde p(1-\tilde p)}{\tilde n}}.
+\]</span></p>
+<p>Jeffreys uses Beta(x + 1/2, n - x + 1/2) quantiles. Clopper–Pearson uses Beta(x, n - x + 1) and Beta(x + 1, n - x) quantiles, with separate handling at x = 0 and x = n.&nbsp;All proportion intervals are finally clipped to [0, 1].</p>
+<p>Given prevalence pi, predictive values are recalculated as</p>
+<p><span class="math display">\[
+PPV_\pi=\frac{Se\,\pi}{Se\,\pi+(1-Sp)(1-\pi)},\qquad
+NPV_\pi=\frac{Sp(1-\pi)}{(1-Se)\pi+Sp(1-\pi)}.
+\]</span></p>
+<p>Intervals simply substitute sensitivity and specificity endpoints and do not propagate their covariance.</p>
+</section>
+<section id="likelihood-ratios-agreement-and-mcnemar" class="level3" data-number="21.15.2">
+<h3 data-number="21.15.2" class="anchored" data-anchor-id="likelihood-ratios-agreement-and-mcnemar"><span class="header-section-number">21.15.2</span> Likelihood Ratios, Agreement, and McNemar</h3>
+<p><span class="math display">\[LR^+=\frac{Se}{1-Sp},\qquad LR^-=\frac{1-Se}{Sp}.\]</span></p>
+<p>Intervals are calculated on the log scale, for example</p>
+<p><span class="math display">\[
+SE\{\log(LR^+)\}=
+\sqrt{\frac1{TP}-\frac1{TP+FN}+\frac1{FP}-\frac1{FP+TN}}.
+\]</span></p>
+<p>The odds ratio is OR = TP * TN / (FP * FN), with log-scale SE equal to the square root of the sum of the four cell reciprocals. A zero cell returns a missing interval; no continuity correction is added automatically.</p>
+<p>Observed and chance agreement are</p>
+<p><span class="math display">\[
+p_o=\frac{TP+TN}{n},\qquad
+p_e=\frac{(TP+FP)(TP+FN)+(FN+TN)(FP+TN)}{n^2},
+\]</span></p>
+<p><span class="math display">\[\kappa=\frac{p_o-p_e}{1-p_e}.\]</span></p>
+<p>Kappa intervals use an explicit asymptotic variance of the four-cell joint proportions and are clipped to [-1, 1]. The PABAK branch uses</p>
+<p><span class="math display">\[PABAK=2p_o-1,\qquad
+\operatorname{Var}(PABAK)=\frac{4p_o(1-p_o)}n.\]</span></p>
+<p>This branch is triggered by supplying prevalence, but the prevalence value does not enter the formula.</p>
+<p>When b + c &lt; 25, McNemar uses a two-sided exact test with B ~ Binomial(b + c, 0.5); otherwise it calculates</p>
+<p><span class="math display">\[\chi^2=\frac{(|b-c|-1)^2}{b+c}\]</span></p>
+<p>with one degree of freedom. When b + c = 0, p = 1.</p>
+</section>
+<section id="c5c95" class="level3" data-number="21.15.3">
+<h3 data-number="21.15.3" class="anchored" data-anchor-id="c5c95"><span class="header-section-number">21.15.3</span> C5/C95</h3>
+<p>Raw replicates are first summarized by sample-level mean mu_j, SD s_j, and n_j. At least three levels with n_j &gt;= 2 and s_j &gt; 0 are required. A concentration-dependent SD s(mu) is then fitted.</p>
+<p>If a positive event is defined as result &gt;= cutoff c,</p>
+<p><span class="math display">\[P(Y\ge c\mid\mu)=1-\Phi\!\left(\frac{c-\mu}{s(\mu)}\right);\]</span></p>
+<p>the reverse event uses the corresponding Phi expression. The source searches for sign changes between the target probability and the model on a 1,001-point grid, then refines the root by one-dimensional solving; if no root is found, it expands the search range up to 16 times. If multiple roots are found, it selects the root closest to the cutoff. This is inversion of a normal response distribution with a precision profile, not binomial probit regression.</p>
+</section>
+<section id="empirical-roc-auc-and-multivariable-models" class="level3" data-number="21.15.4">
+<h3 data-number="21.15.4" class="anchored" data-anchor-id="empirical-roc-auc-and-multivariable-models"><span class="header-section-number">21.15.4</span> Empirical ROC, AUC, and Multivariable Models</h3>
+<p>Candidate thresholds are -infinity, all unique observations, and +infinity. After sorting ROC points by increasing false-positive rate, AUC is trapezoidal area:</p>
+<p><span class="math display">\[
+A=\sum_i\frac{TPR_i+TPR_{i+1}}2(FPR_{i+1}-FPR_i).
+\]</span></p>
+<p>For 0 &lt; A &lt; 1, the source uses the Hanley–McNeil approximation</p>
+<p><span class="math display">\[Q_1=\frac{A}{2-A},\qquad Q_2=\frac{2A^2}{1+A},\]</span></p>
+<p><span class="math display">\[
+SE(A)=\sqrt{
+\frac{A(1-A)+(n_+-1)(Q_1-A^2)+(n_--1)(Q_2-A^2)}{n_+n_-}}.
+\]</span></p>
+<p>The AUC interval is A +/- 1.96 SE(A), clipped to [0, 1]; no SE is computed when A = 0 or 1. The Youden threshold maximizes Se + Sp - 1; the upper-left-corner rule minimizes sqrt((1 - Se)^2 + (1 - Sp)^2). With ties, the first point in the current order is returned.</p>
+<p>Two AUCs from the same subjects cannot be compared as independent samples. auc_compare(method = “ep24”) uses the EP24-A2 Hanley–McNeil paired approximation: calculate Pearson correlations between the two scores within positive and negative subjects (Kendall can be selected for ordinal scores), average them, linearly interpolate the area correlation r from EP24 Table 5 using the mean AUC, and calculate</p>
+<p><span class="math display">\[
+SE(A_1-A_2)=\sqrt{SE_1^2+SE_2^2-2rSE_1SE_2}.
+\]</span></p>
+<p>auc_compare(method = “delong”) builds a covariance matrix Sigma from rank contributions of both scores for each positive and negative subject and sets c = (1, -1)^T:</p>
+<p><span class="math display">\[
+SE(A_1-A_2)=\sqrt{\mathbf c^\mathsf T\widehat\Sigma\mathbf c}.
+\]</span></p>
+<p>Both methods use a normal-approximation test of H0: A1 - A2 = 0. When scores are fitted probabilities from a training-set logistic model, they are treated as fixed scores; model-fit uncertainty and apparent-performance optimism are not corrected.</p>
+<p>A multivariable model fits</p>
+<p><span class="math display">\[
+\operatorname{logit}(p_i)=\beta_0+\sum_{j=1}^q\beta_jx_{ij}
+\]</span></p>
+<p>by binomial logistic regression and uses training predictions to construct the same empirical ROC. The linear-predictor interval is eta_hat +/- 1.96 SE(eta_hat), followed by the logistic inverse. Probability SE is SE(p_hat) = SE(eta_hat) p_hat (1 - p_hat), and the classification threshold is fixed at 0.5.</p>
+</section>
+</section>
+<section id="precision-bottle-variation-and-reference-intervals-1" class="level2" data-number="21.16">
+<h2 data-number="21.16" class="anchored" data-anchor-id="precision-bottle-variation-and-reference-intervals-1"><span class="header-section-number">21.16</span> Precision, Bottle Variation, and Reference Intervals</h2>
+<section id="variance-components-and-precision-profiles" class="level3" data-number="21.16.1">
+<h3 data-number="21.16.1" class="anchored" data-anchor-id="variance-components-and-precision-profiles"><span class="header-section-number">21.16.1</span> Variance Components and Precision Profiles</h3>
+<p>The source first checks balance: balanced designs use ANOVA variance components and unbalanced designs use REML. Each random level returns SD_j = sqrt(VC_j) and CV_j = 100 SD_j / y_bar; total SD is</p>
+<p><span class="math display">\[SD_T=\sqrt{\sum_j\widehat{VC}_j}.\]</span></p>
+<p>Component intervals use the two-sided SD/CV intervals from the VCA inference object; the source does not implement a separate Satterthwaite–chi-square formula.</p>
+<p>Concentration-related variance profiles use VFP. The ten registered models are:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Model</th>
+<th>Variance or CV form</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td>sigma^2 = beta_1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td>sigma^2 = beta_1 mu^2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td>sigma^2 = beta_1 + beta_2 mu^2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td>sigma^2 = (beta_1 + beta_2 mu)^2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td>sigma^2 = beta_1 + beta_2 mu^K</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td>sigma^2 = beta_1 + beta_2 mu + beta_3 mu^J</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td>sigma^2 = beta_1 + beta_2 mu^J</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td>sigma^2 = (beta_1 + beta_2 mu)^J</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td>sigma^2 = beta_1 mu^J</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td>CV = beta_1 mu^J</td>
+</tr>
+</tbody>
+</table>
+<p>When more than one candidate fits, the model with minimum AIC is selected. For CV input, SD is first reconstructed from the mean and then squared as VC for fitting.</p>
+</section>
+<section id="bottle-variation" class="level3" data-number="21.16.2">
+<h3 data-number="21.16.2" class="anchored" data-anchor-id="bottle-variation"><span class="header-section-number">21.16.2</span> Bottle Variation</h3>
+<p>Bottle, lot, or other grouping variables enter a fixed-effect analysis of variance. Within-group descriptive intervals are</p>
+<p><span class="math display">\[
+\bar x_j\pm t_{1-\alpha/2,n_j-1}\frac{s_j}{\sqrt{n_j}}.
+\]</span></p>
+<p>Residuals receive a Shapiro–Wilk test, between-group variances receive Bartlett’s test, and pairwise comparisons use Tukey HSD. Bottle mean squares are not automatically converted into a homogeneity uncertainty; that calculation exists in the random-effects ANOVA branch of the uncertainty module.</p>
+</section>
+<section id="reference-intervals" class="level3" data-number="21.16.3">
+<h3 data-number="21.16.3" class="anchored" data-anchor-id="reference-intervals"><span class="header-section-number">21.16.3</span> Reference Intervals</h3>
+<p>For the default nonparametric method, alpha = (1 - p) / 2 and EP28 continuous ranks are</p>
+<p><span class="math display">\[
+h_q=q(n+1),
+\]</span></p>
+<p>with linear interpolation between the order statistics at floor(h_q) and ceil(h_q). Reference-limit confidence intervals use binomial rank inversion. With delta = (1 - gamma)/2 and B ~ Bin(n, q), endpoint ranks are</p>
+<p><span class="math display">\[
+a=Q_B(\delta),\qquad b=Q_B(1-\delta)+1,
+\]</span></p>
+<p>then clipped to [1, n]. Actual coverage is P(a &lt;= B &lt;= b - 1). If the unclipped rank lies outside the sample, the function marks that the requested coverage cannot be fully attained. type = “type6” retains the R type-6 point estimate but its CI still uses the existing binomial-rank normal approximation; it should not be called the exact-rank CI of the default nonparametric method.</p>
+<p>The parametric method first tests the raw values. If p &lt; 0.05 and all values are positive, it tests log values and uses the log scale only when the log-test p is at least 0.05. On the selected scale, limits are</p>
+<p><span class="math display">\[\bar x\pm z_{1-\alpha}s.\]</span></p>
+<p>Endpoint SE is</p>
+<p><span class="math display">\[SE_L=s\sqrt{\frac1n+\frac{z_{1-\alpha}^2}{2n}},
+\]</span></p>
+<p>with t_(1 - gamma/2, max(n - 2, 1)) used for the endpoint interval; log-scale limits are exponentiated at the end.</p>
+<p>biweight implements EP28 Appendix B. Initialize T_bi with the median and s = MAD / 0.6745. At each iteration use</p>
+<p><span class="math display">\[
+u_i=\frac{x_i-T_{bi}}{3.7s},\qquad
+w_i=(1-u_i^2)^2 I(|u_i|&lt;1),\qquad
+T_{bi}\leftarrow\frac{\sum_iw_ix_i}{\sum_iw_i}.
+\]</span></p>
+<p>Stop when relative change is below 0.001%. For tuning constant c,</p>
+<p><span class="math display">\[
+A=\sum_{|u_i|&lt;1}(1-u_i^2)(1-5u_i^2),\qquad
+B=\sum_{|u_i|&lt;1}u_i^2(1-u_i^2)^4,
+\]</span></p>
+<p><span class="math display">\[
+s_{bi}[c]=cs\sqrt{\frac{nB}{A\max(1,-1+A)}}.
+\]</span></p>
+<p>Calculate s_bi[205.6] and s_bi[3.7] separately. S_T[3.7] uses u_i = (x_i - T_bi)/(3.7 s_bi[3.7]) and removes n from the numerator under the square root. The final limits are</p>
+<p><span class="math display">\[
+T_{bi}\pm t_{n-1,1-\alpha}
+\sqrt{s_{bi}^2[205.6]+S_T^2[3.7]}.
+\]</span></p>
+<p>Endpoint intervals use percentile bootstrap from the same biweight estimator.</p>
+<p>huber retains the package extension. Initialize location T with the median and scale S with MAD / 0.6745, then iterate</p>
+<p><span class="math display">\[
+u_i=\frac{x_i-T}{S},\qquad
+w_i=\begin{cases}
+1,&amp;|u_i|\le1.5,\\
+1.5/|u_i|,&amp;|u_i|&gt;1.5,
+\end{cases}
+\]</span></p>
+<p><span class="math display">\[
+T\leftarrow\frac{\sum_iw_ix_i}{\sum_iw_i},\qquad
+S\leftarrow\sqrt{\frac{\sum_iw_i(x_i-T)^2}{n-1}}.
+\]</span></p>
+<p>The tolerance is 1e-8 with at most 100 iterations; limits are T +/- z_(1 - alpha) S. biweight and Huber endpoint intervals use 1,999 bootstrap draws by default; seed fixes the calculation without changing the caller’s existing random-number state.</p>
+</section>
+</section>
+<section id="response-equation-fitting-and-linearity-1" class="level2" data-number="21.17">
+<h2 data-number="21.17" class="anchored" data-anchor-id="response-equation-fitting-and-linearity-1"><span class="header-section-number">21.17</span> Response-Equation Fitting and Linearity</h2>
+<section id="twelve-registered-response-equations" class="level3" data-number="21.17.1">
+<h3 data-number="21.17.1" class="anchored" data-anchor-id="twelve-registered-response-equations"><span class="header-section-number">21.17.1</span> Twelve Registered Response Equations</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">ID</th>
+<th>Equation in the source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">E01</td>
+<td>a + b x</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E02</td>
+<td>a + b x + c x^2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E03</td>
+<td>a exp(b x)</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E04</td>
+<td>a exp(-b x)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E05</td>
+<td>a x^b</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E06</td>
+<td>a + b log x</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E07</td>
+<td>A + (B - A) / [1 + (x/C)^D]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E08</td>
+<td>A + (B - A) / [1 + (x/C)^D]^E</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E09</td>
+<td>a exp[-(x - b)^2 / (2 c^2)]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E10</td>
+<td>V_max x / (K_m + x)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E11</td>
+<td>a sin(bx + c) + d</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E12</td>
+<td>a + b x + c x^2 + d x^3</td>
+</tr>
+</tbody>
+</table>
+<p>E01, E02, E06, and E12 use a linear-model matrix; the remaining equations use Levenberg–Marquardt nonlinear least squares. The objective is</p>
+<p><span class="math display">\[RSS_w=\sum_iw_i[y_i-f(x_i,\theta)]^2.\]</span></p>
+<p>When only parameter bounds are supplied, the source first attempts bounded nonlinear least squares. General inequalities use COBYLA and equalities use an augmented Lagrangian. A failed constrained optimization receives the penalty objective</p>
+<p><span class="math display">\[RSS_w+10^8\sum_r\{\text{constraint violation}_r\}^2.\]</span></p>
+<p>For constrained fits, covariance uses the central-difference residual Jacobian J:</p>
+<p><span class="math display">\[
+\widehat V(\hat\theta)
+\approx(J^\mathsf TJ)^{-1}\frac{RSS}{n-p}.
+\]</span></p>
+<p>This Jacobian covariance does not multiply J by the fitting weights. Constrained-model AIC is n log(RSS/n) + 2p, and R^2 = 1 - RSS/TSS.</p>
+<p>Nonlinear prediction uses a central-difference gradient g(x):</p>
+<p><span class="math display">\[V\{\hat f(x)\}=g(x)^\mathsf T\widehat V(\hat\theta)g(x).\]</span></p>
+<p>A single-result prediction interval adds RSS/(n - p) to this variance.</p>
+<p>The source uses analytic inverses for E01–E07. E09 takes the left Gaussian branch, E11 uses the principal asin branch, and E12 takes real polynomial roots and selects the root closest to the observed X mean. E08 currently uses</p>
+<p><span class="math display">\[
+x=C\left(\frac{B-A}{y-A}-1\right)^{1/(DE)},
+\]</span></p>
+<p>which is not a strict algebraic inverse of the current E08 equation when E is not 1. Other cases search an extended grid for sign changes, solve one-dimensional roots, and select the root closest to the observed X center.</p>
+</section>
+<section id="linearity-design-quantities-and-regression-comparison" class="level3" data-number="21.17.2">
+<h3 data-number="21.17.2" class="anchored" data-anchor-id="linearity-design-quantities-and-regression-comparison"><span class="header-section-number">21.17.2</span> Linearity Design Quantities and Regression Comparison</h3>
+<p>Expected concentration in a dilution panel is C(p) = p C_H + (1 - p) C_L. Replicate planning first sets p_L = (1 - alpha_F)^(1/L) and z = z_(1 + p_L)/2:</p>
+<p><span class="math display">\[
+n=\left\lceil
+\left(\frac{z\sigma}{ADL-d_{\mathrm{true}}}\right)^2
+\right\rceil.
+\]</span></p>
+<p>Linearity first summarizes each level with its mean, SD, and n_j. Equal weighting uses 1; level-variance weighting uses 1/s_j^2 for raw observations and n_j/s_j^2 for level means. pooled requires variance_group to define contiguous groups in x. For group g,</p>
+<p><span class="math display">\[
+\widehat\sigma_g^2=
+\frac{\sum_{j\in g}(n_j-1)s_j^2}{\sum_{j\in g}(n_j-1)},
+\qquad w_j=\frac{n_j}{\widehat\sigma_g^2}.
+\]</span></p>
+<p>The function does not form groups automatically because EP06 grouping also depends on the repeatability-SD versus concentration relationship. A precision-profile weight first fits SD against mean and then uses 1 / estimated SD_j^2.</p>
+<p>The line fits level means; quadratic and cubic polynomials retain all observations. If any nonlinear term is significant, the model with the smallest s_y|x among models containing significant nonlinear terms is selected; otherwise the line is selected. Nonlinear deviation is</p>
+<p><span class="math display">\[DL_j=\hat y_{\mathrm{poly},j}-\hat y_{\mathrm{linear},j},\]</span></p>
+<p>and linear residual is y_bar_j - y_hat_linear,j. Percentage metrics can use the linear prediction, X, or the observed mean as denominator.</p>
+<p>Each level’s point interval uses family coverage gamma^(1/L):</p>
+<p><span class="math display">\[
+h_j=z_{[1+\gamma^{1/L}]/2}\frac{\hat\sigma_j}{\sqrt{n_j}}.
+\]</span></p>
+<p>The source centers the interval on the deviation. Allowable deviation is the maximum of direct absolute limits and absolute limits converted from relative limits; the final comparison is |metric_j| &gt; ADL_j.</p>
+</section>
+</section>
+<section id="interference-dilution-spike-recovery-and-hook-effect-1" class="level2" data-number="21.18">
+<h2 data-number="21.18" class="anchored" data-anchor-id="interference-dilution-spike-recovery-and-hook-effect-1"><span class="header-section-number">21.18</span> Interference, Dilution, Spike Recovery, and Hook Effect</h2>
+<section id="two-group-interference-and-difference-in-differences" class="level3" data-number="21.18.1">
+<h3 data-number="21.18.1" class="anchored" data-anchor-id="two-group-interference-and-difference-in-differences"><span class="header-section-number">21.18.1</span> Two-Group Interference and Difference-in-Differences</h3>
+<p>For a two-group interference study,</p>
+<p><span class="math display">\[D=\bar y_T-\bar y_C,\qquad
+SE(D)=\sqrt{\frac{s_T^2}{n_T}+\frac{s_C^2}{n_C}}.\]</span></p>
+<p>The interval uses a t critical value with n_T + n_C - 2 degrees of freedom, even though the standard error is unpooled. Percentage effect is 100 D / y_bar_C, with the SE and interval endpoints scaled directly.</p>
+<p>For an analyte-spike design,</p>
+<p><span class="math display">\[
+D=(\bar y_{I,S}-\bar y_{I,U})
+-(\bar y_{N,S}-\bar y_{N,U}),
+\]</span></p>
+<p>with variance equal to the sum of s_g^2 / n_g across four cells and Welch–Satterthwaite degrees of freedom. Percentage effect is 100(I/N - 1), where I = y_bar_I,S - y_bar_I,U and N = y_bar_N,S - y_bar_N,U. The source calculates the variance by differentiating this expression with respect to the four means and applying the delta method.</p>
+<p>When at least two control results exist, blank interference still uses the two-group difference; otherwise the theoretical control mean is zero and a one-sample standard error is used. Dose response calculates effects at each concentration relative to the observed baseline and can additionally fit an OLS line of raw result versus concentration. Forward and reverse conversions use linear interpolation between points and do not extrapolate; reverse interpolation requires a monotone response.</p>
+</section>
+<section id="dilution-recovery" class="level3" data-number="21.18.2">
+<h3 data-number="21.18.2" class="anchored" data-anchor-id="dilution-recovery"><span class="header-section-number">21.18.2</span> Dilution Recovery</h3>
+<p>For dilution factor D, the source sets f = 1 / D. With original assignment C_0 and diluent background C_d,</p>
+<p><span class="math display">\[
+C_{\mathrm{target}}=fC_0+(1-f)C_d,
+\]</span></p>
+<p><span class="math display">\[
+C_{\mathrm{corrected}}=\frac{\bar y-(1-f)C_d}{f},
+\qquad
+Recovery=100\frac{\bar y}{C_{\mathrm{target}}}.
+\]</span></p>
+<p>Recovery is measured diluted result divided by target; it is not corrected concentration divided by original assignment. For multiple samples, the overall interval is the t interval of sample-level recovery means.</p>
+</section>
+<section id="spike-recovery-and-hook-effect" class="level3" data-number="21.18.3">
+<h3 data-number="21.18.3" class="anchored" data-anchor-id="spike-recovery-and-hook-effect"><span class="header-section-number">21.18.3</span> Spike Recovery and Hook Effect</h3>
+<p><span class="math display">\[
+C_{\mathrm{added}}=C_s\frac{V_s}{V_0+V_s},
+\qquad
+C_{\mathrm{final}}=\frac{C_0V_0+C_sV_s}{V_0+V_s},
+\]</span></p>
+<p><span class="math display">\[
+Recovery=100\frac{\bar y_{\mathrm{spike}}-\bar y_{\mathrm{solvent}}}
+{C_{\mathrm{added}}}.
+\]</span></p>
+<p>Hook-effect analysis calculates a mean and t interval at each concentration and identifies the concentration with the maximum mean as the peak. After the peak, when the first level has concentration above ULoQ and a mean response no higher than the threshold, the source reports the preceding measured concentration as hook concentration; it does not interpolate between levels. If no decline is observed, it reports the highest tested concentration as a lower bound.</p>
+</section>
+</section>
+<section id="analytical-sensitivity-1" class="level2" data-number="21.19">
+<h2 data-number="21.19" class="anchored" data-anchor-id="analytical-sensitivity-1"><span class="header-section-number">21.19</span> Analytical Sensitivity</h2>
+<section id="limits-of-blank-and-detection" class="level3" data-number="21.19.1">
+<h3 data-number="21.19.1" class="anchored" data-anchor-id="limits-of-blank-and-detection"><span class="header-section-number">21.19.1</span> Limits of Blank and Detection</h3>
+<p>The nonparametric LoB uses rank r = 0.5 + B(1 - alpha) and linearly interpolates between adjacent integer ranks. The parametric method sets nu = B - K and calculates</p>
+<p><span class="math display">\[
+c_p=\frac{z_{1-\alpha}}{\sqrt{1-1/(4\nu)}},
+\qquad LoB=\bar y_B+c_ps_B.
+\]</span></p>
+<p>The zero-blank branch sets LoB = 0 directly. With two or three reagent lots, the default calculates each lot and takes the maximum LoB; with other lot counts it pools the lots.</p>
+<p>Classical LoD pools low-level SDs by degrees of freedom:</p>
+<p><span class="math display">\[
+s_p=\sqrt{\frac{\sum_j(n_j-1)s_j^2}{\sum_j(n_j-1)}},
+\qquad LoD=LoB+c_ps_p.
+\]</span></p>
+<p>The nonparametric validation method uses the median of all low-level results as a candidate LoD and retains it only when the fraction below LoB is no more than beta. The precision-profile method fits s(x) and solves x - LoB - c_p s(x) = 0, using the smallest qualifying root found.</p>
+<p>The probit method fits</p>
+<p><span class="math display">\[
+\Phi^{-1}\{P(\mathrm{detected}\mid x)\}=\beta_0+\beta_1g(x),
+\]</span></p>
+<p>where g(x) is log10(x) or x. For target detection probability 1 - beta,</p>
+<p><span class="math display">\[g(LoD)=\frac{z_{1-\beta}-\hat\beta_0}{\hat\beta_1}.\]</span></p>
+<p>When fitting by lot or stratum, the final LoD is the maximum group-specific LoD.</p>
+</section>
+<section id="limit-of-quantitation-and-limit-verification" class="level3" data-number="21.19.2">
+<h3 data-number="21.19.2" class="anchored" data-anchor-id="limit-of-quantitation-and-limit-verification"><span class="header-section-number">21.19.2</span> Limit of Quantitation and Limit Verification</h3>
+<p>For a low-level sample, bias is b = y_bar - x_a. The implemented error quantities are</p>
+<p><span class="math display">\[
+E_W=|b|+ks,\qquad
+E_{RMS}=\sqrt{s^2+b^2},\qquad
+E_P=s.
+\]</span></p>
+<p>For a relative target, divide by abs(x_a). The observed candidate LoQ is the smallest measured mean whose error reaches the target. With a profile enabled, the candidate is the smallest root of a linear or quadratic regression of error against assigned value and the target line. The maximum candidate across lots is reported, and when both are finite</p>
+<p><span class="math display">\[LoQ_{\mathrm{reported}}=\max(LoQ_{\mathrm{candidate}},LoD).\]</span></p>
+<p>LoB verification calls y &lt;= LoB consistent; LoD verification calls y &gt;= LoB consistent; LoQ verification calls a result consistent when it lies within the allowed window around its assigned value. The source calculates one-sided Wilson intervals and uses an internal sample-size boundary table; a sample size not in the table takes the larger boundary from neighboring rows. It returns proportions, intervals, and differences from boundaries but does not generate a pass/fail conclusion.</p>
+</section>
+</section>
+<section id="quality-control-and-stability-1" class="level2" data-number="21.20">
+<h2 data-number="21.20" class="anchored" data-anchor-id="quality-control-and-stability-1"><span class="header-section-number">21.20</span> Quality Control and Stability</h2>
+<section id="leveyjennings-and-westgard" class="level3" data-number="21.20.1">
+<h3 data-number="21.20.1" class="anchored" data-anchor-id="leveyjennings-and-westgard"><span class="header-section-number">21.20.1</span> Levey–Jennings and Westgard</h3>
+<p>QC results are standardized as z_i = (x_i - mu_0) / sigma_0. If target values are not supplied, the source uses the sample mean and sample SD of all finite results. The rules are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Rule</th>
+<th>Source decision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1-2s</td>
+<td>abs(z_i) &gt; 2</td>
+</tr>
+<tr class="even">
+<td>1-3s</td>
+<td>abs(z_i) &gt; 3</td>
+</tr>
+<tr class="odd">
+<td>2-2s</td>
+<td>two adjacent points on the same side, both strictly beyond 2s</td>
+</tr>
+<tr class="even">
+<td>R-4s</td>
+<td>adjacent points each with abs(z) &gt;= 2 and abs(delta z) &gt;= 4</td>
+</tr>
+<tr class="odd">
+<td>4-1s</td>
+<td>four consecutive points on the same side, all strictly beyond 1s</td>
+</tr>
+<tr class="even">
+<td>8x/10x</td>
+<td>eight/ten consecutive points strictly on the same side of the mean</td>
+</tr>
+</tbody>
+</table>
+<p>The grouping variable is used only for plot facets; target estimation and rule scanning run across all finite results in row order. 1-3s is labeled out of control and other violations are warnings. Youden uses abs(z_1i) &lt;= 2 and abs(z_2i) &lt;= 2 to test membership in the +/-2s rectangle and calculates Pearson correlation; it does not fit an error ellipse.</p>
+</section>
+<section id="node-bias-time-regression-and-time-to-limit" class="level3" data-number="21.20.2">
+<h3 data-number="21.20.2" class="anchored" data-anchor-id="node-bias-time-regression-and-time-to-limit"><span class="header-section-number">21.20.2</span> Node Bias, Time Regression, and Time to Limit</h3>
+<p>Each condition uses its earliest time-point mean as baseline:</p>
+<p><span class="math display">\[b_t=y_t-y_0,\qquad b_{t,\%}=100\frac{y_t-y_0}{y_0}.\]</span></p>
+<p>Self-comparison first averages by time point. If all time-point SEs are finite and positive, it fits with 1 / SE_t^2 weights; otherwise it falls back to OLS. Absolute drift rate is b_1, relative drift rate is b_1 / b_0, with variance</p>
+<p><span class="math display">\[
+V\left(\frac{b_1}{b_0}\right)=
+\frac{V(b_1)}{b_0^2}+\frac{b_1^2V(b_0)}{b_0^4}
+-\frac{2b_1\operatorname{Cov}(b_0,b_1)}{b_0^3}.
+\]</span></p>
+<p>The source uses a one-sided t critical value t_(gamma, nu). For a decline it takes the lower bound and for an increase the upper bound; if direction is uncertain, it takes the larger absolute side.</p>
+<p>Condition comparison uses test-condition minus reference-condition bias at matched time points. Absolute-bias SE is sqrt(SE_T^2 + SE_R^2); relative-bias SE uses the ratio delta method. WLS or OLS is then selected according to SE availability.</p>
+<p>Time to limit searches a 501-point grid for the first sign change of abs(b_hat(t)) - L or of a one-sided confidence bound versus L, then refines it with one-dimensional root finding. The default upper search is max(100 t_max, t_max + 100); a root beyond the largest observed time is marked extrapolated.</p>
+</section>
+<section id="mean-kinetic-temperature-and-arrhenius" class="level3" data-number="21.20.3">
+<h3 data-number="21.20.3" class="anchored" data-anchor-id="mean-kinetic-temperature-and-arrhenius"><span class="header-section-number">21.20.3</span> Mean Kinetic Temperature and Arrhenius</h3>
+<p>Let q_i = exp[-E_a / (R T_i)]. For equally spaced times,</p>
+<p><span class="math display">\[
+\bar q=\frac1n\sum_iq_i,\qquad
+T_{MKT}=-\frac{E_a}{R\log\bar q}.
+\]</span></p>
+<p>With timestamps, trapezoidal integration is used:</p>
+<p><span class="math display">\[
+\bar q=\frac{\sum_i\Delta t_i(q_i+q_{i+1})/2}{\sum_i\Delta t_i}.
+\]</span></p>
+<p>Multiple probes combine q by effective observation count or time duration, not by directly averaging probe-specific MKT values.</p>
+<p>The Arrhenius branch fits zero-order y = a + b t or first-order log(y) = a + b t at each temperature and converts the slope to a positive rate according to the degradation direction. Automatic order selects the smaller root-mean-square normalized RMSE across temperatures; exact ties select first order. Positive rates then fit</p>
+<p><span class="math display">\[\log k=\alpha+\beta/T,\qquad E_a=-\hat\beta R.\]</span></p>
+<p>Zero-order shelf life is allowable change divided by the target-temperature rate. First-order relative decreases and increases are</p>
+<p><span class="math display">\[t=-\frac{\log(1-r)}{k_*},\qquad t=\frac{\log(1+r)}{k_*}.\]</span></p>
+<p>Shelf-life intervals convert both endpoints of the target-rate interval and sort them.</p>
+<p>The stability design is not a continuous power formula; it uses two lookup matrices embedded in the source. Repeatability is reduced by sigma / sqrt(r), or combined as sqrt(sum_j sigma_j^2 / L_j). The resulting two ratios are rounded to two significant figures and looked up in the 80% or 90% power table.</p>
+</section>
+</section>
+<section id="measurement-uncertainty-and-traceability-1" class="level2" data-number="21.21">
+<h2 data-number="21.21" class="anchored" data-anchor-id="measurement-uncertainty-and-traceability-1"><span class="header-section-number">21.21</span> Measurement Uncertainty and Traceability</h2>
+<section id="type-a-and-type-b-standardization" class="level3" data-number="21.21.1">
+<h3 data-number="21.21.1" class="anchored" data-anchor-id="type-a-and-type-b-standardization"><span class="header-section-number">21.21.1</span> Type A and Type B Standardization</h3>
+<p>The standard uncertainty of one repeat result is s; the standard uncertainty of a mean is s / sqrt(n), with n - 1 degrees of freedom. Relative components are stored internally as u / abs(x_bar).</p>
+<p>For interval-based Type B components, the estimate must be the midpoint of the limits. With half-width a = (U - L) / 2:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Distribution</th>
+<th style="text-align: right;">Standard uncertainty</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rectangular</td>
+<td style="text-align: right;">a / sqrt(3)</td>
+</tr>
+<tr class="even">
+<td>triangular</td>
+<td style="text-align: right;">a / sqrt(6)</td>
+</tr>
+<tr class="odd">
+<td>U-shaped</td>
+<td style="text-align: right;">a / sqrt(2)</td>
+</tr>
+<tr class="even">
+<td>normal with central probability p</td>
+<td style="text-align: right;">a / z_(1+p)/2</td>
+</tr>
+<tr class="odd">
+<td>t with central probability p</td>
+<td style="text-align: right;">a / t_(1+p)/2,nu</td>
+</tr>
+</tbody>
+</table>
+<p>A directly supplied uncertainty is treated as a standard uncertainty. Only when coverage factor k is separately supplied does the source calculate u = U / k. This path accepts standard or normal labels and does not divide by sqrt(3), sqrt(6), and so on according to a distribution label. Distribution divisors occur only on the limit-input path.</p>
+</section>
+<section id="iqc-homogeneity-stability-and-characterization" class="level3" data-number="21.21.2">
+<h3 data-number="21.21.2" class="anchored" data-anchor-id="iqc-homogeneity-stability-and-characterization"><span class="header-section-number">21.21.2</span> IQC, Homogeneity, Stability, and Characterization</h3>
+<p>For a one-way random-effects ANOVA,</p>
+<p><span class="math display">\[
+MS_W=SS_W/(N-m),\qquad MS_B=SS_B/(m-1),
+\]</span></p>
+<p><span class="math display">\[
+n_{\mathrm{eff}}=
+\frac{N-\sum_jn_j^2/N}{m-1},\qquad
+s_B^2=\max\left(0,\frac{MS_B-MS_W}{n_{\mathrm{eff}}}\right).
+\]</span></p>
+<p>When IQC has within-run replicates, single-result uncertainty is</p>
+<p><span class="math display">\[u_{\mathrm{single}}=\sqrt{s_W^2+s_B^2}.\]</span></p>
+<p>If s_B &gt; 0, mean uncertainty is sqrt(MS_B / N); otherwise the source falls back to the SD of all results divided by sqrt(N). Without a run column or with one result per run, it uses long-term SD and its mean standard error directly.</p>
+<p>The homogeneity branch also calculates</p>
+<p><span class="math display">\[
+u_{\mathrm{hidden}}=
+\frac{s_W}{\sqrt{\bar n}}
+\left(\frac2{\nu_W}\right)^{1/4},
+\qquad
+u_{bb}=\max(s_B,u_{\mathrm{hidden}}).
+\]</span></p>
+<p>Long-term stability uncertainty fits y = a + b t for each condition and takes u_lts = SE(b_hat) T_s at shelf life T_s. Characterization first averages each laboratory, then assigns the unweighted mean of laboratory means:</p>
+<p><span class="math display">\[u_{char}=\frac{SD(\bar x_1,\ldots,\bar x_L)}{\sqrt L}.\]</span></p>
+</section>
+<section id="first-order-combination-and-effective-degrees-of-freedom" class="level3" data-number="21.21.3">
+<h3 data-number="21.21.3" class="anchored" data-anchor-id="first-order-combination-and-effective-degrees-of-freedom"><span class="header-section-number">21.21.3</span> First-Order Combination and Effective Degrees of Freedom</h3>
+<p>For standard-uncertainty vector u and correlation matrix R,</p>
+<p><span class="math display">\[
+\Sigma=\operatorname{diag}(u)R\operatorname{diag}(u),\qquad
+u_c^2=c^\mathsf T\Sigma c.
+\]</span></p>
+<p>Signed marginal contribution from component i is m_i = c_i (Sigma c)_i, and the contribution percentage is 100 m_i / u_c^2; with correlation, a contribution can be negative.</p>
+<p>Only when R is the identity does the source calculate</p>
+<p><span class="math display">\[
+\nu_{\mathrm{eff}}=
+\frac{u_c^4}{\sum_i(c_iu_i)^4/\nu_i}.
+\]</span></p>
+<p>Without a supplied coverage factor, finite effective degrees of freedom use a t quantile; otherwise a normal quantile is used. Expanded uncertainty is U = k u_c.&nbsp;When relative and absolute components are mixed, an output value must be supplied so relative components can be converted to absolute units.</p>
+</section>
+<section id="general-measurement-models-and-monte-carlo" class="level3" data-number="21.21.4">
+<h3 data-number="21.21.4" class="anchored" data-anchor-id="general-measurement-models-and-monte-carlo"><span class="header-section-number">21.21.4</span> General Measurement Models and Monte Carlo</h3>
+<p>For y = f(x_1, …, x_q), sensitivity coefficients use central differences:</p>
+<p><span class="math display">\[
+c_i\approx
+\frac{f(\ldots,x_i+h_i,\ldots)-f(\ldots,x_i-h_i,\ldots)}{2h_i},
+\]</span></p>
+<p><span class="math display">\[h_i=\epsilon^{1/3}\max\{1,|x_i|,u(x_i)\}.\]</span></p>
+<p>The delta branch propagates coefficients through the covariance matrix and returns a symmetric interval y_hat +/- U.</p>
+<p>The Monte Carlo branch samples from stored distributions: normal and standard use N(x_i, u_i^2); rectangular uses a uniform distribution; triangular uses the limits and estimate as mode; U-shaped uses x_i + a_i cos(U(0, pi)); t uses x_i + u_i T_(nu_i), so u_i is the t random-variable scale. Non-independent Monte Carlo accepts only normal or standard labels and generates correlated normal draws.</p>
+<p>Simulated-output SD is the standard uncertainty, and the coverage interval is the central interval from R type-8 quantiles.</p>
+</section>
+<section id="stepwise-traceability" class="level3" data-number="21.21.5">
+<h3 data-number="21.21.5" class="anchored" data-anchor-id="stepwise-traceability"><span class="header-section-number">21.21.5</span> Stepwise Traceability</h3>
+<p>At stage r, all components from stages 1 through r are recombined. Sensitivity coefficients default to 1 and this interface has no between-stage correlation input, so</p>
+<p><span class="math display">\[u_{c,r}=\sqrt{\sum_{i\in1:r}u_i^2}.\]</span></p>
+<p>Effective degrees of freedom, coverage factor, and expanded uncertainty are recalculated at every stage; the final stage is the budget for all accumulated components.</p>
+</section>
+</section>
+<section id="sample-size-and-power" class="level2" data-number="21.22">
+<h2 data-number="21.22" class="anchored" data-anchor-id="sample-size-and-power"><span class="header-section-number">21.22</span> Sample Size and Power</h2>
+<section id="blandaltman-agreement" class="level3" data-number="21.22.1">
+<h3 data-number="21.22.1" class="anchored" data-anchor-id="blandaltman-agreement"><span class="header-section-number">21.22.1</span> Bland–Altman Agreement</h3>
+<p>For difference mean mu, SD sigma, allowable limit Delta, and agreement quantile z_gamma,</p>
+<p><span class="math display">\[
+SE_L=\sigma\sqrt{\frac1n+\frac{z_\gamma^2}{2(n-1)}},
+\]</span></p>
+<p><span class="math display">\[
+\tau_1=\frac{\Delta-\mu-z_\gamma\sigma}{SE_L},\qquad
+\tau_2=\frac{\Delta+\mu-z_\gamma\sigma}{SE_L}.
+\]</span></p>
+<p>With t_c = t_(1 - (1 - C)/2, n - 1), power is</p>
+<p><span class="math display">\[
+\Pr\{T_{n-1}(\tau_1)&gt;t_c\}
++\Pr\{T_{n-1}(\tau_2)&lt;-t_c\}.
+\]</span></p>
+<p>Sample-size search uses a binary search within the stated bounds for the smallest integer reaching the target power.</p>
+</section>
+<section id="proportion-intervals-and-target-tests" class="level3" data-number="21.22.2">
+<h3 data-number="21.22.2" class="anchored" data-anchor-id="proportion-intervals-and-target-tests"><span class="header-section-number">21.22.2</span> Proportion Intervals and Target Tests</h3>
+<p>The closed-form Wald half-width sample size is</p>
+<p><span class="math display">\[n=\left\lceil\frac{z_{1-\alpha/2}^2p(1-p)}{d^2}\right\rceil.\]</span></p>
+<p>Other implemented intervals calculate the maximum actual endpoint half-width, then use exponential and binary search for the smallest n with half-width &lt;= d.&nbsp;Methods involving x = round(np) can have nonmonotone jumps; the source scans downward to correct the result.</p>
+<p>For a one-sample proportion target test, first find the critical success count. For an upper alternative it is the smallest integer whose selected one-sided interval lower limit L(x, n) is greater than p0; for a lower alternative it is the largest integer whose upper limit U(x, n) is less than p0. Therefore</p>
+<p><span class="math display">\[
+Power_{&gt;}=1-F_{\mathrm{Bin}(n,p_1)}(x_c-1),\qquad
+Power_{&lt;}=F_{\mathrm{Bin}(n,p_1)}(x_c).
+\]</span></p>
+<p>A two-sided test allocates alpha / 2 to each tail. For sample-size search, a normal-approximation starting point is followed by upward search and downward backtracking; for alpha search, the discrete critical count is fixed first and alpha is solved so that the interval endpoint equals p0. Power is therefore a step function determined by the binomial critical count.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./020-异常值与正态检验.html" class="pagination-link" aria-label="Outlier and Normality Tests">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./022-标准对应关系.html" class="pagination-link" aria-label="Standards Mapping">
+        <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

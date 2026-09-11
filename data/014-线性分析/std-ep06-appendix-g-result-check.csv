@@ -1,0 +1,3 @@
+"statistic","ivdtools","standard","difference","status","note"
+"WLS_slope",1.067728,1.0677,0.000028,"对应舍入","显式分组合并方差；未舍入值按标准精度对应"
+"max_abs_deviation_percent",9.264422,9.3,-0.035578,"对应舍入","标准只显示一位小数"

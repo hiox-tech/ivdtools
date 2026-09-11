@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1&nbsp; ivdtools包总体介绍 – ivdtools使用指引</title>
+<title>1&nbsp; ivdtools包总体介绍 – “ivdtools” 使用指引</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -110,8 +110,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "搜索"
   }
 }</script>
-<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="styles/book.css">
@@ -141,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ivdtools使用指引</a> 
+      <a href="./">“ivdtools” 使用指引</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
 </div>
@@ -174,8 +175,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./003-4PLC方程拟合校准曲线.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></span></a>
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -186,32 +187,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./005-精密度分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./006-线性分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./007-分析灵敏度.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">分析灵敏度</span></span></a>
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./008-瓶间差分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./009-参考区间.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -222,50 +223,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./011-样本量计算.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">样本量计算</span></span></a>
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./012-方法学比较.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">方法学比较</span></span></a>
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./013-定性分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">定性分析</span></span></a>
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./014-ROC曲线与cutoff建立.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></span></a>
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./015-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./016-算法原理简介.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./017-AI自动化分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI 自动化分析</span></span></a>
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./018-参考资料.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">参考资料</span></span></a>
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
   </div>
 </li>
     </ul>
@@ -278,27 +309,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#包定位" id="toc-包定位" class="nav-link active" data-scroll-target="#包定位"><span class="header-section-number">1.1</span> 包定位</a></li>
+  <li><a href="#功能模块" id="toc-功能模块" class="nav-link active" data-scroll-target="#功能模块"><span class="header-section-number">1.1</span> 功能模块</a></li>
   <li><a href="#设计特点" id="toc-设计特点" class="nav-link" data-scroll-target="#设计特点"><span class="header-section-number">1.2</span> 设计特点</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#常规工作流" id="toc-常规工作流" class="nav-link" data-scroll-target="#常规工作流"><span class="header-section-number">1.2.1</span> 常规工作流</a></li>
   <li><a href="#渐进式工作流" id="toc-渐进式工作流" class="nav-link" data-scroll-target="#渐进式工作流"><span class="header-section-number">1.2.2</span> 渐进式工作流</a></li>
   </ul></li>
-  <li><a href="#功能模块" id="toc-功能模块" class="nav-link" data-scroll-target="#功能模块"><span class="header-section-number">1.3</span> 功能模块</a></li>
-  <li><a href="#快速开始" id="toc-快速开始" class="nav-link" data-scroll-target="#快速开始"><span class="header-section-number">1.4</span> 快速开始</a>
-  <ul class="collapse">
-  <li><a href="#方法比较" id="toc-方法比较" class="nav-link" data-scroll-target="#方法比较"><span class="header-section-number">1.4.1</span> 方法比较</a></li>
-  <li><a href="#roc" id="toc-roc" class="nav-link" data-scroll-target="#roc"><span class="header-section-number">1.4.2</span> ROC</a></li>
-  <li><a href="#定性一致性" id="toc-定性一致性" class="nav-link" data-scroll-target="#定性一致性"><span class="header-section-number">1.4.3</span> 定性一致性</a></li>
-  <li><a href="#参考区间" id="toc-参考区间" class="nav-link" data-scroll-target="#参考区间"><span class="header-section-number">1.4.4</span> 参考区间</a></li>
-  <li><a href="#瓶批-anova" id="toc-瓶批-anova" class="nav-link" data-scroll-target="#瓶批-anova"><span class="header-section-number">1.4.5</span> 瓶/批 ANOVA</a></li>
-  <li><a href="#独立工具" id="toc-独立工具" class="nav-link" data-scroll-target="#独立工具"><span class="header-section-number">1.4.6</span> 独立工具</a></li>
-  <li><a href="#获取帮助" id="toc-获取帮助" class="nav-link" data-scroll-target="#获取帮助"><span class="header-section-number">1.4.7</span> 获取帮助</a></li>
+  <li><a href="#快速开始" id="toc-快速开始" class="nav-link" data-scroll-target="#快速开始"><span class="header-section-number">1.3</span> 快速开始</a>
+  <ul>
+  <li><a href="#方法学比较" id="toc-方法学比较" class="nav-link" data-scroll-target="#方法学比较"><span class="header-section-number">1.3.1</span> 方法学比较</a></li>
+  <li><a href="#roc" id="toc-roc" class="nav-link" data-scroll-target="#roc"><span class="header-section-number">1.3.2</span> ROC</a></li>
+  <li><a href="#定性一致性" id="toc-定性一致性" class="nav-link" data-scroll-target="#定性一致性"><span class="header-section-number">1.3.3</span> 定性一致性</a></li>
+  <li><a href="#瓶间差异" id="toc-瓶间差异" class="nav-link" data-scroll-target="#瓶间差异"><span class="header-section-number">1.3.4</span> 瓶间差异</a></li>
   </ul></li>
-  <li><a href="#ai自动分析" id="toc-ai自动分析" class="nav-link" data-scroll-target="#ai自动分析"><span class="header-section-number">1.5</span> AI自动分析</a></li>
-  <li><a href="#依赖" id="toc-依赖" class="nav-link" data-scroll-target="#依赖"><span class="header-section-number">1.6</span> 依赖</a></li>
-  <li><a href="#使用边界" id="toc-使用边界" class="nav-link" data-scroll-target="#使用边界"><span class="header-section-number">1.7</span> 使用边界</a></li>
-  <li><a href="#项目信息" id="toc-项目信息" class="nav-link" data-scroll-target="#项目信息"><span class="header-section-number">1.8</span> 项目信息</a></li>
+  <li><a href="#依赖" id="toc-依赖" class="nav-link" data-scroll-target="#依赖"><span class="header-section-number">1.4</span> 依赖</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
     </div>
@@ -324,47 +348,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="包定位" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="包定位"><span class="header-section-number">1.1</span> 包定位</h2>
-<p><code>ivdtools</code> 是面向体外诊断（in vitro diagnostic，IVD）试剂评价的 R 统计工具包，提供从数据检查、统计分析到结果汇总和可视化的一组可复现工作流。 当前版本为 0.1.1，要求 R &gt;= 4.1.0，采用 MIT 许可证。</p>
-<p>包覆盖方法比较、ROC、定性一致性、精密度、参考区间、稳定性、质量控制、 曲线拟合、分析灵敏度、异常值和正态性评估以及样本量计算。统计结果应结合预先制定的研究方案、 适用标准、实验室要求和临床或分析允许限进行解释，不能替代专业判断。</p>
-</section>
-<section id="设计特点" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="设计特点"><span class="header-section-number">1.2</span> 设计特点</h2>
-<section id="常规工作流" class="level3" data-number="1.2.1">
-<h3 data-number="1.2.1" class="anchored" data-anchor-id="常规工作流"><span class="header-section-number">1.2.1</span> 常规工作流</h3>
-<p>独立接口一次完成一个任务，例如：</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">normal_test</span>(dat, <span class="at">col =</span> <span class="st">"candidate"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">reference_interval</span>(dat, <span class="at">col =</span> <span class="st">"candidate"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="渐进式工作流" class="level3" data-number="1.2.2">
-<h3 data-number="1.2.2" class="anchored" data-anchor-id="渐进式工作流"><span class="header-section-number">1.2.2</span> 渐进式工作流</h3>
-<p>方法比较、ROC、定性分析和精密度等模块采用 S3 对象组织分析过程：</p>
-<ol type="1">
-<li>构造函数创建分析对象并保存原始数据和元数据；</li>
-<li>分析方法接收该对象，计算结果后返回更新后的对象；</li>
-<li><code>summary()</code> 汇总已经完成的分析；</li>
-<li><code>plot()</code> 根据对象中已有的结果绘图；</li>
-<li><code>predict()</code> 在支持的模块中完成预测。</li>
-</ol>
-<pre class="text"><code>数据 -&gt; 构造函数 -&gt; 分析方法 -&gt; 更新后的对象 -&gt; 汇总/绘图/预测</code></pre>
-<p>渐进式接口必须重新赋值：</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>obj <span class="ot">&lt;-</span> <span class="fu">analysis_method</span>(obj)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<p>如果只调用 <code>analysis_method(obj)</code> 而没有执行 <code>obj &lt;-</code>，新结果不会累积到原对象中。</p>
-</section>
-</section>
-<section id="功能模块" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="功能模块"><span class="header-section-number">1.3</span> 功能模块</h2>
+<p><code>ivdtools</code> 是面向体外诊断（in vitro diagnostic，IVD）试剂评价的 R 统计工具包，提供从数据检查、统计分析到结果汇总和可视化的一组可复现工作流。包覆盖方法学比较、ROC、定性一致性、精密度、线性、干扰、稀释与加标、C5/C95、测量不确定度、互换性、参考物质偏倚、参考区间、稳定性、质量控制、曲线拟合、分析灵敏度、异常值和正态性评估以及样本量计算。统计结果应结合预先制定的研究方案、适用标准、实验室要求和临床或分析允许限进行解释。</p>
+<section id="功能模块" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="功能模块"><span class="header-section-number">1.1</span> 功能模块</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -380,61 +366,96 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td>方法比较</td>
+<td>方法学比较</td>
 <td><code>mcr()</code></td>
-<td>描述统计、相关、OLS/WLS、Deming、加权 Deming、Passing–Bablok、Bland–Altman、偏倚和异常值分析</td>
+<td>描述统计、相关、回归、Bland–Altman、偏倚和异常值</td>
 </tr>
 <tr class="even">
-<td>ROC</td>
-<td><code>roc()</code></td>
-<td>ROC 曲线、AUC、最佳截断值、多变量 Logistic 回归和预测</td>
+<td>互换性</td>
+<td><code>commutability()</code></td>
+<td>EP14、 EP30 和 IFCC 互换性评价</td>
 </tr>
 <tr class="odd">
-<td>定性分析</td>
-<td><code>raw_to_table()</code>、<code>counts_to_table()</code></td>
-<td>四格表、诊断准确性指标、Kappa 一致性和 McNemar 检验</td>
+<td>ROC</td>
+<td><code>roc()</code></td>
+<td>ROC 曲线、cutoff、多变量 Logistic 回归和预测</td>
 </tr>
 <tr class="even">
+<td>定性分析</td>
+<td><code>raw_to_table()</code>、 <code>counts_to_table()</code></td>
+<td>四格表、诊断准确性指标、Kappa 一致性和 McNemar 检验</td>
+</tr>
+<tr class="odd">
 <td>精密度</td>
 <td><code>precision()</code></td>
 <td>方差分量、置信区间、异常值、正态性和 Sadler 精密度剖面</td>
 </tr>
+<tr class="even">
+<td>线性</td>
+<td><code>linearity()</code>、<code>linearity_*()</code></td>
+<td>试验设计、HIGH/LOW 配制、直线/多项式分析、权重、ADL 与区间</td>
+</tr>
 <tr class="odd">
-<td>参考区间</td>
-<td><code>reference_interval()</code></td>
-<td>百分位数法、参数法和稳健法参考区间</td>
+<td>干扰</td>
+<td><code>interference_*()</code></td>
+<td>重复数、配对试验、剂量响应和患者样本比较</td>
 </tr>
 <tr class="even">
+<td>稀释与加标</td>
+<td><code>dilution_recovery()</code>、 <code>spike_recovery()</code>、 <code>hook_effect()</code></td>
+<td>稀释回收、加标回收和高剂量钩状效应</td>
+</tr>
+<tr class="odd">
+<td>C5/C95</td>
+<td><code>c5_c95()</code></td>
+<td>连续测量值的定性试剂 C5/C95 估计</td>
+</tr>
+<tr class="even">
+<td>测量不确定度</td>
+<td><code>uncertainty_*()</code></td>
+<td>Type A/B、IQC、偏倚、均匀性、稳定性、合成与传播</td>
+</tr>
+<tr class="odd">
+<td>参考物质偏倚</td>
+<td><code>reference_bias()</code></td>
+<td>偏倚、测量均值不确定度与参考物质不确定度合成区间</td>
+</tr>
+<tr class="even">
+<td>参考区间</td>
+<td><code>reference_interval()</code></td>
+<td>EP28 非参数、biweight、type 6、参数和 Huber 参考区间</td>
+</tr>
+<tr class="odd">
 <td>瓶/批 ANOVA</td>
 <td><code>bottle_anova()</code></td>
 <td>单因素或嵌套 ANOVA、Tukey HSD 和紧凑字母标记</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>稳定性</td>
-<td><code>stability_bias()</code>、<code>stability_regression()</code></td>
+<td><code>stability_bias()</code>、 <code>stability_regression()</code></td>
 <td>偏倚、稳定性回归、超限时间、稳定性方案、MKT 和 Arrhenius 模型</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>质量控制</td>
 <td><code>qc_chart()</code>、<code>youden_plot()</code></td>
 <td>Levey–Jennings 图、Westgard 规则和 Youden 图</td>
 </tr>
-<tr class="odd">
-<td>曲线拟合</td>
+<tr class="even">
+<td>校准与响应曲线</td>
 <td><code>fit_equation()</code></td>
-<td>线性、指数、4PLC、5PLC 等方程拟合、加权/约束拟合和模型比较</td>
+<td>线性校准、指数、4PLC、5PLC 等响应方程的加权、约束拟合和模型比较；不用于方法学线性评价</td>
+</tr>
+<tr class="odd">
+<td>分析灵敏度</td>
+<td><code>sensitivity_lob()</code> / <code>sensitivity_lod()</code> / <code>sensitivity_loq()</code></td>
+<td>空白限、检出限、定量限建立与验证</td>
 </tr>
 <tr class="even">
-<td>分析灵敏度</td>
-<td><code>lob_lod_loq()</code></td>
-<td>空白限、检出限、定量限建立</td>
-</tr>
-<tr class="odd">
 <td>异常值与分布</td>
 <td><code>outliers_test()</code>、<code>normal_test()</code></td>
 <td>Grubbs、ESD、Dixon、IQR 及多种正态性检验</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>样本量</td>
 <td><code>sample_size_*()</code></td>
 <td>Bland–Altman 一致性、单比例置信区间和单臂目标值检验</td>
@@ -442,176 +463,148 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="快速开始" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="快速开始"><span class="header-section-number">1.4</span> 快速开始</h2>
-<p>以下代码使用包内置的确定性示例数据。安装和载入方法见 《分析环境安装与使用》。</p>
-<section id="方法比较" class="level3" data-number="1.4.1">
-<h3 data-number="1.4.1" class="anchored" data-anchor-id="方法比较"><span class="header-section-number">1.4.1</span> 方法比较</h3>
+<section id="设计特点" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="设计特点"><span class="header-section-number">1.2</span> 设计特点</h2>
+<section id="常规工作流" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="常规工作流"><span class="header-section-number">1.2.1</span> 常规工作流</h3>
+<p>独立接口一次完成一个任务，绝大部分分析采用此设计，示例：</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  ivd_mcr_example,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"sid"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="st">"test"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"ref"</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">describe</span>(mc)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">correlation</span>(mc, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">regression</span>(mc, <span class="at">method =</span> <span class="st">"deming"</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(mc, <span class="at">type =</span> <span class="st">"difference"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mc)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mc, <span class="at">type =</span> <span class="st">"regression"</span>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mc, <span class="at">type =</span> <span class="st">"bland_altman"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">normal_test</span>(dat, <span class="at">col =</span> <span class="st">"candidate"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">reference_interval</span>(dat, <span class="at">col =</span> <span class="st">"candidate"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>回归方法可选 OLS、WLS、Deming、加权 Deming 和 Passing-Bablok。 具体方法、权重、置信水平和异常值处理策略应在分析前确定。</p>
 </section>
-<section id="roc" class="level3" data-number="1.4.2">
-<h3 data-number="1.4.2" class="anchored" data-anchor-id="roc"><span class="header-section-number">1.4.2</span> ROC</h3>
+<section id="渐进式工作流" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="渐进式工作流"><span class="header-section-number">1.2.2</span> 渐进式工作流</h3>
+<p>方法比较、ROC、定性分析和精密度等模块采用 S3 对象组织分析过程：</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["原始数据"] --&gt; B["构造函数&lt;br/&gt;建立分析对象"]
+    B --&gt; C["分析方法&lt;br/&gt;累积统计结果"]
+    C --&gt; D["更新后的对象"]
+    D --&gt; E["summary()"]
+    D --&gt; F["plot()"]
+    D --&gt; G["predict()&lt;br/&gt;支持的模块"]
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B,C process
+    class D,E,F,G output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>渐进式接口必须重新赋值：</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">roc</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  ivd_roc_example,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"ref"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">positive =</span> <span class="dv">1</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">describe</span>(ro)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">auc</span>(ro)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">cutoff</span>(ro)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">mlr</span>(ro, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>), <span class="at">name =</span> <span class="st">"combined"</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ro)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ro, <span class="at">mlr =</span> <span class="st">"all"</span>, <span class="at">cutpoint =</span> <span class="st">"Youden"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>obj <span class="ot">&lt;-</span> <span class="fu">analysis_method</span>(obj)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>参考变量必须是二分类变量。若原始参考结果为连续变量，应先使用 <code>continuous_to_binary()</code>，并明确记录阈值和阳性方向。</p>
+<p>如果只调用 <code>analysis_method(obj)</code> 而没有执行 <code>obj &lt;-</code>，新结果不会累积到原对象中。</p>
 </section>
-<section id="定性一致性" class="level3" data-number="1.4.3">
-<h3 data-number="1.4.3" class="anchored" data-anchor-id="定性一致性"><span class="header-section-number">1.4.3</span> 定性一致性</h3>
+</section>
+<section id="快速开始" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="快速开始"><span class="header-section-number">1.3</span> 快速开始</h2>
+<p>以下代码仅用于分析过程演示。</p>
+<section id="方法学比较" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="方法学比较"><span class="header-section-number">1.3.1</span> 方法学比较</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">raw_to_table</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ivd_qualitative_example,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="st">"new"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"gold"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">positive =</span> <span class="st">"positive"</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">describe</span>(qa)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">diagnostics</span>(qa)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">kappa</span>(qa)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">mcnemar</span>(qa)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(qa)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  ivd_mcr_example,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"sid"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="st">"test"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"ref"</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">describe</span>(mc)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">correlation</span>(mc, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">regression</span>(mc, <span class="at">method =</span> <span class="st">"deming"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(mc, <span class="at">type =</span> <span class="st">"difference"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mc)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mc, <span class="at">type =</span> <span class="st">"regression"</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mc, <span class="at">type =</span> <span class="st">"bland_altman"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>已有 TP、FP、TN、FN 计数时，也可以使用 <code>counts_to_table()</code> 创建对象。</p>
 </section>
-<section id="参考区间" class="level3" data-number="1.4.4">
-<h3 data-number="1.4.4" class="anchored" data-anchor-id="参考区间"><span class="header-section-number">1.4.4</span> 参考区间</h3>
+<section id="roc" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="roc"><span class="header-section-number">1.3.2</span> ROC</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20260806</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ri_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">value =</span> <span class="fu">rnorm</span>(<span class="dv">160</span>, <span class="at">mean =</span> <span class="dv">100</span>, <span class="at">sd =</span> <span class="dv">15</span>))</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ri <span class="ot">&lt;-</span> <span class="fu">reference_interval</span>(</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  ri_data,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="st">"value"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"all"</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ri)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ri)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">roc</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  ivd_roc_example,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"ref"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">positive =</span> <span class="dv">1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">describe</span>(ro)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">auc</span>(ro)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">cutoff</span>(ro)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> <span class="fu">mlr</span>(ro, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>), <span class="at">name =</span> <span class="st">"combined"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ro)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ro, <span class="at">curves =</span> <span class="st">"all"</span>, <span class="at">cutpoint =</span> <span class="st">"Youden"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>应根据样本来源、样本量、分布特征和研究方案选择百分位数法、参数法或稳健法。</p>
 </section>
-<section id="瓶批-anova" class="level3" data-number="1.4.5">
-<h3 data-number="1.4.5" class="anchored" data-anchor-id="瓶批-anova"><span class="header-section-number">1.4.5</span> 瓶/批 ANOVA</h3>
+<section id="定性一致性" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="定性一致性"><span class="header-section-number">1.3.3</span> 定性一致性</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ba <span class="ot">&lt;-</span> <span class="fu">bottle_anova</span>(ivd_bottle_example, value <span class="sc">~</span> bottle)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ba)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>posthoc <span class="ot">&lt;-</span> <span class="fu">tukey</span>(ba)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(posthoc)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">raw_to_table</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  ivd_qualitative_example,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="st">"new"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"gold"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">positive =</span> <span class="st">"positive"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">describe</span>(qa)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">diagnostics</span>(qa)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">kappa</span>(qa)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>qa <span class="ot">&lt;-</span> <span class="fu">mcnemar</span>(qa)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(qa)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
-<section id="独立工具" class="level3" data-number="1.4.6">
-<h3 data-number="1.4.6" class="anchored" data-anchor-id="独立工具"><span class="header-section-number">1.4.6</span> 独立工具</h3>
+<section id="瓶间差异" class="level3" data-number="1.3.4">
+<h3 data-number="1.3.4" class="anchored" data-anchor-id="瓶间差异"><span class="header-section-number">1.3.4</span> 瓶间差异</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 异常值和正态性</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">outliers_test</span>(ri_data, <span class="st">"value"</span>, <span class="at">method =</span> <span class="st">"grubbs"</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">normal_test</span>(ri_data, <span class="st">"value"</span>, <span class="at">method =</span> <span class="st">"shapiro"</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看可用拟合方程和 Westgard 规则</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">list_equation</span>()</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">list_westgard</span>()</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 样本量/效能</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_bland_altman</span>(</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.80</span>,</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu =</span> <span class="fl">0.2</span>,</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">1</span>,</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fl">2.5</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ba <span class="ot">&lt;-</span> <span class="fu">bottle_anova</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ivd_bottle_example,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  value <span class="sc">~</span> bottle</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ba)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>posthoc <span class="ot">&lt;-</span> <span class="fu">tukey</span>(ba)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(posthoc)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
-<section id="获取帮助" class="level3" data-number="1.4.7">
-<h3 data-number="1.4.7" class="anchored" data-anchor-id="获取帮助"><span class="header-section-number">1.4.7</span> 获取帮助</h3>
-<p>查看函数介绍：</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(mcr,<span class="st">"ivdtools"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<p>查看帮助文档，浏览特定主题文件。</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vignette</span>(<span class="st">"ivdtools"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<p>查看/下载完整函数手册和帮助文档可访问项目主页。</p>
 </section>
-</section>
-<section id="ai自动分析" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="ai自动分析"><span class="header-section-number">1.5</span> AI自动分析</h2>
-<p><code>ivdtools</code> R 包提供统计函数，<code>ivdtools-analysis</code> Skill 则面向 AI 提供一套受约束的 自动分析工作流。用户给出数据文件、研究设计和分析要求后，Skill 以 <code>ivdtools</code> 为统计 引擎，组织数据预检、参数确认、统计分析、结果核验和中文报告生成。</p>
-<p>在对话中使用 Skill 的价值不是“替代统计判断”，而是把重复的技术步骤标准化，并将数据 来源、分析参数、排除记录、警告、结果表、图形和软件环境一起保存，降低遗漏和手工复制 错误的风险。</p>
-<p><code>ivdtools-analysis</code>没有随<code>ivdtools</code>安装，可从项目主页获取。</p>
-</section>
-<section id="依赖" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="依赖"><span class="header-section-number">1.6</span> 依赖</h2>
-<p><code>ivdtools</code> 主要依赖 <code>ggplot2</code>、<code>ggrepel</code>、<code>VCA</code>、<code>VFP</code>、<code>minpack.lm</code>、 <code>nloptr</code>、<code>nls2</code>、<code>nortest</code> 和 <code>rlang</code>。</p>
-</section>
-<section id="使用边界" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="使用边界"><span class="header-section-number">1.7</span> 使用边界</h2>
-<ul>
-<li>软件输出不自动构成合格判定；接受标准应在分析前确定。</li>
-<li>用于受监管场景前，应完成适用的软件确认、流程验证和结果复核。</li>
-</ul>
-</section>
-<section id="项目信息" class="level2" data-number="1.8">
-<h2 data-number="1.8" class="anchored" data-anchor-id="项目信息"><span class="header-section-number">1.8</span> 项目信息</h2>
-<ul>
-<li>项目主页：<a href="https://github.com/hiox-tech/ivdtools" class="uri">https://github.com/hiox-tech/ivdtools</a></li>
-<li>问题反馈：<a href="https://github.com/hiox-tech/ivdtools/issues" class="uri">https://github.com/hiox-tech/ivdtools/issues</a></li>
-<li>许可证：MIT</li>
-</ul>
+<section id="依赖" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="依赖"><span class="header-section-number">1.4</span> 依赖</h2>
+<p><code>ivdtools</code> 主要依赖 <code>ggplot2</code>、<code>ggrepel</code>、<code>VCA</code>、<code>VFP</code>、<code>minpack.lm</code>、 <code>nloptr</code>、<code>nls2</code>、<code>nortest</code>、<code>rlang</code> 和 <code>ppwdeming</code>。</p>
 
 
 </section>

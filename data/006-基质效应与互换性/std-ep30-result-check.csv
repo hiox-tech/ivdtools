@@ -1,0 +1,21 @@
+case,statistic,standard,tolerance,status,note
+EP30 MA-MB,intercept,3.660,0.02,舍入对应,Table 1
+EP30 MA-MB,slope,0.961,0.002,舍入对应,Table 1
+EP30 MA-MB,syx,1.188,0.01,舍入对应,按n-1计算
+EP30 MA-MB,RMA,1.088,0.05,舍入对应,相对残差
+EP30 MA-MB,RMB,-0.117,0.07,舍入对应,相对残差
+EP30 MA-MB,RMC,0.601,0.05,舍入对应,相对残差
+EP30 MA-MB,RMD,2.164,0.05,舍入对应,相对残差
+EP30 MA-MB,RME,-0.523,0.05,舍入对应,相对残差
+EP30 MA-MB,RMF,3.241,0.05,舍入对应,相对残差
+EP30 MA-MB,RMG,-0.923,0.05,舍入对应,相对残差
+EP30 MA-MD,intercept,0.396,0.01,舍入对应,Table 1
+EP30 MA-MD,slope,0.834,0.002,舍入对应,Table 1
+EP30 MA-MD,syx,1.033,0.01,舍入对应,按n-1计算
+EP30 MA-MD,RMA,-0.603,0.05,舍入对应,相对残差
+EP30 MA-MD,RMB,0.518,0.08,舍入对应,相对残差
+EP30 MA-MD,RMC,0.326,0.05,舍入对应,相对残差
+EP30 MA-MD,RMD,0.997,0.05,舍入对应,相对残差
+EP30 MA-MD,RME,-0.021,0.05,舍入对应,相对残差
+EP30 MA-MD,RMF,-6.758,0.05,对应,相对残差
+EP30 MA-MD,RMG,-0.066,0.06,舍入对应,相对残差

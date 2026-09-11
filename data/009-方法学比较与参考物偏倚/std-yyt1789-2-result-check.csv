@@ -1,0 +1,48 @@
+case,statistic,standard,tolerance,status
+Appendix A L1,mean,192.35,0.005,对应
+Appendix A L1,sd,0.61,0.005,对应
+Appendix A L1,standard_uncertainty,0.25,0.005,对应
+Appendix A L1,expanded_uncertainty,0.50,0.005,对应
+Appendix A L1,bias,-5.2,0.051,显示舍入差异
+Appendix A L1,lower,-7.7,0.101,显示舍入差异
+Appendix A L1,upper,-2.7,0.05,对应
+Appendix A L2,mean,149.80,0.005,对应
+Appendix A L2,sd,0.36,0.005,对应
+Appendix A L2,standard_uncertainty,0.15,0.005,对应
+Appendix A L2,expanded_uncertainty,0.30,0.008,显示舍入差异
+Appendix A L2,bias,-2.6,0.05,对应
+Appendix A L2,lower,-4.5,0.05,对应
+Appendix A L2,upper,-0.7,0.05,对应
+Appendix A L3,mean,119.50,0.005,对应
+Appendix A L3,sd,0.42,0.005,对应
+Appendix A L3,standard_uncertainty,0.17,0.005,对应
+Appendix A L3,expanded_uncertainty,0.34,0.007,显示舍入差异
+Appendix A L3,bias,-2.6,0.05,对应
+Appendix A L3,lower,-4.2,0.05,对应
+Appendix A L3,upper,-1.0,0.05,对应
+Appendix B low,mean_bias,1.8267,0.00005,对应
+Appendix B low,sd_bias,3.63308,0.000005,对应
+Appendix B low,lower,1.0,0.05,对应
+Appendix B low,upper,2.7,0.05,对应
+Appendix B high,mean_relative_bias,3.00,0.005,对应
+Appendix B high,sd_relative_bias,2.523,0.0005,对应
+Appendix B high,median_relative_bias,2.9,0.05,对应
+Appendix B high,lower,2.6,0.05,对应
+Appendix B high,upper,4.0,0.05,对应
+Appendix B OLS,intercept,-0.842,0.0005,对应
+Appendix B OLS,slope,1.039,0.0005,对应
+Appendix B WLS,intercept,-0.700,0.003,显示舍入/迭代差异
+Appendix B WLS,slope,1.038,0.0005,对应
+Appendix B Deming,intercept,-1.023,0.0005,对应
+Appendix B Deming,slope,1.041,0.0005,对应
+Appendix B Passing-Bablok,intercept,0.025,0.00005,对应
+Appendix B Passing-Bablok,slope,1.038,0.00051,对应
+Appendix B OLS MDL,bias,4.1,0.05,对应
+Appendix B OLS MDL,lower,3.4,0.05,对应
+Appendix B OLS MDL,upper,4.8,0.05,对应
+Appendix B WLS MDL,bias,4.1,0.05,对应
+Appendix B WLS MDL,lower,3.5,0.25,方法差异
+Appendix B WLS MDL,upper,4.7,0.15,方法差异
+Appendix B Deming MDL,bias,4.1,0.05,对应
+Appendix B Deming MDL,lower,3.4,0.11,方法差异
+Appendix B Deming MDL,upper,4.9,0.07,方法差异

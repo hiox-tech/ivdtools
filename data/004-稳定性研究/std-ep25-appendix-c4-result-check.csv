@@ -1,0 +1,4 @@
+case,statistic,standard
+low_panel,relative_bias,0.0
+low_control,relative_bias,0.0
+high_control,relative_bias,0.5

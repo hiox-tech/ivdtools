@@ -1,0 +1,21 @@
+case,statistic,standard,tolerance,status,note
+EP14 C1,variance_x,15.06,0.01,舍入对应,原文显示两位小数
+EP14 C1,variance_y,22.08,0.01,舍入对应,原文显示两位小数
+EP14 C1,lambda,1.466,0.001,舍入对应,原文显示三位小数
+EP14 C1,slope,1.088,0.001,舍入对应,原文显示三位小数
+EP14 C1,intercept,-1.282,0.001,舍入对应,原文显示三位小数
+EP14 C1,prediction_at_x_145,156.5,0.1,舍入对应,按原文指定参考点计算
+EP14 C1,prediction_se_at_x_145,3.82,0.01,舍入对应,按原文指定参考点计算
+EP14 C1,lower_at_x_145,148.8,0.1,舍入对应,95%预测区间
+EP14 C1,upper_at_x_145,164.2,0.1,舍入对应,95%预测区间
+EP14 C1,noncommutable_count,1,0,对应,处理样品c非互换
+EP14 C2,variance_x,0.000566,0.000001,舍入对应,原文显示三位有效数字
+EP14 C2,variance_y,0.000571,0.000001,舍入对应,原文显示三位有效数字
+EP14 C2,lambda,1.009,0.001,舍入对应,原文显示三位小数
+EP14 C2,slope,1.0026,0.0001,舍入对应,log10尺度
+EP14 C2,intercept,-0.0081,0.0001,舍入对应,PDF文本层遗漏负号但由数据与回归式可复核
+EP14 C2,prediction_at_x_1.64,1.635,0.002,舍入对应,原文中间舍入
+EP14 C2,prediction_se_at_x_1.64,0.0226,0.0001,舍入对应,按原文指定参考点计算
+EP14 C2,lower_at_x_1.64,1.589,0.002,舍入对应,95%预测区间
+EP14 C2,upper_at_x_1.64,1.681,0.002,舍入对应,95%预测区间
+EP14 C2,noncommutable_count,5,0,对应,处理样品a、b、d、f、g非互换

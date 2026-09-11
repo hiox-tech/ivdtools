@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>16&nbsp; Limits of Blank, Detection, and Quantitation – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./017-参考区间.html" rel="next">
+<link href="./015-定性分析与C5C95.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./016-检出限定量限.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#main-functions" id="toc-main-functions" class="nav-link active" data-scroll-target="#main-functions"><span class="header-section-number">16.1</span> Main Functions</a>
+  <ul>
+  <li><a href="#interfaces-parameters-and-core-statistics" id="toc-interfaces-parameters-and-core-statistics" class="nav-link" data-scroll-target="#interfaces-parameters-and-core-statistics"><span class="header-section-number">16.1.1</span> Interfaces, Parameters, and Core Statistics</a></li>
+  <li><a href="#claim-verification-and-design-checks" id="toc-claim-verification-and-design-checks" class="nav-link" data-scroll-target="#claim-verification-and-design-checks"><span class="header-section-number">16.1.2</span> Claim Verification and Design Checks</a></li>
+  </ul></li>
+  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">16.2</span> Analysis Examples</a>
+  <ul>
+  <li><a href="#lob" id="toc-lob" class="nav-link" data-scroll-target="#lob"><span class="header-section-number">16.2.1</span> LoB</a></li>
+  <li><a href="#lod" id="toc-lod" class="nav-link" data-scroll-target="#lod"><span class="header-section-number">16.2.2</span> LoD</a></li>
+  <li><a href="#loq" id="toc-loq" class="nav-link" data-scroll-target="#loq"><span class="header-section-number">16.2.3</span> LoQ</a></li>
+  <li><a href="#claim-verification" id="toc-claim-verification" class="nav-link" data-scroll-target="#claim-verification"><span class="header-section-number">16.2.4</span> Claim Verification</a></li>
+  <li><a href="#study-design" id="toc-study-design" class="nav-link" data-scroll-target="#study-design"><span class="header-section-number">16.2.5</span> Study Design</a></li>
+  <li><a href="#standard-case-clsi-ep17-a2-appendix-a-classical-lob-and-lod" id="toc-standard-case-clsi-ep17-a2-appendix-a-classical-lob-and-lod" class="nav-link" data-scroll-target="#standard-case-clsi-ep17-a2-appendix-a-classical-lob-and-lod"><span class="header-section-number">16.2.6</span> Standard Case: CLSI EP17-A2 Appendix A, Classical LoB and LoD</a></li>
+  <li><a href="#standard-case-clsi-ep17-a2-appendix-c-probit-lod" id="toc-standard-case-clsi-ep17-a2-appendix-c-probit-lod" class="nav-link" data-scroll-target="#standard-case-clsi-ep17-a2-appendix-c-probit-lod"><span class="header-section-number">16.2.7</span> Standard Case: CLSI EP17-A2 Appendix C, Probit LoD</a></li>
+  <li><a href="#standard-case-clsi-ep17-a2-appendices-e-and-f-claim-verification" id="toc-standard-case-clsi-ep17-a2-appendices-e-and-f-claim-verification" class="nav-link" data-scroll-target="#standard-case-clsi-ep17-a2-appendices-e-and-f-claim-verification"><span class="header-section-number">16.2.8</span> Standard Case: CLSI EP17-A2 Appendices E and F, Claim Verification</a></li>
+  <li><a href="#standard-case-yyt-1789.3-2022-appendix-a-progrp" id="toc-standard-case-yyt-1789.3-2022-appendix-a-progrp" class="nav-link" data-scroll-target="#standard-case-yyt-1789.3-2022-appendix-a-progrp"><span class="header-section-number">16.2.9</span> Standard Case: YY/T 1789.3-2022 Appendix A, ProGRP</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This chapter explains how to turn low-concentration experimental data into auditable sensitivity conclusions for the limit of blank (LoB), limit of detection (LoD), limit of quantitation (LoQ), and verification of those claims. The metrics answer different questions: LoB describes the upper tail of the blank distribution, LoD describes detection capability, and LoQ must additionally specify a precision or total-error requirement.</p>
+<p>Workflow: establish or verify LoB, LoD, and LoQ</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["Define LoB, LoD, LoQ&lt;br/&gt;or claim-verification objective"] --&gt; B["sensitivity_design()&lt;br/&gt;Check design"]
+    B --&gt; C["sensitivity_lob()"]
+    C --&gt; D["sensitivity_lod()"]
+    D --&gt; E["sensitivity_loq()"]
+    E --&gt; F["sensitivity_verify()"]
+    F --&gt; G["Check method, precision profile,&lt;br/&gt;and verification rate"]
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B,C,D,E,F process
+    class G output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="main-functions" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="main-functions"><span class="header-section-number">16.1</span> Main Functions</h2>
+<p>The analytical-sensitivity module uses raw long-format data as its main input and separates limit establishment, claim verification, and study design:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sensitivity_lob()</code></td>
+<td>Establish nonparametric, parametric, or zero LoB</td>
+</tr>
+<tr class="even">
+<td><code>sensitivity_lod()</code></td>
+<td>Classical, nonparametric, precision-profile, or Probit LoD</td>
+</tr>
+<tr class="odd">
+<td><code>sensitivity_loq()</code></td>
+<td>Westgard, RMS, precision-based, or custom-target LoQ</td>
+</tr>
+<tr class="even">
+<td><code>sensitivity_verify()</code></td>
+<td>Verify an existing LoB, LoD, or LoQ claim</td>
+</tr>
+<tr class="odd">
+<td><code>sensitivity_design()</code></td>
+<td>View minimum design requirements and actual data counts</td>
+</tr>
+</tbody>
+</table>
+<section id="interfaces-parameters-and-core-statistics" class="level3" data-number="16.1.1">
+<h3 data-number="16.1.1" class="anchored" data-anchor-id="interfaces-parameters-and-core-statistics"><span class="header-section-number">16.1.1</span> Interfaces, Parameters, and Core Statistics</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_lob</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  data, result, sample, <span class="at">lot =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"nonparametric"</span>, <span class="st">"parametric"</span>, <span class="st">"zero"</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">lot_rule =</span> <span class="fu">c</span>(<span class="st">"ep17"</span>, <span class="st">"separate"</span>, <span class="st">"combined"</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exclude =</span> <span class="cn">NULL</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_lod</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  data, <span class="at">result =</span> <span class="cn">NULL</span>, <span class="at">sample =</span> <span class="cn">NULL</span>, lob, <span class="at">lot =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="cn">NULL</span>, <span class="at">detected =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"classical"</span>, <span class="st">"nonparametric"</span>, <span class="st">"profile"</span>, <span class="st">"probit"</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">beta =</span> <span class="fl">0.05</span>, <span class="at">profile_model =</span> <span class="fu">c</span>(<span class="st">"linear"</span>, <span class="st">"quadratic"</span>, <span class="st">"sadler"</span>, <span class="st">"vfp"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_loq</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  data, result, sample, assigned, <span class="at">lot =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"westgard"</span>, <span class="st">"rms"</span>, <span class="st">"precision"</span>, <span class="st">"custom"</span>),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  goal, <span class="at">goal_scale =</span> <span class="fu">c</span>(<span class="st">"relative"</span>, <span class="st">"absolute"</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">lod =</span> <span class="cn">NULL</span>, <span class="at">k =</span> <span class="dv">2</span>, <span class="at">profile =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Nonparametric LoB is the <span class="math inline">\((1-\alpha)\)</span> rank quantile of blank results; the parametric method uses</p>
+<p><span class="math display">\[
+LoB=\bar x_B+c_p s_B,
+\]</span></p>
+<p>where <span class="math inline">\(c_p\)</span> applies a finite-sample correction based on <span class="math inline">\(α\)</span> and blank degrees of freedom <span class="math inline">\(B-K\)</span>. <code>method="zero"</code> fixes <span class="math inline">\(LoB=0\)</span> and reports the proportion of blank results above zero. For classical LoD, SDs from multiple low-level samples are pooled by degrees of freedom:</p>
+<p><span class="math display">\[
+s_p=\sqrt{\frac{\sum_j(n_j-1)s_j^2}{\sum_j(n_j-1)}},
+\]</span></p>
+<p>and combined with LoB, <span class="math inline">\(β\)</span>, and a finite-sample correction. The precision-profile method solves for concentration-dependent SD; the Probit method fits the detection-probability–concentration relationship. Their data structures and assumptions differ.</p>
+<p>At each LoQ level, bias is <span class="math inline">\(b=\bar x-x_a\)</span>. The four error quantities are:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><code>method</code></th>
+<th>Quantity compared with <code>goal</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>westgard</code></td>
+<td><span class="math inline">\(|b|+k s\)</span></td>
+</tr>
+<tr class="even">
+<td><code>rms</code></td>
+<td><span class="math inline">\(\sqrt{s^2+b^2}\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>precision</code></td>
+<td><span class="math inline">\(s\)</span></td>
+</tr>
+<tr class="even">
+<td><code>custom</code></td>
+<td>Value returned by <code>accuracy_function()</code></td>
+</tr>
+</tbody>
+</table>
+<p>When <code>goal_scale="relative"</code>, the quantity is divided by <span class="math inline">\(|x_a|\)</span>. A candidate LoQ is the lowest observed mean or fitted-profile intersection satisfying the target. Multiple lots are handled by the selected <code>lot_rule</code>, and the most conservative finite candidate is reported. When LoD is supplied,</p>
+<p><span class="math display">\[
+LoQ_{\mathrm{reported}}=\max(LoQ_{\mathrm{candidate}},LoD).
+\]</span></p>
+<p><code>sensitivity_lob()</code>, <code>sensitivity_lod()</code>, and <code>sensitivity_loq()</code> return the corresponding limit, method, core statistics, and diagnostics.</p>
+</section>
+<section id="claim-verification-and-design-checks" class="level3" data-number="16.1.2">
+<h3 data-number="16.1.2" class="anchored" data-anchor-id="claim-verification-and-design-checks"><span class="header-section-number">16.1.2</span> Claim Verification and Design Checks</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_verify</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  data, result, sample, <span class="at">limit =</span> <span class="fu">c</span>(<span class="st">"lob"</span>, <span class="st">"lod"</span>, <span class="st">"loq"</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  claim, <span class="at">lob =</span> <span class="cn">NULL</span>, <span class="at">assigned =</span> <span class="cn">NULL</span>, <span class="at">allowable_error =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">error_scale =</span> <span class="fu">c</span>(<span class="st">"relative"</span>, <span class="st">"absolute"</span>), <span class="at">alpha =</span> <span class="fl">0.05</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_design</span>(<span class="at">method =</span> <span class="st">"all"</span>, <span class="at">data =</span> <span class="cn">NULL</span>, ...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>LoB verification counts <span class="math inline">\(x\le claim\)</span>, LoD verification counts <span class="math inline">\(x\ge LoB\)</span>, and LoQ verification checks whether results fall within the allowable-error window around the assigned value. The function returns the observed success proportion, a one-sided Wilson score interval, and EP17 Table 1 boundaries, but intentionally does not generate a <code>pass</code> field. <code>sensitivity_design()</code> gives minimum design requirements and can summarize actual data counts; it shows gaps but does not replace protocol decisions.</p>
+<p><code>sensitivity_verify()</code> returns the observed success proportion, Wilson interval, and boundary information. <code>sensitivity_design()</code> returns minimum requirements and an actual-count table.</p>
+</section>
+</section>
+<section id="analysis-examples" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">16.2</span> Analysis Examples</h2>
+<section id="lob" class="level3" data-number="16.2.1">
+<h3 data-number="16.2.1" class="anchored" data-anchor-id="lob"><span class="header-section-number">16.2.1</span> LoB</h3>
+<p>Each row of the raw data is one measurement:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">17</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>blank <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lot =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">sample =</span> <span class="fu">paste0</span>(<span class="st">"blank"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">replicate =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">15</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>blank<span class="sc">$</span>result <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(blank), <span class="fl">0.2</span>, <span class="fl">0.1</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(blank, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  lot sample replicate     result
+1   A blank1         1 0.09849913
+2   B blank1         1 0.19203633
+3   A blank2         1 0.17670130
+4   B blank2         1 0.11827321
+5   A blank3         1 0.27720908
+6   B blank3         1 0.18343881</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Establish LoB</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>lob_np <span class="ot">&lt;-</span> <span class="fu">sensitivity_lob</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  blank, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nonparametric"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>lob_np</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analytical sensitivity: LOB 
+  Method: nonparametric 
+  Estimate: 0.378828 </code></pre>
+</div>
+</div>
+<p>EP17 lot rules are used by default for all establishment functions: 2–3 lots are calculated separately and the maximum is reported; 4 or more lots are combined. Negative measurement results are not automatically truncated to 0.</p>
+</section>
+<section id="lod" class="level3" data-number="16.2.2">
+<h3 data-number="16.2.2" class="anchored" data-anchor-id="lod"><span class="header-section-number">16.2.2</span> LoD</h3>
+<p>Classical LoD uses the pooled SD of low-level samples:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>low <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lot =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">sample =</span> <span class="fu">paste0</span>(<span class="st">"low"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">replicate =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">15</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>low<span class="sc">$</span>result <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(low), <span class="fl">1.2</span>, <span class="fl">0.2</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(low, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  lot sample replicate    result
+1   A   low1         1 1.4763513
+2   B   low1         1 1.2897865
+3   A   low2         1 1.1695380
+4   B   low2         1 1.2518588
+5   A   low3         1 0.8777197
+6   B   low3         1 0.7982088</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Establish LoD</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>lod_classical <span class="ot">&lt;-</span> <span class="fu">sensitivity_lod</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  low, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lob =</span> lob_np, <span class="at">method =</span> <span class="st">"classical"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>lod_classical</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analytical sensitivity: LOD 
+  Method: classical 
+  Estimate: 0.771614 </code></pre>
+</div>
+</div>
+<p><code>method = "profile"</code> supports <code>linear</code>, <code>quadratic</code>, <code>sadler</code>, and <code>vfp</code> precision profiles; <code>method = "probit"</code> supports raw 0/1 detection results or count/total summaries. Cochran statistics and fit measures are diagnostics only; the program does not choose the analysis path for the user.</p>
+</section>
+<section id="loq" class="level3" data-number="16.2.3">
+<h3 data-number="16.2.3" class="anchored" data-anchor-id="loq"><span class="header-section-number">16.2.3</span> LoQ</h3>
+<p>The LoQ accuracy target must be prespecified. A relative target is expressed as a proportion, so 21.6% is written <code>0.216</code>:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>loq_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lot =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">sample =</span> <span class="fu">paste0</span>(<span class="st">"pool"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">replicate =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>loq_data<span class="sc">$</span>assigned <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>), <span class="at">each =</span> <span class="dv">9</span>), <span class="dv">2</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>loq_data<span class="sc">$</span>result <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(loq_data), loq_data<span class="sc">$</span>assigned,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                         <span class="fl">0.06</span> <span class="sc">*</span> loq_data<span class="sc">$</span>assigned)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(loq_data, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  lot sample replicate assigned   result
+1   A  pool1         1       30 29.70842
+2   B  pool1         1       30 28.62287
+3   A  pool2         1       30 29.82049
+4   B  pool2         1       30 30.07043
+5   A  pool3         1       30 28.84843
+6   B  pool3         1       30 28.98056</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Establish LoQ</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>loq_te <span class="ot">&lt;-</span> <span class="fu">sensitivity_loq</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  loq_data, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">assigned =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lot =</span> <span class="st">"lot"</span>, <span class="at">method =</span> <span class="st">"westgard"</span>, <span class="at">goal =</span> <span class="fl">0.216</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">goal_scale =</span> <span class="st">"relative"</span>, <span class="at">lod =</span> lod_classical</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>loq_te</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analytical sensitivity: LOQ 
+  Method: westgard 
+  Estimate: 29.4924 
+  Candidate LoQ: 29.4924 
+  Reported LoQ : 29.4924 </code></pre>
+</div>
+</div>
+<p>The result stores both <code>candidate_loq</code> and <code>reported_loq</code>, so the LoD constraint does not overwrite the original candidate value.</p>
+</section>
+<section id="claim-verification" class="level3" data-number="16.2.4">
+<h3 data-number="16.2.4" class="anchored" data-anchor-id="claim-verification"><span class="header-section-number">16.2.4</span> Claim Verification</h3>
+<p><code>limit</code> can specify only one claim type at a time:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>verification <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"blank1"</span>, <span class="st">"blank2"</span>), <span class="at">each =</span> <span class="dv">10</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">19</span>), <span class="fl">1.2</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(verification, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  sample result
+1 blank1      0
+2 blank1      0
+3 blank1      0
+4 blank1      0
+5 blank1      0
+6 blank1      0</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify LoB</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>v_lob <span class="ot">&lt;-</span> <span class="fu">sensitivity_verify</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  verification, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">limit =</span> <span class="st">"lob"</span>, <span class="at">claim =</span> <span class="dv">1</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>v_lob</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analytical sensitivity: VERIFICATION 
+  Method: lob 
+  Limit                    : lob
+  Claim                    : 1
+  LoB                      : 1
+  Total results            : 20
+  Consistent results       : 19
+  Observed proportion      : 0.95
+  Score CI lower           : 0.80399276
+  Score CI upper           : 0.98876518
+  EP17 boundary            : 0.85
+  Difference from boundary : 0.1</code></pre>
+</div>
+</div>
+<ul>
+<li>LoB: count <code>result &lt;= claim</code>.</li>
+<li>LoD: count <code>result &gt;= lob</code>; the LoD claim is not a detection decision threshold.</li>
+<li>LoQ: check whether the result falls within the allowable-error window around each sample’s assigned value.</li>
+</ul>
+<p>The result contains the observed proportion, one-sided Wilson interval, EP17 Table 1 boundaries, and differences. It does not contain a <code>pass</code> or <code>verified</code> field.</p>
+</section>
+<section id="study-design" class="level3" data-number="16.2.5">
+<h3 data-number="16.2.5" class="anchored" data-anchor-id="study-design"><span class="header-section-number">16.2.5</span> Study Design</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_design</span>(<span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analytical sensitivity study design
+  Method: classical
+    Reagent lots         : 2
+    Instruments          : 1
+    Days                 : 3
+    Blank samples        : 4
+    Low samples          : 4
+    Concentration levels : NA
+    Replicates per lot   : 60
+    Replicate scope      : blank and low results separately
+
+  Method: profile
+    Reagent lots         : 2
+    Instruments          : 1
+    Days                 : 5
+    Blank samples        : 0
+    Low samples          : 5
+    Concentration levels : 5
+    Replicates per lot   : 40
+    Replicate scope      : per sample
+
+  Method: probit
+    Reagent lots         : 2
+    Instruments          : NA
+    Days                 : NA
+    Blank samples        : 0
+    Low samples          : 3
+    Concentration levels : 5
+    Replicates per lot   : 20
+    Replicate scope      : per sample and concentration level
+
+  Method: loq
+    Reagent lots         : 2
+    Instruments          : 1
+    Days                 : 3
+    Blank samples        : 0
+    Low samples          : 4
+    Concentration levels : 1
+    Replicates per lot   : 36
+    Replicate scope      : total low results
+
+  Method: verification
+    Reagent lots         : 1
+    Instruments          : 1
+    Days                 : 3
+    Blank samples        : 2
+    Low samples          : 0
+    Concentration levels : 1
+    Replicates per lot   : 20
+    Replicate scope      : total verification results</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity_design</span>(<span class="st">"verification"</span>, verification,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">limit =</span> <span class="st">"lob"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analytical sensitivity study design
+  Method               : verification
+  Reagent lots         : 1
+  Instruments          : 1
+  Days                 : 3
+  Blank samples        : 2
+  Low samples          : 0
+  Concentration levels : 1
+  Replicates per lot   : 20
+  Replicate scope      : total verification results
+
+Observed study counts
+  Observations         : 20
+  Reagent lots         : NA
+  Days                 : NA
+  Samples              : 2
+  Concentration levels : NA</code></pre>
+</div>
+</div>
+<p>The design object reports minimum requirements alongside actual counts but does not make a pass/fail decision. Exclusions must be supplied explicitly through <code>exclude</code> and are preserved in the result object.</p>
+</section>
+<section id="standard-case-clsi-ep17-a2-appendix-a-classical-lob-and-lod" class="level3" data-number="16.2.6">
+<h3 data-number="16.2.6" class="anchored" data-anchor-id="standard-case-clsi-ep17-a2-appendix-a-classical-lob-and-lod"><span class="header-section-number">16.2.6</span> Standard Case: CLSI EP17-A2 Appendix A, Classical LoB and LoD</h3>
+<p>Two reagent lots each have 60 blank and 60 low-level results. Calculate each lot under the EP17 lot rule and report the larger value.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ep17_blank <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data/016-分析灵敏度/std-ep17-appendix-a-blank.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ep17_low <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data/016-分析灵敏度/std-ep17-appendix-a-low.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>ep17_lob_np <span class="ot">&lt;-</span> <span class="fu">sensitivity_lob</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  ep17_blank, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nonparametric"</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>ep17_lod_np <span class="ot">&lt;-</span> <span class="fu">sensitivity_lod</span>(</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  ep17_low, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">lob =</span> ep17_lob_np, <span class="at">method =</span> <span class="st">"classical"</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>ep17_lob_p <span class="ot">&lt;-</span> <span class="fu">sensitivity_lob</span>(</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  ep17_blank, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"parametric"</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>ep17_lod_p <span class="ot">&lt;-</span> <span class="fu">sensitivity_lod</span>(</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  ep17_low, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">lob =</span> ep17_lob_p, <span class="at">method =</span> <span class="st">"classical"</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP17-A2 Appendix A: comparison with the standard</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 32%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard position</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard result</th>
+<th style="text-align: right;">ivdtools result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">nonparametric LoB lot 1</td>
+<td style="text-align: right;">7.6</td>
+<td style="text-align: right;">7.6000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">nonparametric LoB lot 2</td>
+<td style="text-align: right;">9.4</td>
+<td style="text-align: right;">9.4000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">nonparametric LoB report</td>
+<td style="text-align: right;">9.4</td>
+<td style="text-align: right;">9.4000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">classical LoD lot 1</td>
+<td style="text-align: right;">14.5</td>
+<td style="text-align: right;">14.5309</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">classical LoD lot 2</td>
+<td style="text-align: right;">13.8</td>
+<td style="text-align: right;">13.8343</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">classical LoD report</td>
+<td style="text-align: right;">14.5</td>
+<td style="text-align: right;">14.5309</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">parametric LoB report</td>
+<td style="text-align: right;">8.8</td>
+<td style="text-align: right;">8.7956</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP17-A2 Appendix A</td>
+<td style="text-align: left;">parametric LoD report</td>
+<td style="text-align: right;">13.9</td>
+<td style="text-align: right;">13.9266</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Negative measurement results are retained as in the source table and are not truncated to 0.</p>
+</section>
+<section id="standard-case-clsi-ep17-a2-appendix-c-probit-lod" class="level3" data-number="16.2.7">
+<h3 data-number="16.2.7" class="anchored" data-anchor-id="standard-case-clsi-ep17-a2-appendix-c-probit-lod"><span class="header-section-number">16.2.7</span> Standard Case: CLSI EP17-A2 Appendix C, Probit LoD</h3>
+<p>All 66 zero-concentration results from three lots are negative, supporting LoB = 0 in this example. Because zero concentration cannot be log-transformed, only positive-concentration rows are sent to the Probit model; zero-concentration counts remain in the input table for LoB checking.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ep17_probit <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data/016-分析灵敏度/std-ep17-appendix-c-probit.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ep17_probit_fit_data <span class="ot">&lt;-</span> ep17_probit[ep17_probit<span class="sc">$</span>concentration <span class="sc">&gt;</span> <span class="dv">0</span>, ]</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>ep17_c_lod <span class="ot">&lt;-</span> <span class="fu">sensitivity_lod</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  ep17_probit_fit_data,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"positive"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lob =</span> <span class="dv">0</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="st">"concentration"</span>, <span class="at">detected =</span> <span class="st">"positive"</span>, <span class="at">total =</span> <span class="st">"total"</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"probit"</span>, <span class="at">concentration_scale =</span> <span class="st">"log10"</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep17_c_lod)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="016-检出限定量限_files/figure-html/ep17-appendix-c-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP17-A2 Appendix C: comparison with the standard</caption>
+<colgroup>
+<col style="width: 27%">
+<col style="width: 25%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard position</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard result</th>
+<th style="text-align: right;">ivdtools result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendix C</td>
+<td style="text-align: left;">Probit LoD lot 1</td>
+<td style="text-align: right;">0.077</td>
+<td style="text-align: right;">0.0766</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP17-A2 Appendix C</td>
+<td style="text-align: left;">Probit LoD lot 2</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">0.0335</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendix C</td>
+<td style="text-align: left;">Probit LoD lot 3</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">0.0314</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The three LoDs are 0.077, 0.033, and 0.031 CFU/mL; the maximum, 0.077 CFU/mL, is reported. Neither goodness-of-fit test indicates lack of fit, but this appendix uses one sample, a deliberate simplification that falls below the minimum three-sample design and must not be treated as a compliant study template.</p>
+</section>
+<section id="standard-case-clsi-ep17-a2-appendices-e-and-f-claim-verification" class="level3" data-number="16.2.8">
+<h3 data-number="16.2.8" class="anchored" data-anchor-id="standard-case-clsi-ep17-a2-appendices-e-and-f-claim-verification"><span class="header-section-number">16.2.8</span> Standard Case: CLSI EP17-A2 Appendices E and F, Claim Verification</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ep17_ef <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data/016-分析灵敏度/std-ep17-appendix-e-verification.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ep17_f <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data/016-分析灵敏度/std-ep17-appendix-f-loq-verification.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>ep17_verify_lob <span class="ot">&lt;-</span> <span class="fu">sensitivity_verify</span>(</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  ep17_ef[ep17_ef<span class="sc">$</span>type <span class="sc">==</span> <span class="st">"blank"</span>, ],</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">limit =</span> <span class="st">"lob"</span>, <span class="at">claim =</span> <span class="dv">20</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>ep17_verify_lod <span class="ot">&lt;-</span> <span class="fu">sensitivity_verify</span>(</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  ep17_ef[ep17_ef<span class="sc">$</span>type <span class="sc">==</span> <span class="st">"positive"</span>, ],</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">limit =</span> <span class="st">"lod"</span>, <span class="at">claim =</span> <span class="dv">45</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lob =</span> <span class="dv">20</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>ep17_verify_loq <span class="ot">&lt;-</span> <span class="fu">sensitivity_verify</span>(</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  ep17_f, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">limit =</span> <span class="st">"loq"</span>, <span class="at">claim =</span> <span class="dv">50</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="st">"target"</span>, <span class="at">allowable_error =</span> <span class="fl">0.15</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP17-A2 Appendices E-F: comparison with the standard</caption>
+<colgroup>
+<col style="width: 30%">
+<col style="width: 26%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard position</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard result</th>
+<th style="text-align: right;">ivdtools result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendices E-F</td>
+<td style="text-align: left;">LoB consistency (%)</td>
+<td style="text-align: right;">95.8</td>
+<td style="text-align: right;">95.8333</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP17-A2 Appendices E-F</td>
+<td style="text-align: left;">LoD consistency (%)</td>
+<td style="text-align: right;">91.7</td>
+<td style="text-align: right;">91.6667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP17-A2 Appendices E-F</td>
+<td style="text-align: left;">LoQ consistency (%)</td>
+<td style="text-align: right;">91.1</td>
+<td style="text-align: right;">91.1111</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="standard-case-yyt-1789.3-2022-appendix-a-progrp" class="level3" data-number="16.2.9">
+<h3 data-number="16.2.9" class="anchored" data-anchor-id="standard-case-yyt-1789.3-2022-appendix-a-progrp"><span class="header-section-number">16.2.9</span> Standard Case: YY/T 1789.3-2022 Appendix A, ProGRP</h3>
+<p>Appendix A gives 60 blank and 60 low-concentration results for each of two lots and can be analyzed directly with <code>sensitivity_lob()</code> and <code>sensitivity_lod()</code>. Negative blanks are retained as reported and are not truncated to zero.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>yyt1789_3_blank <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/016-分析灵敏度/std-yyt1789-3-appendix-a-blank.csv"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>yyt1789_3_low <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/016-分析灵敏度/std-yyt1789-3-appendix-a-low.csv"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>yyt1789_3_lob_np <span class="ot">&lt;-</span> <span class="fu">sensitivity_lob</span>(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  yyt1789_3_blank, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nonparametric"</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>yyt1789_3_lob_p <span class="ot">&lt;-</span> <span class="fu">sensitivity_lob</span>(</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  yyt1789_3_blank, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"parametric"</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>yyt1789_3_lod_classical <span class="ot">&lt;-</span> <span class="fu">sensitivity_lod</span>(</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  yyt1789_3_low, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">lob =</span> yyt1789_3_lob_np, <span class="at">method =</span> <span class="st">"classical"</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>yyt1789_3_lod_np <span class="ot">&lt;-</span> <span class="fu">sensitivity_lod</span>(</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  yyt1789_3_low, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">lot =</span> <span class="st">"lot"</span>,</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">lob =</span> yyt1789_3_lob_np, <span class="at">method =</span> <span class="st">"nonparametric"</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.3-2022 Appendix A: comparison with the standard</caption>
+<colgroup>
+<col style="width: 29%">
+<col style="width: 30%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard position</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard result</th>
+<th style="text-align: right;">ivdtools result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">nonparametric LoB lot 1</td>
+<td style="text-align: right;">0.240</td>
+<td style="text-align: right;">0.2450</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">nonparametric LoB lot 2</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.2500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">reported LoB</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.2500</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">parametric LoB lot 1</td>
+<td style="text-align: right;">0.174</td>
+<td style="text-align: right;">0.1758</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">parametric LoB lot 2</td>
+<td style="text-align: right;">0.176</td>
+<td style="text-align: right;">0.1779</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">classical LoD lot 1</td>
+<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.3570</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">classical LoD lot 2</td>
+<td style="text-align: right;">0.360</td>
+<td style="text-align: right;">0.3673</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">nonparametric LoD lot 1</td>
+<td style="text-align: right;">1.075</td>
+<td style="text-align: right;">1.0750</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.3 Appendix A</td>
+<td style="text-align: left;">nonparametric LoD lot 2</td>
+<td style="text-align: right;">1.130</td>
+<td style="text-align: right;">1.1300</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Three intermediate algorithm differences must be disclosed:</p>
+<ul>
+<li>The standard takes the 57th order statistic for nonparametric LoB, whereas the package uses continuous rank 57.5 and interpolates between positions 57 and 58. Lot 1 is therefore 0.245 rather than 0.24; after taking the larger of the two lots, the reported value is still exactly 0.25.</li>
+<li>Standard Table A.6 uses displayed pooled SDs of 0.065/0.066 and coefficient 1.653, producing classical LoDs of 0.35/0.36. The package calculates pooled SD from raw results and uses its own finite-sample coefficient 1.6486, producing approximately 0.357/0.367. The methods are similar but not identical; close final rounding does not establish complete reproduction.</li>
+<li>Parametric LoB also differs because of the finite-sample coefficient convention, yielding approximately 0.1758/0.1779 rather than the standard’s 0.174/0.176.</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./015-定性分析与C5C95.html" class="pagination-link" aria-label="Qualitative Analysis and C5/C95">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./017-参考区间.html" class="pagination-link" aria-label="Reference Intervals">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

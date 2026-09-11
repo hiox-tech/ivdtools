@@ -1,0 +1,29 @@
+case,statistic,standard,note
+EP29 Example 1,independent_unequal_u,0.22,原文约值
+EP29 Example 1,same_pipette_equal_u,0.20,原文约值
+EP29 Example 1,independent_equal_u,0.14,原文约值
+EP29 Example 2,relative_u,0.0224,原文约值
+EP29 Example 2,absolute_u,5.03,原文约值
+EP29 Example 3,independent_staged_u,0.149,原文约值
+EP29 Example 3,correlated_u,0.10,原文约值
+EP29 Example 4,ms_between,24.4,表2报告值
+EP29 Example 4,ms_within,0.52,表2报告值
+EP29 Example 4,within_sd,0.72,原文约值
+EP29 Example 4,between_sd,2.19,原文约值
+EP29 Example 4,combined_u,2.30,原文约值
+EP29 Example 4,F,46.9,表2报告值
+EP29 Example 5,n144_bias_u,0.10,原文约值
+EP29 Example 5,n144_combined_u,0.72,原文约值
+EP29 Example 5,n16_bias_u,0.30,原文约值
+EP29 Example 5,n16_combined_u,0.77,原文约值
+EP29 Example 6a,measured_mean,6.04,原文约值
+EP29 Example 6a,bias,-0.26,原文约值
+EP29 Example 6a,bias_u,0.068,原文约值
+EP29 Example 6a,bias_expanded,0.14,原文约值
+EP29 Example 6b,claim_combined_u,0.22,原文约值
+EP29 Example 6b,lab_combined_u,0.165,原文约值
+EP29 Example 10,estimate,145,标准 Figure 4 约值
+EP29 Example 10,relative_percent,7.1,原文独立输入解析约值
+EP29 Example 11,A1C_7_U_0pct,30.8,按原文公式和表4参数计算
+EP29 Example 11,A1C_7_U_2pct,31.8,按原文公式和表4参数计算
+EP29 Example 11,A1C_7_U_5pct,36.8,按原文公式和表4参数计算

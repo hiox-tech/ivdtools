@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>21&nbsp; 算法原理简介 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./022-标准对应关系.html" rel="next">
+<link href="./020-异常值与正态检验.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./021-算法原理简介.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#重复测量多样本与统计单位" id="toc-重复测量多样本与统计单位" class="nav-link active" data-scroll-target="#重复测量多样本与统计单位"><span class="header-section-number">21.1</span> 重复测量、多样本与统计单位</a>
+  <ul>
+  <li><a href="#先确定哪一行是一个观测" id="toc-先确定哪一行是一个观测" class="nav-link" data-scroll-target="#先确定哪一行是一个观测"><span class="header-section-number">21.1.1</span> 先确定“哪一行是一个观测”</a></li>
+  <li><a href="#可以直接接收重复结果的函数" id="toc-可以直接接收重复结果的函数" class="nav-link" data-scroll-target="#可以直接接收重复结果的函数"><span class="header-section-number">21.1.2</span> 可以直接接收重复结果的函数</a></li>
+  <li><a href="#必须先归并为样本级结果的函数" id="toc-必须先归并为样本级结果的函数" class="nav-link" data-scroll-target="#必须先归并为样本级结果的函数"><span class="header-section-number">21.1.3</span> 必须先归并为样本级结果的函数</a></li>
+  <li><a href="#多样本是共同分析还是分别分析" id="toc-多样本是共同分析还是分别分析" class="nav-link" data-scroll-target="#多样本是共同分析还是分别分析"><span class="header-section-number">21.1.4</span> 多样本是“共同分析”还是“分别分析”</a></li>
+  </ul></li>
+  <li><a href="#异常值与正态性" id="toc-异常值与正态性" class="nav-link" data-scroll-target="#异常值与正态性"><span class="header-section-number">21.2</span> 异常值与正态性</a>
+  <ul>
+  <li><a href="#grubbs-检验" id="toc-grubbs-检验" class="nav-link" data-scroll-target="#grubbs-检验"><span class="header-section-number">21.2.1</span> Grubbs 检验</a></li>
+  <li><a href="#广义-esd" id="toc-广义-esd" class="nav-link" data-scroll-target="#广义-esd"><span class="header-section-number">21.2.2</span> 广义 ESD</a></li>
+  <li><a href="#dixon-与-iqr-规则" id="toc-dixon-与-iqr-规则" class="nav-link" data-scroll-target="#dixon-与-iqr-规则"><span class="header-section-number">21.2.3</span> Dixon 与 IQR 规则</a></li>
+  <li><a href="#正态性检验的自动分支" id="toc-正态性检验的自动分支" class="nav-link" data-scroll-target="#正态性检验的自动分支"><span class="header-section-number">21.2.4</span> 正态性检验的自动分支</a></li>
+  </ul></li>
+  <li><a href="#方法比较与参考物质偏倚" id="toc-方法比较与参考物质偏倚" class="nav-link" data-scroll-target="#方法比较与参考物质偏倚"><span class="header-section-number">21.3</span> 方法比较与参考物质偏倚</a>
+  <ul>
+  <li><a href="#分析方向数据单位与预处理分段" id="toc-分析方向数据单位与预处理分段" class="nav-link" data-scroll-target="#分析方向数据单位与预处理分段"><span class="header-section-number">21.3.1</span> 分析方向、数据单位与预处理分段</a></li>
+  <li><a href="#相关系数的三个选项" id="toc-相关系数的三个选项" class="nav-link" data-scroll-target="#相关系数的三个选项"><span class="header-section-number">21.3.2</span> 相关系数的三个选项</a></li>
+  <li><a href="#ols-与-wls-点估计" id="toc-ols-与-wls-点估计" class="nav-link" data-scroll-target="#ols-与-wls-点估计"><span class="header-section-number">21.3.3</span> OLS 与 WLS 点估计</a></li>
+  <li><a href="#deming-回归与-lambda" id="toc-deming-回归与-lambda" class="nav-link" data-scroll-target="#deming-回归与-lambda"><span class="header-section-number">21.3.4</span> Deming 回归与 <code>lambda</code></a></li>
+  <li><a href="#三类加权-deming" id="toc-三类加权-deming" class="nav-link" data-scroll-target="#三类加权-deming"><span class="header-section-number">21.3.5</span> 三类加权 Deming</a></li>
+  <li><a href="#回归参数置信区间" id="toc-回归参数置信区间" class="nav-link" data-scroll-target="#回归参数置信区间"><span class="header-section-number">21.3.6</span> 回归参数置信区间</a></li>
+  <li><a href="#passingbablok" id="toc-passingbablok" class="nav-link" data-scroll-target="#passingbablok"><span class="header-section-number">21.3.7</span> Passing–Bablok</a></li>
+  <li><a href="#差值百分比差与离群分析" id="toc-差值百分比差与离群分析" class="nav-link" data-scroll-target="#差值百分比差与离群分析"><span class="header-section-number">21.3.8</span> 差值、百分比差与离群分析</a></li>
+  <li><a href="#blandaltman-横轴中心与一致性限" id="toc-blandaltman-横轴中心与一致性限" class="nav-link" data-scroll-target="#blandaltman-横轴中心与一致性限"><span class="header-section-number">21.3.9</span> Bland–Altman 横轴、中心与一致性限</a></li>
+  <li><a href="#医学决定水平偏倚与预测区间" id="toc-医学决定水平偏倚与预测区间" class="nav-link" data-scroll-target="#医学决定水平偏倚与预测区间"><span class="header-section-number">21.3.10</span> 医学决定水平偏倚与预测区间</a></li>
+  <li><a href="#参数选择改变了什么" id="toc-参数选择改变了什么" class="nav-link" data-scroll-target="#参数选择改变了什么"><span class="header-section-number">21.3.11</span> 参数选择改变了什么</a></li>
+  <li><a href="#参考物质偏倚" id="toc-参考物质偏倚" class="nav-link" data-scroll-target="#参考物质偏倚"><span class="header-section-number">21.3.12</span> 参考物质偏倚</a></li>
+  </ul></li>
+  <li><a href="#参考物质互换性" id="toc-参考物质互换性" class="nav-link" data-scroll-target="#参考物质互换性"><span class="header-section-number">21.4</span> 参考物质互换性</a>
+  <ul>
+  <li><a href="#ep14-型预测区间" id="toc-ep14-型预测区间" class="nav-link" data-scroll-target="#ep14-型预测区间"><span class="header-section-number">21.4.1</span> EP14 型预测区间</a></li>
+  <li><a href="#ifcc-型差异评价" id="toc-ifcc-型差异评价" class="nav-link" data-scroll-target="#ifcc-型差异评价"><span class="header-section-number">21.4.2</span> IFCC 型差异评价</a></li>
+  </ul></li>
+  <li><a href="#定性性能c5c95-与-roc" id="toc-定性性能c5c95-与-roc" class="nav-link" data-scroll-target="#定性性能c5c95-与-roc"><span class="header-section-number">21.5</span> 定性性能、C5/C95 与 ROC</a>
+  <ul>
+  <li><a href="#四格表比例及区间" id="toc-四格表比例及区间" class="nav-link" data-scroll-target="#四格表比例及区间"><span class="header-section-number">21.5.1</span> 四格表比例及区间</a></li>
+  <li><a href="#似然比一致性与-mcnemar" id="toc-似然比一致性与-mcnemar" class="nav-link" data-scroll-target="#似然比一致性与-mcnemar"><span class="header-section-number">21.5.2</span> 似然比、一致性与 McNemar</a></li>
+  <li><a href="#c5c95" id="toc-c5c95" class="nav-link" data-scroll-target="#c5c95"><span class="header-section-number">21.5.3</span> C5/C95</a></li>
+  <li><a href="#经验-rocauc-与多变量模型" id="toc-经验-rocauc-与多变量模型" class="nav-link" data-scroll-target="#经验-rocauc-与多变量模型"><span class="header-section-number">21.5.4</span> 经验 ROC、AUC 与多变量模型</a></li>
+  </ul></li>
+  <li><a href="#精密度瓶间差与参考区间" id="toc-精密度瓶间差与参考区间" class="nav-link" data-scroll-target="#精密度瓶间差与参考区间"><span class="header-section-number">21.6</span> 精密度、瓶间差与参考区间</a>
+  <ul>
+  <li><a href="#方差分量与精密度轮廓" id="toc-方差分量与精密度轮廓" class="nav-link" data-scroll-target="#方差分量与精密度轮廓"><span class="header-section-number">21.6.1</span> 方差分量与精密度轮廓</a></li>
+  <li><a href="#瓶间差" id="toc-瓶间差" class="nav-link" data-scroll-target="#瓶间差"><span class="header-section-number">21.6.2</span> 瓶间差</a></li>
+  <li><a href="#参考区间" id="toc-参考区间" class="nav-link" data-scroll-target="#参考区间"><span class="header-section-number">21.6.3</span> 参考区间</a></li>
+  </ul></li>
+  <li><a href="#响应方程拟合与线性评价" id="toc-响应方程拟合与线性评价" class="nav-link" data-scroll-target="#响应方程拟合与线性评价"><span class="header-section-number">21.7</span> 响应方程拟合与线性评价</a>
+  <ul>
+  <li><a href="#已实现的十二个响应方程" id="toc-已实现的十二个响应方程" class="nav-link" data-scroll-target="#已实现的十二个响应方程"><span class="header-section-number">21.7.1</span> 已实现的十二个响应方程</a></li>
+  <li><a href="#线性设计量与回归比较" id="toc-线性设计量与回归比较" class="nav-link" data-scroll-target="#线性设计量与回归比较"><span class="header-section-number">21.7.2</span> 线性设计量与回归比较</a></li>
+  </ul></li>
+  <li><a href="#干扰稀释加标与钩状效应" id="toc-干扰稀释加标与钩状效应" class="nav-link" data-scroll-target="#干扰稀释加标与钩状效应"><span class="header-section-number">21.8</span> 干扰、稀释、加标与钩状效应</a>
+  <ul>
+  <li><a href="#双组干扰与差中之差" id="toc-双组干扰与差中之差" class="nav-link" data-scroll-target="#双组干扰与差中之差"><span class="header-section-number">21.8.1</span> 双组干扰与差中之差</a></li>
+  <li><a href="#稀释回收" id="toc-稀释回收" class="nav-link" data-scroll-target="#稀释回收"><span class="header-section-number">21.8.2</span> 稀释回收</a></li>
+  <li><a href="#加标回收与钩状效应" id="toc-加标回收与钩状效应" class="nav-link" data-scroll-target="#加标回收与钩状效应"><span class="header-section-number">21.8.3</span> 加标回收与钩状效应</a></li>
+  </ul></li>
+  <li><a href="#分析灵敏度" id="toc-分析灵敏度" class="nav-link" data-scroll-target="#分析灵敏度"><span class="header-section-number">21.9</span> 分析灵敏度</a>
+  <ul>
+  <li><a href="#空白限与检出限" id="toc-空白限与检出限" class="nav-link" data-scroll-target="#空白限与检出限"><span class="header-section-number">21.9.1</span> 空白限与检出限</a></li>
+  <li><a href="#定量限与限值验证" id="toc-定量限与限值验证" class="nav-link" data-scroll-target="#定量限与限值验证"><span class="header-section-number">21.9.2</span> 定量限与限值验证</a></li>
+  </ul></li>
+  <li><a href="#质量控制与稳定性" id="toc-质量控制与稳定性" class="nav-link" data-scroll-target="#质量控制与稳定性"><span class="header-section-number">21.10</span> 质量控制与稳定性</a>
+  <ul>
+  <li><a href="#leveyjennings-与-westgard" id="toc-leveyjennings-与-westgard" class="nav-link" data-scroll-target="#leveyjennings-与-westgard"><span class="header-section-number">21.10.1</span> Levey–Jennings 与 Westgard</a></li>
+  <li><a href="#节点偏倚时间回归与越限时间" id="toc-节点偏倚时间回归与越限时间" class="nav-link" data-scroll-target="#节点偏倚时间回归与越限时间"><span class="header-section-number">21.10.2</span> 节点偏倚、时间回归与越限时间</a></li>
+  <li><a href="#平均动力学温度与-arrhenius" id="toc-平均动力学温度与-arrhenius" class="nav-link" data-scroll-target="#平均动力学温度与-arrhenius"><span class="header-section-number">21.10.3</span> 平均动力学温度与 Arrhenius</a></li>
+  </ul></li>
+  <li><a href="#测量不确定度与溯源" id="toc-测量不确定度与溯源" class="nav-link" data-scroll-target="#测量不确定度与溯源"><span class="header-section-number">21.11</span> 测量不确定度与溯源</a>
+  <ul>
+  <li><a href="#a-类与-b-类标准化" id="toc-a-类与-b-类标准化" class="nav-link" data-scroll-target="#a-类与-b-类标准化"><span class="header-section-number">21.11.1</span> A 类与 B 类标准化</a></li>
+  <li><a href="#iqc均匀性稳定性和定值" id="toc-iqc均匀性稳定性和定值" class="nav-link" data-scroll-target="#iqc均匀性稳定性和定值"><span class="header-section-number">21.11.2</span> IQC、均匀性、稳定性和定值</a></li>
+  <li><a href="#一阶合成与有效自由度" id="toc-一阶合成与有效自由度" class="nav-link" data-scroll-target="#一阶合成与有效自由度"><span class="header-section-number">21.11.3</span> 一阶合成与有效自由度</a></li>
+  <li><a href="#一般测量模型与-monte-carlo" id="toc-一般测量模型与-monte-carlo" class="nav-link" data-scroll-target="#一般测量模型与-monte-carlo"><span class="header-section-number">21.11.4</span> 一般测量模型与 Monte Carlo</a></li>
+  <li><a href="#逐级溯源" id="toc-逐级溯源" class="nav-link" data-scroll-target="#逐级溯源"><span class="header-section-number">21.11.5</span> 逐级溯源</a></li>
+  </ul></li>
+  <li><a href="#样本量与功效" id="toc-样本量与功效" class="nav-link" data-scroll-target="#样本量与功效"><span class="header-section-number">21.12</span> 样本量与功效</a>
+  <ul>
+  <li><a href="#blandaltman-一致性" id="toc-blandaltman-一致性" class="nav-link" data-scroll-target="#blandaltman-一致性"><span class="header-section-number">21.12.1</span> Bland–Altman 一致性</a></li>
+  <li><a href="#单比例区间与目标值检验" id="toc-单比例区间与目标值检验" class="nav-link" data-scroll-target="#单比例区间与目标值检验"><span class="header-section-number">21.12.2</span> 单比例区间与目标值检验</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本文只描述 <code>ivdtools</code> 当前源码实际执行的计算。涉及同一函数的多个算法参数时，本章同时列出其数学定义、默认选择和适用条件，以便判断改变参数究竟改变了估计对象、误差模型，还是只改变了区间算法；具体调用和报告流程仍见相应专题章节。</p>
+<p>以下统一记样本量为 <span class="math inline">\(n\)</span>，样本均值为 <span class="math inline">\(\bar x\)</span>，样本标准差为 <span class="math inline">\(s\)</span>，正态分布和 t 分布的 <span class="math inline">\(p\)</span> 分位数分别为 <span class="math inline">\(z_p\)</span> 和 <span class="math inline">\(t_{p,\nu}\)</span>。除特别说明外，源码使用 R 的双精度未舍入数值完成中间计算。</p>
+<section id="重复测量多样本与统计单位" class="level2" data-number="21.1">
+<h2 data-number="21.1" class="anchored" data-anchor-id="重复测量多样本与统计单位"><span class="header-section-number">21.1</span> 重复测量、多样本与统计单位</h2>
+<section id="先确定哪一行是一个观测" class="level3" data-number="21.1.1">
+<h3 data-number="21.1.1" class="anchored" data-anchor-id="先确定哪一行是一个观测"><span class="header-section-number">21.1.1</span> 先确定“哪一行是一个观测”</h3>
+<p><code>ivdtools</code> 的函数并不把“长表”自动等同于“支持重复测量”。在调用函数前先确定统计单位：</p>
+<ul>
+<li><strong>单次测量</strong>：每行本身就是独立测量，例如精密度方差分量、线性各水平的重复结果、稀释回收的重复结果；</li>
+<li><strong>样本级代表值</strong>：每个受试者或样本只保留一行，例如方法学比较、普通 ROC、参考区间和四格表；</li>
+<li><strong>样本内重复结构</strong>：重复次数、日、运行、批次或中心具有模型含义，例如 <code>precision(result ~ day/run)</code>；</li>
+<li><strong>分组后的独立分析</strong>：不同产品、分析物、批次、参考人群分区或质控品分别形成多个数据集。</li>
+</ul>
+<p>如果函数没有明确的重复结构参数，同一个 ID 的多行不会自动变成相关观测，也不会自动计算均值；这些行可能直接增加 <code>n</code>、进入回归或被计入四格表。因此，重复数据的处理顺序应为：</p>
+<ol type="1">
+<li>依据方案确认重复测量的层级、有效重复数和最终统计单位；</li>
+<li>若目标函数需要样本级一行，按预先规定的均值、中位数、首次结果或最终判定规则汇总；</li>
+<li>若目标函数本身估计重复性或方差分量，保留长表并提供日、运行、批次、中心等分层列；</li>
+<li>若是多个独立项目，先按分类变量或连续界值拆分，再对每个数据集执行同一分析流程；</li>
+<li>同时保存原始行、汇总规则、实际有效重复数和拆分记录，避免把测量次数误报为独立样本数。</li>
+</ol>
+</section>
+<section id="可以直接接收重复结果的函数" class="level3" data-number="21.1.2">
+<h3 data-number="21.1.2" class="anchored" data-anchor-id="可以直接接收重复结果的函数"><span class="header-section-number">21.1.2</span> 可以直接接收重复结果的函数</h3>
+<p><code>precision()</code> 将重复结果作为方差模型的观测，按公式中的嵌套层级估计残差、日内/日间、批内/批间或站点等方差分量；<code>by</code> 只负责在外层分组后分别建立模型，不改变组内方差公式。<code>linearity()</code> 先按浓度水平计算重复均值、SD 和有效重复数，再按 <code>weights</code> 形成水平权重；<code>method = "linear"</code> 的最终直线和偏离分析均使用这些水平汇总量，探索性多项式则按当前接口的观测层级拟合。<code>c5_c95()</code> 同样先按水平得到 <span class="math inline">\((mu_j,s_j,n_j)\)</span>，再拟合 SD—均值关系，不能把二分类阳性数伪装成连续响应。</p>
+<p><code>interference_paired()</code>、 <code>interference_dose_response()</code>、 <code>interference_patient()</code>、 <code>dilution_recovery()</code>、 <code>spike_recovery()</code>、 <code>hook_effect()</code>、 <code>commutability()</code>、 <code>reference_bias()</code> 和 <code>sensitivity_*()</code> 的共同原则是：在函数明确的样本、水平、方法、条件或批次键内先汇总重复结果，再计算效应、区间或研究级汇总。它们返回的样本级槽位与总体槽位不是同一个统计对象，报告时应分别说明。</p>
+</section>
+<section id="必须先归并为样本级结果的函数" class="level3" data-number="21.1.3">
+<h3 data-number="21.1.3" class="anchored" data-anchor-id="必须先归并为样本级结果的函数"><span class="header-section-number">21.1.3</span> 必须先归并为样本级结果的函数</h3>
+<p>普通 <code>mcr()</code>、<code>roc()</code>、<code>auc()</code>、 <code>cutoff()</code>、 <code>mlr()</code>、 <code>raw_to_table()</code>、 <code>kappa()</code>、 <code>mcnemar()</code>、 <code>reference_interval()</code>、 <code>outliers_test()</code> 和 <code>normal_test()</code> 不会为普通数据框建立样本内相关结构。方法学比较应先把候选和参考方法的重复结果归并为每个样本一对结果；ROC 和四格表应先形成每名受试者一个结果或一个最终判定；参考区间和普通分布检验应先形成每名参考个体一个值。</p>
+<p>对方法学比较，若第 <span class="math inline">\(i\)</span> 个样本两侧分别有 <span class="math inline">\(r_{Xi}\)</span>、<span class="math inline">\(r_{Yi}\)</span> 次重复，至少应保存</p>
+<p><span class="math display">\[
+\bar x_i=\frac1{r_{Xi}}\sum_{k=1}^{r_{Xi}}x_{ik},\qquad
+\bar y_i=\frac1{r_{Yi}}\sum_{k=1}^{r_{Yi}}y_{ik},
+\]</span></p>
+<p>以及两侧 SD 和重复次数。回归和 bootstrap 以 <span class="math inline">\((\bar x_i,\bar y_i)\)</span> 为抽样单位；重复 SD 只在 <code>lambda = "replicates"</code> 或精密度轮廓权重中用于误差模型，不把重复行再加入回归样本量。</p>
+</section>
+<section id="多样本是共同分析还是分别分析" class="level3" data-number="21.1.4">
+<h3 data-number="21.1.4" class="anchored" data-anchor-id="多样本是共同分析还是分别分析"><span class="header-section-number">21.1.4</span> 多样本是“共同分析”还是“分别分析”</h3>
+<p>多份患者样本共同估计一条方法学回归线，多名受试者共同形成一条 ROC 曲线，多名参考个体共同估计参考区间，多瓶共同形成瓶间 ANOVA；这些场景不能按样本逐个拆开后再把结果平均。相反，不同分析物、产品、批次、参考人群分区、质控品、独立 panel 或方法组合若要分别报告，必须先形成多个数据集。</p>
+<p>连续变量分段使用 <code>split_by_cutpoints()</code>，得到 <code>[−Inf,c_1)</code>、<code>[c_1,c_2)</code>、…、<code>[c_K,Inf)</code> 的具名 dataframe list；分类列使用 <code>split_by_factors()</code>，按 factor levels 或非缺失值首次出现顺序拆分。拆分函数只改变数据范围，不改变下游统计公式：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>segments <span class="ot">&lt;-</span> <span class="fu">split_by_cutpoints</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  method_data,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"reference"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutpoints =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  segments,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(d) {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mcr</span>(d, <span class="at">id =</span> <span class="st">"sample"</span>, <span class="at">candidate =</span> <span class="st">"candidate"</span>, <span class="at">reference =</span> <span class="st">"reference"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">describe</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">correlation</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">regression</span>(<span class="at">method =</span> <span class="st">"deming"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">bland_altman</span>()</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>这种预处理方式使每个结果对象的样本范围、缺失处理、异常值记录和置信区间都可独立审计；如果需要整体结论，应在原始总体数据上另建对象，而不是把各段结果简单加权平均。</p>
+</section>
+</section>
+<section id="异常值与正态性" class="level2" data-number="21.2">
+<h2 data-number="21.2" class="anchored" data-anchor-id="异常值与正态性"><span class="header-section-number">21.2</span> 异常值与正态性</h2>
+<section id="grubbs-检验" class="level3" data-number="21.2.1">
+<h3 data-number="21.2.1" class="anchored" data-anchor-id="grubbs-检验"><span class="header-section-number">21.2.1</span> Grubbs 检验</h3>
+<p>对有限观测计算</p>
+<p><span class="math display">\[
+G=\frac{\max_i|x_i-\bar x|}{s}.
+\]</span></p>
+<p>令</p>
+<p><span class="math display">\[
+t=t_{1-\alpha/(2n),\,n-2},\qquad
+G_{\mathrm{crit}}
+=\frac{n-1}{\sqrt n}
+\sqrt{\frac{t^2}{n-2+t^2}}.
+\]</span></p>
+<p>当 <span class="math inline">\(G&gt;G_{\mathrm{crit}}\)</span> 时，只标记本次绝对离均差最大的一个观测。源码没有在标记后自动重复 Grubbs 检验；<span class="math inline">\(n&lt;3\)</span> 或 <span class="math inline">\(s=0\)</span> 时不产生异常值。</p>
+</section>
+<section id="广义-esd" class="level3" data-number="21.2.2">
+<h3 data-number="21.2.2" class="anchored" data-anchor-id="广义-esd"><span class="header-section-number">21.2.2</span> 广义 ESD</h3>
+<p>第 <span class="math inline">\(i\)</span> 轮在当前剩余样本中计算</p>
+<p><span class="math display">\[
+R_i=\frac{\max_j|x_j-\bar x_i|}{s_i},
+\]</span></p>
+<p>移除该轮最极端值，并以</p>
+<p><span class="math display">\[
+t_i=t_{1-\alpha/[2(n-i+1)],\,n-i-1},
+\]</span></p>
+<p><span class="math display">\[
+\lambda_i=
+\frac{(n-i)t_i}
+{\sqrt{(n-i-1+t_i^2)(n-i+1)}}
+\]</span></p>
+<p>作为临界值。最终异常值数是满足 <span class="math inline">\(R_i&gt;\lambda_i\)</span> 的最大轮次，而不是逐轮遇到不显著即停止。源码要求 <span class="math inline">\(n\ge5\)</span>；未指定最大异常数时取 <span class="math inline">\(\min(5,n-2)\)</span>。</p>
+</section>
+<section id="dixon-与-iqr-规则" class="level3" data-number="21.2.3">
+<h3 data-number="21.2.3" class="anchored" data-anchor-id="dixon-与-iqr-规则"><span class="header-section-number">21.2.3</span> Dixon 与 IQR 规则</h3>
+<p>Dixon 计算两端间隙占极差的比例：</p>
+<p><span class="math display">\[
+Q_{\min}=\frac{x_{(2)}-x_{(1)}}{x_{(n)}-x_{(1)}},\qquad
+Q_{\max}=\frac{x_{(n)}-x_{(n-1)}}{x_{(n)}-x_{(1)}}.
+\]</span></p>
+<p>临界值来自源码内置的 <span class="math inline">\(n=3,\ldots,30\)</span>、<span class="math inline">\(\alpha\in\{0.01,0.05\}\)</span> 表。双端检验时源码先检查低端；低端达到临界值后立即返回，不再同时标记高端。</p>
+<p>IQR 规则使用 R 默认分位数算法得到 <span class="math inline">\(Q_1\)</span>、<span class="math inline">\(Q_3\)</span>，并以</p>
+<p><span class="math display">\[
+[Q_1-k(Q_3-Q_1),\;Q_3+k(Q_3-Q_1)]
+\]</span></p>
+<p>之外的观测作为异常值，默认 <span class="math inline">\(k=1.5\)</span>。</p>
+</section>
+<section id="正态性检验的自动分支" class="level3" data-number="21.2.4">
+<h3 data-number="21.2.4" class="anchored" data-anchor-id="正态性检验的自动分支"><span class="header-section-number">21.2.4</span> 正态性检验的自动分支</h3>
+<p>源码对有限观测要求 <span class="math inline">\(n\ge3\)</span> 且 <span class="math inline">\(s&gt;0\)</span>。自动选择规则为：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">样本量</th>
+<th>实际检验</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(3\le n\le50\)</span></td>
+<td>Shapiro–Wilk</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(51\le n\le5000\)</span></td>
+<td>Anderson–Darling</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(n&gt;5000\)</span></td>
+<td>Lilliefors</td>
+</tr>
+</tbody>
+</table>
+<p>Cramér–von Mises 仅在明确选择时执行。后面三种检验直接使用 <code>nortest</code> 包实现；源码只保存检验统计量和 p 值，没有计算偏离正态的效应量，也没有自动进行数据变换。</p>
+</section>
+</section>
+<section id="方法比较与参考物质偏倚" class="level2" data-number="21.3">
+<h2 data-number="21.3" class="anchored" data-anchor-id="方法比较与参考物质偏倚"><span class="header-section-number">21.3</span> 方法比较与参考物质偏倚</h2>
+<section id="分析方向数据单位与预处理分段" class="level3" data-number="21.3.1">
+<h3 data-number="21.3.1" class="anchored" data-anchor-id="分析方向数据单位与预处理分段"><span class="header-section-number">21.3.1</span> 分析方向、数据单位与预处理分段</h3>
+<p>以下统一以参考或比较方法为 <span class="math inline">\(X\)</span>、候选或待评价方法为 <span class="math inline">\(Y\)</span>，并建立</p>
+<p><span class="math display">\[Y=a+bX.\]</span></p>
+<p>因此，正偏倚表示候选方法结果高于参考方法。源码只保留两列均为有限值的完整配对，并要求每个样本 ID 只有一行。原始重复测量必须先汇总为每个样本的两种方法均值；如果还要由重复测量估计 Deming 方差比，则同时保留两侧 SD 和重复次数。这样，回归和 bootstrap 的统计单位始终是“样本”，不会把同一样本的重复结果误当成相互独立的临床样本。</p>
+<p>若预设界值为 <span class="math inline">\(c_1&lt;\cdots&lt;c_K\)</span>，<code>split_by_cutpoints()</code> 在建立 <code>mcr</code> 对象前把指定数值变量划为</p>
+<p><span class="math display">\[
+X&lt;c_1,\quad c_1\le X&lt;c_2,\quad\ldots,\quad X\ge c_K.
+\]</span></p>
+<p>函数返回由 dataframe 构成的具名 list，每个区段分别建立一个 <code>mcr</code> 对象。由此，一个 <code>mcr</code> 对象只对应一个确定的分析数据集，描述、相关、离群点、回归、差值分析及绘图使用相同样本。如需合并区段，应在建立对象前显式合并相应 dataframe，而不是在分析函数内部选择区段。</p>
+<p>分类变量预处理使用 <code>split_by_factors()</code>。factor 按声明的 levels 顺序，character 和 logical 按首次出现顺序形成组；每行只属于一个水平。默认排除分组缺失并删除未使用的 factor level，返回值保留原始分组列和各组行数。它只改变后续函数接收的数据集范围，不改变任何统计公式。</p>
+</section>
+<section id="相关系数的三个选项" class="level3" data-number="21.3.2">
+<h3 data-number="21.3.2" class="anchored" data-anchor-id="相关系数的三个选项"><span class="header-section-number">21.3.2</span> 相关系数的三个选项</h3>
+<p><code>correlation(method=)</code> 只描述共同变化强度，不估计一致性。Pearson 相关为</p>
+<p><span class="math display">\[
+r=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}
+{\sqrt{\sum_i(x_i-\bar x)^2\sum_i(y_i-\bar y)^2}},
+\]</span></p>
+<p>检验的是总体线性相关为零。Spearman 先分别把 <span class="math inline">\(x_i,y_i\)</span> 转换为秩 <span class="math inline">\(R_i,S_i\)</span>，再计算 Pearson 秩相关</p>
+<p><span class="math display">\[
+\rho_s=\operatorname{Cor}(R,S).
+\]</span></p>
+<p>没有并列秩时也可写成</p>
+<p><span class="math display">\[
+\rho_s=1-\frac{6\sum_i(R_i-S_i)^2}{n(n^2-1)}.
+\]</span></p>
+<p>Kendall 依据所有可比较样本对的一致与不一致方向。无并列值时</p>
+<p><span class="math display">\[
+\tau=\frac{N_C-N_D}{\binom n2};
+\]</span></p>
+<p>实际由 <code>stats::cor.test()</code> 处理并列秩修正。Pearson 针对线性关系且更受极端值影响；Spearman 针对单调关系；Kendall 直接解释为样本对方向一致性的净比例。无论哪一种，高相关都不能证明两方法偏倚小或可以互换，因为 <span class="math inline">\(Y=a+bX\)</span> 即使 <span class="math inline">\(a\ne0\)</span> 或 <span class="math inline">\(b\ne1\)</span> 也可能具有接近 1 的相关系数。</p>
+<p>回归 <code>method</code> 的选择首先改变误差模型：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>method</code></th>
+<th>X 轴误差</th>
+<th>Y 轴误差/方差形态</th>
+<th>点估计原则</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>"ols"</code></td>
+<td>视为可忽略</td>
+<td>恒定或由可选权重描述</td>
+<td>最小化纵向平方残差</td>
+<td>参考 X 的误差相对很小</td>
+</tr>
+<tr class="even">
+<td><code>"wls"</code></td>
+<td>视为可忽略</td>
+<td>随浓度变化</td>
+<td>最小化加权纵向平方残差</td>
+<td>差值 SD/CV 随浓度变化</td>
+</tr>
+<tr class="odd">
+<td><code>"deming"</code></td>
+<td>不忽略</td>
+<td>两轴误差比为常数 <span class="math inline">\(\lambda\)</span></td>
+<td>误差变量回归</td>
+<td>两方法都有测量误差且方差形态近似恒定</td>
+</tr>
+<tr class="even">
+<td><code>"wdeming"</code></td>
+<td>不忽略</td>
+<td>由共同权重、恒定 CV 或两侧方差轮廓描述</td>
+<td>加权或迭代误差变量回归</td>
+<td>两轴误差随浓度变化</td>
+</tr>
+<tr class="odd">
+<td><code>"pb"</code></td>
+<td>不忽略</td>
+<td>不要求正态误差模型</td>
+<td>两两斜率的秩估计</td>
+<td>线性但有异常值、混合变异或不宜作正态假设</td>
+</tr>
+</tbody>
+</table>
+<p>选择回归方法依据的是研究设计和差值图所揭示的误差结构，而不是哪个方法产生更接近 1 的斜率。</p>
+</section>
+<section id="ols-与-wls-点估计" class="level3" data-number="21.3.3">
+<h3 data-number="21.3.3" class="anchored" data-anchor-id="ols-与-wls-点估计"><span class="header-section-number">21.3.3</span> OLS 与 WLS 点估计</h3>
+<p>普通最小二乘最小化</p>
+<p><span class="math display">\[
+Q(a,b)=\sum_{i=1}^n(y_i-a-bx_i)^2.
+\]</span></p>
+<p>WLS 最小化</p>
+<p><span class="math display">\[
+Q_w(a,b)=\sum_{i=1}^n w_i(y_i-a-bx_i)^2.
+\]</span></p>
+<p>记</p>
+<p><span class="math display">\[
+W=\sum_iw_i,\qquad
+\bar x_w=\frac{\sum_iw_ix_i}{W},\qquad
+\bar y_w=\frac{\sum_iw_iy_i}{W},
+\]</span></p>
+<p><span class="math display">\[
+S_{xx,w}=\sum_iw_i(x_i-\bar x_w)^2,\qquad
+S_{xy,w}=\sum_iw_i(x_i-\bar x_w)(y_i-\bar y_w),
+\]</span></p>
+<p>则</p>
+<p><span class="math display">\[
+\hat b=\frac{S_{xy,w}}{S_{xx,w}},\qquad
+\hat a=\bar y_w-\hat b\bar x_w.
+\]</span></p>
+<p>OLS 是 <span class="math inline">\(w_i=1\)</span> 的特例。<code>weights</code> 各选项改变的是误差方差随浓度变化的假设：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>weights</code></th>
+<th style="text-align: right;">实际权重</th>
+<th style="text-align: right;">隐含的相对方差形态</th>
+<th>主要区别</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>NULL</code></td>
+<td style="text-align: right;">无权重</td>
+<td style="text-align: right;">OLS 假定 <span class="math inline">\(\operatorname{Var}(Y\mid X)\)</span> 恒定</td>
+<td><code>method="wls"</code> 时不能为 <code>NULL</code></td>
+</tr>
+<tr class="even">
+<td><code>"equal"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: right;">与 OLS 相同</td>
+<td>用于显式进入 WLS 接口</td>
+</tr>
+<tr class="odd">
+<td><code>"1/y"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1/\lvert y_i\rvert\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(\operatorname{Var}(Y_i)\propto \lvert y_i\rvert\)</span></td>
+<td>权重依赖候选方法观测值</td>
+</tr>
+<tr class="even">
+<td><code>"1/y^2"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1/y_i^2\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(SD(Y_i)\propto |y_i|\)</span></td>
+<td>候选方法恒定 CV 的经验权重</td>
+</tr>
+<tr class="odd">
+<td><code>"1/x"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1/\lvert x_i\rvert\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(\operatorname{Var}(Y_i)\propto \lvert x_i\rvert\)</span></td>
+<td>权重依赖参考方法观测值</td>
+</tr>
+<tr class="even">
+<td><code>"1/x^2"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1/x_i^2\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(SD(Y_i)\propto |x_i|\)</span></td>
+<td>参考尺度上的恒定 CV 经验权重</td>
+</tr>
+<tr class="odd">
+<td><code>"constant_cv"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1/x_i^2\)</span></td>
+<td style="text-align: right;">与上一行相同</td>
+<td>WLS 中严格要求 <span class="math inline">\(x_i&gt;0\)</span>；名称明确其模型含义</td>
+</tr>
+<tr class="even">
+<td><code>"residual"</code></td>
+<td style="text-align: right;"><span class="math inline">\(1/\hat\sigma_i^2\)</span></td>
+<td style="text-align: right;">SD 由浓度的一次函数描述</td>
+<td>仅用于 WLS，并迭代更新</td>
+</tr>
+<tr class="odd">
+<td>数据列名</td>
+<td style="text-align: right;">用户给定 <span class="math inline">\(w_i\)</span></td>
+<td style="text-align: right;">由用户定义</td>
+<td>要求非负、有限；零权重等于不让该点贡献目标函数</td>
+</tr>
+</tbody>
+</table>
+<p><code>"1/x"</code> 等通用内置权重遇到零分母时以机器精度下限保护数值；这只避免程序除零，并不使零浓度上的相对误差模型具有统计意义。<code>"constant_cv"</code> 因而直接拒绝非正浓度。</p>
+<p>残差加权先拟合 OLS，令第 <span class="math inline">\(k\)</span> 轮残差为</p>
+<p><span class="math display">\[
+e_i^{(k)}=y_i-\hat a^{(k)}-\hat b^{(k)}x_i,
+\]</span></p>
+<p>再拟合绝对残差函数</p>
+<p><span class="math display">\[
+|e_i^{(k)}|=\gamma_0^{(k)}+\gamma_1^{(k)}x_i+\varepsilon_i,
+\qquad
+w_i^{(k+1)}=\frac{1}{\left(\hat\gamma_0^{(k)}+
+\hat\gamma_1^{(k)}x_i\right)^2}.
+\]</span></p>
+<p>随后重新拟合 WLS。<code>weight_iterations</code> 是上述更新次数，默认 4；改变它可能改变最终权重和回归系数，但不应为了贴合某个已公布区间而调节。任何一轮预测 SD 非正或非有限都会停止。</p>
+<p>OLS/WLS 的解析协方差为</p>
+<p><span class="math display">\[
+\hat\sigma_w^2=\frac{\sum_iw_ie_i^2}{n-2},\qquad
+\widehat{\operatorname{Cov}}(\hat a,\hat b)
+=\hat\sigma_w^2(\mathbf X^\mathsf T\mathbf W\mathbf X)^{-1},
+\]</span></p>
+<p>系数区间为 <span class="math inline">\(\hat\theta\pm t_{1-\alpha/2,n-2}SE(\hat\theta)\)</span>。这与 EP09c 附录 H 在相同最终权重下的计算等价。YY/T 1789.2 式（8）在医学决定水平偏倚区间中没有再次乘 <span class="math inline">\(\hat\sigma_w\)</span>；只有当权重是已知绝对逆方差时，两种写法才不需要残差尺度校正。</p>
+</section>
+<section id="deming-回归与-lambda" class="level3" data-number="21.3.4">
+<h3 data-number="21.3.4" class="anchored" data-anchor-id="deming-回归与-lambda"><span class="header-section-number">21.3.4</span> Deming 回归与 <code>lambda</code></h3>
+<p>Deming 回归定义</p>
+<p><span class="math display">\[
+S_{xx}=\sum_i(x_i-\bar x)^2,\quad
+S_{yy}=\sum_i(y_i-\bar y)^2,\quad
+S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y),
+\]</span></p>
+<p>其中 <span class="math inline">\(\lambda\)</span> 在源码中表示 Y 误差方差与 X 误差方差之比。斜率和截距为</p>
+<p><span class="math display">\[
+U=S_{yy}-\lambda S_{xx},\qquad
+b=\frac{U+\sqrt{U^2+4\lambda S_{xy}^2}}{2S_{xy}},
+\qquad a=\bar y-b\bar x.
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+\lambda=\frac{\sigma_Y^2}{\sigma_X^2}.
+\]</span></p>
+<p><code>lambda = 1</code> 表示两种方法的误差方差相同；<span class="math inline">\(\lambda&gt;1\)</span> 表示候选方法 Y 的误差较大，<span class="math inline">\(\lambda&lt;1\)</span> 表示参考方法 X 的误差较大。把比值方向写反会改变 Deming 斜率，因而必须始终按“候选方差除以参考方差”录入。调用底层算法时所需的倒数换算在包内部完成，不改变用户接口。</p>
+<p><code>lambda = "replicates"</code> 从已经汇总的重复测量 SD 估计方差比。若第 <span class="math inline">\(i\)</span> 个样本在两种方法分别有 <span class="math inline">\(n_{Xi}\)</span>、<span class="math inline">\(n_{Yi}\)</span> 次重复，先计算自由度合并的单次测量方差</p>
+<p><span class="math display">\[
+s_{p,X}^2=
+\frac{\sum_i(n_{Xi}-1)s_{Xi}^2}{\sum_i(n_{Xi}-1)},\qquad
+s_{p,Y}^2=
+\frac{\sum_i(n_{Yi}-1)s_{Yi}^2}{\sum_i(n_{Yi}-1)}.
+\]</span></p>
+<p>回归使用的是样本均值，所以实际输入的方差比为</p>
+<p><span class="math display">\[
+\hat\lambda_{\bar X,\bar Y}
+=\frac{s_{p,Y}^2/n_Y}{s_{p,X}^2/n_X}
+=\frac{s_{p,Y}^2}{s_{p,X}^2}\frac{n_X}{n_Y}.
+\]</span></p>
+<p>两种方法的重复次数可以彼此不同，但每种方法内部必须在样本间恒定；否则单个标量 <span class="math inline">\(\lambda\)</span> 不能描述各样本均值的不同误差方差，应改用精密度轮廓。没有提供重复次数时，源码假定两侧重复次数相等，<span class="math inline">\(n_X/n_Y\)</span> 抵消。<span class="math inline">\(\lambda\)</span> 只估计一次；jackknife 和 bootstrap 重拟合时把它视为固定的外部输入，不在每个子样本内重新估计。</p>
+</section>
+<section id="三类加权-deming" class="level3" data-number="21.3.5">
+<h3 data-number="21.3.5" class="anchored" data-anchor-id="三类加权-deming"><span class="header-section-number">21.3.5</span> 三类加权 Deming</h3>
+<p>固定观测权重的 <code>method="wdeming"</code> 先令 <span class="math inline">\(\tilde w_i=w_i/\sum_jw_j\)</span>，以</p>
+<p><span class="math display">\[
+\bar x_w=\sum_i\tilde w_ix_i,\quad
+\bar y_w=\sum_i\tilde w_iy_i,
+\]</span></p>
+<p><span class="math display">\[
+S_{xx,w}=\sum_i\tilde w_i(x_i-\bar x_w)^2,\quad
+S_{yy,w}=\sum_i\tilde w_i(y_i-\bar y_w)^2,\quad
+S_{xy,w}=\sum_i\tilde w_i(x_i-\bar x_w)(y_i-\bar y_w)
+\]</span></p>
+<p>替换普通中心矩，再代入 Deming 闭式。它只给每一对观测一个共同权重，不能表达 X、Y 两侧各自不同且随浓度变化的方差函数。</p>
+<p><code>weights="constant_cv"</code> 在 WLS 中只是 <span class="math inline">\(1/x_i^2\)</span>；在加权 Deming 中则调用 Linnet 的迭代恒定 CV 算法。第 <span class="math inline">\(k\)</span> 轮以两侧隐变量读数的均值构造</p>
+<p><span class="math display">\[
+w_i^{(k)}=\left(\frac{x_i^{*(k)}+y_i^{*(k)}}{2}\right)^{-2},
+\]</span></p>
+<p>用该权重更新 Deming 直线。若 <span class="math inline">\(d_i=y_i-a-bx_i\)</span>，按 ivdtools 的 <span class="math inline">\(\lambda=\sigma_Y^2/\sigma_X^2\)</span> 记法，隐变量更新可写为</p>
+<p><span class="math display">\[
+x_i^*=x_i+\frac{b\,d_i}{\lambda+b^2},\qquad
+y_i^*=y_i-\frac{\lambda d_i}{\lambda+b^2}.
+\]</span></p>
+<p>权重、直线和隐变量反复更新至相对变化不超过 <code>epsilon</code>。两侧浓度必须严格为正；删除一个样本或抽取一份 bootstrap 样本后，整个迭代从头完成，而不是沿用全数据的最终权重。</p>
+<p><code>weights="precision_profile"</code> 允许参考方法和候选方法分别给出</p>
+<p><span class="math display">\[
+g(\mu)=\operatorname{Var}(X\mid\mu),\qquad
+h(\eta)=\operatorname{Var}(Y\mid\eta),\quad \eta=a+b\mu.
+\]</span></p>
+<p>对每个样本的潜在真值 <span class="math inline">\(\mu_i\)</span>，算法最小化带方差尺度项的目标函数</p>
+<p><span class="math display">\[
+L(a,b,\boldsymbol\mu)=
+\sum_i\left[
+\frac{(x_i-\mu_i)^2}{g(\mu_i)}+
+\frac{(y_i-a-b\mu_i)^2}{h(a+b\mu_i)}+
+\log\{g(\mu_i)h(a+b\mu_i)\}
+\right].
+\]</span></p>
+<p>给定 <span class="math inline">\(a,b\)</span> 和当前方差时，潜在真值更新为</p>
+<p><span class="math display">\[
+\mu_i=
+\frac{h_i x_i+g_i b(y_i-a)}{h_i+g_i b^2}.
+\]</span></p>
+<p><code>variance_models</code> 的两项可以是返回方差的函数，也可以是已经完成 <code>profile()</code> 的 <code>precision</code> 对象。后者由 <code>profile_components</code> 分别选择参考侧和候选侧的方差组分，默认两侧均为 <code>"total"</code>，并把 VFP 预测 SD 平方后作为方差。选择 <code>"error"</code>、<code>"day"</code> 或设计中其他实际可用的方差组分会直接改变 <span class="math inline">\(g\)</span> 或 <span class="math inline">\(h\)</span>；具体名称取决于 <code>precision()</code> 的公式，且必须与 方法比较数据所需的误差层级一致。超出精密度研究浓度范围只警告外推，预测方差非正或非有限则停止。外部精密度轮廓在重抽样中保持固定。</p>
+<p>三类加权 Deming 的含义不能互换：固定权重是经验性地改变每个点的影响，恒定 CV Deming 同时建模两轴的相对误差，精密度轮廓 Deming 则允许两轴拥有不同的非恒定方差函数。</p>
+</section>
+<section id="回归参数置信区间" class="level3" data-number="21.3.6">
+<h3 data-number="21.3.6" class="anchored" data-anchor-id="回归参数置信区间"><span class="header-section-number">21.3.6</span> 回归参数置信区间</h3>
+<p><code>ci_method</code> 决定截距和斜率的不确定度算法。<code>"auto"</code> 的映射为：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>回归方法</th>
+<th><code>auto</code> 实际方法</th>
+<th>主要依据</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OLS、WLS</td>
+<td><code>analytic</code></td>
+<td>回归设计矩阵的解析协方差</td>
+</tr>
+<tr class="even">
+<td>Deming、恒定 CV Deming、精密度轮廓 Deming</td>
+<td><code>jackknife</code></td>
+<td>EP09c 附录 K1</td>
+</tr>
+<tr class="odd">
+<td>Passing–Bablok</td>
+<td><code>rank</code></td>
+<td>EP09c 附录 I</td>
+</tr>
+</tbody>
+</table>
+<p>jackknife 每次删除第 <span class="math inline">\(i\)</span> 个样本并完整重拟合，得到 <span class="math inline">\(\hat{\boldsymbol\theta}_{(-i)}=(\hat a_{(-i)},\hat b_{(-i)})^\mathsf T\)</span>，其协方差为</p>
+<p><span class="math display">\[
+\widehat{\operatorname{Cov}}_{\mathrm{jack}}(\hat{\boldsymbol\theta})
+=\frac{n-1}{n}\sum_{i=1}^n
+(\hat{\boldsymbol\theta}_{(-i)}-\bar{\boldsymbol\theta}_{(-\cdot)})
+(\hat{\boldsymbol\theta}_{(-i)}-\bar{\boldsymbol\theta}_{(-\cdot)})^\mathsf T.
+\]</span></p>
+<p>区间仍以全数据点估计为中心：</p>
+<p><span class="math display">\[
+\hat\theta\pm t_{1-\alpha/2,n-2}SE_{\mathrm{jack}}(\hat\theta).
+\]</span></p>
+<p>bootstrap 始终对完整 <span class="math inline">\((x_i,y_i)\)</span> 样本对有放回抽样；由于 <code>mcr()</code> 只接受每个 ID 一行，不存在把同一样本的重复行拆开抽样的问题。每份 bootstrap 样本都完整重拟合回归。若第 <span class="math inline">\(r\)</span> 次得到 <span class="math inline">\(\hat{\boldsymbol\theta}^{*(r)}\)</span>，则：</p>
+<p><span class="math display">\[
+CI_{\mathrm{percentile}}
+=\left[q_{\alpha/2}(\hat\theta^*),
+q_{1-\alpha/2}(\hat\theta^*)\right],
+\]</span></p>
+<p><span class="math display">\[
+SE_{\mathrm{boot}}(\hat\theta)=SD(\hat\theta^*),\qquad
+CI_{\mathrm{standard}}
+=\hat\theta\pm t_{1-\alpha/2,n-2}SE_{\mathrm{boot}}(\hat\theta).
+\]</span></p>
+<p>两种方法还用 bootstrap 截距、斜率样本的联合协方差计算任意浓度的偏倚。源码要求至少 5000 次；<code>seed</code> 只控制可复现性，不应作为改变结论的调节参数。失败拟合被删除并计数；有效拟合不足一半或不足 100 次时停止。</p>
+<p><code>"analytic"</code> 只允许 OLS/WLS，<code>"rank"</code> 只允许 Passing–Bablok。虽然可以显式要求其他方法使用 jackknife 或 bootstrap，但这会改变区间问题，不能把“结果更接近某标准公布值”作为选择依据。</p>
+</section>
+<section id="passingbablok" class="level3" data-number="21.3.7">
+<h3 data-number="21.3.7" class="anchored" data-anchor-id="passingbablok"><span class="header-section-number">21.3.7</span> Passing–Bablok</h3>
+<p>源码形成全部 <span class="math inline">\(x_j\ne x_i\)</span> 的两两斜率</p>
+<p><span class="math display">\[
+b_{ij}=\frac{y_j-y_i}{x_j-x_i},
+\]</span></p>
+<p>完全重复的点对不提供斜率；垂直点对保留为带符号无穷。Algorithm I 先计算小于 <span class="math inline">\(-1\)</span> 的斜率数 <span class="math inline">\(K\)</span>，删除恰好等于 <span class="math inline">\(-1\)</span> 的斜率，再将点估计和区间的秩循环平移 <span class="math inline">\(K\)</span> 位。平移后的中位数为 <span class="math inline">\(\hat b\)</span>，并令</p>
+<p><span class="math display">\[
+\hat a=\operatorname{median}_i(y_i-\hat b x_i).
+\]</span></p>
+<p>若剩余有效斜率数为 <span class="math inline">\(m\)</span>，令</p>
+<p><span class="math display">\[
+C_\gamma=z_{1-\alpha/2}
+\sqrt{\frac{n(n-1)(2n+5)}{18}},\qquad
+M_1=\max\left\{1,\operatorname{round}\left(\frac{m-C_\gamma}{2}\right)\right\},
+\]</span></p>
+<p>并令 <span class="math inline">\(M_2=m-M_1+1\)</span>。斜率上下限取平移后的第 <span class="math inline">\(M_1\)</span>、<span class="math inline">\(M_2\)</span> 个顺序斜率；截距界限分别为</p>
+<p><span class="math display">\[
+a_L=\operatorname{median}_i(y_i-b_Ux_i),\qquad
+a_U=\operatorname{median}_i(y_i-b_Lx_i).
+\]</span></p>
+<p>这就是回归参数的 <code>ci_method="rank"</code>。秩区间并不直接给出某个医学决定水平处偏倚的联合区间；因此 <code>bias()</code> 和 <code>predict()</code> 对 Passing–Bablok 的 <code>ci_method="auto"</code> 改用成对百分位 bootstrap，而不使用 EP09c K1 明确排除的 jackknife。对象中保留的 jackknife 参数协方差只服务于显式要求的扩展型预测计算，不是 Passing–Bablok 默认偏倚区间。</p>
+</section>
+<section id="差值百分比差与离群分析" class="level3" data-number="21.3.8">
+<h3 data-number="21.3.8" class="anchored" data-anchor-id="差值百分比差与离群分析"><span class="header-section-number">21.3.8</span> 差值、百分比差与离群分析</h3>
+<p>绝对差始终按候选减参考：</p>
+<p><span class="math display">\[
+d_i=y_i-x_i.
+\]</span></p>
+<p>百分比差的 <code>percent_denominator</code> 有三个不同估计对象：</p>
+<p><span class="math display">\[
+p_{i,\mathrm{reference}}=100\frac{y_i-x_i}{x_i},\qquad
+p_{i,\mathrm{mean}}=100\frac{y_i-x_i}{(x_i+y_i)/2},\qquad
+p_{i,\mathrm{candidate}}=100\frac{y_i-x_i}{y_i}.
+\]</span></p>
+<p><code>"reference"</code> 回答“相对于参考方法高或低多少”，是默认值；<code>"mean"</code> 对调两种方法时只改变符号，适合没有天然参考方法的对称比较；<code>"candidate"</code> 以候选结果为基数。分母选择会同时改变数值、分布和离群点，不能只改图轴标签。<code>outlier(type="percent")</code> 与 <code>bland_altman(type="percent")</code> 使用同一组选项，因而可保持检测量和差值图完全一致。</p>
+<p><code>outlier(type="difference")</code> 对 <span class="math inline">\(d_i\)</span> 检验；<code>type="percent"</code> 对所选 <span class="math inline">\(p_i\)</span> 检验。<code>method</code> 分别调用本章前述 Grubbs、广义 ESD、Dixon 或 IQR 规则：前三者由 <code>alpha</code> 控制显著性，IQR 由 <code>coef</code> 控制围栏宽度。离群检验只标记样本，不会自动从后续回归或 Bland–Altman 中删除。</p>
+</section>
+<section id="blandaltman-横轴中心与一致性限" class="level3" data-number="21.3.9">
+<h3 data-number="21.3.9" class="anchored" data-anchor-id="blandaltman-横轴中心与一致性限"><span class="header-section-number">21.3.9</span> Bland–Altman 横轴、中心与一致性限</h3>
+<p><code>x_axis</code> 只改变图的横坐标：</p>
+<p><span class="math display">\[
+m_i=\frac{x_i+y_i}{2},\qquad x_i,\qquad y_i
+\]</span></p>
+<p>分别对应 <code>"mean"</code>、<code>"reference"</code>、<code>"candidate"</code>；它不改变纵轴差值。<code>type</code> 决定纵轴：</p>
+<p><span class="math display">\[
+\text{difference}:y_i-x_i,\qquad
+\text{ratio}:\frac{y_i}{x_i},\qquad
+\text{percent}:p_i.
+\]</span></p>
+<p>参数法 <code>method="parametric"</code> 以均值为中心：</p>
+<p><span class="math display">\[
+\hat\delta=\bar d,\qquad
+CI_\delta=\bar d\pm t_{1-\alpha/2,n-1}\frac{s_d}{\sqrt n}.
+\]</span></p>
+<p>若 <code>agree.level</code> 为 <span class="math inline">\(p\)</span>，令 <span class="math inline">\(z_p=z_{(1+p)/2}\)</span>，一致性限为</p>
+<p><span class="math display">\[
+L_-=\bar d-z_ps_d,\qquad L_+=\bar d+z_ps_d.
+\]</span></p>
+<p>各一致性限的标准误和区间为</p>
+<p><span class="math display">\[
+SE_L=s_d\sqrt{\frac1n+\frac{z_p^2}{2(n-1)}},\qquad
+CI(L_\pm)=L_\pm\pm t_{1-\alpha/2,n-1}SE_L.
+\]</span></p>
+<p><code>agree.level</code> 控制一致性限希望覆盖的个体差值比例；<code>conf.level</code> 控制中心和一致性限本身的统计置信度。两者含义不同，例如把 <code>agree.level</code> 从 0.95 改为 0.99 会扩大 LoA，而把 <code>conf.level</code> 从 0.95 改为 0.99 主要扩大 LoA 外面的置信区间。</p>
+<p>非参数法 <code>method="nonparametric"</code> 以普通样本中位数 <span class="math inline">\(d_{(\lceil n/2\rceil)}\)</span>（偶数时取中间两项均值）为中心。<code>median_ci_method="order_statistic"</code> 对候选下限秩 <span class="math inline">\(k\)</span> 计算实际覆盖率</p>
+<p><span class="math display">\[
+C(k)=1-2P\{\operatorname{Bin}(n,0.5)\le k-1\},
+\]</span></p>
+<p>选择满足 <span class="math inline">\(C(k)\ge\text{conf.level}\)</span> 的最大 <span class="math inline">\(k\)</span>，区间为</p>
+<p><span class="math display">\[
+[d_{(k)},d_{(n-k+1)}].
+\]</span></p>
+<p>它至少达到请求覆盖率，通常略保守，并报告实际覆盖率。<code>"interpolated"</code> 使用 EP09c 附录 F 的连续秩正态近似</p>
+<p><span class="math display">\[
+r_L=\frac{n+1-z_{1-\alpha/2}\sqrt n}{2},\qquad
+r_U=\frac{n+1+z_{1-\alpha/2}\sqrt n}{2},
+\]</span></p>
+<p>若 <span class="math inline">\(r=j+q\)</span>、<span class="math inline">\(j=\lfloor r\rfloor\)</span>、<span class="math inline">\(0\le q&lt;1\)</span>，则线性插值得到</p>
+<p><span class="math display">\[
+d_{(r)}=d_{(j)}+q\{d_{(j+1)}-d_{(j)}\}.
+\]</span></p>
+<p>插值法给出名义覆盖率，边界不必等于某个实际观测；顺序统计量法给出离散而保守的区间。</p>
+<p><code>method="hodges_lehmann"</code> 的中心不是普通中位数，而是所有 Walsh 均值的中位数：</p>
+<p><span class="math display">\[
+\hat\delta_{HL}=\operatorname{median}_{i\le j}\left(\frac{d_i+d_j}{2}\right).
+\]</span></p>
+<p>其中心区间采用无连续性校正的 Wilcoxon/Tukey 正态近似。HL 估计的是差值分布的伪中位数；只有在分布对称等条件下，它才与普通中位数具有相近解释，不能把 <code>hl_estimate</code> 标成 <code>median_diff</code>。</p>
+<p>非参数和 HL 方法的一致性限均取经验分位数</p>
+<p><span class="math display">\[
+L_-=Q_{(1-p)/2}(d),\qquad L_+=Q_{1-(1-p)/2}(d),
+\]</span></p>
+<p>使用 R 的 type 7 线性插值分位数。两端 LoA 的置信区间通过对 <span class="math inline">\(d_i\)</span> 有放回抽样、每次重新计算两个经验分位数，再取 bootstrap 百分位数得到。<code>bootstrap_replicates</code> 默认 5000、最低 100；<code>seed</code> 只保证复现。这个经验 LoA 及其 bootstrap 区间是 ivdtools 保留的扩展，不应与 EP09c 附录 F 的中心估计区间混为一谈。</p>
+</section>
+<section id="医学决定水平偏倚与预测区间" class="level3" data-number="21.3.10">
+<h3 data-number="21.3.10" class="anchored" data-anchor-id="医学决定水平偏倚与预测区间"><span class="header-section-number">21.3.10</span> 医学决定水平偏倚与预测区间</h3>
+<p>对给定 <span class="math inline">\(x_0\)</span>，回归预测为 <span class="math inline">\(\hat y_0=\hat a+\hat b x_0\)</span>，拟合均值方差为</p>
+<p><span class="math display">\[
+V_{\mathrm{fit}}(x_0)=
+SE_a^2+x_0^2SE_b^2+2x_0\operatorname{Cov}(a,b).
+\]</span></p>
+<p>均值区间使用 <span class="math inline">\(\sqrt{V_{\mathrm{fit}}}\)</span>，单次结果预测区间使用 <span class="math inline">\(\sqrt{V_{\mathrm{fit}}+s_e^2}\)</span>。医学决定水平上的候选方法减参考方法偏倚定义为</p>
+<p><span class="math display">\[
+\widehat{\operatorname{bias}}(x_0)
+=(\hat a+\hat b x_0)-x_0
+=\hat a+(\hat b-1)x_0.
+\]</span></p>
+<p>减去固定的 <span class="math inline">\(x_0\)</span> 不增加方差，因此解析或 jackknife 参数协方差下</p>
+<p><span class="math display">\[
+SE\{\widehat{\operatorname{bias}}(x_0)\}
+=\sqrt{SE_a^2+x_0^2SE_b^2+2x_0\operatorname{Cov}(a,b)}.
+\]</span></p>
+<p>百分位 bootstrap 则对每一份参数样本直接计算</p>
+<p><span class="math display">\[
+B^{*(r)}(x_0)=a^{*(r)}+[b^{*(r)}-1]x_0
+\]</span></p>
+<p>并取其分位数；standard bootstrap 使用这些偏倚样本的 SD 和 <span class="math inline">\(t_{n-2}\)</span>。<code>bias()</code> 与 <code>predict()</code> 的 <code>ci_method="auto"</code> 对 Passing–Bablok 使用百分位 bootstrap，对其他方法复用回归对象已经选择的解析、jackknife 或 bootstrap 参数不确定度。若回归对象已经保存相同方法、足够次数且 seed 相容的 bootstrap 样本，就直接复用。</p>
+<p><code>interval="confidence"</code> 描述给定 <span class="math inline">\(x_0\)</span> 处平均回归关系或平均偏倚的不确定度；<code>"prediction"</code> 再加入 <span class="math inline">\(s_e^2\)</span>，描述未来单次候选方法结果的散布；<code>"both"</code> 同时返回。预测区间是 ivdtools 扩展，并不是 EP09c 的回归参数或偏倚置信区间。</p>
+</section>
+<section id="参数选择改变了什么" class="level3" data-number="21.3.11">
+<h3 data-number="21.3.11" class="anchored" data-anchor-id="参数选择改变了什么"><span class="header-section-number">21.3.11</span> 参数选择改变了什么</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>改变的数学对象</th>
+<th>不改变的内容</th>
+<th>选择原则</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>method</code></td>
+<td>直线的损失函数或秩估计量</td>
+<td>X/Y 分析方向</td>
+<td>按两轴误差及差值形态预先选择</td>
+</tr>
+<tr class="even">
+<td><code>lambda</code></td>
+<td>Deming 两轴误差的相对惩罚</td>
+<td>原始观测值</td>
+<td>用独立精密度或合规重复测量估计，不为贴合斜率调参</td>
+</tr>
+<tr class="odd">
+<td><code>weights</code></td>
+<td>各样本贡献或浓度相关方差模型</td>
+<td>候选减参考的方向</td>
+<td>恒定 SD、恒定 CV、残差 SD 或精密度轮廓应有实验依据</td>
+</tr>
+<tr class="even">
+<td><code>profile_components</code></td>
+<td>精密度轮廓中的方差组分 <span class="math inline">\(g,h\)</span></td>
+<td>方法比较均值</td>
+<td>选择与研究目标一致的重复性、中间精密度或总精密度</td>
+</tr>
+<tr class="odd">
+<td><code>ci_method</code></td>
+<td>参数不确定度的估计方法</td>
+<td>全数据点估计</td>
+<td><code>auto</code> 遵循方法对应的 EP09c 默认；其他方法用于预设的敏感性分析</td>
+</tr>
+<tr class="even">
+<td><code>conf.level</code></td>
+<td>参数、中心或 LoA 的置信覆盖率</td>
+<td><code>agree.level</code></td>
+<td>通常预先设为 0.95</td>
+</tr>
+<tr class="odd">
+<td><code>agree.level</code></td>
+<td>LoA 覆盖的个体差值比例</td>
+<td>中心估计的置信度</td>
+<td>按一致性定义设定，不能当作 CI 水平</td>
+</tr>
+<tr class="even">
+<td><code>median_ci_method</code></td>
+<td>普通中位数 CI 的离散/连续秩算法</td>
+<td>中位数点估计</td>
+<td>保守实际覆盖选顺序统计量；复现附录 F 连续秩选插值法</td>
+</tr>
+<tr class="odd">
+<td><code>percent_denominator</code></td>
+<td>百分比差的分母和估计对象</td>
+<td>绝对差</td>
+<td>有参考方法选 reference；对称比较可选 mean</td>
+</tr>
+<tr class="even">
+<td><code>bootstrap_replicates</code></td>
+<td>Monte Carlo 误差</td>
+<td>bootstrap 目标分布</td>
+<td>回归至少 5000；更多次数提高分位数稳定性</td>
+</tr>
+<tr class="odd">
+<td><code>seed</code></td>
+<td>伪随机抽样序列</td>
+<td>统计方法和目标参数</td>
+<td>用于复现，不能用来挑选有利结果</td>
+</tr>
+<tr class="even">
+<td><code>split_by_cutpoints()</code> 的 <code>cutpoints</code></td>
+<td>分析前各 dataframe 的样本范围</td>
+<td>后续统计方法</td>
+<td>依据预设临床区间，不按结果反复切分</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="参考物质偏倚" class="level3" data-number="21.3.12">
+<h3 data-number="21.3.12" class="anchored" data-anchor-id="参考物质偏倚"><span class="header-section-number">21.3.12</span> 参考物质偏倚</h3>
+<p>每个水平以测量均值 <span class="math inline">\(\bar x\)</span> 与参考值 <span class="math inline">\(x_{\mathrm{ref}}\)</span> 之差为偏倚：</p>
+<p><span class="math display">\[
+b=\bar x-x_{\mathrm{ref}},\qquad
+u_{\bar x}=\frac{s}{\sqrt n},\qquad
+U_{\bar x}=k u_{\bar x}.
+\]</span></p>
+<p>源码将传入的参考值不确定度直接与 <span class="math inline">\(U_{\bar x}\)</span> 合成：</p>
+<p><span class="math display">\[
+h=\sqrt{U_{\bar x}^2+U_{\mathrm{ref}}^2},\qquad
+[b-h,b+h].
+\]</span></p>
+<p>这里没有在内部把参考值不确定度再除以覆盖因子。相对偏倚为 <span class="math inline">\(100b/x_{\mathrm{ref}}\)</span>；参考值为零时返回缺失。</p>
+</section>
+</section>
+<section id="参考物质互换性" class="level2" data-number="21.4">
+<h2 data-number="21.4" class="anchored" data-anchor-id="参考物质互换性"><span class="header-section-number">21.4</span> 参考物质互换性</h2>
+<section id="ep14-型预测区间" class="level3" data-number="21.4.1">
+<h3 data-number="21.4.1" class="anchored" data-anchor-id="ep14-型预测区间"><span class="header-section-number">21.4.1</span> EP14 型预测区间</h3>
+<p>每个临床样本先在两个测量程序内求重复测量均值与标准差。各程序的临床样本合并重复性方差为</p>
+<p><span class="math display">\[
+s_{p}^2=
+\frac{\sum_j(n_j-1)s_j^2}{\sum_j(n_j-1)}.
+\]</span></p>
+<p>源码令 <span class="math inline">\(\lambda=s_{p,Y}^2/s_{p,X}^2\)</span>，以临床样本均值拟合 Deming 直线。该分支使用除以 <span class="math inline">\(n\)</span> 的总体中心矩。斜率方差为</p>
+<p><span class="math display">\[
+\operatorname{Var}(\hat b)=
+\frac{\hat b^2\max(0,S_{xx}S_{yy}-S_{xy}^2)}{nS_{xy}^2}.
+\]</span></p>
+<p>参考物质在 <span class="math inline">\(x_R\)</span> 处的预测方差为</p>
+<p><span class="math display">\[
+V_R=(x_R-\bar x)^2\operatorname{Var}(\hat b)
++\left(1+\frac1n\right)
+\left(\frac{\hat b^2s_{p,X}^2}{n_{R,X}}
++\frac{s_{p,Y}^2}{n_{R,Y}}\right).
+\]</span></p>
+<p>自由度取两个程序合并重复性自由度的较小值并向下取整。参考物质的 Y 均值落入 <span class="math inline">\(\hat a+\hat b x_R\pm t\sqrt{V_R}\)</span> 时，源码标记为可互换。</p>
+</section>
+<section id="ifcc-型差异评价" class="level3" data-number="21.4.2">
+<h3 data-number="21.4.2" class="anchored" data-anchor-id="ifcc-型差异评价"><span class="header-section-number">21.4.2</span> IFCC 型差异评价</h3>
+<p>临床样本偏倚为 <span class="math inline">\(b_i=y_i-x_i\)</span>。若明确参考测量程序，排序坐标用 <span class="math inline">\(x_i\)</span>；否则用 <span class="math inline">\((x_i+y_i)/2\)</span>。按坐标排序后计算</p>
+<p><span class="math display">\[
+s_{\mathrm{MSSD}}
+=\sqrt{\frac{\sum_{i=1}^{n-1}(b_{i+1}-b_i)^2}{2(n-1)}}.
+\]</span></p>
+<p>参考物质偏倚与所选临床样本偏倚均值之差记为</p>
+<p><span class="math display">\[d=(y_R-x_R)-\bar b_C.\]</span></p>
+<p>临床子集可为全部样本、距离最近的 <span class="math inline">\(q\)</span> 个样本，或目标位置两侧各取一半。区间标准不确定度为</p>
+<p><span class="math display">\[
+u_d=\sqrt{\frac{s_{X,R}^2}{p_X}+\frac{s_{Y,R}^2}{p_Y}
++\frac{s_C^2}{q}}.
+\]</span></p>
+<p>扩展区间为 <span class="math inline">\(d\pm k u_d\)</span>，源码默认 <span class="math inline">\(k=1.9\)</span>。若整个区间位于允许差异带 <span class="math inline">\([-\Delta,\Delta]\)</span> 内，结果为可互换；若整个区间位于允许带同一侧之外，结果为不可互换；其余为不确定。</p>
+</section>
+</section>
+<section id="定性性能c5c95-与-roc" class="level2" data-number="21.5">
+<h2 data-number="21.5" class="anchored" data-anchor-id="定性性能c5c95-与-roc"><span class="header-section-number">21.5</span> 定性性能、C5/C95 与 ROC</h2>
+<section id="四格表比例及区间" class="level3" data-number="21.5.1">
+<h3 data-number="21.5.1" class="anchored" data-anchor-id="四格表比例及区间"><span class="header-section-number">21.5.1</span> 四格表比例及区间</h3>
+<p>源码按第一行、第一列为阳性组织四格表，并计算</p>
+<p><span class="math display">\[
+Se=\frac{TP}{TP+FN},\quad
+Sp=\frac{TN}{TN+FP},\quad
+PPV=\frac{TP}{TP+FP},\quad
+NPV=\frac{TN}{TN+FN},
+\]</span></p>
+<p><span class="math display">\[
+Acc=\frac{TP+TN}{n},\qquad Prev=\frac{TP+FN}{n}.
+\]</span></p>
+<p>对成功数 <span class="math inline">\(x\)</span>，Wald 区间为</p>
+<p><span class="math display">\[
+\hat p\pm z_{1-\alpha/2}\sqrt{\frac{\hat p(1-\hat p)}n};
+\]</span></p>
+<p>连续性校正版在半宽上再加 <span class="math inline">\(1/(2n)\)</span>。Wilson 区间的中心和半宽为</p>
+<p><span class="math display">\[
+c=\frac{\hat p+z^2/(2n)}{1+z^2/n},\qquad
+h=\frac{z}{1+z^2/n}
+\sqrt{\frac{\hat p(1-\hat p)}n+\frac{z^2}{4n^2}}.
+\]</span></p>
+<p>源码的 Wilson 连续性校正是在 <span class="math inline">\(c\pm h\)</span> 外再减、加 <span class="math inline">\(1/(2n)\)</span>。Agresti–Coull 使用</p>
+<p><span class="math display">\[
+\tilde n=n+z^2,qquad
+\tilde p=\frac{x+z^2/2}{\tilde n},qquad
+\tilde p\pm z\sqrt{\frac{\tilde p(1-\tilde p)}{\tilde n}}.
+\]</span></p>
+<p>Jeffreys 区间使用 <span class="math inline">\(\operatorname{Beta}(x+1/2,n-x+1/2)\)</span> 分位数；Clopper–Pearson 区间使用 <span class="math inline">\(\operatorname{Beta}(x,n-x+1)\)</span> 与 <span class="math inline">\(\operatorname{Beta}(x+1,n-x)\)</span> 分位数，边界 <span class="math inline">\(x=0,n\)</span> 单独处理。所有比例区间最终截断到 <span class="math inline">\([0,1]\)</span>。</p>
+<p>给定患病率 <span class="math inline">\(\pi\)</span> 时，预测值重新按</p>
+<p><span class="math display">\[
+PPV_\pi=\frac{Se\,\pi}{Se\,\pi+(1-Sp)(1-\pi)},\qquad
+NPV_\pi=\frac{Sp(1-\pi)}{(1-Se)\pi+Sp(1-\pi)}
+\]</span></p>
+<p>计算。区间只是把灵敏度和特异度各自的上下限代入，没有传播协方差。</p>
+</section>
+<section id="似然比一致性与-mcnemar" class="level3" data-number="21.5.2">
+<h3 data-number="21.5.2" class="anchored" data-anchor-id="似然比一致性与-mcnemar"><span class="header-section-number">21.5.2</span> 似然比、一致性与 McNemar</h3>
+<p><span class="math display">\[LR^+=\frac{Se}{1-Sp},\qquad LR^-=\frac{1-Se}{Sp}.\]</span></p>
+<p>源码在对数尺度上计算区间，例如</p>
+<p><span class="math display">\[
+SE\{\log(LR^+)\}=
+\sqrt{\frac1{TP}-\frac1{TP+FN}+\frac1{FP}-\frac1{FP+TN}}.
+\]</span></p>
+<p>优势比为 <span class="math inline">\(OR=TP\cdot TN/(FP\cdot FN)\)</span>，对数标准误为四个格子倒数之和的平方根。相关格子为零时返回缺失区间，不自动加连续性校正。</p>
+<p>观察一致率和随机一致率为</p>
+<p><span class="math display">\[
+p_o=\frac{TP+TN}{n},\qquad
+p_e=\frac{(TP+FP)(TP+FN)+(FN+TN)(FP+TN)}{n^2},
+\]</span></p>
+<p><span class="math display">\[\kappa=\frac{p_o-p_e}{1-p_e}.\]</span></p>
+<p>源码按四格联合比例的显式渐近方差计算 <span class="math inline">\(\kappa\)</span> 区间，并截断到 <span class="math inline">\([-1,1]\)</span>。PABAK 分支使用</p>
+<p><span class="math display">\[PABAK=2p_o-1,qquad
+\operatorname{Var}(PABAK)=\frac{4p_o(1-p_o)}n.\]</span></p>
+<p>该分支由是否传入患病率触发，但患病率数值不进入公式。</p>
+<p>McNemar 在 <span class="math inline">\(b+c&lt;25\)</span> 时，以 <span class="math inline">\(B\sim\operatorname{Binomial}(b+c,0.5)\)</span> 做双侧精确检验；否则计算</p>
+<p><span class="math display">\[\chi^2=\frac{(|b-c|-1)^2}{b+c}\]</span></p>
+<p>并取 1 个自由度。当 <span class="math inline">\(b+c=0\)</span> 时，p 值置为 1。</p>
+</section>
+<section id="c5c95" class="level3" data-number="21.5.3">
+<h3 data-number="21.5.3" class="anchored" data-anchor-id="c5c95"><span class="header-section-number">21.5.3</span> C5/C95</h3>
+<p>原始重复测量先按样本水平形成均值 <span class="math inline">\(\mu_j\)</span>、标准差 <span class="math inline">\(s_j\)</span> 和样本量 <span class="math inline">\(n_j\)</span>。源码要求至少三个 <span class="math inline">\(n_j\ge2\)</span> 且 <span class="math inline">\(s_j&gt;0\)</span> 的水平，再拟合方差函数得到浓度相关标准差 <span class="math inline">\(s(\mu)\)</span>。</p>
+<p>若事件定义为结果不低于 cutoff <span class="math inline">\(c\)</span>，则</p>
+<p><span class="math display">\[P(Y\ge c\mid\mu)=1-\Phi\!\left(\frac{c-\mu}{s(\mu)}\right);\]</span></p>
+<p>反向事件改用对应的 <span class="math inline">\(\Phi\)</span>。源码在 1001 点网格上搜索目标概率与该函数的符号变化，再用一维求根细化；无根时最多扩展搜索范围 16 次。若出现多个根，选择最接近 cutoff 的根。这是“正态响应分布 + 方差轮廓”的反演，不是二项 probit 回归。</p>
+</section>
+<section id="经验-rocauc-与多变量模型" class="level3" data-number="21.5.4">
+<h3 data-number="21.5.4" class="anchored" data-anchor-id="经验-rocauc-与多变量模型"><span class="header-section-number">21.5.4</span> 经验 ROC、AUC 与多变量模型</h3>
+<p>候选阈值为 <span class="math inline">\(-\infty\)</span>、全部唯一观测值和 <span class="math inline">\(+\infty\)</span>。将 ROC 点按假阳性率递增排序后AUC 用梯形和计算：</p>
+<p><span class="math display">\[
+A=\sum_i\frac{TPR_i+TPR_{i+1}}2(FPR_{i+1}-FPR_i).
+\]</span></p>
+<p>当 <span class="math inline">\(0&lt;A&lt;1\)</span> 时，源码用 Hanley–McNeil 近似：</p>
+<p><span class="math display">\[Q_1=\frac{A}{2-A},\qquad Q_2=\frac{2A^2}{1+A},\]</span></p>
+<p><span class="math display">\[
+SE(A)=\sqrt{
+\frac{A(1-A)+(n_+-1)(Q_1-A^2)+(n_--1)(Q_2-A^2)}{n_+n_-}}.
+\]</span></p>
+<p>AUC 区间固定为 <span class="math inline">\(A\pm1.96SE(A)\)</span> 并截断到 <span class="math inline">\([0,1]\)</span>；<span class="math inline">\(A=0\)</span> 或 <span class="math inline">\(1\)</span> 时不计算标准误。Youden 截断值最大化 <span class="math inline">\(Se+Sp-1\)</span>；左上角法最小化 <span class="math inline">\(\sqrt{(1-Se)^2+(1-Sp)^2}\)</span>。并列时返回当前顺序的第一个点。</p>
+<p>同一批受试者的两条 AUC 不能按独立样本比较。<code>auc_compare(method="ep24")</code> 采用 EP24-A2 Hanley–McNeil 配对近似：分别求阳性组和阴性组内两项评分的 Pearson 相关（有序评分可选 Kendall），取平均后与平均 AUC 对 EP24 表 5 线性插值得到面积相关 <span class="math inline">\(r\)</span>，再计算</p>
+<p><span class="math display">\[
+SE(A_1-A_2)=\sqrt{SE_1^2+SE_2^2-2rSE_1SE_2}.
+\]</span></p>
+<p><code>auc_compare(method="delong")</code> 以两条评分对每名阳性和阴性受试者的秩贡献建立协方差矩阵 <span class="math inline">\(\widehat\Sigma\)</span>，并令 <span class="math inline">\(\mathbf c=(1,-1)^\mathsf T\)</span>：</p>
+<p><span class="math display">\[
+SE(A_1-A_2)=\sqrt{\mathbf c^\mathsf T\widehat\Sigma\mathbf c}.
+\]</span></p>
+<p>两种方法都用正态近似检验 <span class="math inline">\(H_0:A_1-A_2=0\)</span>。当曲线来自训练集 Logistic 拟合概率时，它们把评分当作既定值，不校正模型拟合不确定性和表观性能的乐观偏倚。</p>
+<p>多指标模型实际拟合</p>
+<p><span class="math display">\[
+\operatorname{logit}(p_i)=\beta_0+\sum_{j=1}^q\beta_jx_{ij}
+\]</span></p>
+<p>的二项 Logistic 回归，并用训练数据预测概率建立同一经验 ROC。新观测的线性预测量区间为 <span class="math inline">\(\hat\eta\pm1.96SE(\hat\eta)\)</span>，再经 Logistic 逆变换。概率标准误采用 <span class="math inline">\(SE(\hat p)=SE(\hat\eta)\hat p(1-\hat p)\)</span>，分类阈值固定为 0.5。</p>
+</section>
+</section>
+<section id="精密度瓶间差与参考区间" class="level2" data-number="21.6">
+<h2 data-number="21.6" class="anchored" data-anchor-id="精密度瓶间差与参考区间"><span class="header-section-number">21.6</span> 精密度、瓶间差与参考区间</h2>
+<section id="方差分量与精密度轮廓" class="level3" data-number="21.6.1">
+<h3 data-number="21.6.1" class="anchored" data-anchor-id="方差分量与精密度轮廓"><span class="header-section-number">21.6.1</span> 方差分量与精密度轮廓</h3>
+<p>源码先判断设计是否平衡：平衡设计使用 ANOVA 方差分量，不平衡设计使用 REML。每个随机层级返回 <span class="math inline">\(SD_j=\sqrt{\widehat{VC}_j}\)</span> 和 <span class="math inline">\(CV_j=100SD_j/\bar y\)</span>；总标准差为</p>
+<p><span class="math display">\[SD_T=\sqrt{\sum_j\widehat{VC}_j}.\]</span></p>
+<p>方差分量区间完全采用 VCA 推断对象中的双侧 SD/CV 区间，源码没有另写 Satterthwaite–卡方区间公式。</p>
+<p>浓度相关方差轮廓由 VFP 拟合。源码注册的十个模型为：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">编号</th>
+<th>实际方差或 CV 模型</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td><span class="math inline">\(\sigma^2=\beta_1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td><span class="math inline">\(\sigma^2=\beta_1\mu^2\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td><span class="math inline">\(\sigma^2=\beta_1+\beta_2\mu^2\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td><span class="math inline">\(\sigma^2=(\beta_1+\beta_2\mu)^2\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td><span class="math inline">\(\sigma^2=\beta_1+\beta_2\mu^K\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td><span class="math inline">\(\sigma^2=\beta_1+\beta_2\mu+\beta_3\mu^J\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td><span class="math inline">\(\sigma^2=\beta_1+\beta_2\mu^J\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td><span class="math inline">\(\sigma^2=(\beta_1+\beta_2\mu)^J\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td><span class="math inline">\(\sigma^2=\beta_1\mu^J\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td><span class="math inline">\(CV=\beta_1\mu^J\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>候选模型多于一个时按 AIC 最小选择。输入为 CV 时，源码先结合均值还原 SD，再以 <span class="math inline">\(VC=SD^2\)</span> 进入拟合。</p>
+</section>
+<section id="瓶间差" class="level3" data-number="21.6.2">
+<h3 data-number="21.6.2" class="anchored" data-anchor-id="瓶间差"><span class="header-section-number">21.6.2</span> 瓶间差</h3>
+<p>瓶、批或其他分组直接进入固定效应方差分析。组内描述区间为</p>
+<p><span class="math display">\[
+\bar x_j\pm t_{1-\alpha/2,n_j-1}\frac{s_j}{\sqrt{n_j}}.
+\]</span></p>
+<p>残差执行 Shapiro–Wilk，组间方差执行 Bartlett；两两比较直接使用 Tukey HSD。源码没有将瓶间均方自动转换为均匀性不确定度；该计算只存在于不确定度模块的随机效应 ANOVA 分支。</p>
+</section>
+<section id="参考区间" class="level3" data-number="21.6.3">
+<h3 data-number="21.6.3" class="anchored" data-anchor-id="参考区间"><span class="header-section-number">21.6.3</span> 参考区间</h3>
+<p>默认非参数法令 <span class="math inline">\(\alpha=(1-p)/2\)</span>，按 EP28 计算连续秩</p>
+<p><span class="math display">\[
+h_q=q(n+1),
+\]</span></p>
+<p>并在 <span class="math inline">\(\lfloor h_q\rfloor\)</span> 与 <span class="math inline">\(\lceil h_q\rceil\)</span> 对应的顺序统计量间线性插值。参考限置信区间使用二项分布秩反演。令 <span class="math inline">\(\delta=(1-\gamma)/2\)</span>、<span class="math inline">\(B\sim\mathrm{Bin}(n,q)\)</span>，秩端点为</p>
+<p><span class="math display">\[
+a=Q_B(\delta),\qquad b=Q_B(1-\delta)+1,
+\]</span></p>
+<p>再限制到 <span class="math inline">\([1,n]\)</span>；实际覆盖率为 <span class="math inline">\(P(a\le B\le b-1)\)</span>。若截断前秩超出样本范围，函数明确标记请求覆盖率不可完全达到。<code>method="type6"</code> 保留相同的 R type-6 点估计，但其 CI 仍使用原有二项秩正态近似，不能与默认非参数法的精确秩 CI 混称。</p>
+<p>参数法先检验原始值；若 p 值小于 0.05 且所有值为正，再检验对数值，并只在对数检验 p 值不小于 0.05 时使用对数尺度。所用尺度上的参考限为</p>
+<p><span class="math display">\[\bar x\pm z_{1-\alpha}s.\]</span></p>
+<p>每个端点的标准误按</p>
+<p><span class="math display">\[SE_L=s\sqrt{\frac1n+\frac{z_{1-\alpha}^2}{2n}}\]</span></p>
+<p>计算，以 <span class="math inline">\(t_{1-\gamma/2,\max(n-2,1)}\)</span> 构造端点区间；若采用对数尺度，最后整体取指数。</p>
+<p><code>method="biweight"</code> 实现 EP28 附录 B。以中位数初始化 <span class="math inline">\(T_{bi}\)</span>，令 <span class="math inline">\(s=MAD/0.6745\)</span>，每轮使用</p>
+<p><span class="math display">\[
+u_i=\frac{x_i-T_{bi}}{3.7s},\qquad
+w_i=(1-u_i^2)^2\ I(|u_i|&lt;1),qquad
+T_{bi}\leftarrow\frac{\sum_iw_ix_i}{\sum_iw_i},
+\]</span></p>
+<p>直到相对变化小于 0.001%。对调节常数 <span class="math inline">\(c\)</span>，定义</p>
+<p><span class="math display">\[
+A=\sum_{|u_i|&lt;1}(1-u_i^2)(1-5u_i^2),\qquad
+B=\sum_{|u_i|&lt;1}u_i^2(1-u_i^2)^4,
+\]</span></p>
+<p><span class="math display">\[
+s_{bi}[c]=cs\sqrt{\frac{nB}{A\max(1,-1+A)}}.
+\]</span></p>
+<p>按附录分别计算 <span class="math inline">\(s_{bi}[205.6]\)</span>、<span class="math inline">\(s_{bi}[3.7]\)</span>；<span class="math inline">\(S_T[3.7]\)</span> 改用 <span class="math inline">\(u_i=(x_i-T_{bi})/(3.7s_{bi}[3.7])\)</span>，并在根号分子中去掉 <span class="math inline">\(n\)</span>。最终参考限为</p>
+<p><span class="math display">\[
+T_{bi}\pm t_{n-1,1-\alpha}
+\sqrt{s_{bi}^2[205.6]+S_T^2[3.7]}.
+\]</span></p>
+<p>端点区间由同一 biweight 估计量的 percentile bootstrap 得到。</p>
+<p><code>method="huber"</code> 保留包原有扩展：以中位数初始化位置 <span class="math inline">\(T\)</span>，以 <span class="math inline">\(MAD/0.6745\)</span> 初始化尺度 <span class="math inline">\(S\)</span>，每轮令</p>
+<p><span class="math display">\[
+u_i=\frac{x_i-T}{S},\qquad
+w_i=\begin{cases}
+1,&amp;|u_i|\le1.5,\\
+1.5/|u_i|,&amp;|u_i|&gt;1.5,
+\end{cases}
+\]</span></p>
+<p><span class="math display">\[
+T\leftarrow\frac{\sum_iw_ix_i}{\sum_iw_i},\qquad
+S\leftarrow\sqrt{\frac{\sum_iw_i(x_i-T)^2}{n-1}}.
+\]</span></p>
+<p>迭代容差为 <span class="math inline">\(10^{-8}\)</span>，最多 100 轮，参考限为 <span class="math inline">\(T\pm z_{1-\alpha}S\)</span>。biweight 与 Huber 的端点区间默认来自 1999 次有放回抽样；<code>seed</code> 可固定计算且不改变调用者原有随机数状态。</p>
+</section>
+</section>
+<section id="响应方程拟合与线性评价" class="level2" data-number="21.7">
+<h2 data-number="21.7" class="anchored" data-anchor-id="响应方程拟合与线性评价"><span class="header-section-number">21.7</span> 响应方程拟合与线性评价</h2>
+<section id="已实现的十二个响应方程" class="level3" data-number="21.7.1">
+<h3 data-number="21.7.1" class="anchored" data-anchor-id="已实现的十二个响应方程"><span class="header-section-number">21.7.1</span> 已实现的十二个响应方程</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">编号</th>
+<th>源码中的方程</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">E01</td>
+<td><span class="math inline">\(a+bx\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E02</td>
+<td><span class="math inline">\(a+bx+cx^2\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E03</td>
+<td><span class="math inline">\(a\exp(bx)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E04</td>
+<td><span class="math inline">\(a\exp(-bx)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E05</td>
+<td><span class="math inline">\(ax^b\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E06</td>
+<td><span class="math inline">\(a+b\log x\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E07</td>
+<td><span class="math inline">\(A+(B-A)/[1+(x/C)^D]\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E08</td>
+<td><span class="math inline">\(A+(B-A)/[1+(x/C)^D]^E\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E09</td>
+<td><span class="math inline">\(a\exp[-(x-b)^2/(2c^2)]\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E10</td>
+<td><span class="math inline">\(V_{\max}x/(K_m+x)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">E11</td>
+<td><span class="math inline">\(a\sin(bx+c)+d\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">E12</td>
+<td><span class="math inline">\(a+bx+cx^2+dx^3\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>E01、E02、E06、E12 用线性模型矩阵估计，其余方程用 Levenberg–Marquardt 非线性最小二乘。目标函数为</p>
+<p><span class="math display">\[RSS_w=\sum_iw_i[y_i-f(x_i,\theta)]^2.\]</span></p>
+<p>仅有参数上下界时先尝试有界非线性最小二乘；一般不等式约束使用 COBYLA，等式约束使用增广 Lagrangian。优化失败后的惩罚目标为</p>
+<p><span class="math display">\[RSS_w+10^8\sum_r\{\text{constraint violation}_r\}^2.\]</span></p>
+<p>约束拟合的协方差由中心差分残差 Jacobian <span class="math inline">\(J\)</span> 近似：</p>
+<p><span class="math display">\[
+\widehat V(\hat\theta)
+\approx(J^\mathsf TJ)^{-1}\frac{RSS}{n-p}.
+\]</span></p>
+<p>该分支的 Jacobian 协方差没有把拟合权重乘入 <span class="math inline">\(J\)</span>。约束模型的 AIC 为 <span class="math inline">\(n\log(RSS/n)+2p\)</span>，而 <span class="math inline">\(R^2=1-RSS/TSS\)</span>。</p>
+<p>非线性预测用中心差分求梯度 <span class="math inline">\(g(x)\)</span>，并令</p>
+<p><span class="math display">\[V\{\hat f(x)\}=g(x)^\mathsf T\widehat V(\hat\theta)g(x).\]</span></p>
+<p>单次预测区间在该方差上再加 <span class="math inline">\(RSS/(n-p)\)</span>。</p>
+<p>源码对 E01–E07 使用解析逆式；E09 固定取高斯峰左支，E11 取 <code>asin</code> 主值分支，E12 对多项式根取实部后选择最接近观测 X 均值的根。E08 当前逆式为</p>
+<p><span class="math display">\[
+x=C\left(\frac{B-A}{y-A}-1\right)^{1/(DE)},
+\]</span></p>
+<p>它不是 <span class="math inline">\(E\ne1\)</span> 时当前 E08 方程的严格代数逆。其他情况在扩展网格上搜索符号变化，用一维求根求解并选择最接近观测 X 中心的根。</p>
+</section>
+<section id="线性设计量与回归比较" class="level3" data-number="21.7.2">
+<h3 data-number="21.7.2" class="anchored" data-anchor-id="线性设计量与回归比较"><span class="header-section-number">21.7.2</span> 线性设计量与回归比较</h3>
+<p>稀释面板的期望浓度按 <span class="math inline">\(C(p)=pC_H+(1-p)C_L\)</span> 计算。重复数规划先令每个水平的置信概率 <span class="math inline">\(p_L=(1-\alpha_F)^{1/L}\)</span>，再取 <span class="math inline">\(z=z_{(1+p_L)/2}\)</span>：</p>
+<p><span class="math display">\[
+n=\left\lceil
+\left(\frac{z\sigma}{ADL-d_{\mathrm{true}}}\right)^2
+\right\rceil.
+\]</span></p>
+<p>线性分析先按水平形成均值、SD 和 <span class="math inline">\(n_j\)</span>。等权时水平权重为 1；逐水平方差法对原始观测用 <span class="math inline">\(1/s_j^2\)</span>，对水平平均值用 <span class="math inline">\(n_j/s_j^2\)</span>。<code>weights="pooled"</code> 要求 <code>variance_group</code> 明确指定按 <span class="math inline">\(x\)</span> 连续的水平组，对组 <span class="math inline">\(g\)</span> 计算</p>
+<p><span class="math display">\[
+\widehat\sigma_g^2=
+\frac{\sum_{j\in g}(n_j-1)s_j^2}{\sum_{j\in g}(n_j-1)},
+\qquad w_j=\frac{n_j}{\widehat\sigma_g^2}.
+\]</span></p>
+<p>函数不根据水平数自动分组，因为 EP06 分组还要结合重复性 SD—浓度关系。精密度轮廓法先以普通直线拟合 SD 对均值，再用预测 <span class="math inline">\(1/\hat\sigma_j^2\)</span> 作权重。</p>
+<p>直线拟合水平均值；二次和三次多项式拟合全部保留观测。若任何非线性项显著，则在有显著非线性项的模型中选择 <span class="math inline">\(s_{y\cdot x}\)</span> 最小者；否则选择直线。非线性偏离为</p>
+<p><span class="math display">\[DL_j=\hat y_{\mathrm{poly},j}-\hat y_{\mathrm{linear},j},\]</span></p>
+<p>线性残差为 <span class="math inline">\(\bar y_j-\hat y_{\mathrm{linear},j}\)</span>。百分比可分别以线性预测值、X 值或实测均值作分母。</p>
+<p>每个水平的点区间使用家族置信概率 <span class="math inline">\(\gamma^{1/L}\)</span>：</p>
+<p><span class="math display">\[
+h_j=z_{[1+\gamma^{1/L}]/2}\frac{\hat\sigma_j}{\sqrt{n_j}}.
+\]</span></p>
+<p>源码以偏离量为区间中心。允许偏离限取直接绝对限、绝对限和相对限换算值中的最大值，最终仅比较 <span class="math inline">\(|\text{metric}_j|&gt;ADL_j\)</span>。</p>
+</section>
+</section>
+<section id="干扰稀释加标与钩状效应" class="level2" data-number="21.8">
+<h2 data-number="21.8" class="anchored" data-anchor-id="干扰稀释加标与钩状效应"><span class="header-section-number">21.8</span> 干扰、稀释、加标与钩状效应</h2>
+<section id="双组干扰与差中之差" class="level3" data-number="21.8.1">
+<h3 data-number="21.8.1" class="anchored" data-anchor-id="双组干扰与差中之差"><span class="header-section-number">21.8.1</span> 双组干扰与差中之差</h3>
+<p>双组干扰效应为</p>
+<p><span class="math display">\[D=\bar y_T-\bar y_C,qquad
+SE(D)=\sqrt{\frac{s_T^2}{n_T}+\frac{s_C^2}{n_C}}.\]</span></p>
+<p>源码用 <span class="math inline">\(n_T+n_C-2\)</span> 自由度的 t 临界值构造区间，虽然标准误采用未合并方差形式。百分比效应 为 <span class="math inline">\(100D/\bar y_C\)</span>，标准误和区间端点也直接缩放。</p>
+<p>分析物加标设计的效应是</p>
+<p><span class="math display">\[
+D=(\bar y_{I,S}-\bar y_{I,U})
+-(\bar y_{N,S}-\bar y_{N,U}),
+\]</span></p>
+<p>其方差为四个单元 <span class="math inline">\(s_g^2/n_g\)</span> 之和，自由度用 Welch–Satterthwaite 合成。百分比效应写为 <span class="math inline">\(100(I/N-1)\)</span>，其中 <span class="math inline">\(I=\bar y_{I,S}-\bar y_{I,U}\)</span>、<span class="math inline">\(N=\bar y_{N,S}-\bar y_{N,U}\)</span>；源码按该表达式对四个均值求梯度并用 delta 法计算方差。</p>
+<p>空白干扰在有至少两个对照结果时仍用双组差；否则把理论对照均值置为零，使用单样本标准误。剂量响应按各浓度均值相对观测基线计算差异，可另拟合原始结果对浓度的 OLS 直线。点间正向和反向换算使用线性插值，不外推；反向插值要求响应单调。</p>
+</section>
+<section id="稀释回收" class="level3" data-number="21.8.2">
+<h3 data-number="21.8.2" class="anchored" data-anchor-id="稀释回收"><span class="header-section-number">21.8.2</span> 稀释回收</h3>
+<p>稀释倍数为 <span class="math inline">\(D\)</span> 时，源码令 <span class="math inline">\(f=1/D\)</span>。原样本赋值为 <span class="math inline">\(C_0\)</span>、稀释液本底为 <span class="math inline">\(C_d\)</span>：</p>
+<p><span class="math display">\[
+C_{\mathrm{target}}=fC_0+(1-f)C_d,
+\]</span></p>
+<p><span class="math display">\[
+C_{\mathrm{corrected}}=\frac{\bar y-(1-f)C_d}{f},
+\qquad
+Recovery=100\frac{\bar y}{C_{\mathrm{target}}}.
+\]</span></p>
+<p>回收率使用实测稀释结果与目标值之比，不使用校正后浓度与原样本赋值之比。多个样本的总体回收率区间是样本级回收率均值的 t 区间。</p>
+</section>
+<section id="加标回收与钩状效应" class="level3" data-number="21.8.3">
+<h3 data-number="21.8.3" class="anchored" data-anchor-id="加标回收与钩状效应"><span class="header-section-number">21.8.3</span> 加标回收与钩状效应</h3>
+<p><span class="math display">\[
+C_{\mathrm{added}}=C_s\frac{V_s}{V_0+V_s},
+\qquad
+C_{\mathrm{final}}=\frac{C_0V_0+C_sV_s}{V_0+V_s},
+\]</span></p>
+<p><span class="math display">\[
+Recovery=100\frac{\bar y_{\mathrm{spike}}-\bar y_{\mathrm{solvent}}}
+{C_{\mathrm{added}}}.
+\]</span></p>
+<p>钩状效应先按浓度计算均值及 t 区间，取第一个最大均值所在浓度为峰值。峰后首次出现“浓度高于 ULoQ 且平均响应不高于阈值”的水平时，源码报告其前一个已测浓度为钩状效应浓度；不做水平间插值。未出现回落时，只报告最高测试浓度为下界。</p>
+</section>
+</section>
+<section id="分析灵敏度" class="level2" data-number="21.9">
+<h2 data-number="21.9" class="anchored" data-anchor-id="分析灵敏度"><span class="header-section-number">21.9</span> 分析灵敏度</h2>
+<section id="空白限与检出限" class="level3" data-number="21.9.1">
+<h3 data-number="21.9.1" class="anchored" data-anchor-id="空白限与检出限"><span class="header-section-number">21.9.1</span> 空白限与检出限</h3>
+<p>非参数空白限以 <span class="math inline">\(r=0.5+B(1-\alpha)\)</span> 确定排序秩，并在相邻整数秩间线性插值。参数法令 <span class="math inline">\(\nu=B-K\)</span>，计算</p>
+<p><span class="math display">\[
+c_p=\frac{z_{1-\alpha}}{\sqrt{1-1/(4\nu)}},
+\qquad LoB=\bar y_B+c_ps_B.
+\]</span></p>
+<p>零空白限分支直接令 <span class="math inline">\(LoB=0\)</span>。存在 2 或 3 个试剂批时默认逐批计算并取最大 LoB；其他批次数默认合并。</p>
+<p>经典 LoD 对低水平标准差作自由度加权合并：</p>
+<p><span class="math display">\[
+s_p=\sqrt{\frac{\sum_j(n_j-1)s_j^2}{\sum_j(n_j-1)}},
+\qquad LoD=LoB+c_ps_p.
+\]</span></p>
+<p>非参数试验法以全部低水平结果中位数为候选 LoD，仅当低于 LoB 的比例不超过 <span class="math inline">\(\beta\)</span> 时保留。精密度轮廓法拟合 <span class="math inline">\(s(x)\)</span> 后求解</p>
+<p><span class="math display">\[x-LoB-c_ps(x)=0,\]</span></p>
+<p>并取搜索到的最小合格根。</p>
+<p>Probit 法拟合</p>
+<p><span class="math display">\[
+\Phi^{-1}\{P(\mathrm{detected}\mid x)\}=\beta_0+\beta_1g(x),
+\]</span></p>
+<p>其中 <span class="math inline">\(g(x)=\log_{10}x\)</span> 或 <span class="math inline">\(x\)</span>。目标检出概率为 <span class="math inline">\(1-\beta\)</span>：</p>
+<p><span class="math display">\[g(LoD)=\frac{z_{1-\beta}-\hat\beta_0}{\hat\beta_1}.\]</span></p>
+<p>分批或分层拟合时，最终报告各组 LoD 的最大值。</p>
+</section>
+<section id="定量限与限值验证" class="level3" data-number="21.9.2">
+<h3 data-number="21.9.2" class="anchored" data-anchor-id="定量限与限值验证"><span class="header-section-number">21.9.2</span> 定量限与限值验证</h3>
+<p>每个低水平样本的偏倚为 <span class="math inline">\(b=\bar y-x_a\)</span>。源码实现的误差量为</p>
+<p><span class="math display">\[
+E_W=|b|+ks,qquad
+E_{RMS}=\sqrt{s^2+b^2},qquad
+E_P=s.
+\]</span></p>
+<p>相对目标时再除以 <span class="math inline">\(|x_a|\)</span>。观测候选 LoQ 是误差量达到目标的样本中最小实测均值；启用轮廓时，以误差量对赋值的一次或二次回归与目标线的最小根作为候选。多批取最大候选，最后在两者有限时取</p>
+<p><span class="math display">\[LoQ_{\mathrm{reported}}=\max(LoQ_{\mathrm{candidate}},LoD).\]</span></p>
+<p>LoB 验证把 <span class="math inline">\(y\le LoB\)</span> 记为一致，LoD 验证把 <span class="math inline">\(y\ge LoB\)</span> 记为一致，LoQ 验证把结果落入赋值的允许窗记为一致。源码计算单侧 Wilson 区间，并按内置样本量–边界表选择验证边界；样本量不在表中时取相邻表行中较大的边界。只返回比例、区间和与边界之差，不生成通过/不通过结论。</p>
+</section>
+</section>
+<section id="质量控制与稳定性" class="level2" data-number="21.10">
+<h2 data-number="21.10" class="anchored" data-anchor-id="质量控制与稳定性"><span class="header-section-number">21.10</span> 质量控制与稳定性</h2>
+<section id="leveyjennings-与-westgard" class="level3" data-number="21.10.1">
+<h3 data-number="21.10.1" class="anchored" data-anchor-id="leveyjennings-与-westgard"><span class="header-section-number">21.10.1</span> Levey–Jennings 与 Westgard</h3>
+<p>控制结果先标准化为 <span class="math inline">\(z_i=(x_i-\mu_0)/\sigma_0\)</span>。未给目标量时，源码用全部有限结果的样本均值和样本 SD。实际规则为：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>规则</th>
+<th>源码判定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1-2s</td>
+<td><span class="math inline">\(|z_i|&gt;2\)</span></td>
+</tr>
+<tr class="even">
+<td>1-3s</td>
+<td><span class="math inline">\(|z_i|&gt;3\)</span></td>
+</tr>
+<tr class="odd">
+<td>2-2s</td>
+<td>相邻两点同侧且都严格超过 <span class="math inline">\(2s\)</span></td>
+</tr>
+<tr class="even">
+<td>R-4s</td>
+<td>相邻两点各自 <span class="math inline">\(|z|\ge2\)</span> 且 <span class="math inline">\(|z_i-z_{i+1}|\ge4\)</span></td>
+</tr>
+<tr class="odd">
+<td>4-1s</td>
+<td>连续四点同侧且都严格超过 <span class="math inline">\(1s\)</span></td>
+</tr>
+<tr class="even">
+<td>8x/10x</td>
+<td>连续 8/10 点严格位于均值同一侧</td>
+</tr>
+</tbody>
+</table>
+<p>分组变量只用于图形分面；目标量估计和规则扫描跨全部有限结果连续执行。源码把 1-3s 标为失控，其他违反标为警告。Youden 以 <span class="math inline">\(|z_{1i}|\le2\)</span> 且 <span class="math inline">\(|z_{2i}|\le2\)</span> 判断是否位于 <span class="math inline">\(\pm2s\)</span> 矩形内，并计算 Pearson 相关；没有拟合误差椭圆。</p>
+</section>
+<section id="节点偏倚时间回归与越限时间" class="level3" data-number="21.10.2">
+<h3 data-number="21.10.2" class="anchored" data-anchor-id="节点偏倚时间回归与越限时间"><span class="header-section-number">21.10.2</span> 节点偏倚、时间回归与越限时间</h3>
+<p>每个条件以自身最早时间点均值为基线：</p>
+<p><span class="math display">\[b_t=y_t-y_0,qquad b_{t,\%}=100\frac{y_t-y_0}{y_0}.\]</span></p>
+<p>自比较先按时间点求均值。若各时间点标准误均有限且为正，以 <span class="math inline">\(1/SE_t^2\)</span> 加权拟合；否则退回 OLS。绝对漂移率为 <span class="math inline">\(b_1\)</span>，相对漂移率为 <span class="math inline">\(b_1/b_0\)</span>，其方差按</p>
+<p><span class="math display">\[
+V\left(\frac{b_1}{b_0}\right)=
+\frac{V(b_1)}{b_0^2}+\frac{b_1^2V(b_0)}{b_0^4}
+-\frac{2b_1\operatorname{Cov}(b_0,b_1)}{b_0^3}
+\]</span></p>
+<p>计算。源码使用单侧临界值 <span class="math inline">\(t_{\gamma,\nu}\)</span>。下降取下界、上升取上界；方向无法确定时取绝对值更大的一侧。</p>
+<p>条件比较以匹配时间点的试验条件减参考条件为偏倚。绝对偏倚标准误为 <span class="math inline">\(\sqrt{SE_T^2+SE_R^2}\)</span>；相对偏倚标准误按比值 delta 法计算。随后仍按标准误可用性选择 WLS 或 OLS。</p>
+<p>越限时间通过 501 点网格寻找 <span class="math inline">\(|\hat b(t)|-L=0\)</span> 或单侧置信界与 <span class="math inline">\(L\)</span> 的首次符号变化，再用一维求根细化。默认搜索上限为 <span class="math inline">\(\max(100t_{\max},t_{\max}+100)\)</span>；超过观测最大时间的根标为外推。</p>
+</section>
+<section id="平均动力学温度与-arrhenius" class="level3" data-number="21.10.3">
+<h3 data-number="21.10.3" class="anchored" data-anchor-id="平均动力学温度与-arrhenius"><span class="header-section-number">21.10.3</span> 平均动力学温度与 Arrhenius</h3>
+<p>令 <span class="math inline">\(q_i=\exp[-E_a/(RT_i)]\)</span>。等时间间隔时</p>
+<p><span class="math display">\[
+\bar q=\frac1n\sum_iq_i,qquad
+T_{MKT}=-\frac{E_a}{R\log\bar q}.
+\]</span></p>
+<p>有时间戳时用梯形积分</p>
+<p><span class="math display">\[
+\bar q=\frac{\sum_i\Delta t_i(q_i+q_{i+1})/2}{\sum_i\Delta t_i}.
+\]</span></p>
+<p>多个探头按各自有效观测数或时间长度合并 <span class="math inline">\(q\)</span>，不是直接平均各探头 MKT。</p>
+<p>Arrhenius 分支在每个温度拟合零级 <span class="math inline">\(y=a+bt\)</span> 或一级 <span class="math inline">\(\log y=a+bt\)</span>，按退化方向转换为正速率。自动级数以各温度原尺度归一化 RMSE 的均方根最小为准；完全相同时选择一级。正速率再拟合</p>
+<p><span class="math display">\[\log k=\alpha+\beta/T,qquad E_a=-\hat\beta R.\]</span></p>
+<p>零级货架期为允许变化量除以目标温度速率。一级相对下降和上升分别为</p>
+<p><span class="math display">\[t=-\frac{\log(1-r)}{k_*},qquad t=\frac{\log(1+r)}{k_*}.\]</span></p>
+<p>货架期区间由目标速率置信区间两端分别换算后排序得到。</p>
+<p>稳定性设计不是连续功效公式，而是源码内置的两个查表矩阵。重复性按 <span class="math inline">\(\sigma/\sqrt r\)</span> 缩减，或按 <span class="math inline">\(\sqrt{\sum_j\sigma_j^2/L_j}\)</span> 合成；结果保留两位有效数字后形成两个比值，再查 80% 或 90% 功效表。</p>
+</section>
+</section>
+<section id="测量不确定度与溯源" class="level2" data-number="21.11">
+<h2 data-number="21.11" class="anchored" data-anchor-id="测量不确定度与溯源"><span class="header-section-number">21.11</span> 测量不确定度与溯源</h2>
+<section id="a-类与-b-类标准化" class="level3" data-number="21.11.1">
+<h3 data-number="21.11.1" class="anchored" data-anchor-id="a-类与-b-类标准化"><span class="header-section-number">21.11.1</span> A 类与 B 类标准化</h3>
+<p>重复测量的单次结果标准不确定度为 <span class="math inline">\(s\)</span>，均值标准不确定度为 <span class="math inline">\(s/\sqrt n\)</span>，自由度均记为 <span class="math inline">\(n-1\)</span>。相对分量在内部保存为 <span class="math inline">\(u/|\bar x|\)</span>。</p>
+<p>区间型 B 类分量要求估计值恰为上下限中点。令半宽度 <span class="math inline">\(a=(U-L)/2\)</span>，源码换算为：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>分布</th>
+<th style="text-align: right;">标准不确定度</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>矩形</td>
+<td style="text-align: right;"><span class="math inline">\(a/\sqrt3\)</span></td>
+</tr>
+<tr class="even">
+<td>三角</td>
+<td style="text-align: right;"><span class="math inline">\(a/\sqrt6\)</span></td>
+</tr>
+<tr class="odd">
+<td>U 形</td>
+<td style="text-align: right;"><span class="math inline">\(a/\sqrt2\)</span></td>
+</tr>
+<tr class="even">
+<td>正态中央覆盖概率 <span class="math inline">\(p\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(a/z_{(1+p)/2}\)</span></td>
+</tr>
+<tr class="odd">
+<td>t 分布中央覆盖概率 <span class="math inline">\(p\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(a/t_{(1+p)/2,\nu}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>若直接提供一个不确定度数值，源码把它视为标准不确定度；只有另给覆盖因子 <span class="math inline">\(k\)</span> 时才执行 <span class="math inline">\(u=U/k\)</span>。此路径只允许 standard 或 normal 标签，不再根据分布名称自动除以 <span class="math inline">\(\sqrt3\)</span>、<span class="math inline">\(\sqrt6\)</span> 等。因此分布除数只在上下限路径中产生。</p>
+</section>
+<section id="iqc均匀性稳定性和定值" class="level3" data-number="21.11.2">
+<h3 data-number="21.11.2" class="anchored" data-anchor-id="iqc均匀性稳定性和定值"><span class="header-section-number">21.11.2</span> IQC、均匀性、稳定性和定值</h3>
+<p>一元随机效应 ANOVA 计算</p>
+<p><span class="math display">\[
+MS_W=SS_W/(N-m),\qquad MS_B=SS_B/(m-1),
+\]</span></p>
+<p><span class="math display">\[
+n_{\mathrm{eff}}=
+\frac{N-\sum_jn_j^2/N}{m-1},qquad
+s_B^2=\max\left(0,\frac{MS_B-MS_W}{n_{\mathrm{eff}}}\right).
+\]</span></p>
+<p>IQC 有运行内重复时，单次结果不确定度为</p>
+<p><span class="math display">\[u_{\mathrm{single}}=\sqrt{s_W^2+s_B^2}.\]</span></p>
+<p>若 <span class="math inline">\(s_B&gt;0\)</span>，总体均值不确定度按 <span class="math inline">\(\sqrt{MS_B/N}\)</span> 计算；否则退回全部结果的 <span class="math inline">\(s/\sqrt N\)</span>。没有运行列或每次运行只有一个结果时，直接使用长期 SD 及其均值标准误。</p>
+<p>均匀性分支另计算</p>
+<p><span class="math display">\[
+u_{\mathrm{hidden}}=
+\frac{s_W}{\sqrt{\bar n}}
+\left(\frac2{\nu_W}\right)^{1/4},
+\qquad
+u_{bb}=\max(s_B,u_{\mathrm{hidden}}).
+\]</span></p>
+<p>长期稳定性不确定度对每个条件拟合 <span class="math inline">\(y=a+bt\)</span>，在货架期 <span class="math inline">\(T_s\)</span> 处取 <span class="math inline">\(u_{lts}=SE(\hat b)T_s\)</span>。定值分支先求每个实验室均值，再以实验室均值的非加权平均赋值：</p>
+<p><span class="math display">\[u_{char}=\frac{SD(\bar x_1,\ldots,\bar x_L)}{\sqrt L}.\]</span></p>
+</section>
+<section id="一阶合成与有效自由度" class="level3" data-number="21.11.3">
+<h3 data-number="21.11.3" class="anchored" data-anchor-id="一阶合成与有效自由度"><span class="header-section-number">21.11.3</span> 一阶合成与有效自由度</h3>
+<p>令标准不确定度向量为 <span class="math inline">\(u\)</span>，相关矩阵为 <span class="math inline">\(R\)</span>：</p>
+<p><span class="math display">\[
+\Sigma=\operatorname{diag}(u)R\operatorname{diag}(u),qquad
+u_c^2=c^\mathsf T\Sigma c.
+\]</span></p>
+<p>第 <span class="math inline">\(i\)</span> 个分量的有符号边际贡献为 <span class="math inline">\(m_i=c_i(\Sigma c)_i\)</span>，贡献率为 <span class="math inline">\(100m_i/u_c^2\)</span>；存在相关性时贡献率可以为负。</p>
+<p>仅在 <span class="math inline">\(R\)</span> 为单位阵时，源码计算</p>
+<p><span class="math display">\[
+\nu_{\mathrm{eff}}=
+\frac{u_c^4}{\sum_i(c_iu_i)^4/\nu_i}.
+\]</span></p>
+<p>未指定覆盖因子时，有限有效自由度使用 t 分位数，否则使用正态分位数；扩展不确定度为 <span class="math inline">\(U=ku_c\)</span>。混合相对和绝对分量时，源码要求给出输出量值，并以其绝对值把相对分量转换为绝对分量。</p>
+</section>
+<section id="一般测量模型与-monte-carlo" class="level3" data-number="21.11.4">
+<h3 data-number="21.11.4" class="anchored" data-anchor-id="一般测量模型与-monte-carlo"><span class="header-section-number">21.11.4</span> 一般测量模型与 Monte Carlo</h3>
+<p>对 <span class="math inline">\(y=f(x_1,\ldots,x_q)\)</span>，灵敏度系数用中心差分：</p>
+<p><span class="math display">\[
+c_i\approx
+\frac{f(\ldots,x_i+h_i,\ldots)-f(\ldots,x_i-h_i,\ldots)}{2h_i},
+\]</span></p>
+<p><span class="math display">\[h_i=\epsilon^{1/3}\max\{1,|x_i|,u(x_i)\}.\]</span></p>
+<p>delta 分支将系数代入协方差传播，并返回对称区间 <span class="math inline">\(\hat y\pm U\)</span>。</p>
+<p>Monte Carlo 分支按保存分布抽样：normal 和 standard 标签用 <span class="math inline">\(N(x_i,u_i^2)\)</span>；矩形用均匀分布；三角分布用上下限和估计值为众数；U 形分布用 <span class="math inline">\(x_i+a_i\cos\{U(0,\pi)\}\)</span>；t 分布用 <span class="math inline">\(x_i+u_iT_{\nu_i}\)</span>。因此 t 分支把 <span class="math inline">\(u_i\)</span> 作为 t 随机变量的尺度。非独立 Monte Carlo 只允许 normal 或 standard 标签，并通过相关正态矩阵生成。</p>
+<p>模拟输出的标准不确定度为模拟结果 SD，覆盖区间采用 R 第 8 类分位数的中央区间。</p>
+</section>
+<section id="逐级溯源" class="level3" data-number="21.11.5">
+<h3 data-number="21.11.5" class="anchored" data-anchor-id="逐级溯源"><span class="header-section-number">21.11.5</span> 逐级溯源</h3>
+<p>第 <span class="math inline">\(r\)</span> 阶段对前 <span class="math inline">\(r\)</span> 阶段全部分量重新合成。灵敏度系数默认为 1，且该接口没有阶段间相关矩阵入口， 所以</p>
+<p><span class="math display">\[u_{c,r}=\sqrt{\sum_{i\in1:r}u_i^2}.\]</span></p>
+<p>每一级重新计算有效自由度、覆盖因子和扩展不确定度；最终级等于全部累计分量的预算。</p>
+</section>
+</section>
+<section id="样本量与功效" class="level2" data-number="21.12">
+<h2 data-number="21.12" class="anchored" data-anchor-id="样本量与功效"><span class="header-section-number">21.12</span> 样本量与功效</h2>
+<section id="blandaltman-一致性" class="level3" data-number="21.12.1">
+<h3 data-number="21.12.1" class="anchored" data-anchor-id="blandaltman-一致性"><span class="header-section-number">21.12.1</span> Bland–Altman 一致性</h3>
+<p>令差值均值为 <span class="math inline">\(\mu\)</span>、SD 为 <span class="math inline">\(\sigma\)</span>、允许界为 <span class="math inline">\(\Delta\)</span>、一致性覆盖分位数为 <span class="math inline">\(z_\gamma\)</span>：</p>
+<p><span class="math display">\[
+SE_L=\sigma\sqrt{\frac1n+\frac{z_\gamma^2}{2(n-1)}},
+\]</span></p>
+<p><span class="math display">\[
+\tau_1=\frac{\Delta-\mu-z_\gamma\sigma}{SE_L},qquad
+\tau_2=\frac{\Delta+\mu-z_\gamma\sigma}{SE_L}.
+\]</span></p>
+<p>令 <span class="math inline">\(t_c=t_{1-(1-C)/2,n-1}\)</span>，功效为</p>
+<p><span class="math display">\[
+\Pr\{T_{n-1}(\tau_1)&gt;t_c\}
++\Pr\{T_{n-1}(\tau_2)&lt;-t_c\}.
+\]</span></p>
+<p>求样本量时，在给定上下限内二分搜索达到目标功效的最小整数。</p>
+</section>
+<section id="单比例区间与目标值检验" class="level3" data-number="21.12.2">
+<h3 data-number="21.12.2" class="anchored" data-anchor-id="单比例区间与目标值检验"><span class="header-section-number">21.12.2</span> 单比例区间与目标值检验</h3>
+<p>Wald 半宽的闭式样本量为</p>
+<p><span class="math display">\[n=\left\lceil\frac{z_{1-\alpha/2}^2p(1-p)}{d^2}\right\rceil.\]</span></p>
+<p>其他已实现区间用实际端点计算最大半宽，再经指数搜索和二分搜索寻找满足半宽 <span class="math inline">\(\le d\)</span> 的最小整数。涉及 <span class="math inline">\(x=\operatorname{round}(np)\)</span> 的方法会出现非单调跳变，源码还向下回扫修正结果。</p>
+<p>单组比例目标值检验先寻找临界成功数。上侧检验的临界数是满足所选单侧比例区间下限 <span class="math inline">\(L(x,n)&gt;p_0\)</span> 的最小整数；下侧检验是满足区间上限 <span class="math inline">\(U(x,n)&lt;p_0\)</span> 的最大整数。因此</p>
+<p><span class="math display">\[
+Power_{&gt;}=1-F_{\mathrm{Bin}(n,p_1)}(x_c-1),qquad
+Power_{&lt;}=F_{\mathrm{Bin}(n,p_1)}(x_c).
+\]</span></p>
+<p>双侧检验把 <span class="math inline">\(\alpha/2\)</span> 分配到两端。求 <span class="math inline">\(n\)</span> 时先用正态近似产生起点，再逐个增加并向下回查；求 <span class="math inline">\(\alpha\)</span> 时先确定离散临界成功数，再反解使比例区间边界等于 <span class="math inline">\(p_0\)</span> 的 <span class="math inline">\(\alpha\)</span>。因此功效是由二项临界数决定的阶梯函数。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./020-异常值与正态检验.html" class="pagination-link" aria-label="异常值与正态检验">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./022-标准对应关系.html" class="pagination-link" aria-label="标准对应关系">
+        <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

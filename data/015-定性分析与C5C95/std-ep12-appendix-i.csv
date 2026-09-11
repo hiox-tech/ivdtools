@@ -1,0 +1,13 @@
+comparison,candidate,reference,count
+candidate_vs_standard,positive,positive,57
+candidate_vs_standard,positive,negative,2
+candidate_vs_standard,negative,positive,4
+candidate_vs_standard,negative,negative,39
+old_vs_standard,positive,positive,54
+old_vs_standard,positive,negative,7
+old_vs_standard,negative,positive,7
+old_vs_standard,negative,negative,34
+candidate_vs_old,positive,positive,285
+candidate_vs_old,positive,negative,15
+candidate_vs_old,negative,positive,14
+candidate_vs_old,negative,negative,222

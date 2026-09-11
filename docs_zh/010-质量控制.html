@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; 质量控制 – ivdtools使用指引</title>
+<title>10&nbsp; 质量控制 – “ivdtools” 使用指引</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./011-样本量计算.html" rel="next">
-<link href="./009-参考区间.html" rel="prev">
+<link href="./011-ROC曲线与cutoff.html" rel="next">
+<link href="./009-方法学比较与参考物偏倚.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -110,9 +110,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "搜索"
   }
 }</script>
-<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/book.css">
 </head>
@@ -141,7 +171,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ivdtools使用指引</a> 
+      <a href="./">“ivdtools” 使用指引</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
 </div>
@@ -174,8 +204,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./003-4PLC方程拟合校准曲线.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC 方程拟合校准曲线</span></span></a>
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -186,32 +216,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./005-精密度分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./006-线性分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./007-分析灵敏度.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">分析灵敏度</span></span></a>
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./008-瓶间差分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./009-参考区间.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -222,50 +252,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./011-样本量计算.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">样本量计算</span></span></a>
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./012-方法学比较.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">方法学比较</span></span></a>
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./013-定性分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">定性分析</span></span></a>
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./014-ROC曲线与cutoff建立.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff 建立</span></span></a>
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./015-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./016-算法原理简介.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./017-AI自动化分析.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI 自动化分析</span></span></a>
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./018-参考资料.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">参考资料</span></span></a>
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
   </div>
 </li>
     </ul>
@@ -278,25 +338,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#分析目的" id="toc-分析目的" class="nav-link active" data-scroll-target="#分析目的"><span class="header-section-number">10.1</span> 分析目的</a></li>
-  <li><a href="#函数概述" id="toc-函数概述" class="nav-link" data-scroll-target="#函数概述"><span class="header-section-number">10.2</span> 函数概述</a></li>
-  <li><a href="#示例一获取规则与日常质控" id="toc-示例一获取规则与日常质控" class="nav-link" data-scroll-target="#示例一获取规则与日常质控"><span class="header-section-number">10.3</span> 示例一：获取规则与日常质控</a>
-  <ul class="collapse">
-  <li><a href="#查看-westgard-规则" id="toc-查看-westgard-规则" class="nav-link" data-scroll-target="#查看-westgard-规则"><span class="header-section-number">10.3.1</span> 查看 Westgard 规则</a></li>
-  <li><a href="#读取日常质控数据" id="toc-读取日常质控数据" class="nav-link" data-scroll-target="#读取日常质控数据"><span class="header-section-number">10.3.2</span> 读取日常质控数据</a></li>
-  <li><a href="#运行质量判定" id="toc-运行质量判定" class="nav-link" data-scroll-target="#运行质量判定"><span class="header-section-number">10.3.3</span> 运行质量判定</a></li>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">10.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#查看规则-list_westgard" id="toc-查看规则-list_westgard" class="nav-link" data-scroll-target="#查看规则-list_westgard"><span class="header-section-number">10.1.1</span> 查看规则 <code>list_westgard()</code></a></li>
+  <li><a href="#单序列控制图-qc_chart" id="toc-单序列控制图-qc_chart" class="nav-link" data-scroll-target="#单序列控制图-qc_chart"><span class="header-section-number">10.1.2</span> 单序列控制图 <code>qc_chart()</code></a></li>
+  <li><a href="#双水平联合图-youden_plot" id="toc-双水平联合图-youden_plot" class="nav-link" data-scroll-target="#双水平联合图-youden_plot"><span class="header-section-number">10.1.3</span> 双水平联合图 <code>youden_plot()</code></a></li>
   </ul></li>
-  <li><a href="#示例二试剂换批时的分组评价" id="toc-示例二试剂换批时的分组评价" class="nav-link" data-scroll-target="#示例二试剂换批时的分组评价"><span class="header-section-number">10.4</span> 示例二：试剂换批时的分组评价</a>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">10.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#已知靶值下的日常质控" id="toc-已知靶值下的日常质控" class="nav-link" data-scroll-target="#已知靶值下的日常质控"><span class="header-section-number">10.2.1</span> 已知靶值下的日常质控</a>
   <ul class="collapse">
-  <li><a href="#读取数据" id="toc-读取数据" class="nav-link" data-scroll-target="#读取数据"><span class="header-section-number">10.4.1</span> 读取数据</a></li>
-  <li><a href="#对整条序列分组" id="toc-对整条序列分组" class="nav-link" data-scroll-target="#对整条序列分组"><span class="header-section-number">10.4.2</span> 对整条序列分组</a></li>
+  <li><a href="#已知目标量与数据内估计的差别" id="toc-已知目标量与数据内估计的差别" class="nav-link" data-scroll-target="#已知目标量与数据内估计的差别"><span class="header-section-number">10.2.1.1</span> 已知目标量与数据内估计的差别</a></li>
   </ul></li>
-  <li><a href="#示例三双水平质控的-youden-图" id="toc-示例三双水平质控的-youden-图" class="nav-link" data-scroll-target="#示例三双水平质控的-youden-图"><span class="header-section-number">10.5</span> 示例三：双水平质控的 Youden 图</a>
-  <ul class="collapse">
-  <li><a href="#读取数据-1" id="toc-读取数据-1" class="nav-link" data-scroll-target="#读取数据-1"><span class="header-section-number">10.5.1</span> 读取数据</a></li>
-  <li><a href="#绘制-youden-图" id="toc-绘制-youden-图" class="nav-link" data-scroll-target="#绘制-youden-图"><span class="header-section-number">10.5.2</span> 绘制 Youden 图</a></li>
+  <li><a href="#换批标记下的连续显示" id="toc-换批标记下的连续显示" class="nav-link" data-scroll-target="#换批标记下的连续显示"><span class="header-section-number">10.2.2</span> 换批标记下的连续显示</a></li>
+  <li><a href="#双水平-youden-图" id="toc-双水平-youden-图" class="nav-link" data-scroll-target="#双水平-youden-图"><span class="header-section-number">10.2.3</span> 双水平 Youden 图</a></li>
   </ul></li>
-  <li><a href="#结果判读要点" id="toc-结果判读要点" class="nav-link" data-scroll-target="#结果判读要点"><span class="header-section-number">10.6</span> 结果判读要点</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
     </div>
@@ -322,10 +378,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="分析目的" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="分析目的"><span class="header-section-number">10.1</span> 分析目的</h2>
-<p>质量控制（quality control，QC）通过定期测定质控品并监控结果是否偏离靶值，判断测量系统是否处于 受控状态。<code>ivdtools</code> 提供 Levey–Jennings 图与 Westgard 多规则评价（<code>qc_chart()</code>）、换批/换组情境 下的分组监控，以及双水平质控的 Youden 图（<code>youden_plot()</code>）。</p>
-<p>本文演示：获取与理解 Westgard 规则、日常质控结果是否超限、试剂换批时如何正确分组评价，以及双 水平质控的 Youden 图。示例数据为确定性的教学数据；<strong>Westgard 规则组合与允许限应根据实验室的风险 管理策略和方案预先确定</strong>。</p>
+<p>本文演示如何使用 <code>ivdtools</code> 监控连续质量控制结果。当前功能包括列出已实现的 Westgard 规则、建立 Levey–Jennings 图并定位规则违例，以及用 Youden 图联合查看两个质控水平。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>本章的日常质控、换批标记和 Youden 数据均为确定性的教学数据，不是 CLSI EP23、EP26 或 EP33 的标准原始数据，也不用于建立通用接受标准。</p>
+<p><code>qc_chart()</code> 一次只分析一个数值序列。规则按数据框当前行顺序扫描，<code>run</code> 只提供图形横坐标，不会自动排序；<code>group</code> 只用于分面，也不会在组间重置连续规则。当前严重程度标签只把 <code>1-3s</code> 记为 <code>out_of_control</code>，其余规则违例统一记为 <code>warning</code>。因此 <code>n_warn</code> 和 <code>n_oc</code> 是软件显示分类，不等同于实验室多规则放行策略。</p>
+</div>
+</div>
+<p>质量控制分析的统计单位和流程为：</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["已批准的靶值、SD 和规则"] --&gt; B["按实际时间顺序整理单水平 QC"]
+    B --&gt; C["qc_chart()"]
+    C --&gt; D["逐规则违例位置"]
+    C --&gt; E["Levey–Jennings 图"]
+    F["同一运行的两个 QC 水平"] --&gt; G["youden_plot()"]
+    G --&gt; H["联合偏移与 ±2SD 矩形"]
+    D --&gt; I["调查、纠正、验证与放行记录"]
+    E --&gt; I
+    H --&gt; I
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A,F input
+    class B,C,G process
+    class D,E,H,I output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
@@ -333,9 +431,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
-<section id="函数概述" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="函数概述"><span class="header-section-number">10.2</span> 函数概述</h2>
+<section id="主要函数" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">10.1</span> 主要函数</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -346,32 +443,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="header">
 <th>函数</th>
 <th>主要用途</th>
-<th>关键输入或输出</th>
+<th>主要结果</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><code>list_westgard()</code></td>
-<td>查看 Westgard 规则名称与含义</td>
-<td><code>brief=TRUE</code> 仅返回规则向量</td>
+<td>查看 <code>qc_chart()</code> 可识别的规则名称</td>
+<td>命名规则说明向量</td>
 </tr>
 <tr class="even">
 <td><code>qc_chart()</code></td>
-<td>Levey–Jennings 图 + 规则判定</td>
-<td><code>rules</code>、<code>mean</code>/<code>sd</code>、<code>group</code>、<code>run</code></td>
+<td>标准化单个 QC 序列、扫描规则并生成 Levey–Jennings 图</td>
+<td>靶值、SD、逐规则位置、唯一违例点和绘图数据</td>
+</tr>
+<tr class="odd">
+<td><code>print()</code></td>
+<td>打印 QC 或 Youden 对象摘要</td>
+<td>目标量、样本量、规则或矩形外位置</td>
+</tr>
+<tr class="even">
+<td><code>plot()</code></td>
+<td>绘制相应结果对象</td>
+<td>Levey–Jennings 图或 Youden 图</td>
 </tr>
 <tr class="odd">
 <td><code>youden_plot()</code></td>
-<td>双水平质控 Youden 图</td>
-<td>两个样本列、靶值均值/SD</td>
+<td>联合查看同一次运行的两个 QC 水平</td>
+<td>Pearson 相关、±2SD 矩形外位置和绘图数据</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="示例一获取规则与日常质控" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="示例一获取规则与日常质控"><span class="header-section-number">10.3</span> 示例一：获取规则与日常质控</h2>
-<section id="查看-westgard-规则" class="level3" data-number="10.3.1">
-<h3 data-number="10.3.1" class="anchored" data-anchor-id="查看-westgard-规则"><span class="header-section-number">10.3.1</span> 查看 Westgard 规则</h3>
+<section id="查看规则-list_westgard" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="查看规则-list_westgard"><span class="header-section-number">10.1.1</span> 查看规则 <code>list_westgard()</code></h3>
+<p><strong>调用形式</strong></p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
@@ -391,40 +496,307 @@ Westgard QC Rules
   -------------------------------------------------- </code></pre>
 </div>
 </div>
+<p><strong>当前源码的精确定义</strong></p>
+<p>设靶均值为 <span class="math inline">\(\mu_0\)</span>、靶标准差为 <span class="math inline">\(\sigma_0&gt;0\)</span>，第 <span class="math inline">\(i\)</span> 个结果的标准化偏差为</p>
+<p><span class="math display">\[
+z_i=\frac{x_i-\mu_0}{\sigma_0}.
+\]</span></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>规则</th>
+<th><code>ivdtools</code> 判定条件</th>
+<th>标记的点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>1-2s</code></td>
+<td><span class="math inline">\(\lvert z_i\rvert&gt;2\)</span></td>
+<td>当前点</td>
+</tr>
+<tr class="even">
+<td><code>1-3s</code></td>
+<td><span class="math inline">\(\lvert z_i\rvert&gt;3\)</span></td>
+<td>当前点</td>
+</tr>
+<tr class="odd">
+<td><code>2-2s</code></td>
+<td>相邻两点均 <span class="math inline">\(&gt;2\)</span>，或均 <span class="math inline">\(&lt;-2\)</span></td>
+<td>该相邻窗口的两点</td>
+</tr>
+<tr class="even">
+<td><code>R-4s</code></td>
+<td>相邻两点各自满足 <span class="math inline">\(\lvert z\rvert\ge2\)</span>，且 <span class="math inline">\(\lvert z_i-z_{i+1}\rvert\ge4\)</span></td>
+<td>该相邻窗口的两点</td>
+</tr>
+<tr class="odd">
+<td><code>4-1s</code></td>
+<td>连续四点全部 <span class="math inline">\(&gt;1\)</span>，或全部 <span class="math inline">\(&lt;-1\)</span></td>
+<td>该窗口的四点</td>
+</tr>
+<tr class="even">
+<td><code>8x</code></td>
+<td>连续八点全部 <span class="math inline">\(&gt;0\)</span>，或全部 <span class="math inline">\(&lt;0\)</span></td>
+<td>该窗口的八点</td>
+</tr>
+<tr class="odd">
+<td><code>10x</code></td>
+<td>连续十点全部 <span class="math inline">\(&gt;0\)</span>，或全部 <span class="math inline">\(&lt;0\)</span></td>
+<td>该窗口的十点</td>
+</tr>
+</tbody>
+</table>
+<p>不等号边界必须按表理解：<code>1-2s</code>、<code>1-3s</code>、<code>2-2s</code> 和 <code>4-1s</code> 使用严格“超过”，恰好位于 <span class="math inline">\(2s\)</span>、<span class="math inline">\(3s\)</span> 或 <span class="math inline">\(1s\)</span> 不触发；<code>R-4s</code> 的单点门槛和两点极差使用“大于等于”。一个点可以同时出现在多条规则中，<code>n_violations</code> 对全部规则位置去重后计数。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="多水平 Westgard 规则的边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>多水平 Westgard 规则的边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>经典多规则方案可以在同一次运行的多个质控水平之间，或在同一水平的连续运行之间组合规则。当前 <code>qc_chart()</code> 只扫描传入的一个向量，<code>R-4s</code> 和其他窗口规则都按相邻行实现；它不会自动识别“同一次运行的两个水平”。多水平数据不能简单堆叠成一列后当作标准多水平 Westgard 判定。<code>youden_plot()</code> 可辅助查看两个水平，但也不执行跨水平 Westgard 拒绝规则。</p>
+</div>
+</div>
 </section>
-<section id="读取日常质控数据" class="level3" data-number="10.3.2">
-<h3 data-number="10.3.2" class="anchored" data-anchor-id="读取日常质控数据"><span class="header-section-number">10.3.2</span> 读取日常质控数据</h3>
+<section id="单序列控制图-qc_chart" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="单序列控制图-qc_chart"><span class="header-section-number">10.1.2</span> 单序列控制图 <code>qc_chart()</code></h3>
+<p><strong>调用形式</strong></p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>qc_daily <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/qc-daily.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>qc_daily <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(qc_daily)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(qc_daily)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qc_chart</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  value,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rules =</span> <span class="st">"1-2s,1-3s,2-2s,R-4s,4-1s,10x"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="cn">NULL</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(x)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["run"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["value"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"103.24","_rn_":"1"},{"1":"2","2":"103.06","_rn_":"2"},{"1":"3","2":"94.52","_rn_":"3"},{"1":"4","2":"99.51","_rn_":"4"},{"1":"5","2":"99.14","_rn_":"5"},{"1":"6","2":"95.62","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
 </div>
-</div>
-</div>
-<p>数据为目标值 mean = 100、SD = 3 的日常质控结果，共 30 个运行点。</p>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>数据框；每行是序列中的一个 QC 结果。</td>
+</tr>
+<tr class="even">
+<td><code>value</code></td>
+<td>数值型 QC 结果列名。</td>
+</tr>
+<tr class="odd">
+<td><code>rules</code></td>
+<td>一个逗号分隔字符串；只能使用 <code>list_westgard()</code> 列出的名称。默认不含 <code>8x</code>。</td>
+</tr>
+<tr class="even">
+<td><code>mean</code></td>
+<td>靶均值；<code>NULL</code> 时由当前完整数据估计。日常监控通常应显式传入已批准靶值。</td>
+</tr>
+<tr class="odd">
+<td><code>sd</code></td>
+<td>正的靶 SD；<code>NULL</code> 时由当前完整数据估计。</td>
+</tr>
+<tr class="even">
+<td><code>group</code></td>
+<td>可选分组列，只用于图形分面；不分别估计目标量，也不重置规则窗口。</td>
+</tr>
+<tr class="odd">
+<td><code>run</code></td>
+<td>可选横坐标列；<code>NULL</code> 时使用 <span class="math inline">\(1,\ldots,n\)</span>。它不改变扫描顺序。</td>
+</tr>
+</tbody>
+</table>
+<p>若不同质控品、批次或仪器需要各自估计目标量并独立重置规则窗口，应先用 <code>split_by_factors(data, variable="...")</code> 拆成具名数据列表，再对各子数据框分别调用 <code>qc_chart()</code>；不能用 <code>group</code> 分面代替独立分析。</p>
+<p><strong>计算与返回值</strong></p>
+<p>缺失 <code>value</code> 的行在计算前删除；<code>run</code> 和 <code>group</code> 同步保留对应完整行。若没有给出目标量，则使用全部完整结果的样本均值和样本 SD：</p>
+<p><span class="math display">\[
+\hat\mu=\frac1n\sum_i x_i,\qquad
+\hat\sigma=\sqrt{\frac{\sum_i(x_i-\hat\mu)^2}{n-1}}.
+\]</span></p>
+<p>由同一监控序列估计目标量可能吸收正在发生的偏移并扩大控制限，因此只适合探索或建立阶段，不应在每次日常判定时滚动重估。</p>
+<p>主要返回字段如下：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>target_mean</code>、<code>target_sd</code></td>
+<td>实际用于标准化和画控制限的目标量</td>
+</tr>
+<tr class="even">
+<td><code>rule_vec</code></td>
+<td>实际扫描的规则及顺序</td>
+</tr>
+<tr class="odd">
+<td><code>violations</code></td>
+<td>命名列表；每项是删除缺失值后的序列位置</td>
+</tr>
+<tr class="even">
+<td><code>n_violations</code></td>
+<td>所有规则命中位置去重后的数量</td>
+</tr>
+<tr class="odd">
+<td><code>n_warn</code></td>
+<td>命中但未命中 <code>1-3s</code> 的唯一点数</td>
+</tr>
+<tr class="even">
+<td><code>n_oc</code></td>
+<td>命中 <code>1-3s</code> 的唯一点数</td>
+</tr>
+<tr class="odd">
+<td><code>plot_data</code></td>
+<td>完整值、横坐标、分组、显示严重程度及规则标签</td>
+</tr>
+<tr class="even">
+<td><code>n_total</code>、<code>n_complete</code>、<code>n_miss</code></td>
+<td>原始、完整和缺失记录数</td>
+</tr>
+</tbody>
+</table>
+<p><code>plot()</code> 绘制靶均值以及 <span class="math inline">\(\pm1s\)</span>、<span class="math inline">\(\pm2s\)</span>、<span class="math inline">\(\pm3s\)</span> 水平线，并标注命中规则的点。<code>violations</code> 中的位置是清理后序列位置，不一定等于原始数据行号；有缺失值时，应通过 <code>plot_data$run</code> 或原始运行标识追溯记录。</p>
 </section>
-<section id="运行质量判定" class="level3" data-number="10.3.3">
-<h3 data-number="10.3.3" class="anchored" data-anchor-id="运行质量判定"><span class="header-section-number">10.3.3</span> 运行质量判定</h3>
+<section id="双水平联合图-youden_plot" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="双水平联合图-youden_plot"><span class="header-section-number">10.1.3</span> 双水平联合图 <code>youden_plot()</code></h3>
+<p><strong>调用形式</strong></p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>qc <span class="ot">&lt;-</span> <span class="fu">qc_chart</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  qc_daily,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">"value"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rules =</span> <span class="st">"1-2s,1-3s,2-2s,R-4s,4-1s,10x"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="dv">100</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">3</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(qc)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">youden_plot</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  sample1,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  sample2,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean1 =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean2 =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd1 =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd2 =</span> <span class="cn">NULL</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(x)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>宽格式数据框；同一行必须是同一次运行中的两个水平。</td>
+</tr>
+<tr class="even">
+<td><code>sample1</code>、<code>sample2</code></td>
+<td>两个数值型 QC 水平列名。</td>
+</tr>
+<tr class="odd">
+<td><code>mean1</code>、<code>mean2</code></td>
+<td>两水平靶均值；省略时由完整配对数据估计。</td>
+</tr>
+<tr class="even">
+<td><code>sd1</code>、<code>sd2</code></td>
+<td>两水平正的靶 SD；省略时由完整配对数据估计。</td>
+</tr>
+</tbody>
+</table>
+<p>只保留两个水平都非缺失的完整行。标准化坐标为</p>
+<p><span class="math display">\[
+z_{1i}=\frac{x_{1i}-\mu_1}{\sigma_1},\qquad
+z_{2i}=\frac{x_{2i}-\mu_2}{\sigma_2}.
+\]</span></p>
+<p>源码把</p>
+<p><span class="math display">\[
+\lvert z_{1i}\rvert\le2
+\quad\text{且}\quad
+\lvert z_{2i}\rvert\le2
+\]</span></p>
+<p>定义为位于矩形内；只要一个水平严格超出 <span class="math inline">\(\pm2s\)</span> 就列入 <code>outside_rows</code>。边界点仍属于矩形内。对象还计算两个原始结果列的 Pearson 相关：</p>
+<p><span class="math display">\[
+r=\frac{\sum_i(x_{1i}-\bar x_1)(x_{2i}-\bar x_2)}
+{\sqrt{\sum_i(x_{1i}-\bar x_1)^2\sum_i(x_{2i}-\bar x_2)^2}}.
+\]</span></p>
+<p>主要字段包括 <code>mean1</code>、<code>mean2</code>、<code>sd1</code>、<code>sd2</code>、<code>correlation</code>、<code>n_outside</code>、<code>outside_rows</code> 和 <code>plot_data</code>。 <code>outside_rows</code> 是原数据行号，这一点与 <code>qc_chart()</code> 的清理后位置不同。</p>
+<p>当前图形在原始量值尺度上绘制两个水平，并叠加 <span class="math inline">\(\pm1s\)</span>、<span class="math inline">\(\pm2s\)</span> 矩形。判断“两个水平同方向偏移”应比较 <span class="math inline">\((z_1,z_2)\)</span> 相对中心的方向，不能把不同靶值、不同单位下的原始 <span class="math inline">\(y=x\)</span> 参考线理解为两个水平应数值相等。<code>correlation</code> 和矩形外标记均为描述性结果，没有误差椭圆、联合概率检验或自动失控结论。</p>
+<p><strong>函数返回值</strong></p>
+<p><code>youden_plot()</code> 返回双水平坐标、椭圆/限界和异常判定数据，并不可见地返回 <code>ggplot</code> 对象。</p>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">10.2</span> 分析案例</h2>
+<section id="已知靶值下的日常质控" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="已知靶值下的日常质控"><span class="header-section-number">10.2.1</span> 已知靶值下的日常质控</h3>
+<p>读取 30 个按运行顺序排列的教学结果：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>qc_daily <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/010-质量控制/qc-daily.csv"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>qc_daily <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(qc_daily)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(qc_daily)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30  2</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(qc_daily)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  run  value
+1   1 103.24
+2   2 103.06
+3   3  94.52
+4   4  99.51
+5   5  99.14
+6   6  95.62</code></pre>
+</div>
+</div>
+<p>方案已规定靶均值 100、靶 SD 3，因此显式传入，不由监控期数据重新估计：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>qc_daily_fit <span class="ot">&lt;-</span> <span class="fu">qc_chart</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  qc_daily,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">"value"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rules =</span> <span class="st">"1-2s,1-3s,2-2s,R-4s,4-1s,10x"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="dv">100</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">3</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(qc_daily_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -442,142 +814,144 @@ QC Control Chart
   -&gt; 2 violation(s): 1 warning(s), 1 out of control</code></pre>
 </div>
 </div>
+<p>第 15 点同时满足 <code>1-2s</code> 和 <code>1-3s</code>，最终只计为一个 <code>out_of_control</code> 点；第 23 点仅满足 <code>1-2s</code>，计为一个 <code>warning</code> 点。因此 <code>n_violations=2</code>、<code>n_warn=1</code>、<code>n_oc=1</code>。</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(qc)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(qc_daily_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="010-质量控制_files/figure-html/qc-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="010-质量控制_files/figure-html/daily-plot-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><code>qc_chart()</code> 把每条规则的违例点记录在 <code>$violations</code> 中：</p>
+<section id="已知目标量与数据内估计的差别" class="level4" data-number="10.2.1.1">
+<h4 data-number="10.2.1.1" class="anchored" data-anchor-id="已知目标量与数据内估计的差别"><span class="header-section-number">10.2.1.1</span> 已知目标量与数据内估计的差别</h4>
+<p>省略 <code>mean</code> 和 <code>sd</code> 后，函数会用这 30 个结果重新估计中心和离散程度：</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>qc<span class="sc">$</span>violations</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>$`1-2s`
-[1] 15 23
-
-$`1-3s`
-[1] 15
-
-$`2-2s`
-integer(0)
-
-$`R-4s`
-integer(0)
-
-$`4-1s`
-integer(0)
-
-$`10x`
-integer(0)</code></pre>
-</div>
-</div>
-<p>本例第 15 点超出 +3s（触发 <code>1-3s</code> 与 <code>1-2s</code>，判为失控），第 23 点超出 −2s（触发 <code>1-2s</code>，判为 警告）。<code>n_warn</code> 与 <code>n_oc</code> 分别给出警告与失控点计数。</p>
-<blockquote class="blockquote">
-<p><strong>参数说明：</strong> <code>qc_chart()</code> 的 <code>rules</code> 为逗号分隔的规则字符串；<code>mean</code>/<code>sd</code> 为目标值（不给出时用 数据估计，但监控质控应使用来自说明书的靶值）。<code>run</code> 指定运行顺序列，<code>group</code> 指定分组列（见示例二）。</p>
-</blockquote>
-</section>
-</section>
-<section id="示例二试剂换批时的分组评价" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="示例二试剂换批时的分组评价"><span class="header-section-number">10.4</span> 示例二：试剂换批时的分组评价</h2>
-<section id="读取数据" class="level3" data-number="10.4.1">
-<h3 data-number="10.4.1" class="anchored" data-anchor-id="读取数据"><span class="header-section-number">10.4.1</span> 读取数据</h3>
-<p>数据中前 10 个点为 L1 批、中间 10 个为 L2 批（存在整体偏移）、后 10 个为 L3 批：</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>qc_lot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/qc-lot-change.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>qc_lot <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(qc_lot)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(qc_lot<span class="sc">$</span>lot)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>qc_daily_estimated <span class="ot">&lt;-</span> <span class="fu">qc_chart</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  qc_daily,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">"value"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>qc_daily_estimated</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-L1 L2 L3 
-10 10 10 </code></pre>
+QC Control Chart
+  Value column:    value
+  Mean (target):   100.2890
+  SD (target):     3.2314
+  N (total):       30  |  Complete: 30  |  Missing: 0
+  Rules applied:   1-2s, 1-3s, 2-2s, R-4s, 4-1s, 10x
+
+  Violations:
+  -------------------------------------------------- 
+    1-2s  : points 15, 23
+  -&gt; 2 violation(s): 2 warning(s), 0 out of control</code></pre>
 </div>
 </div>
+<p>数据内估计得到均值 100.2890、SD 3.2314；第 15 点不再严格超过新的 <span class="math inline">\(+3s\)</span> 界限，因此显示分类从 <code>out_of_control</code> 变成 <code>warning</code>。这正是日常监控不应随当前批数据滚动更新靶值和 SD 的原因。</p>
 </section>
-<section id="对整条序列分组" class="level3" data-number="10.4.2">
-<h3 data-number="10.4.2" class="anchored" data-anchor-id="对整条序列分组"><span class="header-section-number">10.4.2</span> 对整条序列分组</h3>
-<p>用 <code>group = "lot"</code> 画图，Westgard 规则仍在<strong>整条序列</strong>上判定：</p>
+</section>
+<section id="换批标记下的连续显示" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="换批标记下的连续显示"><span class="header-section-number">10.2.2</span> 换批标记下的连续显示</h3>
+<p>该教学数据的前、中、后各 10 个点分别标为 L1、L2 和 L3；L2 存在人为整体偏移：</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>qc_lot_all <span class="ot">&lt;-</span> <span class="fu">qc_chart</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  qc_lot,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">"value"</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="dv">100</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">3</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"lot"</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>qc_lot_all<span class="sc">$</span>n_oc</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>qc_lot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/010-质量控制/qc-lot-change.csv"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>qc_lot <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(qc_lot)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>qc_lot_fit <span class="ot">&lt;-</span> <span class="fu">qc_chart</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  qc_lot,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">"value"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="dv">100</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">3</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"lot"</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(qc_lot_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<pre><code>
+QC Control Chart
+  Value column:    value
+  Mean (target):   100.0000
+  SD (target):     3.0000
+  N (total):       30  |  Complete: 30  |  Missing: 0
+  Rules applied:   1-2s, 1-3s, 2-2s, R-4s, 4-1s, 10x
+
+  Violations:
+  -------------------------------------------------- 
+    1-2s  : points 6, 15
+    4-1s  : points 13-19
+  -&gt; 8 violation(s): 8 warning(s), 0 out of control</code></pre>
 </div>
 </div>
+<p><code>1-2s</code> 命中第 6、15 点；多个重叠的 <code>4-1s</code> 窗口使第 13～19 点均被标记。两类规则合并后共有 8 个唯一点，当前严重程度实现全部计为 <code>warning</code>。规则窗口跨 L1/L2/L3 的边界连续扫描；图形分面不改变这些位置。</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(qc_lot_all)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(qc_lot_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="010-质量控制_files/figure-html/qc-lot-grouped-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="010-质量控制_files/figure-html/lot-plot-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>图中虽按批分面，但规则在整条序列上计算，观察换批造成的系统性偏移。</p>
 </section>
-</section>
-<section id="示例三双水平质控的-youden-图" class="level2" data-number="10.5">
-<h2 data-number="10.5" class="anchored" data-anchor-id="示例三双水平质控的-youden-图"><span class="header-section-number">10.5</span> 示例三：双水平质控的 Youden 图</h2>
-<section id="读取数据-1" class="level3" data-number="10.5.1">
-<h3 data-number="10.5.1" class="anchored" data-anchor-id="读取数据-1"><span class="header-section-number">10.5.1</span> 读取数据</h3>
-<p>Youden 图使用两个不同浓度（水平）的质控品在同一次运行中的结果（宽表格式，一列一个水平）：</p>
+<section id="双水平-youden-图" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="双水平-youden-图"><span class="header-section-number">10.2.3</span> 双水平 Youden 图</h3>
+<p>每行是同一次运行的低、高两个 QC 水平：</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>youden_dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/qc-youden.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>youden_dat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(youden_dat)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(youden_dat)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>youden_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/010-质量控制/qc-youden.csv"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>youden_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(youden_data)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(youden_data)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["run"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["low"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["high"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"77.86","3":"209.36","_rn_":"1"},{"1":"2","2":"82.19","3":"207.10","_rn_":"2"},{"1":"3","2":"75.50","3":"189.00","_rn_":"3"},{"1":"4","2":"80.40","3":"195.36","_rn_":"4"},{"1":"5","2":"80.64","3":"198.23","_rn_":"5"},{"1":"6","2":"78.22","3":"200.14","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
+<div class="cell-output cell-output-stdout">
+<pre><code>  run   low   high
+1   1 77.86 209.36
+2   2 82.19 207.10
+3   3 75.50 189.00
+4   4 80.40 195.36
+5   5 80.64 198.23
+6   6 78.22 200.14</code></pre>
 </div>
 </div>
-</div>
-</section>
-<section id="绘制-youden-图" class="level3" data-number="10.5.2">
-<h3 data-number="10.5.2" class="anchored" data-anchor-id="绘制-youden-图"><span class="header-section-number">10.5.2</span> 绘制 Youden 图</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>yd <span class="ot">&lt;-</span> <span class="fu">youden_plot</span>(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  youden_dat,</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample1 =</span> <span class="st">"low"</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample2 =</span> <span class="st">"high"</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean1 =</span> <span class="dv">80</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean2 =</span> <span class="dv">200</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd1 =</span> <span class="dv">2</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd2 =</span> <span class="dv">5</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(yd)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>youden_fit <span class="ot">&lt;-</span> <span class="fu">youden_plot</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  youden_data,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample1 =</span> <span class="st">"low"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample2 =</span> <span class="st">"high"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean1 =</span> <span class="dv">80</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean2 =</span> <span class="dv">200</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd1 =</span> <span class="dv">2</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd2 =</span> <span class="dv">5</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(youden_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -593,45 +967,23 @@ Youden Plot
   Points outside +/-2SD: 3  (rows: 3, 17, 19)</code></pre>
 </div>
 </div>
+<p>本例 Pearson 相关为 0.5428；原始第 3、17、19 行位于 <span class="math inline">\(\pm2s\)</span> 矩形外。相关系数不决定是否失控，矩形外也只是定位提示。应结合每个运行的两个标准化偏差、单水平控制图、仪器事件和质控记录判断共同系统偏移还是单水平随机问题。</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yd)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(youden_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="010-质量控制_files/figure-html/youden-figure-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="010-质量控制_files/figure-html/youden-plot-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>代码</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>yd<span class="sc">$</span>outside_rows</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1]  3 17 19</code></pre>
-</div>
-</div>
-<p><code>youden_plot()</code> 用 ±2s 矩形框标注超出范围的点。本示例有 3 个运行点落在矩形外（含人为设置的 失控点），提示这些运行可能同时受到系统误差影响。两水平的共享偏移（点沿对角线方向外移）提示 系统误差，单一方向的大幅度偏移则更可能来自随机误差或单水平问题。</p>
-<blockquote class="blockquote">
-<p><strong>参数说明：</strong> <code>youden_plot()</code> 的 <code>sample1</code>/<code>sample2</code> 为两个水平的数值列；<code>mean1</code>/<code>mean2</code>/ <code>sd1</code>/<code>sd2</code> 为靶值（不给出时用数据估计）。<code>$n_outside</code> 与 <code>$outside_rows</code> 给出矩形外的点。</p>
-</blockquote>
-</section>
-</section>
-<section id="结果判读要点" class="level2" data-number="10.6">
-<h2 data-number="10.6" class="anchored" data-anchor-id="结果判读要点"><span class="header-section-number">10.6</span> 结果判读要点</h2>
-<ol type="1">
-<li><strong>靶值来源</strong>：质控图的目标均值与 SD 应来自说明书或验证数据，而不是临时用数据估计。</li>
-<li><strong>规则组合</strong>：Westgard 规则组合与判为失控的处置流程应在方案中预先规定，并随风险重新评估。</li>
-<li><strong>双水平互补</strong>：Youden 图同时看两个水平的联合表现，识别系统误差与随机误差的迹象。</li>
-<li><strong>失控处置</strong>：检测到失控点后应停止报告、排查原因、必要时重新验证与召回，记录完整处置链。</li>
-<li><strong>统计≠放行</strong>：质控判定是放行决策的依据之一，最终决定应符合实验室质量体系要求。</li>
-</ol>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -1042,13 +1394,13 @@ Youden Plot
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./009-参考区间.html" class="pagination-link" aria-label="参考区间">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">参考区间</span></span>
+      <a href="./009-方法学比较与参考物偏倚.html" class="pagination-link" aria-label="方法学比较与参考物偏倚">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./011-样本量计算.html" class="pagination-link" aria-label="样本量计算">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">样本量计算</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./011-ROC曲线与cutoff.html" class="pagination-link" aria-label="ROC 曲线与 cutoff">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

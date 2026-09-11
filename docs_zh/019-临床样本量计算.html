@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>19&nbsp; 临床样本量计算 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./020-异常值与正态检验.html" rel="next">
+<link href="./018-瓶间差.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./019-临床样本量计算.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">19.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#三类计算的数学目标" id="toc-三类计算的数学目标" class="nav-link" data-scroll-target="#三类计算的数学目标"><span class="header-section-number">19.1.1</span> 三类计算的数学目标</a></li>
+  </ul></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">19.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#示例一blandaltman-一致性评价的样本量" id="toc-示例一blandaltman-一致性评价的样本量" class="nav-link" data-scroll-target="#示例一blandaltman-一致性评价的样本量"><span class="header-section-number">19.2.1</span> 示例一：Bland–Altman 一致性评价的样本量</a></li>
+  <li><a href="#示例二单比例置信区间的样本量" id="toc-示例二单比例置信区间的样本量" class="nav-link" data-scroll-target="#示例二单比例置信区间的样本量"><span class="header-section-number">19.2.2</span> 示例二：单比例置信区间的样本量</a></li>
+  <li><a href="#示例三单臂目标值检验的样本量" id="toc-示例三单臂目标值检验的样本量" class="nav-link" data-scroll-target="#示例三单臂目标值检验的样本量"><span class="header-section-number">19.2.3</span> 示例三：单臂目标值检验的样本量</a></li>
+  <li><a href="#blandaltmanpass-example-1-和-example-2" id="toc-blandaltmanpass-example-1-和-example-2" class="nav-link" data-scroll-target="#blandaltmanpass-example-1-和-example-2"><span class="header-section-number">19.2.4</span> Bland–Altman：PASS Example 1 和 Example 2</a></li>
+  <li><a href="#单比例置信区间pass-example-14" id="toc-单比例置信区间pass-example-14" class="nav-link" data-scroll-target="#单比例置信区间pass-example-14"><span class="header-section-number">19.2.5</span> 单比例置信区间：PASS Example 1–4</a></li>
+  <li><a href="#单比例目标值检验saspass-多参数对照" id="toc-单比例目标值检验saspass-多参数对照" class="nav-link" data-scroll-target="#单比例目标值检验saspass-多参数对照"><span class="header-section-number">19.2.6</span> 单比例目标值检验：SAS、PASS 多参数对照</a></li>
+  <li><a href="#cmde体外诊断试剂临床试验技术指导原则附录案例一有临床可接受标准的目标值法" id="toc-cmde体外诊断试剂临床试验技术指导原则附录案例一有临床可接受标准的目标值法" class="nav-link" data-scroll-target="#cmde体外诊断试剂临床试验技术指导原则附录案例一有临床可接受标准的目标值法"><span class="header-section-number">19.2.7</span> CMDE《体外诊断试剂临床试验技术指导原则》附录案例一：有临床可接受标准的目标值法</a></li>
+  <li><a href="#cmde体外诊断试剂临床试验技术指导原则附录案例二只要求置信区间精度的允许误差法" id="toc-cmde体外诊断试剂临床试验技术指导原则附录案例二只要求置信区间精度的允许误差法" class="nav-link" data-scroll-target="#cmde体外诊断试剂临床试验技术指导原则附录案例二只要求置信区间精度的允许误差法"><span class="header-section-number">19.2.8</span> CMDE《体外诊断试剂临床试验技术指导原则》附录案例二：只要求置信区间精度的允许误差法</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>样本量不是脱离研究终点的固定常数，而是由效应大小、变异程度、置信水平、检验效能和研究设计共同决定的规划结果。本文只覆盖 <code>ivdtools</code> 已提供的三类计算：Bland–Altman 一致性限的精度/效能、单比例置信区间半宽，以及单臂比例目标值检验。它们不能直接替代 ROC、精密度方差分量、参考区间或多中心聚类设计的专用样本量论证。</p>
+<p>使用前先写清主要终点、分析单位（受试者、样本还是配对结果）、预期比例或差异、允许误差、单双侧方向和无效样本加量。函数返回的是在这些输入假设成立时的理论样本量；若输入的 SD、预期比例或相关性不确定，应对关键参数做敏感性分析并取保守方案。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>三个函数只覆盖三种特定统计问题，返回值不含失访、无效样本、分层最低例数、设计效应或多重终点加量。Bland–Altman 输入中的 <code>delta</code> 是临床可接受界限，不是观察到的 LoA；比例区间方法和单臂检验方向必须预先确定。正式方案应保存全部假设、来源和敏感性分析，而不只报告最终整数。</p>
+</div>
+</div>
+<p>分析流程：先定义目标，再计算样本量</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["明确主要终点&lt;br/&gt;方向与允许误差"] --&gt; B{"统计问题"}
+    B --&gt;|连续差值一致性限| C["sample_size_bland_altman()"]
+    B --&gt;|单比例区间精度| D["sample_size_proportion_ci()"]
+    B --&gt;|单臂比例目标值| E["sample_size_proportion()"]
+    C --&gt; F["关键参数敏感性分析"]
+    D --&gt; F
+    E --&gt; F
+    F --&gt; G["加入失访、无效样本&lt;br/&gt;和分层覆盖加量"]
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef decision fill:#FFF4E8,stroke:#FF7518,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B decision
+    class C,D,E,F process
+    class G output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="19.1">
+<h2 data-number="19.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">19.1</span> 主要函数</h2>
+<p>样本量计算在研究设计与性能评价方案阶段确定所需样本数或可获得的检验效能。<code>ivdtools</code> 提供三个独立函数，分别对应三类常见问题：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>主要用途</th>
+<th>求解方向</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sample_size_bland_altman()</code></td>
+<td>BA 一致性评价</td>
+<td>由目标 <code>power</code> 求 n</td>
+</tr>
+<tr class="even">
+<td><code>sample_size_proportion_ci()</code></td>
+<td>单比例置信区间</td>
+<td>由目标 <code>half_width</code> 求 n</td>
+</tr>
+<tr class="odd">
+<td><code>sample_size_proportion()</code></td>
+<td>单臂目标值检验</td>
+<td>由 <code>alpha</code> 和 <code>power</code> 求 n</td>
+</tr>
+</tbody>
+</table>
+<p>三个函数都由参数驱动、不需要原始数据文件，并且只计算样本量。它们返回结构化结果，样本量由 <code>result$n</code> 获取，<code>print()</code> 同时显示目标值和实际达到的统计量。示例中的参数（效能、置信水平、允许半宽等）均为教学设定，正式研究必须使用方案规定的参数。样本量向上取整、失访/无效样本加量和分层最低例数应在函数结果之外单独处理。</p>
+<section id="三类计算的数学目标" class="level3" data-number="19.1.1">
+<h3 data-number="19.1.1" class="anchored" data-anchor-id="三类计算的数学目标"><span class="header-section-number">19.1.1</span> 三类计算的数学目标</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_bland_altman</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.80</span>, mu, sd, delta,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">agree.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"lu"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">n.min =</span> <span class="dv">3</span>, <span class="at">n.max =</span> <span class="fl">1e5</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  p, half_width, <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"lower"</span>, <span class="st">"upper"</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"wilson"</span>, <span class="at">n.max =</span> <span class="fl">1e6</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_proportion</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  p0, p1, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">c</span>(<span class="st">"greater"</span>, <span class="st">"less"</span>, <span class="st">"two.sided"</span>),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="st">"exact"</span>, <span class="at">power_method =</span> <span class="st">"binomial"</span>, <span class="at">n.max =</span> <span class="fl">1e6</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Bland–Altman 函数假定差值近似正态，目标 LoA 为</p>
+<p><span class="math display">\[
+\mu\pm z_{(1+\gamma)/2}\sigma,
+\]</span></p>
+<p>其中 <span class="math inline">\(\gamma=\)</span> <code>agree.level</code>。函数按 Lu 等方法用非中心 t 分布计算“两侧 LoA 置信界均落入临床界限 <span class="math inline">\(\pm\delta\)</span>”的效能，再搜索达到目标效能的最小整数。必须满足 <span class="math inline">\(\delta&gt;|\mu|+z_{(1+\gamma)/2}\sigma\)</span>；否则总体 LoA 本身已经超出临床界限，函数直接报错。</p>
+<p>单比例区间的目标是：双侧区间控制总宽度的一半，单侧区间控制预期比例到相应置信限的距离，</p>
+<p><span class="math display">\[
+\frac{U-L}{2}\le d\quad\text{（双侧）},\qquad
+\widehat p-L\le d\ \text{或}\ U-\widehat p\le d\quad\text{（单侧）}.
+\]</span></p>
+<p>规划宽度直接在预期比例 <span class="math inline">\(p\)</span> 处计算，避免先把 <span class="math inline">\(np\)</span> 四舍五入后在小样本、高比例情形产生 <span class="math inline">\(\widehat p=1\)</span> 和零标准误。这个双侧定义与 SAS 的 <code>HALFWIDTH</code> 及 PASS 总宽度的一半一致；对于 Wilson、Clopper–Pearson 等非对称区间，不再把较长一侧误当成总宽度的一半。函数搜索满足半宽约束的第一个整数，并在最终 <span class="math inline">\(n\)</span> 下枚举整数成功数，报告 <code>actual_coverage</code> 和 <code>actual_alpha</code>。</p>
+<p>单臂函数检验 <span class="math inline">\(H_0:p=p_0\)</span> 与由 <code>alternative</code> 指定的备择。<code>test</code> 决定拒绝域，<code>power_method</code> 决定样本量采用连续正态近似还是离散二项枚举。无论采用哪种规划方法，函数都会对最终整数样本量按二项分布核算 <code>actual_alpha</code> 和 <code>achieved_power</code>。二项设计还同时要求实际 α 不超过目标 α，避免近似检验因 α 膨胀而得到虚假的小样本量。</p>
+<p>三个函数均返回结构化样本量结果；<code>result$n</code> 为向上取整后的样本量，并保存目标参数、实际覆盖度、实际 α、达到的效能及搜索边界。</p>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="19.2">
+<h2 data-number="19.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">19.2</span> 分析案例</h2>
+<section id="示例一blandaltman-一致性评价的样本量" class="level3" data-number="19.2.1">
+<h3 data-number="19.2.1" class="anchored" data-anchor-id="示例一blandaltman-一致性评价的样本量"><span class="header-section-number">19.2.1</span> 示例一：Bland–Altman 一致性评价的样本量</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_ba <span class="ot">&lt;-</span> <span class="fu">sample_size_bland_altman</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu =</span> <span class="fl">0.2</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">1</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fl">2.5</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_ba)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample size for Bland-Altman agreement assessment
+  Method            : Lu et al. (2016), noncentral-t approximation
+  Mean difference   : 0.2000
+  SD of differences : 1.0000
+  Clinical limit    : 2.5000
+  Confidence level  : 0.9500
+  Agreement level   : 0.9500
+  Sample size (n)   : 201
+  Target power      : 0.800000
+  Achieved power    : 0.800300</code></pre>
+</div>
+</div>
+<p>在平均差异 <code>mu = 0.2</code>、差异 SD <code>sd = 1</code>、临床一致性限 <code>delta = 2.5</code> 的设定下，达到 80% 效能约需 201 对样本。</p>
+<p><code>mu</code> 为平均差异，<code>sd</code> 为差异标准差（&gt;0），<code>delta</code> 为临床可接受的一致性限（&gt;0）。<code>conf.level</code> 是一致性限置信区间的置信水平，<code>agree.level</code> 是 LoA 的覆盖度，两者是不同层次——前者影响估计的可靠性，后者决定 LoA 本身的宽度。</p>
+</section>
+<section id="示例二单比例置信区间的样本量" class="level3" data-number="19.2.2">
+<h3 data-number="19.2.2" class="anchored" data-anchor-id="示例二单比例置信区间的样本量"><span class="header-section-number">19.2.2</span> 示例二：单比例置信区间的样本量</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_pci <span class="ot">&lt;-</span> <span class="fu">sample_size_proportion_ci</span>(<span class="at">p =</span> <span class="fl">0.3</span>, <span class="at">half_width =</span> <span class="fl">0.05</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_pci)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample size for a single-proportion confidence interval
+  Method                : wilson
+  Interval              : two.sided
+  Anticipated proportion: 0.3000
+  Confidence level      : 0.9500
+  Sample size (n)       : 320
+  Target half-width     : 0.050000
+  Achieved half-width   : 0.049967
+  Target total width    : 0.100000
+  Achieved total width  : 0.099934
+  Planning interval     : [0.252406, 0.352339]
+  Actual coverage       : 0.956096
+  Actual alpha          : 0.043904</code></pre>
+</div>
+</div>
+<p>对预期比例 p = 0.3，要使 95% Wilson 置信区间的总宽度不超过 0.10（半宽不超过 0.05），约需 320 例。结果同时给出规划区间、实际覆盖率和实际 α。</p>
+<p><code>p</code> 为预期比例（必须给定，0≤p≤1；边界值主要用于单侧精确区间），<code>half_width</code> 对双侧区间表示总宽度的一半，对单侧区间表示 p 到相应置信限的距离。<code>method</code> 可选 7 种置信区间方法（默认 <code>"wilson"</code>，另有 <code>"wald"</code>、<code>"wald-cc"</code>、<code>"agresti-coull"</code>、<code>"jeffreys"</code>、<code>"wilson-cc"</code>、<code>"clopper-pearson"</code>），方法选择影响所需样本量，应在方案中说明。</p>
+</section>
+<section id="示例三单臂目标值检验的样本量" class="level3" data-number="19.2.3">
+<h3 data-number="19.2.3" class="anchored" data-anchor-id="示例三单臂目标值检验的样本量"><span class="header-section-number">19.2.3</span> 示例三：单臂目标值检验的样本量</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n_sp <span class="ot">&lt;-</span> <span class="fu">sample_size_proportion</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p0 =</span> <span class="fl">0.2</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fl">0.35</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.8</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="st">"greater"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="st">"exact"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">power_method =</span> <span class="st">"binomial"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_sp)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample size for a single-proportion target-value test
+  Test                  : Exact binomial test
+  Power calculation     : Binomial enumeration
+  H0: p &lt;= 0.2000
+  H1: p &gt; 0.2000
+  Expected p            : 0.3500
+  Sample size (n)       : 56
+  Target alpha          : 0.050000
+  Actual alpha          : 0.043209
+  Alpha criterion       : met
+  Target power          : 0.800000
+  Achieved power        : 0.806416 (binomial evaluation)
+  Critical successes    : &gt;= 17</code></pre>
+</div>
+</div>
+<p>在 p0 = 0.2（目标/零假设比例）与 p1 = 0.35（预期比例）、单侧 α = 0.05、效能 0.80 的设定下，精确二项设计需要 56 例；实际 α 和实际效能分别由结果中的 <code>actual_alpha</code> 和 <code>achieved_power</code> 给出。</p>
+<p><code>alternative</code> 可取 <code>"greater"</code>（此时要求 p1 &gt; p0）、<code>"less"</code> 或 <code>"two.sided"</code>。<code>test</code> 选择精确、Score、Wald 或其他区间反演拒绝域；<code>power_method</code> 独立选择 <code>"binomial"</code> 或 <code>"normal"</code>。正态效能可用于 Exact、Score、Wald 及后二者的连续性校正版本；对无限总体，Exact 与 Score 的正态近似规划公式相同，但最终离散拒绝域仍由 <code>test</code> 决定。</p>
+</section>
+<section id="blandaltmanpass-example-1-和-example-2" class="level3" data-number="19.2.4">
+<h3 data-number="19.2.4" class="anchored" data-anchor-id="blandaltmanpass-example-1-和-example-2"><span class="header-section-number">19.2.4</span> Bland–Altman：PASS Example 1 和 Example 2</h3>
+<p>PASS Example 1 固定 <code>mu = 0.5</code>、<code>delta = 7</code>、<code>conf.level = agree.level = 0.95</code>，交叉考察两档效能和三个差值 SD。下面不删除不一致行，而是同时给出样本量差和效能差。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ba_manual <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_power =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">2.7</span>, <span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">2.7</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pass_n =</span> <span class="fu">c</span>(<span class="dv">60</span>L, <span class="dv">82</span>L, <span class="dv">118</span>L, <span class="dv">78</span>L, <span class="dv">108</span>L, <span class="dv">156</span>L),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pass_power =</span> <span class="fu">c</span>(<span class="fl">0.8059</span>, <span class="fl">0.8019</span>, <span class="fl">0.8024</span>, <span class="fl">0.9014</span>, <span class="fl">0.9003</span>, <span class="fl">0.9002</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ba_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(ba_manual)),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">sample_size_bland_altman</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">power =</span> ba_manual<span class="sc">$</span>target_power[i],</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> <span class="fl">0.5</span>, <span class="at">sd =</span> ba_manual<span class="sc">$</span>sd[i], <span class="at">delta =</span> <span class="dv">7</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">agree.level =</span> <span class="fl">0.95</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>PASS Bland–Altman Example 1 全部参数组合</caption>
+<colgroup>
+<col style="width: 51%">
+<col style="width: 19%">
+<col style="width: 11%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.5</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">60.0000</td>
+<td style="text-align: right;">59.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.5</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.8059</td>
+<td style="text-align: right;">0.803126</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.6</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">82.0000</td>
+<td style="text-align: right;">82.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.6</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.8019</td>
+<td style="text-align: right;">0.803997</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.7</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">118.0000</td>
+<td style="text-align: right;">118.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.7</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.8024</td>
+<td style="text-align: right;">0.803101</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.5</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">78.0000</td>
+<td style="text-align: right;">78.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.5</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.9014</td>
+<td style="text-align: right;">0.901856</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.6</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">108.0000</td>
+<td style="text-align: right;">108.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.6</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.9003</td>
+<td style="text-align: right;">0.900492</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.7</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">156.0000</td>
+<td style="text-align: right;">156.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.7</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.9002</td>
+<td style="text-align: right;">0.900235</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>power = 0.8, SD = 2.5</code> 时 PASS 报 60，包按手册列出的 Lu 非中心 t 公式逐个搜索得到 59，相差 1 例。PASS 手册未给出 n = 59 的内部值，因此这里不把差异归因于舍入，也不为追求表面一致而把包结果强制加 1。效能列也如实保留：小样本几行存在约 0.00004–0.0028 的差异，随着 n 增大而缩小。</p>
+<p>PASS Example 2 另以 <code>power = 0.8, mu = 0.2, sd = 1, delta = 2.5</code> 验证 Lu 等论文的结果。论文表格给出 203，而 PASS 与包都按“第一个达到目标的整数”得到 201；这里的差异发生在论文近似结果与整数搜索结果之间。</p>
+</section>
+<section id="单比例置信区间pass-example-14" class="level3" data-number="19.2.5">
+<h3 data-number="19.2.5" class="anchored" data-anchor-id="单比例置信区间pass-example-14"><span class="header-section-number">19.2.5</span> 单比例置信区间：PASS Example 1–4</h3>
+<p>PASS 双侧案例输入的是总宽度，包输入 <code>half_width</code>，因此复算时使用 <code>half_width = target_width / 2</code>。Example 1 对 Clopper–Pearson 区间给出 3 个宽度与 5 个预期比例，共 15 个组合。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ci_manual <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_width =</span> <span class="fu">c</span>(<span class="fl">0.04</span>, <span class="fl">0.06</span>, <span class="fl">0.10</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ci_manual<span class="sc">$</span>pass_n <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">914</span>L, <span class="dv">1585</span>L, <span class="dv">2065</span>L, <span class="dv">2353</span>L, <span class="dv">2449</span>L,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">417</span>L, <span class="dv">715</span>L, <span class="dv">928</span>L, <span class="dv">1056</span>L, <span class="dv">1098</span>L,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">158</span>L, <span class="dv">264</span>L, <span class="dv">341</span>L, <span class="dv">387</span>L, <span class="dv">402</span>L</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ci_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(ci_manual)),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> ci_manual<span class="sc">$</span>p[i],</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">half_width =</span> ci_manual<span class="sc">$</span>target_width[i] <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"clopper-pearson"</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>PASS 单比例精确区间 Example 1 的 15 个组合</caption>
+<colgroup>
+<col style="width: 53%">
+<col style="width: 16%">
+<col style="width: 12%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.1 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">914</td>
+<td style="text-align: right;">914</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.2 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1585</td>
+<td style="text-align: right;">1585</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.3 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">2065</td>
+<td style="text-align: right;">2065</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.4 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">2353</td>
+<td style="text-align: right;">2353</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.5 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">2449</td>
+<td style="text-align: right;">2449</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.1 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">417</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.2 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">715</td>
+<td style="text-align: right;">715</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.3 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">928</td>
+<td style="text-align: right;">928</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.4 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1056</td>
+<td style="text-align: right;">1056</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.5 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1098</td>
+<td style="text-align: right;">1098</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.1 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">158</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.2 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: right;">264</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.3 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">341</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.4 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">387</td>
+<td style="text-align: right;">387</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.5 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">402</td>
+<td style="text-align: right;">402</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>包额外枚举最终 n 下的覆盖概率；这不是 PASS 用于选择 n 的宽度条件，所以作为诊断表单独报告。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ci_special <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">case =</span> <span class="fu">c</span>(<span class="st">"PASS Example 2"</span>, <span class="st">"PASS Example 3"</span>, <span class="st">"PASS Example 4"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="fu">c</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"单侧下限，Clopper-Pearson"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"双侧，Wilson 连续性校正"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"单侧上限，Clopper-Pearson，p=0"</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pass_n =</span> <span class="fu">c</span>(<span class="dv">25</span>L, <span class="dv">29</span>L, <span class="dv">299</span>L)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>ci_special_results <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fl">0.92</span>, <span class="at">half_width =</span> <span class="fl">0.15104</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"lower"</span>, <span class="at">method =</span> <span class="st">"clopper-pearson"</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fl">0.034483</span>, <span class="at">half_width =</span> <span class="fl">0.1945</span> <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"two.sided"</span>, <span class="at">method =</span> <span class="st">"wilson-cc"</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="dv">0</span>, <span class="at">half_width =</span> <span class="fl">0.01</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"upper"</span>, <span class="at">method =</span> <span class="st">"clopper-pearson"</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>PASS 单比例区间的单侧、连续性校正和边界案例</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PASS Example 2</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS Example 3</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS Example 4</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">299</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Example 3 说明 Wilson 连续性校正必须使用校正后的 Score 反演公式；若只在普通 Wilson 两端机械加减 <span class="math inline">\(1/(2n)\)</span>，结果不会复现 PASS。Example 4 验证 <code>p = 0</code> 的单侧精确区间，因此包允许区间规划的预期比例取 0 或 1。</p>
+</section>
+<section id="单比例目标值检验saspass-多参数对照" class="level3" data-number="19.2.6">
+<h3 data-number="19.2.6" class="anchored" data-anchor-id="单比例目标值检验saspass-多参数对照"><span class="header-section-number">19.2.6</span> 单比例目标值检验：SAS、PASS 多参数对照</h3>
+<p>软件选项与包参数对应如下。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>SAS/PASS 选项</th>
+<th><code>ivdtools</code> 参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SAS <code>TEST=Z VAREST=NULL</code>；PASS <code>Z-test using S(P0)</code></td>
+<td><code>test = "score"</code></td>
+<td>α 项使用 <span class="math inline">\(p_0\)</span> 方差</td>
+</tr>
+<tr class="even">
+<td>SAS <code>TEST=ADJZ</code>；PASS <code>S(P0) with C.C.</code></td>
+<td><code>test = "score-cc"</code></td>
+<td>S(P0) Z 检验加连续性校正</td>
+</tr>
+<tr class="odd">
+<td>PASS <code>Z-test using S(Phat)</code></td>
+<td><code>test = "wald"</code></td>
+<td>α 项使用 <span class="math inline">\(p_1\)</span> 方差的 Wald 近似</td>
+</tr>
+<tr class="even">
+<td><code>METHOD=NORMAL</code>；<code>Normal Approximation</code></td>
+<td><code>power_method = "normal"</code></td>
+<td>连续正态近似搜索样本量</td>
+</tr>
+<tr class="odd">
+<td>Exact；Binomial Enumeration</td>
+<td><code>power_method = "binomial"</code></td>
+<td>离散二项拒绝域与效能</td>
+</tr>
+</tbody>
+</table>
+<p>对照覆盖 SAS Example 90.2 的无校正/有校正结果、PASS Example 9 和 11，以及 PASS Example 2 的六个效应大小。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>target_manual <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">case =</span> <span class="fu">c</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SAS 90.2 Z"</span>, <span class="st">"SAS 90.2 ADJZ"</span>, <span class="st">"PASS 9"</span>, <span class="st">"PASS 11"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">"PASS 2, p1="</span>, <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, <span class="fu">seq</span>(<span class="fl">0.55</span>, <span class="fl">0.80</span>, <span class="fl">0.05</span>)))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">c</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"less"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span>, <span class="fu">rep</span>(<span class="st">"two.sided"</span>, <span class="dv">6</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="fu">c</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"score"</span>, <span class="st">"score-cc"</span>, <span class="st">"score"</span>, <span class="st">"wald"</span>, <span class="fu">rep</span>(<span class="st">"score"</span>, <span class="dv">6</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">p0 =</span> <span class="fu">c</span>(<span class="fl">0.30</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.30</span>, <span class="fu">rep</span>(<span class="fl">0.50</span>, <span class="dv">6</span>)),</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.60</span>, <span class="fl">0.50</span>, <span class="fu">seq</span>(<span class="fl">0.55</span>, <span class="fl">0.80</span>, <span class="fl">0.05</span>)),</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_power =</span> <span class="fu">c</span>(<span class="fl">0.80</span>, <span class="fl">0.80</span>, <span class="fl">0.80</span>, <span class="fl">0.80</span>, <span class="fu">rep</span>(<span class="fl">0.90</span>, <span class="dv">6</span>)),</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">manual_n =</span> <span class="fu">c</span>(<span class="dv">119</span>L, <span class="dv">129</span>L, <span class="dv">153</span>L, <span class="dv">50</span>L, <span class="dv">1047</span>L, <span class="dv">259</span>L, <span class="dv">113</span>L, <span class="dv">62</span>L, <span class="dv">38</span>L, <span class="dv">25</span>L),</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">manual_power =</span> <span class="fu">c</span>(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.80000</span>, <span class="fl">0.80100</span>, <span class="fl">0.80125</span>, <span class="fl">0.80743</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.90011</span>, <span class="fl">0.90055</span>, <span class="fl">0.90120</span>, <span class="fl">0.90286</span>, <span class="fl">0.90249</span>, <span class="fl">0.90321</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>target_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(target_manual)),</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">sample_size_proportion</span>(</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">p0 =</span> target_manual<span class="sc">$</span>p0[i], <span class="at">p1 =</span> target_manual<span class="sc">$</span>p1[i],</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> target_manual<span class="sc">$</span>target_power[i],</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternative =</span> target_manual<span class="sc">$</span>alternative[i],</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">test =</span> target_manual<span class="sc">$</span>test[i], <span class="at">power_method =</span> <span class="st">"normal"</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>SAS、PASS 单比例目标值检验样本量对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">119.00000</td>
+<td style="text-align: right;">119.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80000</td>
+<td style="text-align: right;">0.80032</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">129.00000</td>
+<td style="text-align: right;">129.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80100</td>
+<td style="text-align: right;">0.80094</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">153.00000</td>
+<td style="text-align: right;">153.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80125</td>
+<td style="text-align: right;">0.80125</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">50.00000</td>
+<td style="text-align: right;">50.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80743</td>
+<td style="text-align: right;">0.80743</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1047.00000</td>
+<td style="text-align: right;">1047.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90011</td>
+<td style="text-align: right;">0.90011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">259.00000</td>
+<td style="text-align: right;">259.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90055</td>
+<td style="text-align: right;">0.90055</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">113.00000</td>
+<td style="text-align: right;">113.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90120</td>
+<td style="text-align: right;">0.90120</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">62.00000</td>
+<td style="text-align: right;">62.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90286</td>
+<td style="text-align: right;">0.90286</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">38.00000</td>
+<td style="text-align: right;">38.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90249</td>
+<td style="text-align: right;">0.90249</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">25.00000</td>
+<td style="text-align: right;">25.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90321</td>
+<td style="text-align: right;">0.90321</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>十个案例还需检查最终整数样本量下的离散运行特征：</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>连续正态规划结果的离散二项复核</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.80363</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04776</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.79446</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.03595</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.80944</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.05280</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.83888</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.06532</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.89681</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04789</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.89499</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04656</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.91362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.05943</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.91073</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.05590</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.86830</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.03355</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.89088</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04329</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>binomial_power</code> 和 <code>actual_alpha</code> 是包在最终整数 n 下追加的离散诊断，并未反过来改变正态近似样本量。Wald 或部分 Score 方案会出现实际 α 大于 0.05；例如 PASS Example 11 约为 0.06532。若方案要求实际 α 受控，应改用 <code>power_method = "binomial"</code>；所得 n 可能与手册的连续近似 n 不同，这属于设计方法不同，不应改写成“一致”。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>test</code></th>
+<th><code>power_method="normal"</code></th>
+<th><code>power_method="binomial"</code></th>
+<th>手册核验覆盖</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>exact</code></td>
+<td>支持；无限总体时规划公式同 Score</td>
+<td>支持</td>
+<td>PASS Example 5、12 核验离散拒绝域；Example 13 核验正态效能</td>
+</tr>
+<tr class="even">
+<td><code>score</code></td>
+<td>支持</td>
+<td>支持</td>
+<td>SAS 90.2、PASS 2/5/9</td>
+</tr>
+<tr class="odd">
+<td><code>score-cc</code></td>
+<td>支持</td>
+<td>支持</td>
+<td>SAS 90.2 ADJZ、PASS 5</td>
+</tr>
+<tr class="even">
+<td><code>wald</code></td>
+<td>支持</td>
+<td>支持</td>
+<td>PASS 5、11</td>
+</tr>
+<tr class="odd">
+<td><code>wald-cc</code></td>
+<td>支持</td>
+<td>支持</td>
+<td>PASS 5；手册没有单独的求 n 验证案例</td>
+</tr>
+<tr class="even">
+<td><code>agresti-coull</code>、<code>jeffreys</code></td>
+<td>不支持</td>
+<td>支持</td>
+<td>所查 PASS 单比例检验过程未提供这两种检验统计量</td>
+</tr>
+</tbody>
+</table>
+<p>测试层还逐项复现了 PASS Example 5：6 个固定 n × 5 种检验，共 30 个离散效能和 30 个实际 α。这些是拒绝域实现的验证，不改变公开函数“只计算样本量”的接口。</p>
+</section>
+<section id="cmde体外诊断试剂临床试验技术指导原则附录案例一有临床可接受标准的目标值法" class="level3" data-number="19.2.7">
+<h3 data-number="19.2.7" class="anchored" data-anchor-id="cmde体外诊断试剂临床试验技术指导原则附录案例一有临床可接受标准的目标值法"><span class="header-section-number">19.2.7</span> CMDE《体外诊断试剂临床试验技术指导原则》附录案例一：有临床可接受标准的目标值法</h3>
+<p>附录采用正态近似公式</p>
+<p><span class="math display">\[
+n=\frac{\left[Z_{1-\alpha/2}\sqrt{P_0(1-P_0)}+
+Z_{1-\beta}\sqrt{P_T(1-P_T)}\right]^2}{(P_T-P_0)^2}.
+\]</span></p>
+<p>案例设双侧 <span class="math inline">\(\alpha=0.05\)</span>、效能 <span class="math inline">\(1-\beta=0.80\)</span>。阳性符合率的可接受标准/预期值为 85%/90%，阴性符合率为 90%/94%。附录用 <span class="math inline">\(Z_{0.975}=1.96\)</span>、<span class="math inline">\(Z_{0.80}=0.84\)</span>，报告阳性组 362 例、阴性组 388 例，合计 750 例；按 10% 脱落剔除率加量后至少入组 834 例。</p>
+<p><code>sample_size_proportion(test="score", power_method="normal")</code> 执行同一连续正态近似。包使用未舍入的正态分位数，并将理论样本量向上取整；随后另外按离散二项拒绝域核算实际 α 和实际效能。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cmde_target_value <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"阳性组"</span>, <span class="st">"阴性组"</span>),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p0 =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.90</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.94</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cmde_n =</span> <span class="fu">c</span>(<span class="dv">362</span>L, <span class="dv">388</span>L)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>cmde_target_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(cmde_target_value)),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_size_proportion</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">p0 =</span> cmde_target_value<span class="sc">$</span>p0[i],</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">p1 =</span> cmde_target_value<span class="sc">$</span>p1[i],</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">alternative =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">test =</span> <span class="st">"score"</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">power_method =</span> <span class="st">"normal"</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>CMDE 附录目标值法：指导原则公布值与 ivdtools 连续正态近似</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMDE target-value / 阳性组</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">362</td>
+<td style="text-align: right;">363.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE target-value / 阳性组</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.05552</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CMDE target-value / 阴性组</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">388</td>
+<td style="text-align: right;">388.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE target-value / 阴性组</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.05094</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CMDE target-value / 合计</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">750</td>
+<td style="text-align: right;">751.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE target-value / 合计</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>阳性组公式值为 362.7756，满足目标效能的最小整数是 363；附件写为 362，来自近似分位数和普通取整。<code>actual_alpha</code> 是将连续近似确定的样本量重新放回离散拒绝域后得到的诊断指标，不参与 CMDE 公式本身的样本量搜索。</p>
+</section>
+<section id="cmde体外诊断试剂临床试验技术指导原则附录案例二只要求置信区间精度的允许误差法" class="level3" data-number="19.2.8">
+<h3 data-number="19.2.8" class="anchored" data-anchor-id="cmde体外诊断试剂临床试验技术指导原则附录案例二只要求置信区间精度的允许误差法"><span class="header-section-number">19.2.8</span> CMDE《体外诊断试剂临床试验技术指导原则》附录案例二：只要求置信区间精度的允许误差法</h3>
+<p>附录公式为</p>
+<p><span class="math display">\[
+n=\frac{Z_{1-\alpha/2}^2P(1-P)}{\Delta^2}.
+\]</span></p>
+<p>灵敏度预期为 85%、特异度预期为 90%，允许误差 <span class="math inline">\(\Delta=0.05\)</span>。该公式对应 <code>sample_size_proportion_ci(method = "wald")</code>；包使用精确的 <code>qnorm(0.975)</code>，并把样本量向上取整为满足半宽要求的最小整数。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cmde_ci_precision <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"阳性组（灵敏度）"</span>, <span class="st">"阴性组（特异度）"</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.90</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cmde_n =</span> <span class="fu">c</span>(<span class="dv">196</span>L, <span class="dv">138</span>L)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>cmde_ci_precision<span class="sc">$</span>ivdtools_n <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  cmde_ci_precision<span class="sc">$</span>p,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(p) <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> p, <span class="at">half_width =</span> <span class="fl">0.05</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">method =</span> <span class="st">"wald"</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">$</span>n,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">integer</span>(<span class="dv">1</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>CMDE 附录允许误差法及 10% 加量结果对照</caption>
+<colgroup>
+<col style="width: 54%">
+<col style="width: 16%">
+<col style="width: 12%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMDE allowable-error / 阳性组（灵敏度）</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">196</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE allowable-error / 阴性组（特异度）</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">139</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CMDE allowable-error / 合计</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">335</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE allowable-error / 10% addition</td>
+<td style="text-align: left;">enrolment</td>
+<td style="text-align: right;">371</td>
+<td style="text-align: right;">373</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>阴性组包结果为 139，而附录报告 138。差异来自两个细节：附录代入近似值 1.96 后把 138.30 报为 138，包使用精确分位数并向上取整。附录据 334 例进一步报告 10% 加量后 371 例；若“至少入组”按保守整数处理，包的 335 个可分析病例应取 <span class="math inline">\(\lceil335/0.90\rceil=373\)</span>。这不是置信区间方法差异，而是分位数精度和整数取整规则差异。</p>
+<p>当预期比例接近 100% 时，指导原则也提醒正态近似可能不适用。此时可以用 <code>sample_size_proportion_ci(method = "clopper-pearson")</code> 等方法做敏感性分析，但结果属于改变区间方法后的补充分析，不能标成附件 Wald 公式的复算。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./018-瓶间差.html" class="pagination-link" aria-label="瓶间差分析">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./020-异常值与正态检验.html" class="pagination-link" aria-label="异常值与正态检验">
+        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,10 @@
+statistic,calculated,standard,tolerance,status,note
+intercept,3.020211,3.013,0.008,公布精度/标准复算差异,published input precision or implementation detail
+intercept_se,1.072402,1.073,0.001,显示舍入差异,difference is 0.001
+intercept_lower,0.896563,0.889,0.008,公布精度/标准复算差异,published input precision or implementation detail
+intercept_upper,5.143859,5.138,0.006,公布精度/标准复算差异,published input precision or implementation detail
+slope,1.020901,1.021,0.0005,对应,
+slope_se,0.006973,0.007,0.0005,对应,
+slope_lower,1.007094,1.007,0.0005,对应,
+slope_upper,1.034709,1.035,0.0005,对应,
+regression_se,1.221649,1.222,0.0005,对应,

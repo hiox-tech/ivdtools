@@ -1,0 +1,13 @@
+case,statistic,standard
+level_1,change_180,7.97
+level_1,change_180_upper_CL,8.78
+level_1,change_210,9.30
+level_1,change_210_upper_CL,10.24
+level_2,change_180,5.19
+level_2,change_180_upper_CL,6.11
+level_2,change_210,6.05
+level_2,change_210_upper_CL,7.13
+level_3,change_180,9.19
+level_3,change_180_upper_CL,10.18
+level_3,change_210,10.73
+level_3,change_210_upper_CL,11.87

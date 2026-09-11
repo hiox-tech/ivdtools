@@ -1,0 +1,28 @@
+appendix,statistic,calculated,standard,tolerance,status,note
+A,rectangular_90_180,25.980762,26.0,0.05,corresponding,
+A,triangular_90_180,18.371173,18.4,0.05,corresponding,
+A,gaussian_90_180,15.000000,15.0,0.05,corresponding,limits interpreted as plus/minus 3 SD
+A,weighing_specification_u,0.577350,0.577,0.0005,corresponding,
+A,balance_u,0.012472,0.013,0.0005,rounding_difference,standard rounds intermediate component
+A,tight_combined_u,0.059181,0.059,0.0005,corresponding,using standard rounded balance u 0.013
+B,lot_A_rep1_mean,7.600000,7.60,0.005,corresponding,
+B,lot_A_rep1_sd,0.330151,0.33,0.005,corresponding,
+B,lot_B_rep1_mean,7.714286,7.71,0.005,corresponding,
+B,lot_B_rep1_sd,0.203189,0.20,0.005,corresponding,
+B,all_rep1_mean,7.657143,7.66,0.005,corresponding,
+B,all_rep1_sd,0.276867,0.28,0.005,corresponding,
+B,valid_rep1_mean,7.682927,7.68,0.005,corresponding,run 4 excluded
+B,valid_rep1_sd,0.223498,0.22,0.005,corresponding,run 4 excluded
+B,between_ss,6.088293,6.09,0.005,corresponding,
+B,within_ss,0.579999,0.58,0.005,corresponding,
+B,between_ms,0.152207,0.152,0.0005,corresponding,
+B,within_ms,0.007073,0.00707,0.000005,corresponding,
+B,F,21.51897,21.5,0.05,corresponding,
+B,p_value,1.243945e-29,1.24e-29,0.005e-29,corresponding,
+B,within_sd,0.084102,0.084,0.0005,corresponding,
+B,between_variance,0.048378,0.0483,0.00005,rounding_difference,standard uses rounded mean squares
+B,between_sd,0.219950,0.220,0.0005,corresponding,
+B,combined_u,0.235481,0.235,0.0005,corresponding,
+B,expanded_U,0.470962,0.470,0.0005,rounding_difference,standard uses rounded components
+B,grand_mean,7.690244,7.69,0.005,corresponding,
+B,relative_expanded_percent,6.124145,6.1,0.05,corresponding,

@@ -1,0 +1,4 @@
+"case","calculated_replicates","replicates_per_sample","tolerance","status"
+"5.1.1 two-sided",11.550853,12,0.000001,"对应"
+"5.1.4 7%",10.721860,11,0.000001,"对应"
+"5.1.4 10%",5.253712,6,0.000001,"对应"

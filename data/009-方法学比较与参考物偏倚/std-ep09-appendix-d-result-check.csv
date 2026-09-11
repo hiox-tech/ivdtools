@@ -1,0 +1,9 @@
+dataset,statistic,calculated,standard,tolerance,status,note
+D1,records,40,40,0,corresponding,Table D1 complete
+D2,records,40,40,0,corresponding,Table D2 complete
+D3,records,40,40,0,corresponding,Table D3 complete
+D4,records,40,40,0,corresponding,Table D4 complete
+D5,records,40,40,0,corresponding,Table D5 complete
+D6,records,40,40,0,corresponding,Table D6 complete
+D4,outlier_sample,14,14,0,corresponding,largest OLS absolute residual
+D5,outlier_sample,3,3,0,corresponding,largest OLS absolute residual

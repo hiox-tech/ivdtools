@@ -1,0 +1,3 @@
+"statistic","calculated","standard","tolerance","difference","status"
+"WLS_slope",1.004529,1.0045,0.00005,0.000029,"对应"
+"max_abs_deviation_percent",1.721154,1.7,0.05,0.021154,"对应"

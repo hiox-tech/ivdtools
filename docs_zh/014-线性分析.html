@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>14&nbsp; 线性分析 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./015-定性分析与C5C95.html" rel="next">
+<link href="./013-精密度分析.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./014-线性分析.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">14.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#设计重复数与配制水平" id="toc-设计重复数与配制水平" class="nav-link" data-scroll-target="#设计重复数与配制水平"><span class="header-section-number">14.1.0.1</span> 设计重复数与配制水平</a></li>
+  <li><a href="#直线模型区间与-adl" id="toc-直线模型区间与-adl" class="nav-link" data-scroll-target="#直线模型区间与-adl"><span class="header-section-number">14.1.0.2</span> 直线模型、区间与 ADL</a></li>
+  <li><a href="#设计量权重与允许偏离公式" id="toc-设计量权重与允许偏离公式" class="nav-link" data-scroll-target="#设计量权重与允许偏离公式"><span class="header-section-number">14.1.1</span> 设计量、权重与允许偏离公式</a></li>
+  </ul></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">14.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#示例一系列稀释的线性偏差" id="toc-示例一系列稀释的线性偏差" class="nav-link" data-scroll-target="#示例一系列稀释的线性偏差"><span class="header-section-number">14.2.1</span> 示例一：系列稀释的线性偏差</a></li>
+  <li><a href="#示例二对半稀释的多项式分析" id="toc-示例二对半稀释的多项式分析" class="nav-link" data-scroll-target="#示例二对半稀释的多项式分析"><span class="header-section-number">14.2.2</span> 示例二：对半稀释的多项式分析</a></li>
+  <li><a href="#标准案例clsi-ep06-第-2-版附录-g-两重复研究" id="toc-标准案例clsi-ep06-第-2-版附录-g-两重复研究" class="nav-link" data-scroll-target="#标准案例clsi-ep06-第-2-版附录-g-两重复研究"><span class="header-section-number">14.2.3</span> 标准案例：CLSI EP06 第 2 版附录 G 两重复研究</a></li>
+  <li><a href="#标准案例clsi-ep06-第-2-版附录-h-双面板研究" id="toc-标准案例clsi-ep06-第-2-版附录-h-双面板研究" class="nav-link" data-scroll-target="#标准案例clsi-ep06-第-2-版附录-h-双面板研究"><span class="header-section-number">14.2.4</span> 标准案例：CLSI EP06 第 2 版附录 H 双面板研究</a></li>
+  <li><a href="#标准案例clsi-ep06-第-2-版附录-i-赋值样品" id="toc-标准案例clsi-ep06-第-2-版附录-i-赋值样品" class="nav-link" data-scroll-target="#标准案例clsi-ep06-第-2-版附录-i-赋值样品"><span class="header-section-number">14.2.5</span> 标准案例：CLSI EP06 第 2 版附录 I 赋值样品</a></li>
+  <li><a href="#标准案例wst-4082024-五水平线性验证" id="toc-标准案例wst-4082024-五水平线性验证" class="nav-link" data-scroll-target="#标准案例wst-4082024-五水平线性验证"><span class="header-section-number">14.2.6</span> 标准案例：WS/T 408—2024 五水平线性验证</a></li>
+  <li><a href="#标准案例yyt-1789.42022-附录-a-线性样本-1" id="toc-标准案例yyt-1789.42022-附录-a-线性样本-1" class="nav-link" data-scroll-target="#标准案例yyt-1789.42022-附录-a-线性样本-1"><span class="header-section-number">14.2.7</span> 标准案例：YY/T 1789.4—2022 附录 A 线性样本 1</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>线性（linearity）评价测量系统在整个工作范围内，测得结果与被测物浓度（或目标量值）之间是否存在可接受的线性关系，通常采用稀释数据，按 CLSI EP06 分析偏差。本文统一使用专用的 <code>linearity()</code> 工作流完成水平汇总、权重、直线残差、允许偏离线性（ADL）和探索性多项式分析。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>EP06 第 2 版的核心是相对于预设允许偏离线性（ADL）评价直线残差，而不是以相关系数或“二次项不显著”单独证明线性。<code>method="linear"</code> 在水平均值上拟合；<code>method="polynomial"</code> 复现已被取代的 EP6-A 思路，应明确标为探索性。函数不替代样品配制、可交换性、端点覆盖、干扰和报告范围的专业判断。</p>
+</div>
+</div>
+<p>分析流程：验证报告范围内的线性和允许偏离</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["设计 LOW/HIGH&lt;br/&gt;与稀释水平"] --&gt; B["linearity_replicates()&lt;br/&gt;linearity_panel()"]
+    B --&gt; C["重复测量长表"]
+    C --&gt; D["linearity()&lt;br/&gt;内部完成水平汇总与拟合"]
+    D --&gt; E["残差、区间&lt;br/&gt;与 ADL 比较"]
+    E --&gt; F["linearity_endpoints()&lt;br/&gt;核对报告端点"]
+    F --&gt; G["仅在验证范围内&lt;br/&gt;声明线性"]
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A,C input
+    class B,D,E,F process
+    class G output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">14.1</span> 主要函数</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>主要用途</th>
+<th>关键输入或输出</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>linearity_replicates()</code></td>
+<td>按精密度和 ADL 计算每水平重复数</td>
+<td><code>imprecision</code>、<code>adl</code>、 <code>family_error</code></td>
+</tr>
+<tr class="even">
+<td><code>linearity_panel()</code></td>
+<td>设计 HIGH/LOW 配制系列</td>
+<td><code>proportion_high</code>、<code>high</code>、<code>low</code>、 <code>total_volume</code></td>
+</tr>
+<tr class="odd">
+<td><code>linearity_endpoints()</code></td>
+<td>计算 LOW/HIGH 实验室确认目标</td>
+<td>LLoQ/ULoQ 与低高端 CV</td>
+</tr>
+<tr class="even">
+<td><code>linearity()</code></td>
+<td>EP06 参数化线性分析</td>
+<td><code>method</code>、<code>weights</code>、<code>conf.level</code>、 <code>adl_*</code></td>
+</tr>
+<tr class="odd">
+<td><code>plot()</code></td>
+<td>绘制重复结果、精密度、拟合、残差或模型差异</td>
+<td><code>type</code></td>
+</tr>
+</tbody>
+</table>
+<section id="设计重复数与配制水平" class="level4" data-number="14.1.0.1">
+<h4 data-number="14.1.0.1" class="anchored" data-anchor-id="设计重复数与配制水平"><span class="header-section-number">14.1.0.1</span> 设计重复数与配制水平</h4>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linearity_replicates</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">imprecision =</span> <span class="dv">4</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">adl =</span> <span class="dv">5</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">8</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_error =</span> <span class="fl">0.10</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Type: relative
+    Imprecision           : 4
+    ADL                   : 5
+    True deviation        : 0
+    Effective ADL         : 5
+    Level probability     : 0.98691628
+    Z                     : 2.4814824
+    Calculated replicates : 3.940963
+    Replicates            : 4
+    Recommend four        : FALSE</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linearity_panel</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">proportion_high =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">6</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">high =</span> <span class="dv">1000</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">low =</span> <span class="dv">10</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">total_volume =</span> <span class="dv">1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Sample: S1
+    Proportion high        : 0
+    Proportion low         : 1
+    Expected               : 10
+    Relative concentration : 0.01
+    Total volume           : 1
+    High volume            : 0
+    Low volume             : 1
+
+  Sample: S2
+    Proportion high        : 0.2
+    Proportion low         : 0.8
+    Expected               : 208
+    Relative concentration : 0.208
+    Total volume           : 1
+    High volume            : 0.2
+    Low volume             : 0.8
+
+  Sample: S3
+    Proportion high        : 0.4
+    Proportion low         : 0.6
+    Expected               : 406
+    Relative concentration : 0.406
+    Total volume           : 1
+    High volume            : 0.4
+    Low volume             : 0.6
+
+  Sample: S4
+    Proportion high        : 0.6
+    Proportion low         : 0.4
+    Expected               : 604
+    Relative concentration : 0.604
+    Total volume           : 1
+    High volume            : 0.6
+    Low volume             : 0.4
+
+  Sample: S5
+    Proportion high        : 0.8
+    Proportion low         : 0.2
+    Expected               : 802
+    Relative concentration : 0.802
+    Total volume           : 1
+    High volume            : 0.8
+    Low volume             : 0.2
+
+  Sample: S6
+    Proportion high        : 1
+    Proportion low         : 0
+    Expected               : 1000
+    Relative concentration : 1
+    Total volume           : 1
+    High volume            : 1
+    Low volume             : 0</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linearity_endpoints</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">lloq =</span> <span class="dv">10</span>, <span class="at">uloq =</span> <span class="dv">1000</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv_high =</span> <span class="dv">5</span>, <span class="at">cv_at_lloq =</span> <span class="dv">20</span>, <span class="at">cv_at_k_lloq =</span> <span class="dv">15</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>CLSI EP06-Ed2 target concentrations
+  LOW target: 14.14116
+  HIGH target: 924.0072</code></pre>
+</div>
+</div>
+<p>重复数函数只报告统计设计量；最终水平数和重复数还应满足研究方案、适用标准与样本资源约束；计算 LOW/HIGH 限制在实验室确认目标浓度使用，不适用于厂商的验证过程。</p>
+</section>
+<section id="直线模型区间与-adl" class="level4" data-number="14.1.0.2">
+<h4 data-number="14.1.0.2" class="anchored" data-anchor-id="直线模型区间与-adl"><span class="header-section-number">14.1.0.2</span> 直线模型、区间与 ADL</h4>
+<p>下面直接使用每行一条重复测量的长表。<code>sample</code> 标识浓度水平，<code>x</code> 为预期值；同一 <code>sample</code> 内的 <code>x</code> 必须恒定。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>linearity_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/014-线性分析/linearity-dilution.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>linearity_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(linearity_data)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>lin_ep06 <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  linearity_data,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"conc"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"signal"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"conc"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"linear"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="st">"level_variance"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">multiplicity =</span> <span class="st">"familywise"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">adl_rel =</span> <span class="dv">5</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>lin_ep06</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linearity regression analysis
+
+Analysis settings
+
+Method: linear (EP06-Ed2)
+Observations / levels: 24 / 8
+Intercept: estimated
+Weights: level_variance
+Fit unit: level_mean
+
+Model comparison
+
+Degree: 1
+Observations                : 8
+Parameters                  : 2
+Residual degrees of freedom : 6
+RSS                         : 158.54622
+Weighted RSS                : 7.7423768
+SY.X                        : 5.1404639
+Weighted SY.X               : 1.135956
+R-squared                   : 0.99998216
+Adjusted R-squared          : 0.99997918
+
+Regression coefficients
+
+     Estimate  Std. Error   t value   Pr(&gt;|t|)    
+a -0.12687310  0.39305554  -0.32279    0.75781    
+b  0.99947673  0.00172361 579.87366 1.7753e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Sample fit information
+
+Sample  Expected  Predicted  Observed mean      Weight  Observed SD  n
+50            50    49.8470        49.2667  6.08108108     0.702377  3
+100          100    99.8208       100.8000  3.29670330     0.953939  3
+200          200   199.7685       202.6667  0.15133681     4.452340  3
+400          400   399.6638       397.8333  0.05484127     7.396170  3
+800          800   799.4545       798.8667  0.02848913    10.261741  3
+1600        1600  1599.0359      1596.9000  0.01585959    13.753545  3
+3200        3200  3198.1987      3207.8000  0.00684119    20.940869  3
+6400        6400  6396.5242      6389.5667  0.00755775    19.923437  3
+
+Sample bias information
+
+Sample   Residual  Recovery bias  Residual (%)  Recovery bias (%)        ADL  Decision  
+50      -0.580297      -0.733333    -1.1641563          -1.466667    2.49235  Within ADL
+100      0.979200       0.800000     0.9809583           0.800000    4.99104  Within ADL
+200      2.898194       2.666667     1.4507766           1.333333    9.98842  Within ADL
+400     -1.830484      -2.166667    -0.4580060          -0.541667   19.98319  Within ADL
+800     -0.587842      -1.133333    -0.0735304          -0.141667   39.97273  Within ADL
+1600    -2.135890      -3.100000    -0.1335736          -0.193750   79.95179  Within ADL
+3200     9.601346       7.800000     0.3002111           0.243750  159.90993  Within ADL
+6400    -6.957514     -10.433333    -0.1087702          -0.163021  319.82621  Within ADL
+
+Definitions
+
+Residual = observed mean - predicted value.
+Recovery bias = observed mean - expected value.
+Recovery bias (%) = 100 * recovery bias / expected value.
+Residual (%) denominator: predicted.
+ADL decision metric = residual.</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lin_ep06, <span class="at">type =</span> <span class="st">"fit"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-线性分析_files/figure-html/linearity-dedicated-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lin_ep06, <span class="at">type =</span> <span class="st">"residual"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-线性分析_files/figure-html/linearity-dedicated-plot-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>adl_exceeded</code> 是实测线性偏离与调用者提供 ADL 的数值比较，不代表完整的产品合格结论。多项式模式用于复现旧版 EP6-A 思路，在 EP06-Ed2 语境下应标为探索性分析。</p>
+</section>
+<section id="设计量权重与允许偏离公式" class="level3" data-number="14.1.1">
+<h3 data-number="14.1.1" class="anchored" data-anchor-id="设计量权重与允许偏离公式"><span class="header-section-number">14.1.1</span> 设计量、权重与允许偏离公式</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linearity_replicates</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  imprecision, adl, <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"relative"</span>, <span class="st">"absolute"</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">level_probability =</span> <span class="fl">0.99</span>, <span class="at">levels =</span> <span class="cn">NULL</span>, <span class="at">family_error =</span> <span class="cn">NULL</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">true_deviation =</span> <span class="dv">0</span>, <span class="at">min_replicates =</span> <span class="dv">2</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">linearity_panel</span>(proportion_high, high, <span class="at">low =</span> <span class="dv">0</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">total_volume =</span> <span class="cn">NULL</span>, <span class="at">sample =</span> <span class="cn">NULL</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">linearity</span>(</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  data, sample, result, x, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"linear"</span>, <span class="st">"polynomial"</span>),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">intercept =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="fu">c</span>(<span class="st">"equal"</span>, <span class="st">"level_variance"</span>, <span class="st">"pooled"</span>, <span class="st">"precision_profile"</span>),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">variance_group =</span> <span class="cn">NULL</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="cn">NULL</span>, <span class="at">multiplicity =</span> <span class="fu">c</span>(<span class="st">"familywise"</span>, <span class="st">"none"</span>),</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">adl =</span> <span class="cn">NULL</span>, <span class="at">adl_abs =</span> <span class="cn">NULL</span>, <span class="at">adl_rel =</span> <span class="cn">NULL</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>若单水平中心覆盖概率为 <span class="math inline">\(P_L\)</span>，重复性为 <span class="math inline">\(s\)</span> 或 CV，预期真实偏离为 <span class="math inline">\(\delta_0\)</span>，有效 ADL 为 <span class="math inline">\(A_{\mathrm{eff}}=A-\delta_0\)</span>，重复数按</p>
+<p><span class="math display">\[
+n=\left\lceil\left(\frac{z_{(1+P_L)/2}s}{A_{\mathrm{eff}}}\right)^2\right\rceil
+\]</span></p>
+<p>并受 <code>min_replicates</code> 限制。给出总族错误概率 <span class="math inline">\(\alpha_F\)</span> 和 <span class="math inline">\(L\)</span> 个水平时，<span class="math inline">\(P_L=(1-\alpha_F)^{1/L}\)</span>。相对型输入统一使用百分数单位，例如 5 表示 5%。</p>
+<p>HIGH/LOW 面板中，高样品比例为 <span class="math inline">\(p_h\)</span> 时</p>
+<p><span class="math display">\[
+x_{\mathrm{expected}}=p_hx_H+(1-p_h)x_L.
+\]</span></p>
+<p><code>linearity(method="linear")</code> 先按样本汇总 <span class="math inline">\(\bar y_j,s_j,n_j\)</span>，拟合 <span class="math inline">\(\bar y_j=\beta_0+\beta_1x_j+e_j\)</span>。权重差异为：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>weights</code></th>
+<th>水平均值拟合权重</th>
+<th>适用含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>equal</code></td>
+<td><span class="math inline">\(1\)</span></td>
+<td>各水平等权</td>
+</tr>
+<tr class="even">
+<td><code>level_variance</code></td>
+<td><span class="math inline">\(n_j/s_j^2\)</span></td>
+<td>使用各水平自身重复方差</td>
+</tr>
+<tr class="odd">
+<td><code>pooled</code></td>
+<td><span class="math inline">\(n_j/\widehat\sigma_g^2\)</span></td>
+<td>按 <code>variance_group</code> 明确指定的相邻水平组合并方差；不自动分组</td>
+</tr>
+<tr class="even">
+<td><code>precision_profile</code></td>
+<td><span class="math inline">\(1/\widehat\sigma_j^2\)</span></td>
+<td>用 SD—均值轮廓预测方差</td>
+</tr>
+</tbody>
+</table>
+<p>直线残差为 <span class="math inline">\(r_j=\bar y_j-\widehat y_j\)</span>。<code>adl_abs</code>、<code>adl_rel</code> 或逐水平 <code>adl</code> 同时给出时，函数逐水平采用最大的允许值；相对 ADL 转为绝对量后比较</p>
+<p><span class="math display">\[
+|r_j|&gt;ADL_j.
+\]</span></p>
+<p><code>weights="pooled"</code> 时，<code>variance_group</code> 必须指向原数据中的分组列；同一样本水平的分组值必须相同，各组在按 <span class="math inline">\(x\)</span> 排序后必须连续且至少含两个水平。组内合并方差为</p>
+<p><span class="math display">\[
+\widehat\sigma_g^2=
+\frac{\sum_{j\in g}(n_j-1)s_j^2}{\sum_{j\in g}(n_j-1)},
+\]</span></p>
+<p>水平均值回归权重为 <span class="math inline">\(n_j/\widehat\sigma_g^2\)</span>。<code>percent_base</code> 决定相对残差分母是直线预测值、<span class="math inline">\(x\)</span> 还是观测均值。<code>multiplicity="familywise"</code> 把总体覆盖度换为逐水平覆盖度 <span class="math inline">\(C_L=C^{1/L}\)</span>；<code>"none"</code> 则每个水平直接使用 <span class="math inline">\(C\)</span>。</p>
+<p><code>linearity_replicates()</code> 返回设计重复数；<code>linearity_panel()</code> 返回配制水平表；<code>linearity_endpoints()</code> 返回低、高端目标；<code>linearity()</code> 返回含水平汇总、拟合、残差和 ADL 比较的分析对象；<code>plot()</code> 返回 <code>ggplot</code> 对象。</p>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">14.2</span> 分析案例</h2>
+<section id="示例一系列稀释的线性偏差" class="level3" data-number="14.2.1">
+<h3 data-number="14.2.1" class="anchored" data-anchor-id="示例一系列稀释的线性偏差"><span class="header-section-number">14.2.1</span> 示例一：系列稀释的线性偏差</h3>
+<p>稀释系列包含 8 个浓度水平、每水平 3 次重复，共 24 行：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dilution <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/014-线性分析/linearity-dilution.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dilution <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(dilution)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dilution, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  conc replicate signal
+1   50         1   48.6
+2   50         2   49.2
+3   50         3   50.0
+4  100         1  101.3
+5  100         2   99.7
+6  100         3  101.4</code></pre>
+</div>
+</div>
+<p><code>linearity()</code> 直接接收每行一条重复结果的长表，在函数内部按 <code>sample</code> 汇总均值、SD 和重复数，再拟合水平均值。这里用各水平等权重，并以预设的相对 ADL 评价直线残差：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fit_lin <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  dilution,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"conc"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"signal"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"conc"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"linear"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="st">"equal"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">multiplicity =</span> <span class="st">"familywise"</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">adl_rel =</span> <span class="dv">5</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_lin)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linearity regression analysis
+
+Analysis settings
+
+Method: linear (EP06-Ed2)
+Observations / levels: 24 / 8
+Intercept: estimated
+Weights: equal
+Fit unit: level_mean
+
+Model comparison
+
+Degree: 1
+Observations                : 8
+Parameters                  : 2
+Residual degrees of freedom : 6
+RSS                         : 146.65863
+Weighted RSS                : 146.65863
+SY.X                        : 4.9439969
+Weighted SY.X               : 4.9439969
+R-squared                   : 0.99999571
+Adjusted R-squared          : 0.999995
+
+Regression coefficients
+
+     Estimate  Std. Error    t value Pr(&gt;|t|)    
+a 0.975290473 2.205878722    0.44213  0.67388    
+b 0.998893935 0.000844269 1183.14720  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Sample fit information
+
+Sample  Expected  Predicted  Observed mean  Weight  Observed SD  n
+50            50     50.920        49.2667       1     0.702377  3
+100          100    100.865       100.8000       1     0.953939  3
+200          200    200.754       202.6667       1     4.452340  3
+400          400    400.533       397.8333       1     7.396170  3
+800          800    800.090       798.8667       1    10.261741  3
+1600        1600   1599.206      1596.9000       1    13.753545  3
+3200        3200   3197.436      3207.8000       1    20.940869  3
+6400        6400   6393.896      6389.5667       1    19.923437  3
+
+Sample bias information
+
+Sample   Residual  Recovery bias  Residual (%)  Recovery bias (%)        ADL  Decision  
+50      -1.653321      -0.733333    -3.2468990          -1.466667    2.54600  Within ADL
+100     -0.064684       0.800000    -0.0641295           0.800000    5.04323  Within ADL
+200      1.912589       2.666667     0.9527025           1.333333   10.03770  Within ADL
+400     -2.699531      -2.166667    -0.6739850          -0.541667   20.02664  Within ADL
+800     -1.223772      -1.133333    -0.1529542          -0.141667   40.00452  Within ADL
+1600    -2.305587      -3.100000    -0.1441708          -0.193750   79.96028  Within ADL
+3200    10.364116       7.800000     0.3241384           0.243750  159.87179  Within ADL
+6400    -4.329810     -10.433333    -0.0677179          -0.163021  319.69482  Within ADL
+
+Definitions
+
+Residual = observed mean - predicted value.
+Recovery bias = observed mean - expected value.
+Recovery bias (%) = 100 * recovery bias / expected value.
+Residual (%) denominator: predicted.
+ADL decision metric = residual.</code></pre>
+</div>
+</div>
+<p><strong>ADL 是否超限只能按方案预先规定的限值解释。</strong> <code>weights</code> 可选等权、各水平自身方差、预设分组的合并方差或精密度轮廓；选择应与试验设计和异方差结构一致。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_lin, <span class="at">type =</span> <span class="st">"fit"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-线性分析_files/figure-html/plot-linear-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_lin, <span class="at">type =</span> <span class="st">"residual"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-线性分析_files/figure-html/plot-linear-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="示例二对半稀释的多项式分析" class="level3" data-number="14.2.2">
+<h3 data-number="14.2.2" class="anchored" data-anchor-id="示例二对半稀释的多项式分析"><span class="header-section-number">14.2.2</span> 示例二：对半稀释的多项式分析</h3>
+<p>数据为 5 个浓度水平 × 3 复孔：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>poly_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/014-线性分析/linearity-polynomial.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>poly_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(poly_data)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(poly_data, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    conc replicate signal
+1  75.00         1   75.0
+2  75.00         2   75.0
+3  75.00         3   74.4
+4 483.75         1  454.1
+5 483.75         2  455.3
+6 483.75         3  456.0</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit_poly <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  poly_data,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"conc"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"signal"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"conc"</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"polynomial"</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="st">"level_variance"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_degree =</span> <span class="dv">3</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">poly_alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_base =</span> <span class="st">"predicted"</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_poly)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linearity regression analysis
+
+Analysis settings
+
+Method: polynomial (EP6-A, exploratory)
+Observations / levels: 15 / 5
+Intercept: estimated
+Weights: level_variance
+Fit unit: observation
+Selected degree: 3
+
+Model comparison
+
+Degree: 1
+Observations                : 15
+Parameters                  : 2
+Residual degrees of freedom : 13
+RSS                         : 52631.917
+Weighted RSS                : 550.93015
+SY.X                        : 63.62868
+Weighted SY.X               : 6.5099341
+R-squared                   : 0.99902344
+Adjusted R-squared          : 0.99894832
+
+Degree: 2
+Observations                : 15
+Parameters                  : 3
+Residual degrees of freedom : 12
+RSS                         : 10241.163
+Weighted RSS                : 30.175825
+SY.X                        : 29.213529
+Weighted SY.X               : 1.5857655
+R-squared                   : 0.99994651
+Adjusted R-squared          : 0.9999376
+
+Degree: 3
+Observations                : 15
+Parameters                  : 4
+Residual degrees of freedom : 11
+RSS                         : 4360.5146
+Weighted RSS                : 15.881083
+SY.X                        : 19.910058
+Weighted SY.X               : 1.2015552
+R-squared                   : 0.99997185
+Adjusted R-squared          : 0.99996417
+Selected                    : Yes
+
+Regression coefficients (degree 1)
+
+    Estimate Std. Error   t value Pr(&gt;|t|)    
+a 3.26682147 1.60149874   2.03985 0.062224 .  
+b 0.94635339 0.00820623 115.32135  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Regression coefficients (degree 2)
+
+     Estimate  Std. Error  t value   Pr(&gt;|t|)    
+a 7.07723e+00 4.71485e-01  15.0105 3.8555e-09 ***
+b 8.98365e-01 3.88796e-03 231.0636 &lt; 2.22e-16 ***
+c 5.87581e-05 4.08310e-06  14.3905 6.2393e-09 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Regression coefficients (degree 3, selected)
+
+      Estimate   Std. Error  t value   Pr(&gt;|t|)    
+a  1.08167e+01  1.24094e+00  8.71655 2.8637e-06 ***
+b  8.38991e-01  1.90976e-02 43.93179 1.0374e-13 ***
+c  1.93013e-04  4.27784e-05  4.51193  0.0008837 ***
+d -5.97186e-08  1.89786e-08 -3.14662  0.0092980 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Sample fit information
+
+Sample   Expected  Predicted  Observed mean      Weight  Observed SD  n
+75          75.00    74.8015         74.800  8.33333333     0.346410  3
+483.75     483.75   455.0861        455.133  1.08303249     0.960902  3
+892.5      892.50   870.9067        865.967  0.01552474     8.025792  3
+1301.25   1301.25  1297.7933       1328.467  0.00166688    24.493332  3
+1710      1710.00  1711.2760       1710.433  0.01516914     8.119319  3
+
+Sample bias information
+
+Sample      Residual  Recovery bias  Residual (%)  Recovery bias (%)         DL  ADL  Decision    
+75       -0.00153386      -0.200000   -0.00206599         -0.2666667   0.558208   NA  Not assessed
+483.75    0.04720887     -28.616667    0.01023909         -5.9155900  -5.979149   NA  Not assessed
+892.5    -4.94005897     -26.533333   -0.58263161         -2.9729225  23.019504   NA  Not assessed
+1301.25  30.67332481      27.216667    2.48425504          2.0915786  63.084173   NA  Not assessed
+1710     -0.84264426       0.433333   -0.05196596          0.0253411  89.744861   NA  Not assessed
+
+Definitions
+
+Residual = observed mean - predicted value.
+Recovery bias = observed mean - expected value.
+Recovery bias (%) = 100 * recovery bias / expected value.
+Residual (%) denominator: predicted.
+ADL decision metric = deviation from linearity (DL).
+
+Warnings / interpretation notes
+
+1 duplicate sample/result/x row(s) were retained.
+
+Polynomial regression follows superseded EP6-A and is exploratory under EP06-Ed2. </code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_poly, <span class="at">type =</span> <span class="st">"fit"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-线性分析_files/figure-html/plot-polynomial-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_poly, <span class="at">type =</span> <span class="st">"difference"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="014-线性分析_files/figure-html/plot-polynomial-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="标准案例clsi-ep06-第-2-版附录-g-两重复研究" class="level3" data-number="14.2.3">
+<h3 data-number="14.2.3" class="anchored" data-anchor-id="标准案例clsi-ep06-第-2-版附录-g-两重复研究"><span class="header-section-number">14.2.3</span> 标准案例：CLSI EP06 第 2 版附录 G 两重复研究</h3>
+<p>附录 G 使用 HIGH 与空白按 0.1～1.0 相对浓度配制 10 个水平，每水平测量 2 次。预设线性区间为 55～500 U/L，允许偏离线性为 ±10%。标准因每水平仅有 2 次重复，将相邻水平的方差分成三组进行合并，再以 <span class="math inline">\(2/\overline{s^2}\)</span> 作为无截距 WLS 权重。分组列已按标准表 G3 直接写入 CSV，预期浓度也已根据 HIGH 浓度和配制比例写入。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ep06_g <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/014-线性分析/std-ep06-appendix-g.csv"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ep06_g_ivd <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  ep06_g, <span class="at">sample =</span> <span class="st">"level"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">x =</span> <span class="st">"expected"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"linear"</span>, <span class="at">intercept =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="st">"pooled"</span>, <span class="at">variance_group =</span> <span class="st">"variance_group"</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP06 第 2 版附录 G：ivdtools 与标准原文结果对照</caption>
+<colgroup>
+<col style="width: 29%">
+<col style="width: 38%">
+<col style="width: 13%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP06 Ed2 Appendix G</td>
+<td style="text-align: left;">WLS_slope</td>
+<td style="text-align: right;">1.0677</td>
+<td style="text-align: right;">1.0677</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP06 Ed2 Appendix G</td>
+<td style="text-align: left;">max_abs_deviation_percent</td>
+<td style="text-align: right;">9.3000</td>
+<td style="text-align: right;">9.2644</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>variance_group</code> 将 10 个水平明确分成 1–3、4–7、8–10 三组。分组由用户根据重复性SD—浓度图和预先规定的方案提供，函数不自动选择最有利的分组。</p>
+</section>
+<section id="标准案例clsi-ep06-第-2-版附录-h-双面板研究" class="level3" data-number="14.2.4">
+<h3 data-number="14.2.4" class="anchored" data-anchor-id="标准案例clsi-ep06-第-2-版附录-h-双面板研究"><span class="header-section-number">14.2.4</span> 标准案例：CLSI EP06 第 2 版附录 H 双面板研究</h3>
+<p>附录 H 用 HIGH1 和 HIGH2 分别与空白配制两个 10 水平面板，每水平测量 5 次，共 100 条结果。HIGH1 覆盖高端，HIGH2 覆盖低端；合并后覆盖案例预设的 20～1000 U/L 区间。每水平权重为 <span class="math inline">\(5/s^2\)</span>，拟合无截距 WLS 直线。CSV 已包含由面板、水平和配制比例确定的<code>sample_id</code> 与<code>expected</code>，读取后可直接进入分析。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ep06_h <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/014-线性分析/std-ep06-appendix-h.csv"</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ep06_h_fit <span class="ot">&lt;-</span> <span class="cf">function</span>(z) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    z, <span class="at">sample =</span> <span class="st">"sample_id"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">x =</span> <span class="st">"expected"</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"linear"</span>, <span class="at">intercept =</span> <span class="cn">FALSE</span>, <span class="at">weights =</span> <span class="st">"level_variance"</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">slope =</span> fit<span class="sc">$</span>coefficients<span class="sc">$</span>estimate,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_abs_deviation_percent =</span> <span class="fu">max</span>(<span class="fu">abs</span>(fit<span class="sc">$</span>level_summary<span class="sc">$</span>percent_residual_linear))</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>ep06_h_combined <span class="ot">&lt;-</span> <span class="fu">ep06_h_fit</span>(ep06_h)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>ep06_h_separate <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(ep06_h, ep06_h<span class="sc">$</span>panel), ep06_h_fit</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP06 第 2 版附录 H：ivdtools 与标准原文结果对照</caption>
+<colgroup>
+<col style="width: 27%">
+<col style="width: 42%">
+<col style="width: 12%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP06 Ed2 Appendix H</td>
+<td style="text-align: left;">combined WLS slope</td>
+<td style="text-align: right;">0.9686</td>
+<td style="text-align: right;">0.9686</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP06 Ed2 Appendix H</td>
+<td style="text-align: left;">combined maximum deviation (%)</td>
+<td style="text-align: right;">14.5000</td>
+<td style="text-align: right;">14.4759</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP06 Ed2 Appendix H</td>
+<td style="text-align: left;">HIGH1 WLS slope</td>
+<td style="text-align: right;">0.9496</td>
+<td style="text-align: right;">0.9496</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP06 Ed2 Appendix H</td>
+<td style="text-align: left;">HIGH1 maximum deviation (%)</td>
+<td style="text-align: right;">12.8000</td>
+<td style="text-align: right;">12.7612</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP06 Ed2 Appendix H</td>
+<td style="text-align: left;">HIGH2 WLS slope</td>
+<td style="text-align: right;">1.0013</td>
+<td style="text-align: right;">1.0013</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP06 Ed2 Appendix H</td>
+<td style="text-align: left;">HIGH2 maximum deviation (%)</td>
+<td style="text-align: right;">9.2000</td>
+<td style="text-align: right;">9.2134</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>三种分析的最大偏离均未超过案例预设 ±15%，但两个部分面板的重叠、范围覆盖和权重结构是这一结论成立的前提。</p>
+</section>
+<section id="标准案例clsi-ep06-第-2-版附录-i-赋值样品" class="level3" data-number="14.2.5">
+<h3 data-number="14.2.5" class="anchored" data-anchor-id="标准案例clsi-ep06-第-2-版附录-i-赋值样品"><span class="header-section-number">14.2.5</span> 标准案例：CLSI EP06 第 2 版附录 I 赋值样品</h3>
+<p>附录 I 给出 9 个加标样品的真值、10 次测量均值和 SD，但不公布 90 条单次测量结果。因此本例保留标准公布的汇总粒度，不从均值和 SD 反向生成伪原始数据。权重为 <span class="math inline">\(10/s^2\)</span>，拟合无截距 WLS 直线，预设允许偏离为 ±2%。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ep06_i <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/014-线性分析/std-ep06-appendix-i-summary.csv"</span>,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>ep06_i<span class="sc">$</span>weight <span class="ot">&lt;-</span> ep06_i<span class="sc">$</span>n <span class="sc">/</span> ep06_i<span class="sc">$</span>sd<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>ep06_i_ivd <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  ep06_i, <span class="at">sample =</span> <span class="st">"sample"</span>, <span class="at">result =</span> <span class="st">"measured_mean"</span>, <span class="at">x =</span> <span class="st">"true_value"</span>,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"linear"</span>, <span class="at">intercept =</span> <span class="cn">FALSE</span>, <span class="at">weights =</span> ep06_i<span class="sc">$</span>weight</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP06 第 2 版附录 I：ivdtools 与标准原文结果对照</caption>
+<colgroup>
+<col style="width: 29%">
+<col style="width: 38%">
+<col style="width: 13%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP06 Ed2 Appendix I</td>
+<td style="text-align: left;">WLS_slope</td>
+<td style="text-align: right;">1.0045</td>
+<td style="text-align: right;">1.0045</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP06 Ed2 Appendix I</td>
+<td style="text-align: left;">max_abs_deviation_percent</td>
+<td style="text-align: right;">1.7000</td>
+<td style="text-align: right;">1.7212</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>复算的最大绝对偏离位于案例预设 ±2% 内。回收偏差与线性偏离回答不同问题：前者相对真值，后者相对最佳拟合直线，不能互相替代。</p>
+</section>
+<section id="标准案例wst-4082024-五水平线性验证" class="level3" data-number="14.2.6">
+<h3 data-number="14.2.6" class="anchored" data-anchor-id="标准案例wst-4082024-五水平线性验证"><span class="header-section-number">14.2.6</span> 标准案例：WS/T 408—2024 五水平线性验证</h3>
+<p>附录 A.4 的 HDL-C 案例包含 5 个水平、每水平 3 次测量。标准关注直线回归剩余标准差 <span class="math inline">\(s_{y|x}\)</span>、批内标准差 <span class="math inline">\(s_{WR}\)</span>、二者的 F 比值及非线性标准差 <span class="math inline">\(s_{NL}\)</span>。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>wst408_linearity <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/014-线性分析/std-wst408-linearity.csv"</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>wst408_linearity_ivd <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(wst408_linearity), <span class="at">sample =</span> <span class="st">"level"</span>, <span class="at">result =</span> <span class="st">"measured"</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"expected"</span>, <span class="at">method =</span> <span class="st">"linear"</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>WS/T 408 附录 A.4：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">WS/T 408 Appendix A.4</td>
+<td style="text-align: left;">s_yx</td>
+<td style="text-align: right;">0.0318</td>
+<td style="text-align: right;">0.03277</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WS/T 408 Appendix A.4</td>
+<td style="text-align: left;">s_WR</td>
+<td style="text-align: right;">0.0186</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WS/T 408 Appendix A.4</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">2.9130</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WS/T 408 Appendix A.4</td>
+<td style="text-align: left;">s_NL</td>
+<td style="text-align: right;">0.0258</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>linearity()</code> 按 5 个水平均值拟合直线，输出 <span class="math inline">\(s_{y|x}\approx0.0328\)</span>；标准配套表为 0.0318。标准所需的 <span class="math inline">\(s_{WR}\)</span>、F 和 <span class="math inline">\(s_{NL}\)</span> 不是当前对象的公开结果，表中以 <code>NA</code> 明示未实现。</p>
+</section>
+<section id="标准案例yyt-1789.42022-附录-a-线性样本-1" class="level3" data-number="14.2.7">
+<h3 data-number="14.2.7" class="anchored" data-anchor-id="标准案例yyt-1789.42022-附录-a-线性样本-1"><span class="header-section-number">14.2.7</span> 标准案例：YY/T 1789.4—2022 附录 A 线性样本 1</h3>
+<p>附录 A.5 给出 AFP 线性样本 1 的 14 个稀释水平、每水平 4 次结果。标准先用一至三阶多项式的高阶项显著性选择模型，再以最终直线的逐水平相对偏倚和 ±10% 允许误差判断测量区间。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>yyt1789_4 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/014-线性分析/std-yyt1789-4-appendix-a-sample1.csv"</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>yyt1789_4_linear_p <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  yyt1789_4, <span class="at">sample =</span> <span class="st">"level"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">x =</span> <span class="st">"dilution"</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"polynomial"</span>, <span class="at">weights =</span> <span class="st">"equal"</span>, <span class="at">adl_rel =</span> <span class="dv">10</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>yyt1789_4_linear <span class="ot">&lt;-</span> <span class="fu">linearity</span>(</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  yyt1789_4, <span class="at">sample =</span> <span class="st">"level"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">x =</span> <span class="st">"dilution"</span>,</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"linear"</span>, <span class="at">weights =</span> <span class="st">"equal"</span>, <span class="at">adl_rel =</span> <span class="dv">10</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.4—2022 附录 A.5：最终直线和相对偏倚对照</caption>
+<colgroup>
+<col style="width: 44%">
+<col style="width: 27%">
+<col style="width: 11%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 1</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">4.28</td>
+<td style="text-align: right;">4.284</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 1</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">6.07</td>
+<td style="text-align: right;">5.974</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 2</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">19.40</td>
+<td style="text-align: right;">19.401</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 2</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">5.05</td>
+<td style="text-align: right;">5.046</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 3</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">34.52</td>
+<td style="text-align: right;">34.518</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 3</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">4.46</td>
+<td style="text-align: right;">4.453</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 4</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">64.75</td>
+<td style="text-align: right;">64.752</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 4</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">-3.69</td>
+<td style="text-align: right;">-3.697</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 5</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">125.22</td>
+<td style="text-align: right;">125.219</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 5</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">7.25</td>
+<td style="text-align: right;">7.250</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 6</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">246.16</td>
+<td style="text-align: right;">246.154</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 6</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">0.467</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 7</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">367.10</td>
+<td style="text-align: right;">367.089</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 7</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">3.77</td>
+<td style="text-align: right;">3.773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 8</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">488.04</td>
+<td style="text-align: right;">488.025</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 8</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">-4.04</td>
+<td style="text-align: right;">-4.043</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 9</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">608.98</td>
+<td style="text-align: right;">608.960</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 9</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">-3.05</td>
+<td style="text-align: right;">-3.051</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 10</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">729.92</td>
+<td style="text-align: right;">729.895</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 10</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">3.59</td>
+<td style="text-align: right;">3.598</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 11</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">850.86</td>
+<td style="text-align: right;">850.830</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 11</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">-3.99</td>
+<td style="text-align: right;">-3.990</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 12</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">971.80</td>
+<td style="text-align: right;">971.765</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 12</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">2.60</td>
+<td style="text-align: right;">2.607</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 13</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">1092.74</td>
+<td style="text-align: right;">1092.700</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 13</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">-3.20</td>
+<td style="text-align: right;">-3.198</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 14</td>
+<td style="text-align: left;">final-line prediction</td>
+<td style="text-align: right;">1213.68</td>
+<td style="text-align: right;">1213.635</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.4 Appendix A.5 / level 14</td>
+<td style="text-align: left;">relative bias (%)</td>
+<td style="text-align: right;">2.56</td>
+<td style="text-align: right;">2.566</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>模型选择步骤并不完全等价：标准对水平均值拟合多项式并报告回归标准误， <code>linearity(method="polynomial")</code> 当前对逐次观测拟合，且将该模式标为旧 EP6-A 探索流程；两者自由度和回归标准误不同。因此本例只把包内 <code>method="linear"</code> 的最终直线称为复现，不把 包的多项式选择结果冒充 YY/T 1789.4 的高阶项检验。</p>
+<p>标准附录 A.3 的 ADL-PctBnd 临界表还把回归不精密度、水平数和重复数共同换算为临界值；<code>adl_rel=10</code> 是逐水平数值限，未实现 PctBnd 查表规则。这两个“ADL”名称相近但算法不同，本章报告时必须注明采用哪一种。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./013-精密度分析.html" class="pagination-link" aria-label="精密度分析">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./015-定性分析与C5C95.html" class="pagination-link" aria-label="定性分析与 C5/C95">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

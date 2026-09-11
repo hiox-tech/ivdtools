@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; ROC 曲线与多元回归 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./013-精密度分析.html" rel="next">
+<link href="./011-ROC曲线与cutoff.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./012-ROC曲线与多元回归.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">12.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#多元-logistic-回归-mlr" id="toc-多元-logistic-回归-mlr" class="nav-link" data-scroll-target="#多元-logistic-回归-mlr"><span class="header-section-number">12.1.1</span> 多元 Logistic 回归 <code>mlr()</code></a></li>
+  <li><a href="#配对-auc-比较-auc_compare" id="toc-配对-auc-比较-auc_compare" class="nav-link" data-scroll-target="#配对-auc-比较-auc_compare"><span class="header-section-number">12.1.2</span> 配对 AUC 比较 <code>auc_compare()</code></a></li>
+  <li><a href="#概率预测-predict" id="toc-概率预测-predict" class="nav-link" data-scroll-target="#概率预测-predict"><span class="header-section-number">12.1.3</span> 概率预测 <code>predict()</code></a></li>
+  <li><a href="#roc-绘图和汇总" id="toc-roc-绘图和汇总" class="nav-link" data-scroll-target="#roc-绘图和汇总"><span class="header-section-number">12.1.4</span> ROC 绘图和汇总</a></li>
+  </ul></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">12.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#教学数据两个标记物联合模型" id="toc-教学数据两个标记物联合模型" class="nav-link" data-scroll-target="#教学数据两个标记物联合模型"><span class="header-section-number">12.2.1</span> 教学数据：两个标记物联合模型</a></li>
+  <li><a href="#clsi-ep24-a2-附录-d两条配对-roc" id="toc-clsi-ep24-a2-附录-d两条配对-roc" class="nav-link" data-scroll-target="#clsi-ep24-a2-附录-d两条配对-roc"><span class="header-section-number">12.2.2</span> CLSI EP24-A2 附录 D：两条配对 ROC</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本文在单标记物 ROC 的基础上，演示用多个标记物拟合二项 Logistic 回归、计算联合预测概率、绘制训练集 ROC，并对新样本预测。联合模型需要同时评价区分度、校准、临床效用和可推广性；AUC 增加只是其中一个方面。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>mlr()</code> 拟合的是给定变量的未惩罚、主效应 Logistic 回归。当前 <code>ivdtools</code> 不进行变量筛选、非线性项自动构造、交互作用搜索、缺失值插补、共线性诊断、内部验证、校准评价、决策曲线、外部验证或模型更新。</p>
+<p><code>mlr()</code> 报告的联合 AUC 来自拟合模型所用的同一批数据，属于表观性能；其 Hanley–McNeil 区间也没有校正模型拟合和变量选择带来的乐观偏倚。<code>predict()</code> 给出的区间是模型系数不确定性所对应的平均预测概率置信区间，不是未来个体结局的预测区间。</p>
+</div>
+</div>
+<p>多标记物工作流为：</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["共同病例&lt;br/&gt;多个定量标记物"] --&gt; B["roc() → auc()&lt;br/&gt;单标记物基线"]
+    B --&gt; C["mlr()&lt;br/&gt;Logistic 联合模型"]
+    B --&gt; G["auc_compare()&lt;br/&gt;配对 AUC 比较"]
+    C --&gt; G
+    C --&gt; D["系数与训练集 AUC"]
+    C --&gt; E["predict()&lt;br/&gt;新样本概率"]
+    D --&gt; F["独立验证&lt;br/&gt;区分度、校准、效用"]
+    E --&gt; F
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B,C,G,D,E process
+    class F output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">12.1</span> 主要函数</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>主要用途</th>
+<th>主要结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>roc()</code></td>
+<td>用多个标记物建立共同完整病例对象</td>
+<td>标记物值、参考状态和单标记物方向</td>
+</tr>
+<tr class="even">
+<td><code>auc()</code></td>
+<td>建立单标记物性能基线</td>
+<td>每列 AUC、Hanley–McNeil SE 和 CI</td>
+</tr>
+<tr class="odd">
+<td><code>mlr()</code></td>
+<td>拟合一个命名的多元 Logistic 模型</td>
+<td>模型、系数、预测概率及训练集 ROC/AUC</td>
+</tr>
+<tr class="even">
+<td><code>auc_compare()</code></td>
+<td>比较同一批受试者的两条 ROC 曲线</td>
+<td>AUC 差、SE、CI、z 和 P 值</td>
+</tr>
+<tr class="odd">
+<td><code>predict()</code></td>
+<td>用已保存模型预测训练数据或新数据</td>
+<td>概率、SE、CI 和固定 0.5 分类</td>
+</tr>
+<tr class="even">
+<td><code>plot()</code></td>
+<td>叠加原始标记物和联合模型 ROC</td>
+<td><code>ggplot</code> 图形</td>
+</tr>
+<tr class="odd">
+<td><code>summary()</code></td>
+<td>汇总所有已执行的分析</td>
+<td>单标记物及全部命名模型结果</td>
+</tr>
+</tbody>
+</table>
+<p><code>roc()</code>、<code>auc()</code> 的完整参数、方向、AUC 和区间公式见上一章。本章重点说明联合模型接口。</p>
+<section id="多元-logistic-回归-mlr" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="多元-logistic-回归-mlr"><span class="header-section-number">12.1.1</span> 多元 Logistic 回归 <code>mlr()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mlr</span>(x, <span class="at">cols =</span> <span class="cn">NULL</span>, <span class="at">name =</span> <span class="cn">NULL</span>, ...)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>已执行 <code>auc()</code> 的 <code>roc</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>cols</code></td>
+<td>进入模型的标记物列；<code>NULL</code> 使用对象中的全部标记物。</td>
+</tr>
+<tr class="odd">
+<td><code>name</code></td>
+<td>唯一模型名；省略时依次生成 <code>MLR01</code>、<code>MLR02</code> 等。</td>
+</tr>
+<tr class="even">
+<td><code>...</code></td>
+<td>传给 <code>stats::glm()</code> 的其他参数，例如控制选项；模型公式和二项分布由函数固定。</td>
+</tr>
+</tbody>
+</table>
+<p>令 <span class="math inline">\(Y_i\in\{0,1\}\)</span>，选择 <span class="math inline">\(p\)</span> 个标记物后，当前函数建立</p>
+<p><span class="math display">\[
+\eta_i=\beta_0+\sum_{j=1}^{p}\beta_jx_{ij},
+\qquad
+\pi_i=P(Y_i=1\mid\mathbf x_i)
+=\frac{\exp(\eta_i)}{1+\exp(\eta_i)}.
+\]</span></p>
+<p>系数通过二项分布最大似然估计。对其他变量不变的条件下，<span class="math inline">\(x_j\)</span> 每增加一个原始单位，阳性优势乘以</p>
+<p><span class="math display">\[
+\operatorname{OR}_j=\exp(\beta_j).
+\]</span></p>
+<p>这不是风险比，也不表示因果效应。若变量单位很小或很大，应在建模前按照预设方案缩放，以便系数具有可解释单位。</p>
+<p>函数公式固定为 <code>reference_binary ~ x1 + x2 + ...</code>，不会自动加入平方项、样条或交互项。<code>roc()</code> 已经按全部初始 <code>cols</code> 建立共同完整病例，因此 <code>mlr(cols=...)</code> 的子模型仍使用同一分析集。这有利于比较嵌套标记物组合，但不等于完成缺失数据处理。</p>
+<p>拟合后用同一批病例的 <span class="math inline">\(\widehat\pi_i\)</span> 建经验 ROC，方向固定为 <code>geq</code>，即预测概率越大越倾向阳性。联合 AUC 的 SE 和 95% CI 继续使用上一章的 Hanley–McNeil 单曲线公式。</p>
+<p>每个模型保存在 <code>mlr_results[[name]]</code>，主要字段为：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>formula</code>、<code>cols</code></td>
+<td>实际公式和预测变量</td>
+</tr>
+<tr class="even">
+<td><code>fit</code>、<code>fit_summary</code></td>
+<td><code>glm</code> 对象及其摘要</td>
+</tr>
+<tr class="odd">
+<td><code>predicted</code></td>
+<td>训练集拟合概率</td>
+</tr>
+<tr class="even">
+<td><code>auc</code>、<code>auc_se</code>、<code>ci_lower</code>、<code>ci_upper</code></td>
+<td>训练集 AUC 及近似区间</td>
+</tr>
+<tr class="odd">
+<td><code>roc_curve</code></td>
+<td>训练概率的完整 cutoff 指标表</td>
+</tr>
+</tbody>
+</table>
+<p>返回更新后的 <code>roc</code> 对象；新模型保存在 <code>mlr_results[[name]]</code>。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="AUC 增加不等于模型已经得到验证">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>AUC 增加不等于模型已经得到验证
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>单标记物和联合模型的 ROC 来自同一受试者，二者相关，应使用 <code>auc_compare()</code> 作配对比较。但是，训练集联合概率由同一批结局数据拟合，EP24 和 DeLong 都把输入评分当作既定值，不会校正模型拟合、变量选择或过拟合造成的乐观偏倚。因此配对 P 值不能代替内部验证、独立验证、校准和临床净获益评价。</p>
+</div>
+</div>
+</section>
+<section id="配对-auc-比较-auc_compare" class="level3" data-number="12.1.2">
+<h3 data-number="12.1.2" class="anchored" data-anchor-id="配对-auc-比较-auc_compare"><span class="header-section-number">12.1.2</span> 配对 AUC 比较 <code>auc_compare()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc_compare</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  curves,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"ep24"</span>, <span class="st">"delong"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">rating_method =</span> <span class="fu">c</span>(<span class="st">"pearson"</span>, <span class="st">"kendall"</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="cn">NULL</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>已完成相应 <code>auc()</code> 或 <code>mlr()</code> 分析的同一个 <code>roc</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>curves</code></td>
+<td>恰好两个曲线名称，可以是原始标记物、命名 MLR，或两者各一个；差值方向为第一个减第二个。</td>
+</tr>
+<tr class="odd">
+<td><code>method</code></td>
+<td>默认 <code>"ep24"</code>，使用 EP24-A2 Hanley–McNeil 配对近似；<code>"delong"</code> 使用非参数配对协方差。</td>
+</tr>
+<tr class="even">
+<td><code>conf.level</code></td>
+<td>AUC 差值区间的置信水平。</td>
+</tr>
+<tr class="odd">
+<td><code>rating_method</code></td>
+<td>EP24 组内评分相关方法；连续实验室结果默认 Pearson，有序等级可选 Kendall。DeLong 不使用该参数。</td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td>可选结果名称；省略时由两条曲线名称和方法自动生成。</td>
+</tr>
+</tbody>
+</table>
+<p>函数只接受同一个 <code>roc</code> 对象中的曲线，从而保证阳性、阴性状态和完整病例完全配对。结果保存在 <code>auc_comparisons[[name]]</code>，包含两条 AUC、各自 SE、差值、差值 SE、置信区间、z、P 值及方法专用的相关或协方差信息。<code>summary()</code> 会打印全部已保存比较。</p>
+<p>EP24 方法先分别计算阳性组和阴性组内两项评分的相关系数，再取平均，并结合平均 AUC 对 EP24-A2 表 5 作线性插值，得到两个 AUC 估计量之间的相关系数。若坐标超出标准表范围，函数使用最近边界并在结果与控制台中明确标记。DeLong 方法则从阳性和阴性的配对秩贡献直接估计两条 AUC 的协方差，不使用 EP24 查表近似。</p>
+</section>
+<section id="概率预测-predict" class="level3" data-number="12.1.3">
+<h3 data-number="12.1.3" class="anchored" data-anchor-id="概率预测-predict"><span class="header-section-number">12.1.3</span> 概率预测 <code>predict()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  object,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mlr =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_map =</span> <span class="cn">NULL</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>object</code></td>
+<td>至少含一个 <code>mlr()</code> 结果的 <code>roc</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>mlr</code></td>
+<td>模型名；对象只有一个模型时可省略，多个模型时必须指定。</td>
+</tr>
+<tr class="odd">
+<td><code>newdata</code></td>
+<td>新数据框；<code>NULL</code> 时返回共同完整训练数据的拟合结果。</td>
+</tr>
+<tr class="even">
+<td><code>column_map</code></td>
+<td>命名字符向量，名称是新数据列，值是训练模型列，例如 <code>c(new_x1="x1")</code>。</td>
+</tr>
+</tbody>
+</table>
+<p>设新样本设计向量为 <span class="math inline">\(\mathbf x_0=(1,x_{01},\ldots,x_{0p})^\mathsf T\)</span>，链接尺度预测及其标准误为</p>
+<p><span class="math display">\[
+\widehat\eta_0=\mathbf x_0^\mathsf T\widehat{\boldsymbol\beta},
+\qquad
+\operatorname{SE}(\widehat\eta_0)
+=\sqrt{\mathbf x_0^\mathsf T
+\widehat{\operatorname{Cov}}(\widehat{\boldsymbol\beta})\mathbf x_0}.
+\]</span></p>
+<p>函数先在 logit 尺度建立</p>
+<p><span class="math display">\[
+\widehat\eta_0\pm z_{0.975}\operatorname{SE}(\widehat\eta_0),
+\]</span></p>
+<p>再用 <span class="math inline">\(\operatorname{logit}^{-1}\)</span> 转回概率尺度得到 <code>ci_lower</code> 和 <code>ci_upper</code>。概率尺度的 <code>pred_se</code> 使用 Delta 法：</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat\pi_0)
+\approx \operatorname{SE}(\widehat\eta_0)
+\widehat\pi_0(1-\widehat\pi_0).
+\]</span></p>
+<p><code>pred_class</code> 固定为 <span class="math inline">\(I(\widehat\pi_0\ge0.5)\)</span>，当前接口不能改成其他概率阈值。若研究方案使用不同决策阈值，应从 <code>pred_prob</code> 另行按预设规则分类并明确记录。</p>
+<p>返回含输入行标识、<code>pred_prob</code>、<code>pred_se</code>、<code>ci_lower</code>、<code>ci_upper</code> 和 <code>pred_class</code> 的数据框。</p>
+</section>
+<section id="roc-绘图和汇总" class="level3" data-number="12.1.4">
+<h3 data-number="12.1.4" class="anchored" data-anchor-id="roc-绘图和汇总"><span class="header-section-number">12.1.4</span> ROC 绘图和汇总</h3>
+<p><code>plot()</code> 不可见地返回 <code>ggplot</code> 对象；<code>summary()</code> 打印并不可见地返回输入的 <code>roc</code> 对象。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="at">curves =</span> <span class="cn">NULL</span>, <span class="at">cutpoint =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"roc"</span>, <span class="st">"cutoff"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(x)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>curves</code> 与 <code>auc_compare()</code> 使用同一个曲线命名空间：既可以是原始标记物名称，也可以是 MLR 模型名称。<code>plot(x, curves="all")</code> 绘制全部原始标记物和已保存模型；<code>plot(x, curves=c("x1", "combined"))</code> 可混合选择，单独指定 <code>"combined"</code> 则只画该模型。<code>curves=NULL</code> 保持默认只画全部原始标记物。<code>type="cutoff"</code> 只支持在 <code>curves</code> 中指定一个 原始标记物，暂不支持多元模型概率的 cutoff 图。<code>cutpoint</code> 只标注所选原始标记物。<code>summary()</code> 打印全部已保存模型和 <code>auc_compare()</code> 比较结果。</p>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">12.2</span> 分析案例</h2>
+<section id="教学数据两个标记物联合模型" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="教学数据两个标记物联合模型"><span class="header-section-number">12.2.1</span> 教学数据：两个标记物联合模型</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mlr_dat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/012-ROC曲线与多元回归/roc-multimarker.csv"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mlr_dat)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  sid ref        x1        x2
+1   1   0  5.510540  8.298655
+2   2   0  3.188811 12.942968
+3   3   0  8.126533 12.351778
+4   4   0  6.159571 16.105370
+5   5   0 11.118763 11.867919
+6   6   0  2.736035 19.585368</code></pre>
+</div>
+</div>
+<p>先在同一共同病例集上计算两个原始标记物的 AUC：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">roc</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  mlr_dat, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"ref"</span>, <span class="at">id =</span> <span class="st">"sid"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">auc</span>(mlr_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+AUC Table
+  Column               AUC          95% CI  Direction
+  ------------------------------------------------------------ 
+  x1                0.9219  [0.8712, 0.9727]       geq
+  x2                0.8322  [0.7587, 0.9057]       geq</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mlr_fit</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROC Analysis
+  Data class:        data.frame
+  Total rows:        120
+  Complete cases:    120
+  Reference:         ref (binary)
+  Reference coding:  binary (0/1)
+  Positive / Neg:    60 / 60
+  Evaluation cols:   2  (x1, x2)
+  Duplicate IDs:     none
+
+Analysis slots:
+    [ ] Describe
+    [x] AUC
+    [ ] Paired AUC comparison
+    [ ] Cutoff
+    [ ] MLR</code></pre>
+</div>
+</div>
+<p><code>x1</code> 和 <code>x2</code> 的 AUC 分别为 0.9219 和 0.8322；两者方向均为 <code>geq</code>。随后拟合预先指定的双标记物主效应模型：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">mlr</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>), <span class="at">name =</span> <span class="st">"combined"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Multivariate Logistic Regression (combined)
+  -------------------------------------------------- 
+  Formula: reference_binary ~ x1 + x2
+  n = 120  (positive = 60, negative = 60)
+  AUC = 0.9642  [0.9298, 0.9985]
+
+  Coefficients:
+                   Estimate Std. Error   z value     Pr(&gt;|z|) 
+    (Intercept) -13.6586717  2.7569949 -4.954188 7.263286e-07 
+    x1            0.7638502  0.1549103  4.930919 8.184356e-07 
+    x2            0.3949617  0.1064673  3.709700 2.075049e-04 
+
+  * Note: AUC is evaluated on the same data used for fitting;
+    the estimate may be optimistic.</code></pre>
+</div>
+</div>
+<p>拟合方程为</p>
+<p><span class="math display">\[
+\operatorname{logit}(\widehat\pi)
+=-13.6587+0.76385x_1+0.39496x_2.
+\]</span></p>
+<p>在另一个标记物不变时，<code>x1</code> 和 <code>x2</code> 每增加一个原始单位的调整优势比分别约为 <span class="math inline">\(\exp(0.76385)=2.146\)</span> 和 <span class="math inline">\(\exp(0.39496)=1.484\)</span>。截距的指数通常没有实际意义，因为 <span class="math inline">\(x_1=x_2=0\)</span> 可能不在数据范围内。</p>
+<p>联合模型训练集 AUC 为 0.9642，95% CI 为 0.9298～0.9985。进一步把联合模型分别与两个原始标记物作 EP24 配对比较：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">auc_compare</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">curves =</span> <span class="fu">c</span>(<span class="st">"combined"</span>, <span class="st">"x1"</span>), <span class="at">method =</span> <span class="st">"ep24"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Paired AUC Comparison
+  Curves: combined - x1
+  Method: EP24-A2 Hanley-McNeil paired approximation
+  Subjects: 120 (positive = 60, negative = 60)
+  AUC combined: 0.964167
+  AUC x1: 0.921944
+  Difference: 0.042222
+  SE difference: 0.022111
+  95.0% CI: [-0.001115, 0.085559]
+  z = 1.909555
+  p-value: 0.0561906
+  Mean within-group rating correlation: 0.660442
+  EP24 area correlation: 0.538934
+  Note: fitted training probabilities are treated as fixed scores;
+        model optimism and fitting uncertainty are not corrected.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">auc_compare</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">curves =</span> <span class="fu">c</span>(<span class="st">"combined"</span>, <span class="st">"x2"</span>), <span class="at">method =</span> <span class="st">"ep24"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Paired AUC Comparison
+  Curves: combined - x2
+  Method: EP24-A2 Hanley-McNeil paired approximation
+  Subjects: 120 (positive = 60, negative = 60)
+  AUC combined: 0.964167
+  AUC x2: 0.832222
+  Difference: 0.131944
+  SE difference: 0.035277
+  95.0% CI: [0.062803, 0.201085]
+  z = 3.740275
+  p-value: 0.000183819
+  Mean within-group rating correlation: 0.445998
+  EP24 area correlation: 0.357226
+  Note: fitted training probabilities are treated as fixed scores;
+        model optimism and fitting uncertainty are not corrected.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>联合训练模型与单标记物的配对 AUC 比较</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">比较</th>
+<th style="text-align: right;">AUC差</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">CI下限</th>
+<th style="text-align: right;">CI上限</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">P值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">combined - x1</td>
+<td style="text-align: right;">0.04222</td>
+<td style="text-align: right;">0.02211</td>
+<td style="text-align: right;">-0.00111</td>
+<td style="text-align: right;">0.08556</td>
+<td style="text-align: right;">1.90955</td>
+<td style="text-align: right;">0.05619</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">combined - x2</td>
+<td style="text-align: right;">0.13194</td>
+<td style="text-align: right;">0.03528</td>
+<td style="text-align: right;">0.06280</td>
+<td style="text-align: right;">0.20109</td>
+<td style="text-align: right;">3.74028</td>
+<td style="text-align: right;">0.00018</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>这些比较解决了同一受试者所致的曲线相关性，但联合概率仍由这 120 例资料拟合，配对检验没有校正模型拟合不确定性或乐观偏倚，也没有完成验证集评价，不能表述为已经证实的临床增益。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mlr_fit, <span class="at">curves =</span> <span class="st">"all"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="012-ROC曲线与多元回归_files/figure-html/teaching-mlr-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>新样本预测与列名映射</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>new_patients <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x1 =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">12</span>),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x2 =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">21</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>new_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">mlr =</span> <span class="st">"combined"</span>, <span class="at">newdata =</span> new_patients</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>new_predictions</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x1 x2 pred_prob    pred_se   ci_lower  ci_upper pred_class
+1  7 16 0.1200103 0.05313595 0.04840777 0.2677265          0
+2 12 21 0.9781557 0.01751040 0.89984790 0.9955390          1</code></pre>
+</div>
+</div>
+<p>两例预测概率分别为 0.1200 和 0.9782，按内置 0.5 阈值分别显示为 0 和 1。区间反映拟合平均概率的参数不确定性，不包含新个体结局本身的二项随机性，也不包含模型错误和人群迁移。</p>
+<p>新数据列名不同时，映射方向是“新列名 = 训练列名”：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>renamed_patients <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker_a =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">12</span>),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker_b =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">21</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>mapped_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  mlr_fit,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mlr =</span> <span class="st">"combined"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> renamed_patients,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_map =</span> <span class="fu">c</span>(<span class="at">marker_a =</span> <span class="st">"x1"</span>, <span class="at">marker_b =</span> <span class="st">"x2"</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="clsi-ep24-a2-附录-d两条配对-roc" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="clsi-ep24-a2-附录-d两条配对-roc"><span class="header-section-number">12.2.2</span> CLSI EP24-A2 附录 D：两条配对 ROC</h3>
+<p>EP24 附录 D 的 OxLDL 和 LDL 都来自同一组 50 名受试者，因此两条 AUC 相关。先在同一个 <code>roc</code> 对象中计算两条经验 AUC 及单曲线 Hanley–McNeil 区间，再调用 <code>auc_compare()</code>；函数由共同完整病例保证配对关系。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ep24_pair <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/公共/std-ep24-appendix-d.csv"</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit <span class="ot">&lt;-</span> <span class="fu">roc</span>(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  ep24_pair, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"oxldl"</span>, <span class="st">"ldl"</span>),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"diagnosis"</span>, <span class="at">id =</span> <span class="st">"id"</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit <span class="ot">&lt;-</span> <span class="fu">auc</span>(ep24_pair_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+AUC Table
+  Column               AUC          95% CI  Direction
+  ------------------------------------------------------------ 
+  oxldl             0.7995  [0.6777, 0.9213]       geq
+  ldl               0.5617  [0.4012, 0.7222]       geq</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROC Analysis
+  Data class:        data.frame
+  Total rows:        50
+  Complete cases:    50
+  Reference:         diagnosis (binary)
+  Reference coding:  binary (0/1)
+  Positive / Neg:    28 / 22
+  Evaluation cols:   2  (oxldl, ldl)
+  Duplicate IDs:     none
+
+Analysis slots:
+    [ ] Describe
+    [x] AUC
+    [ ] Paired AUC comparison
+    [ ] Cutoff
+    [ ] MLR</code></pre>
+</div>
+</div>
+<p>默认的 EP24 方法按标准式（6）计算</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat A_1-\widehat A_2)
+=\sqrt{\operatorname{SE}_1^2+\operatorname{SE}_2^2
+-2r\operatorname{SE}_1\operatorname{SE}_2},
+\]</span></p>
+<p>其中 <span class="math inline">\(r\)</span> 是由阳性、阴性组内评分相关的平均值和平均 AUC 对 EP24 表 5 插值得到的 AUC 相关。DeLong 方法不使用这项查表近似，而是通过每名阳性和阴性受试者的配对秩贡献估计协方差：</p>
+<p>定义</p>
+<p><span class="math display">\[
+\phi(x,y)=I(x&gt;y)+\frac12I(x=y),
+\]</span></p>
+<p>对第 <span class="math inline">\(k\)</span> 个标记物、<span class="math inline">\(m\)</span> 个阳性和 <span class="math inline">\(n\)</span> 个阴性，建立</p>
+<p><span class="math display">\[
+V_{10,i}^{(k)}=\frac1n\sum_{j=1}^{n}\phi(X_{ki},Y_{kj}),
+\qquad
+V_{01,j}^{(k)}=\frac1m\sum_{i=1}^{m}\phi(X_{ki},Y_{kj}).
+\]</span></p>
+<p>两个标记物 AUC 向量的 DeLong 协方差估计为</p>
+<p><span class="math display">\[
+\widehat{\boldsymbol\Sigma}
+=\frac{\operatorname{Cov}(\mathbf V_{10})}{m}
++\frac{\operatorname{Cov}(\mathbf V_{01})}{n}.
+\]</span></p>
+<p>令 <span class="math inline">\(\mathbf c=(1,-1)^\mathsf T\)</span>，则差值 <span class="math inline">\(\widehat\Delta=\widehat A_{\mathrm{OxLDL}}-\widehat A_{\mathrm{LDL}}\)</span> 的标准误为</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat\Delta)
+=\sqrt{\mathbf c^\mathsf T\widehat{\boldsymbol\Sigma}\mathbf c}.
+\]</span></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit <span class="ot">&lt;-</span> <span class="fu">auc_compare</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  ep24_pair_fit,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">curves =</span> <span class="fu">c</span>(<span class="st">"oxldl"</span>, <span class="st">"ldl"</span>),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ep24"</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Paired AUC Comparison
+  Curves: oxldl - ldl
+  Method: EP24-A2 Hanley-McNeil paired approximation
+  Subjects: 50 (positive = 28, negative = 22)
+  AUC oxldl: 0.799513
+  AUC ldl: 0.561688
+  Difference: 0.237825
+  SE difference: 0.075261
+  95.0% CI: [0.090315, 0.385334]
+  z = 3.159979
+  p-value: 0.0015778
+  Mean within-group rating correlation: 0.511818
+  EP24 area correlation: 0.481818
+  Table lookup used bounded coordinates: correlation 0.5118, AUC 0.7000</code></pre>
+</div>
+</div>
+<p>把现场计算值与检查表中的 EP24 公布值比较：</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP24-A2 附录 D：单曲线和配对差异结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">AUC</td>
+<td style="text-align: right;">0.8000</td>
+<td style="text-align: right;">0.799513</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">SE</td>
+<td style="text-align: right;">0.0620</td>
+<td style="text-align: right;">0.062140</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">CI_lower</td>
+<td style="text-align: right;">0.6800</td>
+<td style="text-align: right;">0.677718</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">CI_upper</td>
+<td style="text-align: right;">0.9200</td>
+<td style="text-align: right;">0.921308</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">AUC</td>
+<td style="text-align: right;">0.5600</td>
+<td style="text-align: right;">0.561688</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">SE</td>
+<td style="text-align: right;">0.0820</td>
+<td style="text-align: right;">0.081895</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">CI_lower</td>
+<td style="text-align: right;">0.4000</td>
+<td style="text-align: right;">0.401174</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">CI_upper</td>
+<td style="text-align: right;">0.7200</td>
+<td style="text-align: right;">0.722203</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">AUC_difference</td>
+<td style="text-align: right;">0.2400</td>
+<td style="text-align: right;">0.237825</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">SE</td>
+<td style="text-align: right;">0.0750</td>
+<td style="text-align: right;">0.075261</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">CI_lower</td>
+<td style="text-align: right;">0.0900</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">CI_upper</td>
+<td style="text-align: right;">0.3900</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">z</td>
+<td style="text-align: right;">3.1600</td>
+<td style="text-align: right;">3.159979</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">p_value</td>
+<td style="text-align: right;">0.0016</td>
+<td style="text-align: right;">0.001578</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./011-ROC曲线与cutoff.html" class="pagination-link" aria-label="ROC 曲线与 cutoff">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./013-精密度分析.html" class="pagination-link" aria-label="精密度分析">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

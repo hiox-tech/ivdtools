@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>19&nbsp; Clinical Sample-Size Calculation – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./020-异常值与正态检验.html" rel="next">
+<link href="./018-瓶间差.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./019-临床样本量计算.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#main-functions" id="toc-main-functions" class="nav-link active" data-scroll-target="#main-functions"><span class="header-section-number">19.1</span> Main Functions</a>
+  <ul>
+  <li><a href="#interfaces" id="toc-interfaces" class="nav-link" data-scroll-target="#interfaces"><span class="header-section-number">19.1.1</span> Interfaces</a></li>
+  </ul></li>
+  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">19.2</span> Analysis Examples</a>
+  <ul>
+  <li><a href="#blandaltman-agreement" id="toc-blandaltman-agreement" class="nav-link" data-scroll-target="#blandaltman-agreement"><span class="header-section-number">19.2.1</span> Bland–Altman Agreement</a></li>
+  <li><a href="#single-proportion-confidence-interval" id="toc-single-proportion-confidence-interval" class="nav-link" data-scroll-target="#single-proportion-confidence-interval"><span class="header-section-number">19.2.2</span> Single-Proportion Confidence Interval</a></li>
+  <li><a href="#one-arm-target-value-test" id="toc-one-arm-target-value-test" class="nav-link" data-scroll-target="#one-arm-target-value-test"><span class="header-section-number">19.2.3</span> One-Arm Target-Value Test</a></li>
+  <li><a href="#standard-and-guidance-cross-checks" id="toc-standard-and-guidance-cross-checks" class="nav-link" data-scroll-target="#standard-and-guidance-cross-checks"><span class="header-section-number">19.2.4</span> Standard and Guidance Cross-Checks</a></li>
+  </ul></li>
+  <li><a href="#interpretation-checklist" id="toc-interpretation-checklist" class="nav-link" data-scroll-target="#interpretation-checklist"><span class="header-section-number">19.3</span> Interpretation Checklist</a></li>
+  <li><a href="#complete-standard-cases" id="toc-complete-standard-cases" class="nav-link" data-scroll-target="#complete-standard-cases"><span class="header-section-number">19.4</span> Complete Standard Cases</a>
+  <ul>
+  <li><a href="#blandaltman-pass-examples-1-and-2" id="toc-blandaltman-pass-examples-1-and-2" class="nav-link" data-scroll-target="#blandaltman-pass-examples-1-and-2"><span class="header-section-number">19.4.1</span> Bland–Altman: PASS Examples 1 and 2</a></li>
+  <li><a href="#proportion-confidence-intervals-pass-examples-14" id="toc-proportion-confidence-intervals-pass-examples-14" class="nav-link" data-scroll-target="#proportion-confidence-intervals-pass-examples-14"><span class="header-section-number">19.4.2</span> Proportion Confidence Intervals: PASS Examples 1–4</a></li>
+  <li><a href="#one-sample-proportion-target-tests-sas-and-pass-comparison" id="toc-one-sample-proportion-target-tests-sas-and-pass-comparison" class="nav-link" data-scroll-target="#one-sample-proportion-target-tests-sas-and-pass-comparison"><span class="header-section-number">19.4.3</span> One-Sample Proportion Target Tests: SAS and PASS Comparison</a></li>
+  <li><a href="#cmde-appendix-case-1-target-value-method-with-clinical-acceptance-criteria" id="toc-cmde-appendix-case-1-target-value-method-with-clinical-acceptance-criteria" class="nav-link" data-scroll-target="#cmde-appendix-case-1-target-value-method-with-clinical-acceptance-criteria"><span class="header-section-number">19.4.4</span> CMDE Appendix Case 1: Target-Value Method with Clinical Acceptance Criteria</a></li>
+  <li><a href="#cmde-appendix-case-2-allowable-error-method-requiring-ci-precision" id="toc-cmde-appendix-case-2-allowable-error-method-requiring-ci-precision" class="nav-link" data-scroll-target="#cmde-appendix-case-2-allowable-error-method-requiring-ci-precision"><span class="header-section-number">19.4.5</span> CMDE Appendix Case 2: Allowable Error Method Requiring CI Precision</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Sample size is determined by effect size, variability, confidence level, power, and study design; it is not a fixed constant. This chapter covers the three sample-size problems implemented by <code>ivdtools</code>: Bland–Altman agreement precision/power, precision of a single-proportion confidence interval, and a one-arm test of a proportion against a target.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Scope of Use">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Scope of Use
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The functions do not add attrition, invalid samples, minimum numbers per stratum, design effects, clustering, or multiplicity adjustments. <code>delta</code> in a Bland–Altman calculation is the clinically acceptable limit, not the observed LoA. Confidence-interval methods and one- or two-sided directions must be prespecified. Preserve all assumptions and sensitivity analyses, not only the final integer.</p>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="main-functions" class="level2" data-number="19.1">
+<h2 data-number="19.1" class="anchored" data-anchor-id="main-functions"><span class="header-section-number">19.1</span> Main Functions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Main purpose</th>
+<th>Solving direction</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sample_size_bland_altman()</code></td>
+<td>Bland–Altman agreement evaluation</td>
+<td>Solve for <code>n</code> from target power</td>
+</tr>
+<tr class="even">
+<td><code>sample_size_proportion_ci()</code></td>
+<td>Single-proportion confidence interval</td>
+<td>Solve for <code>n</code> from the target half-width</td>
+</tr>
+<tr class="odd">
+<td><code>sample_size_proportion()</code></td>
+<td>One-arm target-value test</td>
+<td>Solve for <code>n</code> from the target alpha and power</td>
+</tr>
+</tbody>
+</table>
+<p>All three functions are parameter-driven and do not require raw data. They return structured results; the sample size is in <code>result$n</code>, and <code>print()</code> shows target and achieved quantities. Round-up, attrition, invalid samples, and minimum stratum counts must be handled separately.</p>
+<section id="interfaces" class="level3" data-number="19.1.1">
+<h3 data-number="19.1.1" class="anchored" data-anchor-id="interfaces"><span class="header-section-number">19.1.1</span> Interfaces</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_bland_altman</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.80</span>, mu, sd, delta,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">agree.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"lu"</span>, <span class="at">n.min =</span> <span class="dv">3</span>, <span class="at">n.max =</span> <span class="fl">1e5</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  p, half_width, <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"lower"</span>, <span class="st">"upper"</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"wilson"</span>, <span class="at">n.max =</span> <span class="fl">1e6</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_size_proportion</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  p0, p1, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">c</span>(<span class="st">"greater"</span>, <span class="st">"less"</span>, <span class="st">"two.sided"</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="st">"exact"</span>, <span class="at">power_method =</span> <span class="st">"binomial"</span>, <span class="at">n.max =</span> <span class="fl">1e6</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For Bland–Altman, the target LoA are</p>
+<p><span class="math display">\[
+\mu\pm z_{(1+\gamma)/2}\sigma,
+\]</span></p>
+<p>where $γ=<code>agree.level</code>. The function uses the Lu et al.&nbsp;noncentral-t calculation for the probability that both LoA confidence bounds remain within <span class="math inline">\(±\delta\)</span> and searches for the smallest integer meeting target power. It requires <span class="math inline">\(δ&gt;|\mu|+z_{(1+γ)/2}σ\)</span>.</p>
+<p>For a proportion interval, the target is a half-width <span class="math inline">\(d\)</span>. For two-sided intervals,</p>
+<p><span class="math display">\[\frac{U-L}{2}\le d,\]</span></p>
+<p>and for one-sided intervals the distance from the expected proportion to the relevant limit is at most <span class="math inline">\(d\)</span>. The interval method affects the required sample size and must be stated in the protocol.</p>
+<p>For a one-arm test, <code>test</code> determines the rejection region and <code>power_method</code> chooses continuous normal planning or discrete binomial enumeration. The final integer sample size is checked using actual alpha and achieved power; binomial planning additionally controls actual alpha rather than relying on an approximation.</p>
+</section>
+</section>
+<section id="analysis-examples" class="level2" data-number="19.2">
+<h2 data-number="19.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">19.2</span> Analysis Examples</h2>
+<section id="blandaltman-agreement" class="level3" data-number="19.2.1">
+<h3 data-number="19.2.1" class="anchored" data-anchor-id="blandaltman-agreement"><span class="header-section-number">19.2.1</span> Bland–Altman Agreement</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_ba <span class="ot">&lt;-</span> <span class="fu">sample_size_bland_altman</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.80</span>, <span class="at">mu =</span> <span class="fl">0.2</span>, <span class="at">sd =</span> <span class="dv">1</span>, <span class="at">delta =</span> <span class="fl">2.5</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_ba)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample size for Bland-Altman agreement assessment
+  Method            : Lu et al. (2016), noncentral-t approximation
+  Mean difference   : 0.2000
+  SD of differences : 1.0000
+  Clinical limit    : 2.5000
+  Confidence level  : 0.9500
+  Agreement level   : 0.9500
+  Sample size (n)   : 201
+  Target power      : 0.800000
+  Achieved power    : 0.800300</code></pre>
+</div>
+</div>
+<p>Under these teaching parameters, approximately 201 pairs are needed for 80% power. <code>mu</code> is mean difference, <code>sd</code> is difference SD, and <code>delta</code> is the clinical agreement limit. <code>conf.level</code> and <code>agree.level</code> describe different layers: reliability of the LoA estimate versus coverage of the LoA itself.</p>
+</section>
+<section id="single-proportion-confidence-interval" class="level3" data-number="19.2.2">
+<h3 data-number="19.2.2" class="anchored" data-anchor-id="single-proportion-confidence-interval"><span class="header-section-number">19.2.2</span> Single-Proportion Confidence Interval</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_pci <span class="ot">&lt;-</span> <span class="fu">sample_size_proportion_ci</span>(<span class="at">p =</span> <span class="fl">0.3</span>, <span class="at">half_width =</span> <span class="fl">0.05</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_pci)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample size for a single-proportion confidence interval
+  Method                : wilson
+  Interval              : two.sided
+  Anticipated proportion: 0.3000
+  Confidence level      : 0.9500
+  Sample size (n)       : 320
+  Target half-width     : 0.050000
+  Achieved half-width   : 0.049967
+  Target total width    : 0.100000
+  Achieved total width  : 0.099934
+  Planning interval     : [0.252406, 0.352339]
+  Actual coverage       : 0.956096
+  Actual alpha          : 0.043904</code></pre>
+</div>
+</div>
+<p>For expected proportion 0.3 and a 95% Wilson half-width of 0.05, approximately 320 observations are needed. Available methods include Wilson, Wald, continuity-corrected Wald/Wilson, Agresti–Coull, Jeffreys, and Clopper–Pearson.</p>
+</section>
+<section id="one-arm-target-value-test" class="level3" data-number="19.2.3">
+<h3 data-number="19.2.3" class="anchored" data-anchor-id="one-arm-target-value-test"><span class="header-section-number">19.2.3</span> One-Arm Target-Value Test</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n_sp <span class="ot">&lt;-</span> <span class="fu">sample_size_proportion</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p0 =</span> <span class="fl">0.2</span>, <span class="at">p1 =</span> <span class="fl">0.35</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.8</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="st">"greater"</span>, <span class="at">test =</span> <span class="st">"exact"</span>, <span class="at">power_method =</span> <span class="st">"binomial"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_sp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample size for a single-proportion target-value test
+  Test                  : Exact binomial test
+  Power calculation     : Binomial enumeration
+  H0: p &lt;= 0.2000
+  H1: p &gt; 0.2000
+  Expected p            : 0.3500
+  Sample size (n)       : 56
+  Target alpha          : 0.050000
+  Actual alpha          : 0.043209
+  Alpha criterion       : met
+  Target power          : 0.800000
+  Achieved power        : 0.806416 (binomial evaluation)
+  Critical successes    : &gt;= 17</code></pre>
+</div>
+</div>
+<p><code>alternative="greater"</code> requires <span class="math inline">\(p_1&gt;p_0\)</span>; use <code>"less"</code> or <code>"two.sided"</code> as appropriate. Exact, score, continuity-corrected score, Wald, and related test definitions are not interchangeable. Specify both <code>test</code> and <code>power_method</code> in the protocol.</p>
+</section>
+<section id="standard-and-guidance-cross-checks" class="level3" data-number="19.2.4">
+<h3 data-number="19.2.4" class="anchored" data-anchor-id="standard-and-guidance-cross-checks"><span class="header-section-number">19.2.4</span> Standard and Guidance Cross-Checks</h3>
+<p>The supplied examples compare the functions with PASS, SAS, and CMDE calculations. Small differences can arise from continuous normal planning versus discrete binomial enumeration, exact quantiles versus rounded handbook quantiles, interval definitions, and integer search rules. For example, a handbook may report a rounded approximate sample size while the package returns the first integer whose actual operating characteristics meet the stated constraint. Report both the selected method and achieved alpha/power.</p>
+</section>
+</section>
+<section id="interpretation-checklist" class="level2" data-number="19.3">
+<h2 data-number="19.3" class="anchored" data-anchor-id="interpretation-checklist"><span class="header-section-number">19.3</span> Interpretation Checklist</h2>
+<ol type="1">
+<li>Define the primary endpoint, analysis unit, expected proportion or difference, allowable error, and tail direction.</li>
+<li>Run sensitivity analyses for uncertain SDs, proportions, prevalence, and agreement limits.</li>
+<li>Select interval and test methods before calculating the sample size.</li>
+<li>Add attrition, invalid-sample, stratification, clustering, and multiple-endpoint allowances outside these functions.</li>
+<li>Save parameters, function calls, outputs, and the software version in the protocol.</li>
+</ol>
+</section>
+<section id="complete-standard-cases" class="level2" data-number="19.4">
+<h2 data-number="19.4" class="anchored" data-anchor-id="complete-standard-cases"><span class="header-section-number">19.4</span> Complete Standard Cases</h2>
+<section id="blandaltman-pass-examples-1-and-2" class="level3" data-number="19.4.1">
+<h3 data-number="19.4.1" class="anchored" data-anchor-id="blandaltman-pass-examples-1-and-2"><span class="header-section-number">19.4.1</span> Bland–Altman: PASS Examples 1 and 2</h3>
+<p>PASS Example 1 fixes mu = 0.5, delta = 7, and conf.level = agree.level = 0.95, then crosses two power levels with three difference SDs. The comparison below keeps every row, including rows that do not agree, and reports both sample-size and achieved-power differences.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ba_manual <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_power =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">2.7</span>, <span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">2.7</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pass_n =</span> <span class="fu">c</span>(<span class="dv">60</span>L, <span class="dv">82</span>L, <span class="dv">118</span>L, <span class="dv">78</span>L, <span class="dv">108</span>L, <span class="dv">156</span>L),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pass_power =</span> <span class="fu">c</span>(<span class="fl">0.8059</span>, <span class="fl">0.8019</span>, <span class="fl">0.8024</span>, <span class="fl">0.9014</span>, <span class="fl">0.9003</span>, <span class="fl">0.9002</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ba_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(ba_manual)),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">sample_size_bland_altman</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">power =</span> ba_manual<span class="sc">$</span>target_power[i],</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> <span class="fl">0.5</span>, <span class="at">sd =</span> ba_manual<span class="sc">$</span>sd[i], <span class="at">delta =</span> <span class="dv">7</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">agree.level =</span> <span class="fl">0.95</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>All parameter combinations in PASS Bland–Altman Example 1</caption>
+<colgroup>
+<col style="width: 52%">
+<col style="width: 20%">
+<col style="width: 12%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.5</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">60.0000</td>
+<td style="text-align: right;">59.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.5</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.8059</td>
+<td style="text-align: right;">0.803126</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.6</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">82.0000</td>
+<td style="text-align: right;">82.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.6</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.8019</td>
+<td style="text-align: right;">0.803997</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.7</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">118.0000</td>
+<td style="text-align: right;">118.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.8 / SD=2.7</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.8024</td>
+<td style="text-align: right;">0.803101</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.5</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">78.0000</td>
+<td style="text-align: right;">78.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.5</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.9014</td>
+<td style="text-align: right;">0.901856</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.6</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">108.0000</td>
+<td style="text-align: right;">108.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.6</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.9003</td>
+<td style="text-align: right;">0.900492</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.7</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">156.0000</td>
+<td style="text-align: right;">156.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS BA Example 1 / power=0.9 / SD=2.7</td>
+<td style="text-align: left;">achieved power</td>
+<td style="text-align: right;">0.9002</td>
+<td style="text-align: right;">0.900235</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For power = 0.8 and SD = 2.5, PASS reports 60, while the Lu noncentral-t formula as listed in the manual gives 59 as the first searched integer meeting the target. PASS does not publish its internal values at n = 59, so this comparison does not attribute the difference to rounding or force the package result upward. The power column is retained as reported: several small-n rows differ by approximately 0.00004–0.0028, with the difference shrinking as n increases.</p>
+<p>PASS Example 2 uses mu = 0.2, SD = 1, and delta = 2.5 to validate the result in the Lu et al.&nbsp;paper. The paper table gives 203, while PASS and ivdtools both obtain 201 when searching for the first integer that reaches the target; this difference is between the paper’s approximate result and an integer search.</p>
+</section>
+<section id="proportion-confidence-intervals-pass-examples-14" class="level3" data-number="19.4.2">
+<h3 data-number="19.4.2" class="anchored" data-anchor-id="proportion-confidence-intervals-pass-examples-14"><span class="header-section-number">19.4.2</span> Proportion Confidence Intervals: PASS Examples 1–4</h3>
+<p>PASS two-sided cases specify total width, whereas the package takes half_width, so the comparison uses half_width = target_width / 2. Example 1 gives three widths and five expected proportions for 15 Clopper–Pearson combinations.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ci_manual <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_width =</span> <span class="fu">c</span>(<span class="fl">0.04</span>, <span class="fl">0.06</span>, <span class="fl">0.10</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ci_manual<span class="sc">$</span>pass_n <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">914</span>L, <span class="dv">1585</span>L, <span class="dv">2065</span>L, <span class="dv">2353</span>L, <span class="dv">2449</span>L,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">417</span>L, <span class="dv">715</span>L, <span class="dv">928</span>L, <span class="dv">1056</span>L, <span class="dv">1098</span>L,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">158</span>L, <span class="dv">264</span>L, <span class="dv">341</span>L, <span class="dv">387</span>L, <span class="dv">402</span>L</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ci_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(ci_manual)),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> ci_manual<span class="sc">$</span>p[i],</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">half_width =</span> ci_manual<span class="sc">$</span>target_width[i] <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"clopper-pearson"</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>The 15 combinations in PASS exact proportion-interval Example 1</caption>
+<colgroup>
+<col style="width: 56%">
+<col style="width: 17%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.1 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">914</td>
+<td style="text-align: right;">914</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.2 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1585</td>
+<td style="text-align: right;">1585</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.3 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">2065</td>
+<td style="text-align: right;">2065</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.4 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">2353</td>
+<td style="text-align: right;">2353</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.5 / width=0.04</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">2449</td>
+<td style="text-align: right;">2449</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.1 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">417</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.2 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">715</td>
+<td style="text-align: right;">715</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.3 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">928</td>
+<td style="text-align: right;">928</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.4 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1056</td>
+<td style="text-align: right;">1056</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.5 / width=0.06</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1098</td>
+<td style="text-align: right;">1098</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.1 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">158</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.2 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: right;">264</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.3 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">341</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS CI Example 1 / p=0.4 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">387</td>
+<td style="text-align: right;">387</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS CI Example 1 / p=0.5 / width=0.10</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">402</td>
+<td style="text-align: right;">402</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The package also enumerates coverage at the final n; this is a diagnostic separate from the width condition used to select n in PASS.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ci_special <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">case =</span> <span class="fu">c</span>(<span class="st">"PASS Example 2"</span>, <span class="st">"PASS Example 3"</span>, <span class="st">"PASS Example 4"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="fu">c</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"one-sided lower limit, Clopper--Pearson"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"two-sided, Wilson continuity correction"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"one-sided upper limit, Clopper--Pearson, p=0"</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pass_n =</span> <span class="fu">c</span>(<span class="dv">25</span>L, <span class="dv">29</span>L, <span class="dv">299</span>L)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>ci_special_results <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fl">0.92</span>, <span class="at">half_width =</span> <span class="fl">0.15104</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"lower"</span>, <span class="at">method =</span> <span class="st">"clopper-pearson"</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fl">0.034483</span>, <span class="at">half_width =</span> <span class="fl">0.1945</span> <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"two.sided"</span>, <span class="at">method =</span> <span class="st">"wilson-cc"</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="dv">0</span>, <span class="at">half_width =</span> <span class="fl">0.01</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">interval =</span> <span class="st">"upper"</span>, <span class="at">method =</span> <span class="st">"clopper-pearson"</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>One-sided, continuity-corrected, and boundary cases from PASS</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PASS Example 2</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS Example 3</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS Example 4</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">299</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Example 3 shows that Wilson continuity correction must use the corrected score-inversion formula; mechanically adding or subtracting 1/(2n) from ordinary Wilson endpoints does not reproduce PASS. Example 4 validates a one-sided exact interval with p = 0, so the package allows expected proportions of 0 and 1 for interval planning.</p>
+</section>
+<section id="one-sample-proportion-target-tests-sas-and-pass-comparison" class="level3" data-number="19.4.3">
+<h3 data-number="19.4.3" class="anchored" data-anchor-id="one-sample-proportion-target-tests-sas-and-pass-comparison"><span class="header-section-number">19.4.3</span> One-Sample Proportion Target Tests: SAS and PASS Comparison</h3>
+<p>The software options map to package parameters as follows.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>SAS/PASS option</th>
+<th>ivdtools parameter</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SAS TEST=Z VAREST=NULL; PASS Z-test using S(P0)</td>
+<td>test = “score”</td>
+<td>p0 variance in the alpha term</td>
+</tr>
+<tr class="even">
+<td>SAS TEST=ADJZ; PASS S(P0) with C.C.</td>
+<td>test = “score-cc”</td>
+<td>S(P0) Z test with continuity correction</td>
+</tr>
+<tr class="odd">
+<td>PASS Z-test using S(Phat)</td>
+<td>test = “wald”</td>
+<td>Wald approximation using p1 variance in the alpha term</td>
+</tr>
+<tr class="even">
+<td>METHOD=NORMAL; Normal Approximation</td>
+<td>power_method = “normal”</td>
+<td>Continuous normal approximation</td>
+</tr>
+<tr class="odd">
+<td>Exact; Binomial Enumeration</td>
+<td>power_method = “binomial”</td>
+<td>Discrete binomial rejection region and power</td>
+</tr>
+</tbody>
+</table>
+<p>The comparison covers the uncorrected and corrected SAS Example 90.2 results, PASS Examples 9 and 11, and six effect sizes from PASS Example 2.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>target_manual <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">case =</span> <span class="fu">c</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SAS 90.2 Z"</span>, <span class="st">"SAS 90.2 ADJZ"</span>, <span class="st">"PASS 9"</span>, <span class="st">"PASS 11"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">"PASS 2, p1="</span>, <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, <span class="fu">seq</span>(<span class="fl">0.55</span>, <span class="fl">0.80</span>, <span class="fl">0.05</span>)))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">c</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"less"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span>, <span class="fu">rep</span>(<span class="st">"two.sided"</span>, <span class="dv">6</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="fu">c</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"score"</span>, <span class="st">"score-cc"</span>, <span class="st">"score"</span>, <span class="st">"wald"</span>, <span class="fu">rep</span>(<span class="st">"score"</span>, <span class="dv">6</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">p0 =</span> <span class="fu">c</span>(<span class="fl">0.30</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.30</span>, <span class="fu">rep</span>(<span class="fl">0.50</span>, <span class="dv">6</span>)),</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.60</span>, <span class="fl">0.50</span>, <span class="fu">seq</span>(<span class="fl">0.55</span>, <span class="fl">0.80</span>, <span class="fl">0.05</span>)),</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_power =</span> <span class="fu">c</span>(<span class="fl">0.80</span>, <span class="fl">0.80</span>, <span class="fl">0.80</span>, <span class="fl">0.80</span>, <span class="fu">rep</span>(<span class="fl">0.90</span>, <span class="dv">6</span>)),</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">manual_n =</span> <span class="fu">c</span>(<span class="dv">119</span>L, <span class="dv">129</span>L, <span class="dv">153</span>L, <span class="dv">50</span>L, <span class="dv">1047</span>L, <span class="dv">259</span>L, <span class="dv">113</span>L, <span class="dv">62</span>L, <span class="dv">38</span>L, <span class="dv">25</span>L),</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">manual_power =</span> <span class="fu">c</span>(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.80000</span>, <span class="fl">0.80100</span>, <span class="fl">0.80125</span>, <span class="fl">0.80743</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.90011</span>, <span class="fl">0.90055</span>, <span class="fl">0.90120</span>, <span class="fl">0.90286</span>, <span class="fl">0.90249</span>, <span class="fl">0.90321</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>target_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(target_manual)),</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">sample_size_proportion</span>(</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">p0 =</span> target_manual<span class="sc">$</span>p0[i], <span class="at">p1 =</span> target_manual<span class="sc">$</span>p1[i],</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> target_manual<span class="sc">$</span>target_power[i],</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternative =</span> target_manual<span class="sc">$</span>alternative[i],</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">test =</span> target_manual<span class="sc">$</span>test[i], <span class="at">power_method =</span> <span class="st">"normal"</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>SAS and PASS one-sample proportion target-test comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">119.00000</td>
+<td style="text-align: right;">119.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80000</td>
+<td style="text-align: right;">0.80032</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">129.00000</td>
+<td style="text-align: right;">129.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80100</td>
+<td style="text-align: right;">0.80094</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">153.00000</td>
+<td style="text-align: right;">153.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80125</td>
+<td style="text-align: right;">0.80125</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">50.00000</td>
+<td style="text-align: right;">50.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.80743</td>
+<td style="text-align: right;">0.80743</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">1047.00000</td>
+<td style="text-align: right;">1047.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90011</td>
+<td style="text-align: right;">0.90011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">259.00000</td>
+<td style="text-align: right;">259.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90055</td>
+<td style="text-align: right;">0.90055</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">113.00000</td>
+<td style="text-align: right;">113.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90120</td>
+<td style="text-align: right;">0.90120</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">62.00000</td>
+<td style="text-align: right;">62.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90286</td>
+<td style="text-align: right;">0.90286</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">38.00000</td>
+<td style="text-align: right;">38.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90249</td>
+<td style="text-align: right;">0.90249</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">25.00000</td>
+<td style="text-align: right;">25.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">normal planning power</td>
+<td style="text-align: right;">0.90321</td>
+<td style="text-align: right;">0.90321</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Check the discrete operating characteristics at the final integer sample size:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Discrete binomial check of continuous-normal planning</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.80363</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 Z</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04776</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.79446</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SAS 90.2 ADJZ</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.03595</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.80944</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 9</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.05280</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.83888</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 11</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.06532</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.89681</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.55</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04789</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.89499</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.60</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04656</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.91362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.65</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.05943</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.91073</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.70</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.05590</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.86830</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.75</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.03355</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">binomial achieved power</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.89088</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PASS 2, p1=0.80</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.04329</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>binomial_power and actual_alpha are additional diagnostics at the final integer n; they do not change the normal-approximation sample size. Wald and some score designs can have actual alpha above 0.05; for example PASS Example 11 is approximately 0.06532. If the protocol requires actual alpha control, use power_method = “binomial”; the resulting n may differ from the manual’s continuous approximation because the design method is different.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>test</th>
+<th>power_method = “normal”</th>
+<th>power_method = “binomial”</th>
+<th>Standard cross-check</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>exact</td>
+<td>Supported; infinite-population planning equals score</td>
+<td>Supported</td>
+<td>PASS Examples 5 and 12 for discrete rejection; Example 13 for normal power</td>
+</tr>
+<tr class="even">
+<td>score</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>SAS 90.2; PASS 2/5/9</td>
+</tr>
+<tr class="odd">
+<td>score-cc</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>SAS 90.2 ADJZ; PASS 5</td>
+</tr>
+<tr class="even">
+<td>wald</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>PASS 5/11</td>
+</tr>
+<tr class="odd">
+<td>wald-cc</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>PASS 5; no separate manual sample-size case</td>
+</tr>
+<tr class="even">
+<td>agresti-coull, jeffreys</td>
+<td>Not supported</td>
+<td>Supported</td>
+<td>No matching PASS one-sample-test procedure found</td>
+</tr>
+</tbody>
+</table>
+<p>The testing layer also reproduces PASS Example 5: six fixed n values across five tests, for 30 discrete power values and 30 actual-alpha values. These validate rejection-region implementation and do not change the public sample-size interface.</p>
+</section>
+<section id="cmde-appendix-case-1-target-value-method-with-clinical-acceptance-criteria" class="level3" data-number="19.4.4">
+<h3 data-number="19.4.4" class="anchored" data-anchor-id="cmde-appendix-case-1-target-value-method-with-clinical-acceptance-criteria"><span class="header-section-number">19.4.4</span> CMDE Appendix Case 1: Target-Value Method with Clinical Acceptance Criteria</h3>
+<p>The appendix uses the normal-approximation formula</p>
+<p><span class="math display">\[
+n=\frac{\left[Z_{1-\alpha/2}\sqrt{P_0(1-P_0)}+
+Z_{1-\beta}\sqrt{P_T(1-P_T)}\right]^2}{(P_T-P_0)^2}.
+\]</span></p>
+<p>The case uses two-sided alpha = 0.05 and power = 1 - beta = 0.80. The acceptable-standard/expected-value pairs are 85%/90% for positive agreement and 90%/94% for negative agreement. Using Z0.975 = 1.96 and Z0.80 = 0.84, the appendix reports 362 positive cases and 388 negative cases, for 750 total; after a 10% dropout allowance, at least 834 participants are enrolled.</p>
+<p>sample_size_proportion(test = “score”, power_method = “normal”) performs the same continuous normal approximation. The package uses unrounded normal quantiles and rounds the theoretical result upward; actual alpha and power are then recalculated separately from the discrete binomial rejection region.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cmde_target_value <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"Positive group"</span>, <span class="st">"Negative group"</span>),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p0 =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.90</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.94</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cmde_n =</span> <span class="fu">c</span>(<span class="dv">362</span>L, <span class="dv">388</span>L)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>cmde_target_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq_len</span>(<span class="fu">nrow</span>(cmde_target_value)),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_size_proportion</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">p0 =</span> cmde_target_value<span class="sc">$</span>p0[i],</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">p1 =</span> cmde_target_value<span class="sc">$</span>p1[i],</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">alternative =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">test =</span> <span class="st">"score"</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">power_method =</span> <span class="st">"normal"</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>CMDE target-value method: published and ivdtools normal-approximation results</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMDE target-value / Positive group</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">362</td>
+<td style="text-align: right;">363.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE target-value / Positive group</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.05552</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CMDE target-value / Negative group</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">388</td>
+<td style="text-align: right;">388.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE target-value / Negative group</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.05094</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CMDE target-value / Total</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">750</td>
+<td style="text-align: right;">751.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE target-value / Total</td>
+<td style="text-align: left;">actual alpha</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The positive-group formula value is 362.7756, so the smallest integer meeting the target power is 363; the appendix writes 362 because it uses approximate quantiles and ordinary rounding. actual_alpha is a diagnostic obtained by placing the continuous-approximation sample size back into the discrete rejection region; it is not part of the CMDE formula’s sample-size search.</p>
+</section>
+<section id="cmde-appendix-case-2-allowable-error-method-requiring-ci-precision" class="level3" data-number="19.4.5">
+<h3 data-number="19.4.5" class="anchored" data-anchor-id="cmde-appendix-case-2-allowable-error-method-requiring-ci-precision"><span class="header-section-number">19.4.5</span> CMDE Appendix Case 2: Allowable Error Method Requiring CI Precision</h3>
+<p>The appendix formula is</p>
+<p><span class="math display">\[
+n=\frac{Z_{1-\alpha/2}^2P(1-P)}{\Delta^2}.
+\]</span></p>
+<p>The expected sensitivity is 85%, the expected specificity is 90%, and the allowable error is Delta = 0.05. This corresponds to sample_size_proportion_ci(method = “wald”). The package uses the exact qnorm(0.975) and rounds upward to the smallest integer satisfying the half-width requirement.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cmde_ci_precision <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"Positive group (sensitivity)"</span>, <span class="st">"Negative group (specificity)"</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.90</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cmde_n =</span> <span class="fu">c</span>(<span class="dv">196</span>L, <span class="dv">138</span>L)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>cmde_ci_precision<span class="sc">$</span>ivdtools_n <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  cmde_ci_precision<span class="sc">$</span>p,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(p) <span class="fu">sample_size_proportion_ci</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> p, <span class="at">half_width =</span> <span class="fl">0.05</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">method =</span> <span class="st">"wald"</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  )[[<span class="st">"n"</span>]],</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">integer</span>(<span class="dv">1</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>CMDE allowable-error method and 10% addition</caption>
+<colgroup>
+<col style="width: 63%">
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMDE allowable-error / Positive group (sensitivity)</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">196</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE allowable-error / Negative group (specificity)</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">139</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CMDE allowable-error / Total</td>
+<td style="text-align: left;">sample size</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">335</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMDE allowable-error / 10% addition</td>
+<td style="text-align: left;">enrolment</td>
+<td style="text-align: right;">371</td>
+<td style="text-align: right;">373</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The package gives 139 for the negative group while the appendix reports 138. The difference has two causes: the appendix substitutes the approximate value 1.96 and reports 138.30 as 138, whereas the package uses the exact quantile and rounds upward. The appendix then reports 371 after adding 10% to 334 cases; if “at least enroll” is handled conservatively, the package’s 335 analyzable cases require ceil(335 / 0.90) = 373. This is a quantile-precision and integer-rounding difference, not a difference in the CI method.</p>
+<p>When the expected proportion is close to 100%, the guidance also warns that the normal approximation may be unsuitable. Use sample_size_proportion_ci(method = “clopper-pearson”) or another method for sensitivity analysis, but label the result as a supplementary analysis under a different interval method rather than as a recalculation of the appendix’s Wald formula.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./018-瓶间差.html" class="pagination-link" aria-label="Bottle-to-Bottle Variation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./020-异常值与正态检验.html" class="pagination-link" aria-label="Outlier and Normality Tests">
+        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

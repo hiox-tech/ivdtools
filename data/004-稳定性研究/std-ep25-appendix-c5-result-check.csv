@@ -1,0 +1,10 @@
+case,statistic,standard
+with_outlier,cook_distance_day_61,1.08
+with_outlier,change_333,-9.28
+with_outlier,change_333_upper_CL,-18.50
+with_outlier,change_370,-10.32
+with_outlier,change_370_upper_CL,-20.55
+without_day_61,change_333,-3.68
+without_day_61,change_333_upper_CL,-4.38
+without_day_61,change_370,-4.09
+without_day_61,change_370_upper_CL,-4.87

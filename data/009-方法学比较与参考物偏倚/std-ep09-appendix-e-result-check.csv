@@ -1,0 +1,11 @@
+iteration,statistic,standard,tolerance,status
+1,R,6.09,0.005,对应
+2,R,3.01,0.005,对应
+3,R,2.78,0.005,对应
+4,R,2.75,0.005,对应
+5,R,2.14,0.005,对应
+1,critical,3.75,0.005,对应
+2,critical,3.75,0.005,对应
+3,critical,3.75,0.005,对应
+4,critical,3.74,0.005,对应
+5,critical,3.74,0.005,对应

@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; ROC Curves and Multivariate Regression – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./013-精密度分析.html" rel="next">
+<link href="./011-ROC曲线与cutoff.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./012-ROC曲线与多元回归.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#main-functions" id="toc-main-functions" class="nav-link active" data-scroll-target="#main-functions"><span class="header-section-number">12.1</span> Main Functions</a>
+  <ul>
+  <li><a href="#multivariate-logistic-regression-with-mlr" id="toc-multivariate-logistic-regression-with-mlr" class="nav-link" data-scroll-target="#multivariate-logistic-regression-with-mlr"><span class="header-section-number">12.1.1</span> Multivariate Logistic Regression with <code>mlr()</code></a></li>
+  <li><a href="#paired-auc-comparison-with-auc_compare" id="toc-paired-auc-comparison-with-auc_compare" class="nav-link" data-scroll-target="#paired-auc-comparison-with-auc_compare"><span class="header-section-number">12.1.2</span> Paired AUC Comparison with <code>auc_compare()</code></a></li>
+  <li><a href="#probability-prediction-with-predict" id="toc-probability-prediction-with-predict" class="nav-link" data-scroll-target="#probability-prediction-with-predict"><span class="header-section-number">12.1.3</span> Probability Prediction with <code>predict()</code></a></li>
+  <li><a href="#roc-plotting-and-summary" id="toc-roc-plotting-and-summary" class="nav-link" data-scroll-target="#roc-plotting-and-summary"><span class="header-section-number">12.1.4</span> ROC Plotting and Summary</a></li>
+  </ul></li>
+  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">12.2</span> Analysis Examples</a>
+  <ul>
+  <li><a href="#teaching-data-a-joint-model-with-two-markers" id="toc-teaching-data-a-joint-model-with-two-markers" class="nav-link" data-scroll-target="#teaching-data-a-joint-model-with-two-markers"><span class="header-section-number">12.2.1</span> Teaching Data: A Joint Model with Two Markers</a></li>
+  <li><a href="#clsi-ep24-a2-appendix-d-two-paired-rocs" id="toc-clsi-ep24-a2-appendix-d-two-paired-rocs" class="nav-link" data-scroll-target="#clsi-ep24-a2-appendix-d-two-paired-rocs"><span class="header-section-number">12.2.2</span> CLSI EP24-A2 Appendix D: Two Paired ROCs</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Building on single-marker ROC analysis, this chapter demonstrates how to fit a binomial logistic regression with multiple markers, calculate joint predicted probabilities, plot a training-set ROC, and predict new samples. A joint model must be evaluated for discrimination, calibration, clinical utility, and transportability; an increase in AUC is only one aspect.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Scope of Use">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Scope of Use
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>mlr()</code> fits an unpenalized, main-effects logistic regression for the supplied variables. The current implementation does not perform variable selection, automatically construct nonlinear terms, search for interactions, impute missing values, diagnose collinearity, perform internal validation, assess calibration, create decision curves, conduct external validation, or update models.</p>
+<p>The joint AUC reported by <code>mlr()</code> uses the same data that fitted the model and therefore represents apparent performance. Its Hanley–McNeil interval also does not correct for optimism from model fitting and variable selection. Intervals from <code>predict()</code> are confidence intervals for the mean predicted probability due to model-coefficient uncertainty, not prediction intervals for future individual outcomes.</p>
+</div>
+</div>
+<p>The multiple-marker workflow is:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["Common cases&lt;br/&gt;Multiple quantitative markers"] --&gt; B["roc() → auc()&lt;br/&gt;Single-marker baseline"]
+    B --&gt; C["mlr()&lt;br/&gt;Joint logistic model"]
+    B --&gt; G["auc_compare()&lt;br/&gt;Paired AUC comparison"]
+    C --&gt; G
+    C --&gt; D["Coefficients and training-set AUC"]
+    C --&gt; E["predict()&lt;br/&gt;New-sample probabilities"]
+    D --&gt; F["Independent validation&lt;br/&gt;Discrimination, calibration, utility"]
+    E --&gt; F
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B,C,G,D,E process
+    class F output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="main-functions" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="main-functions"><span class="header-section-number">12.1</span> Main Functions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Main purpose</th>
+<th>Main result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>roc()</code></td>
+<td>Build a common complete-case object from multiple markers</td>
+<td>Marker values, reference state, and single-marker directions</td>
+</tr>
+<tr class="even">
+<td><code>auc()</code></td>
+<td>Establish a single-marker performance baseline</td>
+<td>AUC, Hanley–McNeil SE, and CI for each marker</td>
+</tr>
+<tr class="odd">
+<td><code>mlr()</code></td>
+<td>Fit a named multivariate logistic model</td>
+<td>Model, coefficients, predicted probabilities, and training ROC/AUC</td>
+</tr>
+<tr class="even">
+<td><code>auc_compare()</code></td>
+<td>Compare two ROC curves from the same subjects</td>
+<td>AUC difference, SE, CI, z, and P value</td>
+</tr>
+<tr class="odd">
+<td><code>predict()</code></td>
+<td>Predict training data or new data with a saved model</td>
+<td>Probability, SE, CI, and fixed 0.5 classification</td>
+</tr>
+<tr class="even">
+<td><code>plot()</code></td>
+<td>Overlay original-marker and joint-model ROCs</td>
+<td><code>ggplot</code> figure</td>
+</tr>
+<tr class="odd">
+<td><code>summary()</code></td>
+<td>Summarize all analyses already run</td>
+<td>Single-marker and all named-model results</td>
+</tr>
+</tbody>
+</table>
+<p>The complete arguments, direction rules, AUC, and interval formulas for <code>roc()</code> and <code>auc()</code> are given in the previous chapter. This chapter focuses on the joint-model interface.</p>
+<section id="multivariate-logistic-regression-with-mlr" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="multivariate-logistic-regression-with-mlr"><span class="header-section-number">12.1.1</span> Multivariate Logistic Regression with <code>mlr()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mlr</span>(x, <span class="at">cols =</span> <span class="cn">NULL</span>, <span class="at">name =</span> <span class="cn">NULL</span>, ...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>A <code>roc</code> object on which <code>auc()</code> has already been run.</td>
+</tr>
+<tr class="even">
+<td><code>cols</code></td>
+<td>Marker columns to enter the model; <code>NULL</code> uses all markers in the object.</td>
+</tr>
+<tr class="odd">
+<td><code>name</code></td>
+<td>Unique model name; if omitted, names are generated as <code>MLR01</code>, <code>MLR02</code>, and so on.</td>
+</tr>
+<tr class="even">
+<td><code>...</code></td>
+<td>Other arguments passed to <code>stats::glm()</code>, such as control options; the formula and binomial family are fixed by the function.</td>
+</tr>
+</tbody>
+</table>
+<p>Let <span class="math inline">\(Y_i\in\{0,1\}\)</span>. After selecting <span class="math inline">\(p\)</span> markers, the current function fits</p>
+<p><span class="math display">\[
+\eta_i=\beta_0+\sum_{j=1}^{p}\beta_jx_{ij},
+\qquad
+\pi_i=P(Y_i=1\mid\mathbf x_i)
+=\frac{\exp(\eta_i)}{1+\exp(\eta_i)}.
+\]</span></p>
+<p>Coefficients are estimated by binomial maximum likelihood. Holding other variables constant, a one-unit increase in <span class="math inline">\(x_j\)</span> multiplies the odds of a positive outcome by</p>
+<p><span class="math display">\[
+\operatorname{OR}_j=\exp(\beta_j).
+\]</span></p>
+<p>This is not a risk ratio and does not represent a causal effect. If variables are measured in very small or very large units, rescale them before modeling according to the prespecified plan so that coefficients have interpretable units.</p>
+<p>The formula is fixed as <code>reference_binary ~ x1 + x2 + ...</code>; squared terms, splines, and interactions are not added automatically. <code>roc()</code> has already established common complete cases using all initial <code>cols</code>, so a submodel from <code>mlr(cols=...)</code> still uses the same analysis set. This helps compare nested marker combinations but is not a substitute for missing-data handling.</p>
+<p>After fitting, an empirical ROC is constructed from the fitted probabilities <span class="math inline">\(\widehat\pi_i\)</span> in the same cases, with direction fixed at <code>geq</code> so that larger probabilities indicate a greater tendency to be positive. The joint AUC SE and 95% CI continue to use the single-curve Hanley–McNeil formula from the previous chapter.</p>
+<p>Each model is stored in <code>mlr_results[[name]]</code>. Main fields are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>formula</code>, <code>cols</code></td>
+<td>Actual formula and predictors</td>
+</tr>
+<tr class="even">
+<td><code>fit</code>, <code>fit_summary</code></td>
+<td><code>glm</code> object and its summary</td>
+</tr>
+<tr class="odd">
+<td><code>predicted</code></td>
+<td>Fitted probabilities in the training set</td>
+</tr>
+<tr class="even">
+<td><code>auc</code>, <code>auc_se</code>, <code>ci_lower</code>, <code>ci_upper</code></td>
+<td>Training-set AUC and approximate interval</td>
+</tr>
+<tr class="odd">
+<td><code>roc_curve</code></td>
+<td>Complete cutoff metric table for the training probabilities</td>
+</tr>
+</tbody>
+</table>
+<p>The updated <code>roc</code> object is returned and the new model is stored in <code>mlr_results[[name]]</code>.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="An AUC Increase Does Not Validate a Model">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>An AUC Increase Does Not Validate a Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The single-marker and joint-model ROCs come from the same subjects and are correlated; use <code>auc_compare()</code> for a paired comparison. However, the joint probabilities are fitted from the same outcome data. EP24 and DeLong treat input scores as fixed and do not correct for model fitting, variable selection, or overfitting optimism. Therefore a paired P value cannot replace internal validation, independent validation, calibration, or assessment of clinical net benefit.</p>
+</div>
+</div>
+</section>
+<section id="paired-auc-comparison-with-auc_compare" class="level3" data-number="12.1.2">
+<h3 data-number="12.1.2" class="anchored" data-anchor-id="paired-auc-comparison-with-auc_compare"><span class="header-section-number">12.1.2</span> Paired AUC Comparison with <code>auc_compare()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc_compare</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  curves,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"ep24"</span>, <span class="st">"delong"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">rating_method =</span> <span class="fu">c</span>(<span class="st">"pearson"</span>, <span class="st">"kendall"</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="cn">NULL</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>The same <code>roc</code> object with the required <code>auc()</code> or <code>mlr()</code> analysis completed.</td>
+</tr>
+<tr class="even">
+<td><code>curves</code></td>
+<td>Exactly two curve names: original markers, named MLR models, or one of each. The difference is first minus second.</td>
+</tr>
+<tr class="odd">
+<td><code>method</code></td>
+<td>Default <code>"ep24"</code>, the EP24-A2 Hanley–McNeil paired approximation; <code>"delong"</code> uses nonparametric paired covariance.</td>
+</tr>
+<tr class="even">
+<td><code>conf.level</code></td>
+<td>Confidence level for the AUC-difference interval.</td>
+</tr>
+<tr class="odd">
+<td><code>rating_method</code></td>
+<td>Within-group score-correlation method for EP24; Pearson is the default for continuous laboratory results and Kendall can be used for ordinal ratings. DeLong does not use this argument.</td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td>Optional result name; if omitted, it is generated from the two curve names and method.</td>
+</tr>
+</tbody>
+</table>
+<p>The function accepts curves only from the same <code>roc</code> object, ensuring fully paired positive and negative states and complete cases. The result is stored in <code>auc_comparisons[[name]]</code> and contains both AUCs, their SEs, the difference, difference SE, confidence interval, z statistic, P value, and method-specific correlation or covariance information. <code>summary()</code> prints all saved comparisons.</p>
+<p>The EP24 method first calculates the correlation between the two scores within the positive and negative groups, averages the two correlations, and combines that value with the average AUC to linearly interpolate the correlation between the two AUC estimates from EP24-A2 Table 5. If the coordinates fall outside the table range, the nearest boundary is used and the result and console output are marked explicitly. DeLong directly estimates the covariance of the two AUCs from paired rank contributions in the positive and negative groups and does not use the EP24 lookup approximation.</p>
+</section>
+<section id="probability-prediction-with-predict" class="level3" data-number="12.1.3">
+<h3 data-number="12.1.3" class="anchored" data-anchor-id="probability-prediction-with-predict"><span class="header-section-number">12.1.3</span> Probability Prediction with <code>predict()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  object,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mlr =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_map =</span> <span class="cn">NULL</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>object</code></td>
+<td>A <code>roc</code> object containing at least one <code>mlr()</code> result.</td>
+</tr>
+<tr class="even">
+<td><code>mlr</code></td>
+<td>Model name. It may be omitted when the object contains one model and is required when it contains multiple models.</td>
+</tr>
+<tr class="odd">
+<td><code>newdata</code></td>
+<td>New data frame; <code>NULL</code> returns fitted results for the common complete-case training data.</td>
+</tr>
+<tr class="even">
+<td><code>column_map</code></td>
+<td>Named character vector where names are new-data columns and values are training-model columns, such as <code>c(new_x1="x1")</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>For a new-sample design vector <span class="math inline">\(\mathbf x_0=(1,x_{01},\ldots,x_{0p})^\mathsf T\)</span>, the link-scale prediction and its standard error are</p>
+<p><span class="math display">\[
+\widehat\eta_0=\mathbf x_0^\mathsf T\widehat{\boldsymbol\beta},
+\qquad
+\operatorname{SE}(\widehat\eta_0)
+=\sqrt{\mathbf x_0^\mathsf T
+\widehat{\operatorname{Cov}}(\widehat{\boldsymbol\beta})\mathbf x_0}.
+\]</span></p>
+<p>The function first forms, on the logit scale,</p>
+<p><span class="math display">\[
+\widehat\eta_0\pm z_{0.975}\operatorname{SE}(\widehat\eta_0),
+\]</span></p>
+<p>and transforms the bounds back to the probability scale with <span class="math inline">\(\operatorname{logit}^{-1}\)</span> to obtain <code>ci_lower</code> and <code>ci_upper</code>. The probability-scale <code>pred_se</code> uses the delta method:</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat\pi_0)
+\approx \operatorname{SE}(\widehat\eta_0)
+\widehat\pi_0(1-\widehat\pi_0).
+\]</span></p>
+<p><code>pred_class</code> is fixed at <span class="math inline">\(I(\widehat\pi_0\ge0.5)\)</span>; the current interface cannot change this probability threshold. If a study protocol uses another decision threshold, classify <code>pred_prob</code> separately according to that prespecified rule and record it explicitly.</p>
+<p>The function returns a data frame containing input row identifiers, <code>pred_prob</code>, <code>pred_se</code>, <code>ci_lower</code>, <code>ci_upper</code>, and <code>pred_class</code>.</p>
+</section>
+<section id="roc-plotting-and-summary" class="level3" data-number="12.1.4">
+<h3 data-number="12.1.4" class="anchored" data-anchor-id="roc-plotting-and-summary"><span class="header-section-number">12.1.4</span> ROC Plotting and Summary</h3>
+<p><code>plot()</code> invisibly returns a <code>ggplot</code> object; <code>summary()</code> prints and invisibly returns the input <code>roc</code> object.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="at">curves =</span> <span class="cn">NULL</span>, <span class="at">cutpoint =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"roc"</span>, <span class="st">"cutoff"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>curves</code> uses the same curve namespace as <code>auc_compare()</code>: it can contain original marker names or MLR model names. <code>plot(x, curves="all")</code> draws all original markers and saved models; <code>plot(x, curves=c("x1", "combined"))</code> can mix them, while specifying only <code>"combined"</code> draws only that model. <code>curves=NULL</code> retains the default of plotting all original markers. <code>type="cutoff"</code> supports only one original marker in <code>curves</code>; cutoff plots for multivariate model probabilities are not currently supported. <code>cutpoint</code> labels only the selected original marker. <code>summary()</code> prints all saved models and <code>auc_compare()</code> results.</p>
+</section>
+</section>
+<section id="analysis-examples" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">12.2</span> Analysis Examples</h2>
+<section id="teaching-data-a-joint-model-with-two-markers" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="teaching-data-a-joint-model-with-two-markers"><span class="header-section-number">12.2.1</span> Teaching Data: A Joint Model with Two Markers</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mlr_dat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/012-ROC曲线与多元回归/roc-multimarker.csv"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mlr_dat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  sid ref        x1        x2
+1   1   0  5.510540  8.298655
+2   2   0  3.188811 12.942968
+3   3   0  8.126533 12.351778
+4   4   0  6.159571 16.105370
+5   5   0 11.118763 11.867919
+6   6   0  2.736035 19.585368</code></pre>
+</div>
+</div>
+<p>First calculate the AUC of both original markers on the same common-case set:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">roc</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  mlr_dat, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"ref"</span>, <span class="at">id =</span> <span class="st">"sid"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">auc</span>(mlr_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+AUC Table
+  Column               AUC          95% CI  Direction
+  ------------------------------------------------------------ 
+  x1                0.9219  [0.8712, 0.9727]       geq
+  x2                0.8322  [0.7587, 0.9057]       geq</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mlr_fit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROC Analysis
+  Data class:        data.frame
+  Total rows:        120
+  Complete cases:    120
+  Reference:         ref (binary)
+  Reference coding:  binary (0/1)
+  Positive / Neg:    60 / 60
+  Evaluation cols:   2  (x1, x2)
+  Duplicate IDs:     none
+
+Analysis slots:
+    [ ] Describe
+    [x] AUC
+    [ ] Paired AUC comparison
+    [ ] Cutoff
+    [ ] MLR</code></pre>
+</div>
+</div>
+<p>The AUCs of <code>x1</code> and <code>x2</code> are 0.9219 and 0.8322, respectively; both directions are <code>geq</code>. Next fit the prespecified main-effects model with two markers:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">mlr</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>), <span class="at">name =</span> <span class="st">"combined"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Multivariate Logistic Regression (combined)
+  -------------------------------------------------- 
+  Formula: reference_binary ~ x1 + x2
+  n = 120  (positive = 60, negative = 60)
+  AUC = 0.9642  [0.9298, 0.9985]
+
+  Coefficients:
+                   Estimate Std. Error   z value     Pr(&gt;|z|) 
+    (Intercept) -13.6586717  2.7569949 -4.954188 7.263286e-07 
+    x1            0.7638502  0.1549103  4.930919 8.184356e-07 
+    x2            0.3949617  0.1064673  3.709700 2.075049e-04 
+
+  * Note: AUC is evaluated on the same data used for fitting;
+    the estimate may be optimistic.</code></pre>
+</div>
+</div>
+<p>The fitted equation is</p>
+<p><span class="math display">\[
+\operatorname{logit}(\widehat\pi)
+=-13.6587+0.76385x_1+0.39496x_2.
+\]</span></p>
+<p>Holding the other marker constant, a one-unit increase in <code>x1</code> and <code>x2</code> multiplies the adjusted odds by approximately <span class="math inline">\(\exp(0.76385)=2.146\)</span> and <span class="math inline">\(\exp(0.39496)=1.484\)</span>, respectively. The exponentiated intercept usually has no practical interpretation because <span class="math inline">\(x_1=x_2=0\)</span> may lie outside the data range.</p>
+<p>The joint model has a training-set AUC of 0.9642 and a 95% CI of 0.9298–0.9985. Compare the joint model with each original marker using EP24 paired comparisons:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">auc_compare</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">curves =</span> <span class="fu">c</span>(<span class="st">"combined"</span>, <span class="st">"x1"</span>), <span class="at">method =</span> <span class="st">"ep24"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Paired AUC Comparison
+  Curves: combined - x1
+  Method: EP24-A2 Hanley-McNeil paired approximation
+  Subjects: 120 (positive = 60, negative = 60)
+  AUC combined: 0.964167
+  AUC x1: 0.921944
+  Difference: 0.042222
+  SE difference: 0.022111
+  95.0% CI: [-0.001115, 0.085559]
+  z = 1.909555
+  p-value: 0.0561906
+  Mean within-group rating correlation: 0.660442
+  EP24 area correlation: 0.538934
+  Note: fitted training probabilities are treated as fixed scores;
+        model optimism and fitting uncertainty are not corrected.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mlr_fit <span class="ot">&lt;-</span> <span class="fu">auc_compare</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">curves =</span> <span class="fu">c</span>(<span class="st">"combined"</span>, <span class="st">"x2"</span>), <span class="at">method =</span> <span class="st">"ep24"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Paired AUC Comparison
+  Curves: combined - x2
+  Method: EP24-A2 Hanley-McNeil paired approximation
+  Subjects: 120 (positive = 60, negative = 60)
+  AUC combined: 0.964167
+  AUC x2: 0.832222
+  Difference: 0.131944
+  SE difference: 0.035277
+  95.0% CI: [0.062803, 0.201085]
+  z = 3.740275
+  p-value: 0.000183819
+  Mean within-group rating correlation: 0.445998
+  EP24 area correlation: 0.357226
+  Note: fitted training probabilities are treated as fixed scores;
+        model optimism and fitting uncertainty are not corrected.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Paired AUC comparison of the joint training model and single markers</caption>
+<colgroup>
+<col style="width: 19%">
+<col style="width: 21%">
+<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">comparison</th>
+<th style="text-align: right;">auc_difference</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">CI_lower</th>
+<th style="text-align: right;">CI_upper</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">P_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">combined - x1</td>
+<td style="text-align: right;">0.04222</td>
+<td style="text-align: right;">0.02211</td>
+<td style="text-align: right;">-0.00111</td>
+<td style="text-align: right;">0.08556</td>
+<td style="text-align: right;">1.90955</td>
+<td style="text-align: right;">0.05619</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">combined - x2</td>
+<td style="text-align: right;">0.13194</td>
+<td style="text-align: right;">0.03528</td>
+<td style="text-align: right;">0.06280</td>
+<td style="text-align: right;">0.20109</td>
+<td style="text-align: right;">3.74028</td>
+<td style="text-align: right;">0.00018</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>These comparisons address correlation between curves caused by the same subjects. However, the joint probabilities are still fitted from these 120 cases; the paired test does not correct for model-fitting uncertainty or optimism and does not evaluate a validation set. The result cannot be described as confirmed clinical benefit.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mlr_fit, <span class="at">curves =</span> <span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="012-ROC曲线与多元回归_files/figure-html/teaching-mlr-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Predict new samples and map column names:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>new_patients <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x1 =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">12</span>),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x2 =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">21</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>new_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  mlr_fit, <span class="at">mlr =</span> <span class="st">"combined"</span>, <span class="at">newdata =</span> new_patients</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>new_predictions</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x1 x2 pred_prob    pred_se   ci_lower  ci_upper pred_class
+1  7 16 0.1200103 0.05313595 0.04840777 0.2677265          0
+2 12 21 0.9781557 0.01751040 0.89984790 0.9955390          1</code></pre>
+</div>
+</div>
+<p>The predicted probabilities for the two cases are 0.1200 and 0.9782, displayed as 0 and 1 using the built-in 0.5 threshold. The interval reflects parameter uncertainty for the fitted mean probability; it does not include the future individual’s binomial outcome randomness, model error, or population shift.</p>
+<p>When new data use different column names, the mapping direction is “new column name = training column name”:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>renamed_patients <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker_a =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">12</span>),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker_b =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">21</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>mapped_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  mlr_fit,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mlr =</span> <span class="st">"combined"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> renamed_patients,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_map =</span> <span class="fu">c</span>(<span class="at">marker_a =</span> <span class="st">"x1"</span>, <span class="at">marker_b =</span> <span class="st">"x2"</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="clsi-ep24-a2-appendix-d-two-paired-rocs" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="clsi-ep24-a2-appendix-d-two-paired-rocs"><span class="header-section-number">12.2.2</span> CLSI EP24-A2 Appendix D: Two Paired ROCs</h3>
+<p>OxLDL and LDL in EP24 Appendix D were measured in the same 50 subjects, so their AUCs are correlated. First calculate both empirical AUCs and single-curve Hanley–McNeil intervals in one <code>roc</code> object, then call <code>auc_compare()</code>; common complete cases preserve the pairing.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ep24_pair <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/公共/std-ep24-appendix-d.csv"</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit <span class="ot">&lt;-</span> <span class="fu">roc</span>(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  ep24_pair, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"oxldl"</span>, <span class="st">"ldl"</span>),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"diagnosis"</span>, <span class="at">id =</span> <span class="st">"id"</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit <span class="ot">&lt;-</span> <span class="fu">auc</span>(ep24_pair_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+AUC Table
+  Column               AUC          95% CI  Direction
+  ------------------------------------------------------------ 
+  oxldl             0.7995  [0.6777, 0.9213]       geq
+  ldl               0.5617  [0.4012, 0.7222]       geq</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROC Analysis
+  Data class:        data.frame
+  Total rows:        50
+  Complete cases:    50
+  Reference:         diagnosis (binary)
+  Reference coding:  binary (0/1)
+  Positive / Neg:    28 / 22
+  Evaluation cols:   2  (oxldl, ldl)
+  Duplicate IDs:     none
+
+Analysis slots:
+    [ ] Describe
+    [x] AUC
+    [ ] Paired AUC comparison
+    [ ] Cutoff
+    [ ] MLR</code></pre>
+</div>
+</div>
+<p>The default EP24 method uses standard equation (6):</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat A_1-\widehat A_2)
+=\sqrt{\operatorname{SE}_1^2+\operatorname{SE}_2^2
+-2r\operatorname{SE}_1\operatorname{SE}_2},
+\]</span></p>
+<p>where <span class="math inline">\(r\)</span> is the AUC correlation interpolated from EP24 Table 5 using the average within-group score correlation and average AUC. DeLong does not use this lookup approximation; it estimates the covariance from paired rank contributions for each positive and negative subject.</p>
+<p>Define</p>
+<p><span class="math display">\[
+\phi(x,y)=I(x&gt;y)+\frac12I(x=y).
+\]</span></p>
+<p>For marker <span class="math inline">\(k\)</span>, with <span class="math inline">\(m\)</span> positives and <span class="math inline">\(n\)</span> negatives, construct</p>
+<p><span class="math display">\[
+V_{10,i}^{(k)}=\frac1n\sum_{j=1}^{n}\phi(X_{ki},Y_{kj}),
+\qquad
+V_{01,j}^{(k)}=\frac1m\sum_{i=1}^{m}\phi(X_{ki},Y_{kj}).
+\]</span></p>
+<p>The DeLong covariance estimate for the two-marker AUC vector is</p>
+<p><span class="math display">\[
+\widehat{\boldsymbol\Sigma}
+=\frac{\operatorname{Cov}(\mathbf V_{10})}{m}
++\frac{\operatorname{Cov}(\mathbf V_{01})}{n}.
+\]</span></p>
+<p>Let <span class="math inline">\(\mathbf c=(1,-1)^\mathsf T\)</span>. The standard error of <span class="math inline">\(\widehat\Delta=\widehat A_{\mathrm{OxLDL}}-\widehat A_{\mathrm{LDL}}\)</span> is</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat\Delta)
+=\sqrt{\mathbf c^\mathsf T\widehat{\boldsymbol\Sigma}\mathbf c}.
+\]</span></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ep24_pair_fit <span class="ot">&lt;-</span> <span class="fu">auc_compare</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  ep24_pair_fit,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">curves =</span> <span class="fu">c</span>(<span class="st">"oxldl"</span>, <span class="st">"ldl"</span>),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ep24"</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Paired AUC Comparison
+  Curves: oxldl - ldl
+  Method: EP24-A2 Hanley-McNeil paired approximation
+  Subjects: 50 (positive = 28, negative = 22)
+  AUC oxldl: 0.799513
+  AUC ldl: 0.561688
+  Difference: 0.237825
+  SE difference: 0.075261
+  95.0% CI: [0.090315, 0.385334]
+  z = 3.159979
+  p-value: 0.0015778
+  Mean within-group rating correlation: 0.511818
+  EP24 area correlation: 0.481818
+  Table lookup used bounded coordinates: correlation 0.5118, AUC 0.7000</code></pre>
+</div>
+</div>
+<p>Compare live values with the EP24 published values in the check table:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP24-A2 Appendix D: single-curve and paired-difference comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard position</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard result</th>
+<th style="text-align: right;">ivdtools result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">AUC</td>
+<td style="text-align: right;">0.8000</td>
+<td style="text-align: right;">0.799513</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">SE</td>
+<td style="text-align: right;">0.0620</td>
+<td style="text-align: right;">0.062140</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">CI_lower</td>
+<td style="text-align: right;">0.6800</td>
+<td style="text-align: right;">0.677718</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OxLDL</td>
+<td style="text-align: left;">CI_upper</td>
+<td style="text-align: right;">0.9200</td>
+<td style="text-align: right;">0.921308</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">AUC</td>
+<td style="text-align: right;">0.5600</td>
+<td style="text-align: right;">0.561688</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">SE</td>
+<td style="text-align: right;">0.0820</td>
+<td style="text-align: right;">0.081895</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">CI_lower</td>
+<td style="text-align: right;">0.4000</td>
+<td style="text-align: right;">0.401174</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LDL</td>
+<td style="text-align: left;">CI_upper</td>
+<td style="text-align: right;">0.7200</td>
+<td style="text-align: right;">0.722203</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">AUC_difference</td>
+<td style="text-align: right;">0.2400</td>
+<td style="text-align: right;">0.237825</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">SE</td>
+<td style="text-align: right;">0.0750</td>
+<td style="text-align: right;">0.075261</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">CI_lower</td>
+<td style="text-align: right;">0.0900</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">CI_upper</td>
+<td style="text-align: right;">0.3900</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">z</td>
+<td style="text-align: right;">3.1600</td>
+<td style="text-align: right;">3.159979</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;">p_value</td>
+<td style="text-align: right;">0.0016</td>
+<td style="text-align: right;">0.001578</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./011-ROC曲线与cutoff.html" class="pagination-link" aria-label="ROC Curves and Cutoff Determination">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./013-精密度分析.html" class="pagination-link" aria-label="Precision Analysis">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

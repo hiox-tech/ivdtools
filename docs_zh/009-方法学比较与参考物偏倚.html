@@ -1,0 +1,3597 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; 方法学比较与参考物偏倚 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./010-质量控制.html" rel="next">
+<link href="./008-稀释回收与HOOK.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./009-方法学比较与参考物偏倚.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">9.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#分析流程" id="toc-分析流程" class="nav-link" data-scroll-target="#分析流程"><span class="header-section-number">9.1.1</span> 分析流程：</a></li>
+  <li><a href="#重复测量汇总-replicate_to_mean" id="toc-重复测量汇总-replicate_to_mean" class="nav-link" data-scroll-target="#重复测量汇总-replicate_to_mean"><span class="header-section-number">9.1.2</span> 重复测量汇总 <code>replicate_to_mean()</code></a></li>
+  <li><a href="#按预设界值拆分数据-split_by_cutpoints" id="toc-按预设界值拆分数据-split_by_cutpoints" class="nav-link" data-scroll-target="#按预设界值拆分数据-split_by_cutpoints"><span class="header-section-number">9.1.3</span> 按预设界值拆分数据 <code>split_by_cutpoints()</code></a></li>
+  <li><a href="#建立方法学比较对象-mcr" id="toc-建立方法学比较对象-mcr" class="nav-link" data-scroll-target="#建立方法学比较对象-mcr"><span class="header-section-number">9.1.4</span> 建立方法学比较对象 <code>mcr()</code></a></li>
+  <li><a href="#描述统计-describe" id="toc-描述统计-describe" class="nav-link" data-scroll-target="#描述统计-describe"><span class="header-section-number">9.1.5</span> 描述统计 <code>describe()</code></a></li>
+  <li><a href="#相关分析-correlation" id="toc-相关分析-correlation" class="nav-link" data-scroll-target="#相关分析-correlation"><span class="header-section-number">9.1.6</span> 相关分析 <code>correlation()</code></a></li>
+  <li><a href="#回归分析-regression" id="toc-回归分析-regression" class="nav-link" data-scroll-target="#回归分析-regression"><span class="header-section-number">9.1.7</span> 回归分析 <code>regression()</code></a></li>
+  <li><a href="#blandaltman-分析-bland_altman" id="toc-blandaltman-分析-bland_altman" class="nav-link" data-scroll-target="#blandaltman-分析-bland_altman"><span class="header-section-number">9.1.8</span> Bland–Altman 分析 <code>bland_altman()</code></a></li>
+  <li><a href="#离群点检验-outlier" id="toc-离群点检验-outlier" class="nav-link" data-scroll-target="#离群点检验-outlier"><span class="header-section-number">9.1.9</span> 离群点检验 <code>outlier()</code></a></li>
+  <li><a href="#指定水平处偏倚-bias" id="toc-指定水平处偏倚-bias" class="nav-link" data-scroll-target="#指定水平处偏倚-bias"><span class="header-section-number">9.1.10</span> 指定水平处偏倚 <code>bias()</code></a></li>
+  <li><a href="#回归预测-predict" id="toc-回归预测-predict" class="nav-link" data-scroll-target="#回归预测-predict"><span class="header-section-number">9.1.11</span> 回归预测 <code>predict()</code></a></li>
+  <li><a href="#参考物质偏倚-reference_bias" id="toc-参考物质偏倚-reference_bias" class="nav-link" data-scroll-target="#参考物质偏倚-reference_bias"><span class="header-section-number">9.1.12</span> 参考物质偏倚 <code>reference_bias()</code></a></li>
+  <li><a href="#结果绘图-plot" id="toc-结果绘图-plot" class="nav-link" data-scroll-target="#结果绘图-plot"><span class="header-section-number">9.1.13</span> 结果绘图 <code>plot()</code></a></li>
+  <li><a href="#结果汇总-summary" id="toc-结果汇总-summary" class="nav-link" data-scroll-target="#结果汇总-summary"><span class="header-section-number">9.1.14</span> 结果汇总 <code>summary()</code></a></li>
+  </ul></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">9.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#重复测量汇总与-lambda" id="toc-重复测量汇总与-lambda" class="nav-link" data-scroll-target="#重复测量汇总与-lambda"><span class="header-section-number">9.2.1</span> 重复测量汇总与 lambda</a></li>
+  <li><a href="#clsi-ep09c-附录-c混合变异与回归模型" id="toc-clsi-ep09c-附录-c混合变异与回归模型" class="nav-link" data-scroll-target="#clsi-ep09c-附录-c混合变异与回归模型"><span class="header-section-number">9.2.2</span> CLSI EP09c 附录 C：混合变异与回归模型</a></li>
+  <li><a href="#clsi-ep09c-附录-d六种数据形态" id="toc-clsi-ep09c-附录-d六种数据形态" class="nav-link" data-scroll-target="#clsi-ep09c-附录-d六种数据形态"><span class="header-section-number">9.2.3</span> CLSI EP09c 附录 D：六种数据形态</a></li>
+  <li><a href="#clsi-ep09c-附录-e广义-esd-离群检验" id="toc-clsi-ep09c-附录-e广义-esd-离群检验" class="nav-link" data-scroll-target="#clsi-ep09c-附录-e广义-esd-离群检验"><span class="header-section-number">9.2.4</span> CLSI EP09c 附录 E：广义 ESD 离群检验</a></li>
+  <li><a href="#clsi-ep09c-附录-f中位偏倚区间" id="toc-clsi-ep09c-附录-f中位偏倚区间" class="nav-link" data-scroll-target="#clsi-ep09c-附录-f中位偏倚区间"><span class="header-section-number">9.2.5</span> CLSI EP09c 附录 F：中位偏倚区间</a></li>
+  <li><a href="#clsi-ep09c-附录-h迭代加权最小二乘" id="toc-clsi-ep09c-附录-h迭代加权最小二乘" class="nav-link" data-scroll-target="#clsi-ep09c-附录-h迭代加权最小二乘"><span class="header-section-number">9.2.6</span> CLSI EP09c 附录 H：迭代加权最小二乘</a></li>
+  <li><a href="#clsi-ep09c-附录-ipassingbablok-参数与偏倚区间" id="toc-clsi-ep09c-附录-ipassingbablok-参数与偏倚区间" class="nav-link" data-scroll-target="#clsi-ep09c-附录-ipassingbablok-参数与偏倚区间"><span class="header-section-number">9.2.7</span> CLSI EP09c 附录 I：Passing–Bablok 参数与偏倚区间</a></li>
+  <li><a href="#clsi-ep09c-附录-j精密度轮廓加权-deming" id="toc-clsi-ep09c-附录-j精密度轮廓加权-deming" class="nav-link" data-scroll-target="#clsi-ep09c-附录-j精密度轮廓加权-deming"><span class="header-section-number">9.2.8</span> CLSI EP09c 附录 J：精密度轮廓加权 Deming</a></li>
+  <li><a href="#clsi-ep09c-附录-k2回归与偏倚-bootstrap" id="toc-clsi-ep09c-附录-k2回归与偏倚-bootstrap" class="nav-link" data-scroll-target="#clsi-ep09c-附录-k2回归与偏倚-bootstrap"><span class="header-section-number">9.2.9</span> CLSI EP09c 附录 K2：回归与偏倚 bootstrap</a></li>
+  <li><a href="#yyt-1789.22021-附录-a参考物质偏倚" id="toc-yyt-1789.22021-附录-a参考物质偏倚" class="nav-link" data-scroll-target="#yyt-1789.22021-附录-a参考物质偏倚"><span class="header-section-number">9.2.10</span> YY/T 1789.2—2021 附录 A：参考物质偏倚</a></li>
+  <li><a href="#yyt-1789.22021-附录-b患者样本偏倚与回归" id="toc-yyt-1789.22021-附录-b患者样本偏倚与回归" class="nav-link" data-scroll-target="#yyt-1789.22021-附录-b患者样本偏倚与回归"><span class="header-section-number">9.2.11</span> YY/T 1789.2—2021 附录 B：患者样本偏倚与回归</a>
+  <ul class="collapse">
+  <li><a href="#广义-esd-离群检验" id="toc-广义-esd-离群检验" class="nav-link" data-scroll-target="#广义-esd-离群检验"><span class="header-section-number">9.2.11.1</span> 广义 ESD 离群检验</a></li>
+  <li><a href="#分段偏倚" id="toc-分段偏倚" class="nav-link" data-scroll-target="#分段偏倚"><span class="header-section-number">9.2.11.2</span> 分段偏倚</a></li>
+  <li><a href="#四种回归模型" id="toc-四种回归模型" class="nav-link" data-scroll-target="#四种回归模型"><span class="header-section-number">9.2.11.3</span> 四种回归模型</a></li>
+  <li><a href="#mgdl-处偏倚" id="toc-mgdl-处偏倚" class="nav-link" data-scroll-target="#mgdl-处偏倚"><span class="header-section-number">9.2.11.4</span> 125 mg/dL 处偏倚</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本文演示如何使用 <code>ivdtools</code> 包分析方法学比较和参考物质偏倚。方法学比较使用同一批患者样本评价两个测量程序之间的关系，参考物质偏倚则比较重复测量均值与参考物质赋值。两条路径的研究对象、统计模型和结论不同，但都必须先规定比较方向和可接受偏倚限。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>分析路径</th>
+<th>主要输入</th>
+<th>主要结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>患者样本方法学比较</td>
+<td>样本编号、比较程序结果、待评价程序结果及可选权重</td>
+<td>差值、回归参数、一致性限、离群点和指定水平处偏倚</td>
+</tr>
+<tr class="even">
+<td>参考物质偏倚</td>
+<td>重复测量结果、参考物质赋值及其不确定度</td>
+<td>均值、偏倚、相对偏倚和偏倚区间</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>函数只计算统计结果，不依据相关系数、参数置信区间或一致性限自动宣布两个程序等效。回归模型、医学决定水平、允许偏倚、离群点处理和参考物质适用性均应在分析前规定。标准案例中的接受限只属于原案例。</p>
+</div>
+</div>
+<p><code>mcr()</code> 只接受每份样本一行的均值数据，不在内部聚合原始重复行。两种程序都有重复结果时，应先用 <code>replicate_to_mean(data, "样本列", c("candidate", "reference"))</code> 生成均值、SD 和 n，或由用户提前完成同等汇总。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["逐样本配对结果"] --&gt; B{"是否存在&lt;br/&gt;重复测量？"}
+    B --&gt;|是| C["replicate_to_mean()&lt;br/&gt;汇总为每样本一行"]
+    B --&gt;|否| D["保留原数据"]
+    C --&gt; E{"是否预设&lt;br/&gt;分析分段？"}
+    D --&gt; E
+    E --&gt;|是| F["split_by_cutpoints()&lt;br/&gt;拆分原数据"]
+    E --&gt;|否| G["mcr()"]
+    F --&gt; G
+    G --&gt; H["describe() / correlation()&lt;br/&gt;outlier()"]
+    H --&gt; I["regression() / bland_altman()"]
+    I --&gt; J["bias() / plot() / summary()"]
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef decision fill:#FFF4E8,stroke:#FF7518,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B,E decision
+    class C,D,F,G,H,I process
+    class J output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">9.1</span> 主要函数</h2>
+<section id="分析流程" class="level3" data-number="9.1.1">
+<h3 data-number="9.1.1" class="anchored" data-anchor-id="分析流程"><span class="header-section-number">9.1.1</span> 分析流程：</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>用途</th>
+<th>返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>replicate_to_mean()</code></td>
+<td>将一个或多个响应列按样本汇总为均值、SD 和 n</td>
+<td>汇总数据框</td>
+</tr>
+<tr class="even">
+<td><code>split_by_cutpoints()</code></td>
+<td>按预设数值界值拆分分析数据</td>
+<td>具名 dataframe list</td>
+</tr>
+<tr class="odd">
+<td><code>mcr()</code></td>
+<td>建立方法学比较对象</td>
+<td><code>mcr</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>describe()</code></td>
+<td>添加描述统计</td>
+<td>更新后的 <code>mcr</code> 对象</td>
+</tr>
+<tr class="odd">
+<td><code>correlation()</code></td>
+<td>添加相关分析</td>
+<td>更新后的 <code>mcr</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>regression()</code></td>
+<td>拟合 OLS、WLS、Deming、加权 Deming 或 Passing–Bablok 回归</td>
+<td>更新后的 <code>mcr</code> 对象</td>
+</tr>
+<tr class="odd">
+<td><code>bland_altman()</code></td>
+<td>估计中心差异、中心区间和一致性限</td>
+<td>更新后的 <code>mcr</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>outlier()</code></td>
+<td>检验差值离群点</td>
+<td>更新后的 <code>mcr</code> 对象</td>
+</tr>
+<tr class="odd">
+<td><code>bias()</code></td>
+<td>计算指定水平处偏倚</td>
+<td>更新后的 <code>mcr</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>predict()</code></td>
+<td>进行正向或逆向预测</td>
+<td>预测数据框</td>
+</tr>
+<tr class="odd">
+<td><code>reference_bias()</code></td>
+<td>分析参考物质偏倚及区间</td>
+<td><code>reference_bias</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>plot()</code></td>
+<td>绘制散点、回归、一致性或偏倚图</td>
+<td><code>ggplot</code> 对象</td>
+</tr>
+<tr class="odd">
+<td><code>summary()</code></td>
+<td>汇总已经完成的分析</td>
+<td>原 <code>mcr</code> 对象（不可见）</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="重复测量汇总-replicate_to_mean" class="level3" data-number="9.1.2">
+<h3 data-number="9.1.2" class="anchored" data-anchor-id="重复测量汇总-replicate_to_mean"><span class="header-section-number">9.1.2</span> 重复测量汇总 <code>replicate_to_mean()</code></h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">replicate_to_mean</span>(data, x, y, <span class="at">weights =</span> <span class="cn">NULL</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 同时汇总两个方法，结果可直接交给 mcr()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>summary_data <span class="ot">&lt;-</span> <span class="fu">replicate_to_mean</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  raw_data, <span class="st">"sample"</span>, <span class="fu">c</span>(<span class="st">"candidate"</span>, <span class="st">"reference"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>x</code> 是样本编号列，<code>y</code> 可为一个或多个数值结果列。单列调用继续返回 <code>x</code>、<code>y_mean</code>、<code>y_sd</code>、<code>y_n</code>，保持原接口；多列调用返回 <code>&lt;变量&gt;_mean</code>、<code>&lt;变量&gt;_sd</code>、<code>&lt;变量&gt;_n</code>。多列模式不生成单一权重，因为两个方法各有自己的精密度信息。</p>
+</section>
+<section id="按预设界值拆分数据-split_by_cutpoints" class="level3" data-number="9.1.3">
+<h3 data-number="9.1.3" class="anchored" data-anchor-id="按预设界值拆分数据-split_by_cutpoints"><span class="header-section-number">9.1.3</span> 按预设界值拆分数据 <code>split_by_cutpoints()</code></h3>
+<p>分段属于分析前的数据准备，不保存在 <code>mcr</code> 对象中。一个 <code>mcr</code> 对象始终对应一个确定的数据集，因而描述统计、相关、离群点、回归、Bland–Altman、偏倚和图形使用相同的样本范围。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mcr_data_list <span class="ot">&lt;-</span> <span class="fu">split_by_cutpoints</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  method_data,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"reference"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutpoints =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>mcr_data_list</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>控制台输出保持数据拆分摘要的形式：</p>
+<pre class="text"><code>Data split by cutpoints
+  Variable: reference
+  Cutpoints: 100, 500
+
+  segment_1  [-Inf, 100)          n = 35
+  segment_2  [100, 500)           n = 62
+  segment_3  [500, Inf)           n = 28</code></pre>
+<p>返回值本质上仍是具名的 dataframe list，各段保留原数据的全部列和行顺序：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mcr_data_list<span class="sc">$</span>segment_1</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mcr_data_list<span class="sc">$</span>segment_2</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>mcr_data_list<span class="sc">$</span>segment_3</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>因此可以用 <code>lapply()</code> 分别建立方法学比较对象，再对任一分段执行完整分析：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mcr_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  mcr_data_list,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mcr</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    d,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">"sample"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">candidate =</span> <span class="st">"candidate"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference =</span> <span class="st">"reference"</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>mcr_results<span class="sc">$</span>segment_1 <span class="sc">|&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">describe</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">correlation</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">regression</span>(<span class="at">method =</span> <span class="st">"deming"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bland_altman</span>()</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>cutpoints</code> 必须是有限、严格递增且不重复的数值。区间采用左闭右开规则，分段点本身进入后一段。默认保留空区间，以便发现预设范围没有样本；可设置 <code>drop_empty = TRUE</code> 删除空区间。分段变量中的非有限值默认报错，只有显式设置 <code>na_action = "drop"</code> 才会排除并记录数量。<code>labels</code> 可为各区间提供自定义且唯一的 list 名称。</p>
+</section>
+<section id="建立方法学比较对象-mcr" class="level3" data-number="9.1.4">
+<h3 data-number="9.1.4" class="anchored" data-anchor-id="建立方法学比较对象-mcr"><span class="header-section-number">9.1.4</span> 建立方法学比较对象 <code>mcr()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcr</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  id,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  candidate,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  reference,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="cn">NULL</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate_sd =</span> <span class="cn">NULL</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference_sd =</span> <span class="cn">NULL</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate_n =</span> <span class="cn">NULL</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference_n =</span> <span class="cn">NULL</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>数据框，每行必须是一份样本的一对均值结果；重复 ID 会报错。</td>
+</tr>
+<tr class="even">
+<td><code>id</code></td>
+<td>样本编号列的列名。</td>
+</tr>
+<tr class="odd">
+<td><code>candidate</code></td>
+<td>待评价程序列的列名，作为回归纵轴 Y 和差值的第一项。</td>
+</tr>
+<tr class="even">
+<td><code>reference</code></td>
+<td>参考或比较程序列的列名，作为回归横轴 X 和差值的第二项。</td>
+</tr>
+<tr class="odd">
+<td><code>weights</code></td>
+<td>可选的非负有限权重列名，供加权回归使用。</td>
+</tr>
+<tr class="even">
+<td><code>candidate_sd</code>、<code>reference_sd</code></td>
+<td>可选的样本内 SD 列名，必须同时提供；供 <code>lambda = "replicates"</code> 使用。</td>
+</tr>
+<tr class="odd">
+<td><code>candidate_n</code>、<code>reference_n</code></td>
+<td>可选的重复数列名，必须同时提供。若省略，则按两种方法具有相同重复数处理。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回 <code>mcr</code> 类对象。<code>data</code> 保存传入的数据，<code>id</code>、<code>candidate</code> 和 <code>reference</code> 保存完整配对值，<code>complete_idx</code> 保存完整配对在传入数据中的行号，<code>n</code> 为完整配对数；<code>describe</code>、<code>correlation</code>、<code>regression</code>、 <code>outlier</code>、 <code>bland_altman</code> 和 <code>bias</code> 是后续分析结果槽。需要分段时，应先用 <code>split_by_cutpoints()</code> 拆分原数据，再分别建立对象。</p>
+</section>
+<section id="描述统计-describe" class="level3" data-number="9.1.5">
+<h3 data-number="9.1.5" class="anchored" data-anchor-id="描述统计-describe"><span class="header-section-number">9.1.5</span> 描述统计 <code>describe()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="cn">NULL</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">4</span>L</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td><code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>cols</code></td>
+<td>需要描述的附加列；省略时使用编号和两个测量结果列以外的全部列，也可用 <code>"-列名"</code> 排除列。</td>
+</tr>
+<tr class="odd">
+<td><code>digits</code></td>
+<td>描述结果显示位数。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回更新后的 <code>mcr</code> 对象。<code>describe</code> 槽包含完整配对数、编号重复情况、附加列汇总，以及候选程序、比较程序和程序间差值的描述统计。</p>
+</section>
+<section id="相关分析-correlation" class="level3" data-number="9.1.6">
+<h3 data-number="9.1.6" class="anchored" data-anchor-id="相关分析-correlation"><span class="header-section-number">9.1.6</span> 相关分析 <code>correlation()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">correlation</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"pearson"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td><code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>method</code></td>
+<td>相关系数方法：Pearson、Spearman 或 Kendall。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回更新后的 <code>mcr</code> 对象。<code>correlation</code> 槽包含相关系数、检验统计量、自由度、P 值、置信区间和样本数。相关性描述共同变化程度，不等同于一致性。</p>
+</section>
+<section id="回归分析-regression" class="level3" data-number="9.1.7">
+<h3 data-number="9.1.7" class="anchored" data-anchor-id="回归分析-regression"><span class="header-section-number">9.1.7</span> 回归分析 <code>regression()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">regression</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"ols"</span>, <span class="st">"wls"</span>, <span class="st">"deming"</span>, <span class="st">"wdeming"</span>, <span class="st">"pb"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda =</span> <span class="dv">1</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">variance_models =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">profile_components =</span> <span class="fu">c</span>(<span class="at">reference =</span> <span class="st">"total"</span>, <span class="at">candidate =</span> <span class="st">"total"</span>),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_method =</span> <span class="fu">c</span>(</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"auto"</span>, <span class="st">"analytic"</span>, <span class="st">"jackknife"</span>, <span class="st">"rank"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bootstrap_percentile"</span>, <span class="st">"bootstrap_standard"</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>L,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mdl =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight_iterations =</span> <span class="dv">4</span>L,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">epsilon =</span> <span class="cn">NULL</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td><code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>method</code></td>
+<td><code>"ols"</code>、<code>"wls"</code>、<code>"deming"</code>、<code>"wdeming"</code> 或 <code>"pb"</code>。</td>
+</tr>
+<tr class="odd">
+<td><code>conf.level</code></td>
+<td>回归参数置信水平。</td>
+</tr>
+<tr class="even">
+<td><code>lambda</code></td>
+<td>Deming 方法使用的候选程序 Y 方差与参考程序 X 方差之比，可为正数或 <code>"replicates"</code>。后者从 <code>mcr()</code> 指定的汇总 SD/n 估计。</td>
+</tr>
+<tr class="odd">
+<td><code>weights</code></td>
+<td>除原有固定权重和 <code>"residual"</code> 外，新增 <code>"constant_cv"</code> 与 <code>"precision_profile"</code>。WLS 的恒定 CV 严格等于 <code>1/x^2</code>；加权 Deming 的恒定 CV使用 Linnet 迭代算法。</td>
+</tr>
+<tr class="even">
+<td><code>variance_models</code></td>
+<td>精密度轮廓 Deming 的 <code>list(reference=..., candidate=...)</code>；每侧可为已运行 <code>profile()</code> 的 <code>precision</code> 对象或返回方差的函数。</td>
+</tr>
+<tr class="odd">
+<td><code>profile_components</code></td>
+<td>两侧从 <code>precision</code> 对象读取的方差分量，默认均为 <code>"total"</code>。</td>
+</tr>
+<tr class="even">
+<td><code>ci_method</code></td>
+<td><code>"auto"</code> 对 OLS/WLS 采用解析区间，对各 Deming 采用完整重拟合 jackknife，对 Passing–Bablok 采用秩区间；也可显式选两种 K2 bootstrap。</td>
+</tr>
+<tr class="odd">
+<td><code>bootstrap_replicates</code>、<code>seed</code></td>
+<td>bootstrap 至少 5000 次；固定 <code>seed</code> 可复现且不会改变调用者原随机数状态。</td>
+</tr>
+<tr class="even">
+<td><code>mdl</code></td>
+<td>可选医学决定水平；若回归阶段使用 bootstrap，会一并保存这些水平的偏倚抽样。</td>
+</tr>
+<tr class="odd">
+<td><code>weight_iterations</code></td>
+<td>残差权重模型的更新轮数，默认按 EP09c 建议执行 4 轮。</td>
+</tr>
+<tr class="even">
+<td><code>epsilon</code></td>
+<td>两种迭代加权 Deming 的可选收敛容差。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回更新后的 <code>mcr</code> 对象。<code>regression</code> 槽包含方法、截距、斜率、标准误、参数置信区间、截距—斜率协方差、残差、回归标准误、样本数、传入数据行号及置信水平；适用时还包含决定系数、方差比和权重规格。迭代加权 Deming 另保存收敛信息、隐变量浓度和最终方差/权重；bootstrap 保存种子、请求/有效/失败次数和参数抽样。Passing–Bablok 按 EP09c 附录 I 的 Algorithm I 处理垂直点、<code>−1</code> 斜率和 K 位移。</p>
+</section>
+<section id="blandaltman-分析-bland_altman" class="level3" data-number="9.1.8">
+<h3 data-number="9.1.8" class="anchored" data-anchor-id="blandaltman-分析-bland_altman"><span class="header-section-number">9.1.8</span> Bland–Altman 分析 <code>bland_altman()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bland_altman</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"difference"</span>, <span class="st">"ratio"</span>, <span class="st">"percent"</span>),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_axis =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"candidate"</span>, <span class="st">"reference"</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_denominator =</span> <span class="fu">c</span>(<span class="st">"reference"</span>, <span class="st">"mean"</span>, <span class="st">"candidate"</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">agree.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"parametric"</span>, <span class="st">"nonparametric"</span>, <span class="st">"hodges_lehmann"</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">median_ci_method =</span> <span class="fu">c</span>(<span class="st">"order_statistic"</span>, <span class="st">"interpolated"</span>),</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>L,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="cn">NULL</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td><code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>type</code></td>
+<td>选择绝对差、比值或百分比差。</td>
+</tr>
+<tr class="odd">
+<td><code>x_axis</code></td>
+<td>一致性图横轴使用两程序均值、<code>candidate</code> 或 <code>reference</code>。</td>
+</tr>
+<tr class="even">
+<td><code>percent_denominator</code></td>
+<td><code>type = "percent"</code> 时的分母，可选比较程序、两程序均值或候选程序；它与绘图横轴相互独立。</td>
+</tr>
+<tr class="odd">
+<td><code>agree.level</code></td>
+<td>一致性限覆盖比例。</td>
+</tr>
+<tr class="even">
+<td><code>conf.level</code></td>
+<td>中心差异和一致性限区间的置信水平。</td>
+</tr>
+<tr class="odd">
+<td><code>method</code></td>
+<td>参数法使用平均差；<code>"nonparametric"</code> 使用普通中位数；<code>"hodges_lehmann"</code> 使用 HL 伪中位数。</td>
+</tr>
+<tr class="even">
+<td><code>median_ci_method</code></td>
+<td>普通中位数可选保守顺序统计量区间（默认）或附录 F 连续秩线性插值区间。</td>
+</tr>
+<tr class="odd">
+<td><code>bootstrap_replicates</code>、<code>seed</code></td>
+<td>非参数一致性限的 bootstrap 次数和可选随机种子。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回更新后的 <code>mcr</code> 对象。<code>bland_altman</code> 槽包含中心值、<code>center_estimand</code>、<code>center_ci</code>、方法专用的 <code>mean_diff_ci</code>、<code>median_diff_ci</code> 或 <code>hl_estimate</code>/<code>hl_ci</code>、SD、一致性限及其区间、百分比差分母、传入数据行号、绘图坐标和标签。保守顺序统计量区间记录实际覆盖率；插值区间记录连续秩和名义覆盖率。</p>
+</section>
+<section id="离群点检验-outlier" class="level3" data-number="9.1.9">
+<h3 data-number="9.1.9" class="anchored" data-anchor-id="离群点检验-outlier"><span class="header-section-number">9.1.9</span> 离群点检验 <code>outlier()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">outlier</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"grubbs"</span>, <span class="st">"esd"</span>, <span class="st">"dixon"</span>, <span class="st">"iqr"</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"difference"</span>, <span class="st">"percent"</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_denominator =</span> <span class="fu">c</span>(<span class="st">"reference"</span>, <span class="st">"mean"</span>, <span class="st">"candidate"</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef =</span> <span class="fl">1.5</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td><code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>method</code></td>
+<td>Grubbs、广义 ESD、Dixon 或 IQR。</td>
+</tr>
+<tr class="odd">
+<td><code>type</code></td>
+<td>检验绝对差或百分比差。</td>
+</tr>
+<tr class="even">
+<td><code>percent_denominator</code></td>
+<td>百分比差的分母；定义与 <code>bland_altman()</code> 完全一致，默认仍为 <code>"reference"</code>。</td>
+</tr>
+<tr class="odd">
+<td><code>alpha</code></td>
+<td>Grubbs、ESD 或 Dixon 检验显著性水平。</td>
+</tr>
+<tr class="even">
+<td><code>coef</code></td>
+<td>IQR 法的四分位距倍数。</td>
+</tr>
+<tr class="odd">
+<td><code>...</code></td>
+<td>传给检验方法的附加参数；广义 ESD 可用 <code>r</code> 指定最多检验的离群点数。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回更新后的 <code>mcr</code> 对象。<code>outlier</code> 槽包含方法、差值尺度、离群数、原数据行号、离群值、检验统计量和临界值。检出离群点不等于授权删除数据。</p>
+</section>
+<section id="指定水平处偏倚-bias" class="level3" data-number="9.1.10">
+<h3 data-number="9.1.10" class="anchored" data-anchor-id="指定水平处偏倚-bias"><span class="header-section-number">9.1.10</span> 指定水平处偏倚 <code>bias()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bias</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  mdl,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"confidence"</span>, <span class="st">"prediction"</span>, <span class="st">"both"</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_method =</span> <span class="fu">c</span>(<span class="st">"auto"</span>, <span class="st">"analytic"</span>, <span class="st">"jackknife"</span>, <span class="st">"rank"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"bootstrap_percentile"</span>, <span class="st">"bootstrap_standard"</span>),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>L,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="cn">NULL</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>已完成 <code>regression()</code> 的 <code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>mdl</code></td>
+<td><code>reference</code>（X）尺度上的一个或多个指定水平。</td>
+</tr>
+<tr class="odd">
+<td><code>level</code></td>
+<td>偏倚区间的置信水平。</td>
+</tr>
+<tr class="even">
+<td><code>interval</code></td>
+<td>是否返回置信区间、预测区间或两者。</td>
+</tr>
+<tr class="odd">
+<td><code>ci_method</code>、<code>bootstrap_replicates</code>、<code>seed</code></td>
+<td>参数不确定度算法及 bootstrap 设置。Passing–Bablok 在 <code>"auto"</code> 下使用 percentile bootstrap，不使用 jackknife。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回更新后的 <code>mcr</code> 对象，<code>bias</code> 槽中的偏倚定义为 <code>fitted_candidate - mdl</code>。若对象来自预先拆分的数据，<code>mdl</code> 应位于该数据范围内，避免无意外推。</p>
+</section>
+<section id="回归预测-predict" class="level3" data-number="9.1.11">
+<h3 data-number="9.1.11" class="anchored" data-anchor-id="回归预测-predict"><span class="header-section-number">9.1.11</span> 回归预测 <code>predict()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  object,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="cn">NULL</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="cn">NULL</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="cn">NULL</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">inverse =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"confidence"</span>, <span class="st">"prediction"</span>, <span class="st">"both"</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_method =</span> <span class="fu">c</span>(<span class="st">"auto"</span>, <span class="st">"analytic"</span>, <span class="st">"jackknife"</span>, <span class="st">"rank"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">"bootstrap_percentile"</span>, <span class="st">"bootstrap_standard"</span>),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>L,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="cn">NULL</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>object</code></td>
+<td>已完成 <code>regression()</code> 的 <code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>newdata</code></td>
+<td>可选的新数据框；正向预测默认读取原 <code>reference</code> 列，逆向预测默认读取原 <code>candidate</code> 列。</td>
+</tr>
+<tr class="odd">
+<td><code>reference</code>、<code>candidate</code></td>
+<td>不使用 <code>newdata</code> 时的数值向量；使用 <code>newdata</code> 时可指定其中的列名。</td>
+</tr>
+<tr class="even">
+<td><code>inverse</code></td>
+<td><code>FALSE</code> 按回归方程由 <code>reference</code> 预测 <code>candidate</code>；<code>TRUE</code> 由 <code>candidate</code> 反算 <code>reference</code>。</td>
+</tr>
+<tr class="odd">
+<td><code>interval</code></td>
+<td>正向预测是否返回置信区间、预测区间或两者。</td>
+</tr>
+<tr class="even">
+<td><code>conf.level</code></td>
+<td>预测区间的置信水平。</td>
+</tr>
+<tr class="odd">
+<td><code>ci_method</code>、<code>bootstrap_replicates</code>、<code>seed</code></td>
+<td>参数不确定度算法及 bootstrap 设置；已保存在回归对象中的同方法抽样会直接复用。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回输入值、预测值及所请求的区间。预测区间是保留的 <code>ivdtools</code> 扩展，不属于 EP09c 参数区间；逆向预测只作代数反算，不返回区间。</p>
+</section>
+<section id="参考物质偏倚-reference_bias" class="level3" data-number="9.1.12">
+<h3 data-number="9.1.12" class="anchored" data-anchor-id="参考物质偏倚-reference_bias"><span class="header-section-number">9.1.12</span> 参考物质偏倚 <code>reference_bias()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reference_bias</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  result,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  reference,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  reference_uncertainty,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>长格式重复测量数据框。</td>
+</tr>
+<tr class="even">
+<td><code>result</code></td>
+<td>数值型测量结果列的列名。</td>
+</tr>
+<tr class="odd">
+<td><code>reference</code></td>
+<td>参考赋值，可为单个数值、分层数相同的向量或数据列。</td>
+</tr>
+<tr class="even">
+<td><code>reference_uncertainty</code></td>
+<td>参考赋值的不确定度，可为单个数值、分层数相同的向量或数据列。</td>
+</tr>
+<tr class="odd">
+<td><code>level</code></td>
+<td>可选的参考物质或浓度水平列；每个水平内赋值及其不确定度必须恒定。</td>
+</tr>
+<tr class="even">
+<td><code>k</code></td>
+<td>将测量均值的标准不确定度扩展为区间分量的覆盖因子，默认为 2。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回 <code>reference_bias</code> 类对象。<code>result</code> 数据框包含各水平总行数、有效重复数、排除数、均值、SD、均值的标准和扩展不确定度、参考赋值及不确定度、绝对和相对偏倚、区间半宽及上下限；对象同时保存输入列名、覆盖因子和总计数。</p>
+</section>
+<section id="结果绘图-plot" class="level3" data-number="9.1.13">
+<h3 data-number="9.1.13" class="anchored" data-anchor-id="结果绘图-plot"><span class="header-section-number">9.1.13</span> 结果绘图 <code>plot()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"scatter"</span>, <span class="st">"regression"</span>, <span class="st">"bland_altman"</span>, <span class="st">"bias"</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"confidence"</span>, <span class="st">"prediction"</span>, <span class="st">"both"</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mdl =</span> <span class="cn">NULL</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td><code>mcr</code> 对象。</td>
+</tr>
+<tr class="even">
+<td><code>type</code></td>
+<td>选择散点图、回归图、Bland–Altman 图或偏倚图。</td>
+</tr>
+<tr class="odd">
+<td><code>interval</code>、<code>conf.level</code></td>
+<td>控制回归图或偏倚图的区间类型和置信水平。</td>
+</tr>
+<tr class="even">
+<td><code>mdl</code></td>
+<td>偏倚图上需要标记的医学决定水平。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>不可见地返回 <code>ggplot</code> 对象。散点图使用当前 <code>mcr</code> 对象的数据；回归图和 Bland–Altman 图使用相应分析槽保存的数据，因此一个对象内的图形与统计分析具有相同样本范围。Bland–Altman 图以橙色带显示中心差异区间，以蓝色带显示上下侧一致性限区间。</p>
+</section>
+<section id="结果汇总-summary" class="level3" data-number="9.1.14">
+<h3 data-number="9.1.14" class="anchored" data-anchor-id="结果汇总-summary"><span class="header-section-number">9.1.14</span> 结果汇总 <code>summary()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(object)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数与返回值</strong></p>
+<p><code>object</code> 为 <code>mcr</code> 对象。函数打印对象中已经完成的分析，不自动补做尚未执行的步骤，并不可见地返回原对象。</p>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">9.2</span> 分析案例</h2>
+<section id="重复测量汇总与-lambda" class="level3" data-number="9.2.1">
+<h3 data-number="9.2.1" class="anchored" data-anchor-id="重复测量汇总与-lambda"><span class="header-section-number">9.2.1</span> 重复测量汇总与 lambda</h3>
+<p><code>mcr()</code> 不接受同一 ID 的原始重复行。下面先同时汇总两种方法，再把均值列作为 X/Y、把 SD/n 列作为重复测量精密度传入。两种方法的重复数可以彼此不同，但各自在所有样本间必须恒定；否则单一标量 <code>lambda</code> 不再合适，应改用精密度轮廓。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>replicate_raw <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, <span class="at">each =</span> <span class="dv">3</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">80</span>, <span class="dv">10</span>), <span class="at">each =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="dv">8</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="fu">rep</span>(<span class="dv">2</span> <span class="sc">+</span> <span class="fl">1.05</span> <span class="sc">*</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">80</span>, <span class="dv">10</span>), <span class="at">each =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rep</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="dv">8</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>replicate_summary <span class="ot">&lt;-</span> <span class="fu">replicate_to_mean</span>(</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  replicate_raw, <span class="st">"sample"</span>, <span class="fu">c</span>(<span class="st">"candidate"</span>, <span class="st">"reference"</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>replicate_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  replicate_summary,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"x"</span>, <span class="at">candidate =</span> <span class="st">"candidate_mean"</span>, <span class="at">reference =</span> <span class="st">"reference_mean"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate_sd =</span> <span class="st">"candidate_sd"</span>, <span class="at">reference_sd =</span> <span class="st">"reference_sd"</span>,</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate_n =</span> <span class="st">"candidate_n"</span>, <span class="at">reference_n =</span> <span class="st">"reference_n"</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>replicate_fit <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  replicate_mcr, <span class="at">method =</span> <span class="st">"deming"</span>, <span class="at">lambda =</span> <span class="st">"replicates"</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Deming
+  CI method: jackknife
+  Lambda: 0.2500 (from summarized SD data)
+  Intercept = 2.0000  (SE = 0.0000)
+  Slope     = 1.0500  (SE = 0.0000)
+  Intercept 95% CI: [2.0000, 2.0000]
+  Slope     95% CI: [1.0500, 1.0500]
+    H0: slope = 1 -&gt; t = 170220065980364.3125, p = &lt; 2.2e-16
+    slope significantly different from 1 (CI excludes 1)
+  Sigma     = 0.0000
+  n = 8</code></pre>
+</div>
+</div>
+</section>
+<section id="clsi-ep09c-附录-c混合变异与回归模型" class="level3" data-number="9.2.2">
+<h3 data-number="9.2.2" class="anchored" data-anchor-id="clsi-ep09c-附录-c混合变异与回归模型"><span class="header-section-number">9.2.2</span> CLSI EP09c 附录 C：混合变异与回归模型</h3>
+<p>附录 C 比较同一测量程序的两个试剂批，共 79 份样本。低浓度第 1～40 号样本用 Y − X 的绝对差，高浓度第 41～79 号样本用 Y − X 相对两批均值的百分比差。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ep09_c <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/009-方法学比较与参考物偏倚/std-ep09-appendix-c.csv"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>ep09_c_diff <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_c),</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>, <span class="at">candidate =</span> <span class="st">"mp_y"</span>, <span class="at">reference =</span> <span class="st">"mp_x"</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>ep09_c_diff <span class="ot">&lt;-</span> <span class="fu">describe</span>(ep09_c_diff)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Descriptive Statistics
+  Variable               n     Mean       SD      Min       Q1   Median       Q3      Max  NA
+  --------------------------------------------------------------------------- 
+    mp_x (X)            79   8.7969  16.2611   0.0010   0.1835   1.7730  11.5160  91.2350  
+    mp_y (Y)            79   9.0292  17.4625   0.0010   0.1995   1.8330  11.5980  99.8020  
+    Diff (Y-X)          79   0.2323   1.9178  -2.4890  -0.0515   0.0060   0.0760  13.3600  
+
+  unit
+  Level                Count  Percent
+   -------------------------------------- 
+  ug/L                    79   100.0%</code></pre>
+</div>
+</div>
+<p>先按附录 C 预先指定的低、高浓度组调用 <code>bland_altman()</code>。这两组是研究设计给定的第 1～40 与 41～79 号样本，边界处参考结果略有重叠，不能由单一数值 <code>cutpoints</code> 无损重建，因此直接按研究设计拆分数据，而不调用 <code>split_by_cutpoints()</code>。低浓度使用绝对差；高浓度按 EP09c 设置 <code>percent_denominator = "mean"</code>，直接计算 Y − X 相对两批结果均值的百分比差。<code>x_axis</code> 与百分比差分母分别控制绘图位置和偏倚定义，不应混为同一参数。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ep09_c_low_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_c[<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>, ]),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>, <span class="at">candidate =</span> <span class="st">"mp_y"</span>, <span class="at">reference =</span> <span class="st">"mp_x"</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>ep09_c_low_mcr <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  ep09_c_low_mcr, <span class="at">type =</span> <span class="st">"difference"</span>, <span class="at">x_axis =</span> <span class="st">"mean"</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        difference
+  Y-axis:      mp_y - mp_x
+  X-axis:      Mean of mp_y and mp_x
+  Method:       parametric
+  n = 40
+
+  Mean diff:       0.0204
+  95% CI for mean diff: [-0.0101, 0.0509]
+  SD diff:         0.0954
+  95% LoA: [-0.1666, 0.2074]
+
+  95% CI for LoA:
+    Lower LoA: [-0.2192, -0.1140]
+    Upper LoA: [0.1548, 0.2599]</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ep09_c_high_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_c[<span class="dv">41</span><span class="sc">:</span><span class="dv">79</span>, ]),</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>, <span class="at">candidate =</span> <span class="st">"mp_y"</span>, <span class="at">reference =</span> <span class="st">"mp_x"</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>ep09_c_high_mcr <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  ep09_c_high_mcr,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">x_axis =</span> <span class="st">"mean"</span>, <span class="at">percent_denominator =</span> <span class="st">"mean"</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        percent
+  Y-axis:      (mp_y - mp_x) / mean(mp_y, mp_x) * 100
+  X-axis:      Mean of mp_y and mp_x
+  Percent base: mean
+  Method:       parametric
+  n = 39
+
+  Mean diff:       0.4303
+  95% CI for mean diff: [-1.8286, 2.6892]
+  SD diff:         6.9685
+  95% LoA: [-13.2277, 14.0883]
+
+  95% CI for LoA:
+    Lower LoA: [-17.1215, -9.3339]
+    Upper LoA: [10.1945, 17.9821]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP09c 附录 C 分段偏倚结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">low_absolute</td>
+<td style="text-align: left;">estimate</td>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">0.0204</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low_absolute</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">-0.010</td>
+<td style="text-align: right;">-0.0101</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low_absolute</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">0.051</td>
+<td style="text-align: right;">0.0509</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_percent</td>
+<td style="text-align: left;">estimate</td>
+<td style="text-align: right;">0.430</td>
+<td style="text-align: right;">0.4303</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high_percent</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">-1.830</td>
+<td style="text-align: right;">-1.8286</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_percent</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">2.690</td>
+<td style="text-align: right;">2.6892</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep09_c_low_mcr, <span class="at">type =</span> <span class="st">"bland_altman"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="009-方法学比较与参考物偏倚_files/figure-html/ep09-c-bias-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>图中橙色色带为平均差的 95% CI，蓝色色带分别为下、上侧一致性限的 95% CI。</p>
+<p>按标准图 C(f)～C(j) 分别拟合五种模型。<code>weights = "constant_cv"</code> 对 WLS 严格使用 <code>1/x^2</code>，对加权 Deming 则调用 Linnet 的迭代恒定 CV 算法；后者每次 jackknife 删除后都会重新迭代完整模型。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ep09_c_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_c),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>, <span class="at">candidate =</span> <span class="st">"mp_y"</span>, <span class="at">reference =</span> <span class="st">"mp_x"</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>ep09_c_ols <span class="ot">&lt;-</span> <span class="fu">regression</span>(ep09_c_mcr, <span class="at">method =</span> <span class="st">"ols"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: OLS
+  CI method: analytic
+  Intercept = -0.3804  (SE = 0.1995)
+  Slope     = 1.0697  (SE = 0.0108)
+  Intercept 95% CI: [-0.7777, 0.0169]
+  Slope     95% CI: [1.0481, 1.0912]
+    H0: slope = 1 -&gt; t = 6.4219, p = 1.011e-08
+    slope significantly different from 1 (CI excludes 1)
+  R-squared = 0.9921
+  Sigma     = 1.5576
+  n = 79</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ep09_c_wls <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  ep09_c_mcr, <span class="at">method =</span> <span class="st">"wls"</span>, <span class="at">weights =</span> <span class="st">"constant_cv"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: WLS
+  Weights: constant_cv
+  CI method: analytic
+  Intercept = 0.0054  (SE = 0.0004)
+  Slope     = 0.9238  (SE = 0.0521)
+  Intercept 95% CI: [0.0046, 0.0062]
+  Slope     95% CI: [0.8201, 1.0274]
+    H0: slope = 1 -&gt; t = -1.4642, p = 0.1472
+    slope not significantly different from 1 (CI contains 1)
+  R-squared = 0.8035
+  Sigma     = 0.4456
+  n = 79</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ep09_c_deming <span class="ot">&lt;-</span> <span class="fu">regression</span>(ep09_c_mcr, <span class="at">method =</span> <span class="st">"deming"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Deming
+  CI method: jackknife
+  Intercept = -0.4202  (SE = 0.1792)
+  Slope     = 1.0742  (SE = 0.0367)
+  Intercept 95% CI: [-0.7771, -0.0634]
+  Slope     95% CI: [1.0012, 1.1472]
+    H0: slope = 1 -&gt; t = 2.0230, p = 0.04654
+    slope significantly different from 1 (CI excludes 1)
+  Sigma     = 1.5594
+  n = 79</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ep09_c_wdeming <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  ep09_c_mcr, <span class="at">method =</span> <span class="st">"wdeming"</span>, <span class="at">weights =</span> <span class="st">"constant_cv"</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Constant-CV Deming
+  Weights: constant_cv
+  CI method: jackknife
+  Intercept = -0.0023  (SE = 0.0019)
+  Slope     = 1.0372  (SE = 0.0264)
+  Intercept 95% CI: [-0.0061, 0.0015]
+  Slope     95% CI: [0.9846, 1.0899]
+    H0: slope = 1 -&gt; t = 1.4074, p = 0.1633
+    slope not significantly different from 1 (CI contains 1)
+  Sigma     = 0.0056
+  n = 79</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ep09_c_pb <span class="ot">&lt;-</span> <span class="fu">regression</span>(ep09_c_mcr, <span class="at">method =</span> <span class="st">"pb"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Passing-Bablok
+  CI method: rank
+  Intercept = 0.0055  (SE = 0.0083)
+  Slope     = 1.0028  (SE = 0.0132)
+  Intercept 95% CI: [-0.0059, 0.0089]
+  Slope     95% CI: [0.9830, 1.0162]
+    H0: slope = 1 -&gt; t = 0.2140, p = 0.8311
+    slope not significantly different from 1 (CI contains 1)
+  Sigma     = 1.9142
+  n = 79</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP09c 附录 C 回归参数对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">OLS</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-0.3800</td>
+<td style="text-align: right;">-0.3804</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OLS</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.0700</td>
+<td style="text-align: right;">1.0697</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WLS</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">0.0100</td>
+<td style="text-align: right;">0.0054</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WLS</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">0.9200</td>
+<td style="text-align: right;">0.9238</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Deming</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-0.4200</td>
+<td style="text-align: right;">-0.4202</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Deming</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.0700</td>
+<td style="text-align: right;">1.0742</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Weighted Deming</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">-0.0023</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Weighted Deming</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.0400</td>
+<td style="text-align: right;">1.0372</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Passing-Bablok</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">0.0055</td>
+<td style="text-align: right;">0.0055</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Passing-Bablok</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.0028</td>
+<td style="text-align: right;">1.0028</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>恒定 CV 拟合同时保存 <code>convergence</code>、<code>latent_concentration</code> 和最终 <code>weights</code>，且内部已把 <code>ppwdeming</code> 的 X/Y 方差比换算为本包统一的 Y/X <code>lambda</code>。Passing–Bablok 按附录 I 的 Algorithm I 保留垂直点的有符号无穷大斜率、排除 −1 斜率并执行 K 位移。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep09_c_pb, <span class="at">type =</span> <span class="st">"regression"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="009-方法学比较与参考物偏倚_files/figure-html/ep09-c-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="clsi-ep09c-附录-d六种数据形态" class="level3" data-number="9.2.3">
+<h3 data-number="9.2.3" class="anchored" data-anchor-id="clsi-ep09c-附录-d六种数据形态"><span class="header-section-number">9.2.3</span> CLSI EP09c 附录 D：六种数据形态</h3>
+<p>附录 D 的六组数据各有 40 对结果，用于展示恒定 SD、恒定 CV、浓度分布和离群点对差值图及回归的影响。标准没有为六组数据统一公布一套回归参数，以下 OLS 参数只用于核验数据结构。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ep09_d <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/009-方法学比较与参考物偏倚/std-ep09-appendix-d.csv"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>ep09_d_pattern <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">D1 =</span> <span class="st">"恒定 SD"</span>, <span class="at">D2 =</span> <span class="st">"恒定 CV"</span>, <span class="at">D3 =</span> <span class="st">"恒定 CV"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">D4 =</span> <span class="st">"恒定 CV，有离群点"</span>, <span class="at">D5 =</span> <span class="st">"恒定 SD，有离群点"</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">D6 =</span> <span class="st">"恒定 SD"</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 以含离群点的 D4 展示单个数据集的操作步骤，再用同一调用方式汇总 D1～D6（略）</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>ep09_d4 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ep09_d[ep09_d<span class="sc">$</span>dataset <span class="sc">==</span> <span class="st">"D4"</span>, ])</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>ep09_d4_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  ep09_d4, <span class="at">id =</span> <span class="st">"sample"</span>,</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">candidate =</span> <span class="st">"candidate"</span>, <span class="at">reference =</span> <span class="st">"comparative"</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>ep09_d4_mcr <span class="ot">&lt;-</span> <span class="fu">describe</span>(ep09_d4_mcr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Descriptive Statistics
+  Variable               n     Mean       SD      Min       Q1   Median       Q3      Max  NA
+  --------------------------------------------------------------------------- 
+    comparative (X)     40 203.8413 226.8297   0.8810  31.6217 104.2190 282.3255 785.5660  
+    candidate (Y)       40 224.5340 235.1985   1.0780  37.6600 140.9205 347.1503 801.2270  
+    Diff (Y-X)          40  20.6928 107.4543 -205.3500  -2.0363   4.9985  18.7690 585.1470  
+
+  dataset
+  Level                Count  Percent
+   -------------------------------------- 
+  D4                      40   100.0%</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ep09_d4_mcr <span class="ot">&lt;-</span> <span class="fu">regression</span>(ep09_d4_mcr, <span class="at">method =</span> <span class="st">"ols"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: OLS
+  CI method: analytic
+  Intercept = 35.9058  (SE = 22.9826)
+  Slope     = 0.9254  (SE = 0.0759)
+  Intercept 95% CI: [-10.6200, 82.4316]
+  Slope     95% CI: [0.7717, 1.0790]
+    H0: slope = 1 -&gt; t = -0.9834, p = 0.3316
+    slope not significantly different from 1 (CI contains 1)
+  R-squared = 0.7965
+  Sigma     = 107.4996
+  n = 40</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep09_d4_mcr, <span class="at">type =</span> <span class="st">"regression"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="009-方法学比较与参考物偏倚_files/figure-html/ep09-d-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP09c 附录 D 数据结构与 OLS 诊断</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">数据集</th>
+<th style="text-align: left;">数据形态</th>
+<th style="text-align: right;">样本数</th>
+<th style="text-align: right;">截距</th>
+<th style="text-align: right;">斜率</th>
+<th style="text-align: right;">最大残差样本</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">D1</td>
+<td style="text-align: left;">D1</td>
+<td style="text-align: left;">恒定 SD</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">9.1854</td>
+<td style="text-align: right;">0.9959</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D2</td>
+<td style="text-align: left;">D2</td>
+<td style="text-align: left;">恒定 CV</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">12.4287</td>
+<td style="text-align: right;">0.9697</td>
+<td style="text-align: right;">36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D3</td>
+<td style="text-align: left;">D3</td>
+<td style="text-align: left;">恒定 CV</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">7.3639</td>
+<td style="text-align: right;">0.8942</td>
+<td style="text-align: right;">39</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D4</td>
+<td style="text-align: left;">D4</td>
+<td style="text-align: left;">恒定 CV，有离群点</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">35.9058</td>
+<td style="text-align: right;">0.9254</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D5</td>
+<td style="text-align: left;">D5</td>
+<td style="text-align: left;">恒定 SD，有离群点</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">0.5373</td>
+<td style="text-align: right;">0.9594</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D6</td>
+<td style="text-align: left;">D6</td>
+<td style="text-align: left;">恒定 SD</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">0.2171</td>
+<td style="text-align: right;">1.0024</td>
+<td style="text-align: right;">18</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>六组均为 40 对完整结果。模型选择仍应基于差值图所显示的误差结构，而不是只比较相关系数。</p>
+</section>
+<section id="clsi-ep09c-附录-e广义-esd-离群检验" class="level3" data-number="9.2.4">
+<h3 data-number="9.2.4" class="anchored" data-anchor-id="clsi-ep09c-附录-e广义-esd-离群检验"><span class="header-section-number">9.2.4</span> CLSI EP09c 附录 E：广义 ESD 离群检验</h3>
+<p>附录 E 使用附录 F 的 100 个相对偏倚，在 α = 0.01、最多 5 个离群点的设置下演示广义 ESD。相对偏倚定义为 <code>100 × (Y - X) / X</code>。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ep09_f <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/009-方法学比较与参考物偏倚/std-ep09-appendix-f.csv"</span>,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>ep09_f_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_f),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>, <span class="at">candidate =</span> <span class="st">"y"</span>, <span class="at">reference =</span> <span class="st">"x"</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>ep09_e_result <span class="ot">&lt;-</span> <span class="fu">outlier</span>(</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  ep09_f_mcr, <span class="at">method =</span> <span class="st">"esd"</span>, <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">r =</span> <span class="dv">5</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Outlier
+  Method: esd
+  Data:   Percent diff ((y - x) / x * 100)
+  Alpha:  0.01
+
+  1 outlier(s) found:
+  Row                Value   Statistic  Critical
+   -------------------------------------------------- 
+  3               -55.7047      6.0896  3.7540</code></pre>
+</div>
+</div>
+</section>
+<section id="clsi-ep09c-附录-f中位偏倚区间" class="level3" data-number="9.2.5">
+<h3 data-number="9.2.5" class="anchored" data-anchor-id="clsi-ep09c-附录-f中位偏倚区间"><span class="header-section-number">9.2.5</span> CLSI EP09c 附录 F：中位偏倚区间</h3>
+<p>附录 F 给出 100 对结果。普通中位数分别演示默认的保守顺序统计量区间和连续秩插值区间；<code>method = "hodges_lehmann"</code> 直接返回 Walsh 均值伪中位数及无连续性校正的 Wilcoxon/Tukey 区间。非参数一致性限仍为经验分位数及 percentile bootstrap 区间。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>ep09_f_ba <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  ep09_f_mcr,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">x_axis =</span> <span class="st">"reference"</span>,</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_denominator =</span> <span class="st">"reference"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nonparametric"</span>, <span class="at">bootstrap_replicates =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">2026</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        percent
+  Y-axis:      (y - x) / x * 100
+  X-axis:      x
+  Percent base: reference
+  Method:       nonparametric
+  n = 100
+
+  Median diff:     -0.3345
+  95% requested CI for median diff (actual 96.5%): [-2.0202, 1.5873]
+  SD diff:         9.1499
+  95% LoA: [-12.6938, 16.2952]
+
+  95% CI for LoA:
+    Lower LoA: [-35.4958, -9.2515]
+    Upper LoA: [11.6452, 22.4088]</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>ep09_f_interpolated <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  ep09_f_mcr,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">x_axis =</span> <span class="st">"reference"</span>,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_denominator =</span> <span class="st">"reference"</span>,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nonparametric"</span>, <span class="at">median_ci_method =</span> <span class="st">"interpolated"</span>,</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">2026</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        percent
+  Y-axis:      (y - x) / x * 100
+  X-axis:      x
+  Percent base: reference
+  Method:       nonparametric
+  n = 100
+
+  Median diff:     -0.3345
+  95% requested CI for median diff (actual 95.0%): [-1.9970, 1.1783]
+  SD diff:         9.1499
+  95% LoA: [-12.6938, 16.2952]
+
+  95% CI for LoA:
+    Lower LoA: [-35.4958, -9.2515]
+    Upper LoA: [11.6452, 22.4088]</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>ep09_f_hl <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  ep09_f_mcr,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">x_axis =</span> <span class="st">"reference"</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_denominator =</span> <span class="st">"reference"</span>,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"hodges_lehmann"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">2026</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        percent
+  Y-axis:      (y - x) / x * 100
+  X-axis:      x
+  Percent base: reference
+  Method:       hodges_lehmann
+  n = 100
+
+  HL pseudomedian: 0.0460
+  95% CI for hl pseudomedian: [-1.4034, 1.6075]
+  SD diff:         9.1499
+  95% LoA: [-12.6938, 16.2952]
+
+  95% CI for LoA:
+    Lower LoA: [-35.4958, -9.2515]
+    Upper LoA: [11.6452, 22.4088]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP09c 附录 F 中位偏倚结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">median</td>
+<td style="text-align: right;">-0.335</td>
+<td style="text-align: right;">-0.3345</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">position_40</td>
+<td style="text-align: right;">-2.020</td>
+<td style="text-align: right;">-2.0202</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">position_41</td>
+<td style="text-align: right;">-1.990</td>
+<td style="text-align: right;">-1.9871</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">position_60</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">1.0031</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">position_61</td>
+<td style="text-align: right;">1.590</td>
+<td style="text-align: right;">1.5873</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">interpolated_lower</td>
+<td style="text-align: right;">-1.997</td>
+<td style="text-align: right;">-1.9970</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">interpolated_upper</td>
+<td style="text-align: right;">1.152</td>
+<td style="text-align: right;">1.1783</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">HL_pseudomedian</td>
+<td style="text-align: right;">-0.050</td>
+<td style="text-align: right;">0.0460</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">HL_lower</td>
+<td style="text-align: right;">-1.410</td>
+<td style="text-align: right;">-1.4034</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix F</td>
+<td style="text-align: left;">HL_upper</td>
+<td style="text-align: right;">1.610</td>
+<td style="text-align: right;">1.6075</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>默认 <code>median_diff_ci</code> 给出位置 40 和 61 构成的保守顺序统计量区间，实际覆盖率约 96.4%。插值法的连续秩为 40.7002 和 60.2998，按相邻顺序统计量线性插值得 −1.9970%～1.1783%；公开数据依公式得到的上限与正文 1.152% 不一致。由表 F2 精确数值复算，Hodges–Lehmann 伪中位数为 <strong>+0.05%</strong>，而标准正文写为 <strong>−0.05%</strong>；区间仍为约 −1.41%～1.61%。</p>
+</section>
+<section id="clsi-ep09c-附录-h迭代加权最小二乘" class="level3" data-number="9.2.6">
+<h3 data-number="9.2.6" class="anchored" data-anchor-id="clsi-ep09c-附录-h迭代加权最小二乘"><span class="header-section-number">9.2.6</span> CLSI EP09c 附录 H：迭代加权最小二乘</h3>
+<p>附录 H 比较两台分析仪的 120 对血小板结果。<code>weights = "residual"</code> 先建立 OLS 拟合，再用绝对残差估计线性 SD 函数，以拟合 SD 的平方倒数为权重；<code>weight_iterations = 4</code> 按标准建议更新四轮。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>ep09_h <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/009-方法学比较与参考物偏倚/std-ep09-appendix-h.csv"</span>,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>ep09_h_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_h),</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"sample"</span>, <span class="at">candidate =</span> <span class="st">"candidate"</span>, <span class="at">reference =</span> <span class="st">"comparative"</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>ep09_h_wls <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  ep09_h_mcr,</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"wls"</span>, <span class="at">weights =</span> <span class="st">"residual"</span>, <span class="at">weight_iterations =</span> <span class="dv">4</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: WLS
+  Weights: residual
+  Weight updates: 4
+  CI method: analytic
+  Intercept = 3.0202  (SE = 1.0724)
+  Slope     = 1.0209  (SE = 0.0070)
+  Intercept 95% CI: [0.8966, 5.1439]
+  Slope     95% CI: [1.0071, 1.0347]
+    H0: slope = 1 -&gt; t = 2.9977, p = 0.003318
+    slope significantly different from 1 (CI excludes 1)
+  R-squared = 0.9945
+  Sigma     = 1.2216
+  n = 120</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: WLS
+  Weights: residual
+  Weight updates: 4
+  CI method: analytic
+  Intercept = 3.0202  (SE = 1.0724)
+  Slope     = 1.0209  (SE = 0.0070)
+  Intercept 95% CI: [0.8966, 5.1439]
+  Slope     95% CI: [1.0071, 1.0347]
+    H0: slope = 1 -&gt; t = 2.9977, p = 0.003318
+    slope significantly different from 1 (CI excludes 1)
+  R-squared = 0.9945
+  Sigma     = 1.2216
+  n = 120</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP09c 附录 H WLS 结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">3.013</td>
+<td style="text-align: right;">3.0202</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">intercept_se</td>
+<td style="text-align: right;">1.073</td>
+<td style="text-align: right;">1.0724</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">intercept_lower</td>
+<td style="text-align: right;">0.889</td>
+<td style="text-align: right;">0.8966</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">intercept_upper</td>
+<td style="text-align: right;">5.138</td>
+<td style="text-align: right;">5.1439</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.021</td>
+<td style="text-align: right;">1.0209</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">slope_se</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">0.0070</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">slope_lower</td>
+<td style="text-align: right;">1.007</td>
+<td style="text-align: right;">1.0071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">slope_upper</td>
+<td style="text-align: right;">1.035</td>
+<td style="text-align: right;">1.0347</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP09c Appendix H</td>
+<td style="text-align: left;">regression_se</td>
+<td style="text-align: right;">1.222</td>
+<td style="text-align: right;">1.2216</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>截距复算为 3.020，标准为 3.013；相应区间的小差异可能来自未显示输入精度或标准复算过程，不能解释为 WLS 公式不同。</p>
+</section>
+<section id="clsi-ep09c-附录-ipassingbablok-参数与偏倚区间" class="level3" data-number="9.2.7">
+<h3 data-number="9.2.7" class="anchored" data-anchor-id="clsi-ep09c-附录-ipassingbablok-参数与偏倚区间"><span class="header-section-number">9.2.7</span> CLSI EP09c 附录 I：Passing–Bablok 参数与偏倚区间</h3>
+<p><code>ci_method = "auto"</code> 在 Passing–Bablok 回归参数上选择附录 I 的秩区间。指定医学决定水平的偏倚属于回归参数的联合函数。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>ep09_i_bias <span class="ot">&lt;-</span> <span class="fu">bias</span>(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  ep09_c_pb, <span class="at">mdl =</span> <span class="dv">1</span>,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="st">"confidence"</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>, <span class="at">seed =</span> <span class="dv">202609</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bias
+  Method: Passing-Bablok
+  Interval: confidence (95%)
+  MDL points: 1
+  Bias range: [0.0083, 0.0083]
+
+ mdl        bias    ci_lower   ci_upper 
+--------------------------------------- 
+   1 0.008343138 -0.01802986 0.02214245 </code></pre>
+</div>
+</div>
+<p>偏倚区间由完整 <code>(X, Y)</code> 对重采样得到；点估计仍来自原始 Passing–Bablok 拟合。返回对象的 <code>ci_method</code> 属性为 <code>bootstrap_percentile</code>。</p>
+</section>
+<section id="clsi-ep09c-附录-j精密度轮廓加权-deming" class="level3" data-number="9.2.8">
+<h3 data-number="9.2.8" class="anchored" data-anchor-id="clsi-ep09c-附录-j精密度轮廓加权-deming"><span class="header-section-number">9.2.8</span> CLSI EP09c 附录 J：精密度轮廓加权 Deming</h3>
+<p>附录 J 要求把两种方法各自的方差函数纳入误差变量回归。<code>variance_models</code> 可直接接收返回方差的函数，也可接收已经完成 <code>variance()</code> 和 <code>profile()</code> 的 <code>precision</code> 对象。超出精密度研究均值范围会警告，预测出非正或非有限方差会报错。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>ep09_j_precision_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-profile.csv"</span>,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>ep09_j_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep09_j_precision_data), value <span class="sc">~</span> day, <span class="at">by =</span> <span class="st">"sample"</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>ep09_j_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep09_j_precision)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+     L1       day   0.6376   63.0  0.7985 3.9446  anova
+     L1     error   0.3750   37.0  0.6124 3.0250  anova
+     L2       day   5.7139   75.1  2.3904 4.7584  anova
+     L2     error   1.8937   24.9  1.3761 2.7393  anova
+     L3       day   3.3913   15.7  1.8415 1.8088  anova
+     L3     error  18.1466   84.3  4.2599 4.1840  anova
+     L4       day  30.5549   54.6  5.5276 2.7529  anova
+     L4     error  25.4525   45.4  5.0451 2.5126  anova
+     L5       day   0.0000    0.0  0.0000 0.0000  anova
+     L5     error 171.7986  100.0 13.1072 3.3003  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>ep09_j_precision <span class="ot">&lt;-</span> <span class="fu">profile</span>(ep09_j_precision)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision profiles -- Sadler
+  total: sigma^2 = 0.0000 + 0.0086 * u^J  (AIC = 56.45, R^2 = 0.9847)
+  day: sigma^2 = 0.0000 + 0.0095 * u^J  (AIC = 43.46, R^2 = 0.8919)
+  error: sigma^2 = 0.0010 * u^2  (AIC = 55.96, R^2 = 0.9806)</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 生成一组虚拟数据，演示分析过程</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>ep09_j_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="fu">seq</span>(<span class="dv">25</span>, <span class="dv">350</span>, <span class="at">length.out =</span> <span class="dv">8</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>ep09_j_data<span class="sc">$</span>candidate <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">1.03</span> <span class="sc">*</span> ep09_j_data<span class="sc">$</span>reference <span class="sc">+</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="sc">-</span><span class="fl">1.0</span>, <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="fl">1.1</span>, <span class="sc">-</span><span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="sc">-</span><span class="fl">0.6</span>, <span class="fl">0.7</span>)</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>ep09_j_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  ep09_j_data, <span class="st">"sample"</span>, <span class="st">"candidate"</span>, <span class="st">"reference"</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>ep09_j_profile_fit <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  ep09_j_mcr, <span class="at">method =</span> <span class="st">"wdeming"</span>, <span class="at">weights =</span> <span class="st">"precision_profile"</span>,</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">variance_models =</span> <span class="fu">list</span>(</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference =</span> ep09_j_precision,</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">candidate =</span> ep09_j_precision</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Precision-profile Deming
+  Weights: precision_profile
+  CI method: jackknife
+  Intercept = 0.0131  (SE = 1.3393)
+  Slope     = 1.0360  (SE = 0.0074)
+  Intercept 95% CI: [-3.2639, 3.2902]
+  Slope     95% CI: [1.0178, 1.0542]
+    H0: slope = 1 -&gt; t = 4.8363, p = 0.002892
+    slope significantly different from 1 (CI excludes 1)
+  Sigma     = 1.0955
+  n = 8</code></pre>
+</div>
+</div>
+</section>
+<section id="clsi-ep09c-附录-k2回归与偏倚-bootstrap" class="level3" data-number="9.2.9">
+<h3 data-number="9.2.9" class="anchored" data-anchor-id="clsi-ep09c-附录-k2回归与偏倚-bootstrap"><span class="header-section-number">9.2.9</span> CLSI EP09c 附录 K2：回归与偏倚 bootstrap</h3>
+<p>percentile 方法直接取参数抽样分位数；standard 方法由 bootstrap 标准误、截距—斜率协方差和 <span class="math inline">\(t_{n-2}\)</span> 构造区间。每次均重采样完整样本对并重拟合所选模型。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>ep09_k_percentile <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  ep09_c_mcr, <span class="at">method =</span> <span class="st">"ols"</span>,</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_method =</span> <span class="st">"bootstrap_percentile"</span>,</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>, <span class="at">seed =</span> <span class="dv">202610</span>, <span class="at">mdl =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: OLS
+  CI method: bootstrap_percentile
+  Bootstrap: 5000 effective / 5000 requested (0 failed)
+  Intercept = -0.3804  (SE = 0.1738)
+  Slope     = 1.0697  (SE = 0.0358)
+  Intercept 95% CI: [-0.6645, 0.0425]
+  Slope     95% CI: [0.9822, 1.1270]
+    H0: slope = 1 -&gt; t = 1.9441, p = 0.05554
+    slope not significantly different from 1 (CI contains 1)
+  R-squared = 0.9921
+  Sigma     = 1.5576
+  n = 79</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>ep09_k_standard <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  ep09_c_mcr, <span class="at">method =</span> <span class="st">"ols"</span>,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_method =</span> <span class="st">"bootstrap_standard"</span>,</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap_replicates =</span> <span class="dv">5000</span>, <span class="at">seed =</span> <span class="dv">202610</span>, <span class="at">mdl =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>)</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: OLS
+  CI method: bootstrap_standard
+  Bootstrap: 5000 effective / 5000 requested (0 failed)
+  Intercept = -0.3804  (SE = 0.1738)
+  Slope     = 1.0697  (SE = 0.0358)
+  Intercept 95% CI: [-0.7265, -0.0343]
+  Slope     95% CI: [0.9983, 1.1410]
+    H0: slope = 1 -&gt; t = 1.9441, p = 0.05554
+    slope not significantly different from 1 (CI contains 1)
+  R-squared = 0.9921
+  Sigma     = 1.5576
+  n = 79</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>附录 K2 两种 bootstrap 参数区间</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">method</th>
+<th style="text-align: left;">parameter</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">lower</th>
+<th style="text-align: right;">upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">percentile</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-0.38040</td>
+<td style="text-align: right;">-0.66451</td>
+<td style="text-align: right;">0.04253</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">percentile</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.06965</td>
+<td style="text-align: right;">0.98218</td>
+<td style="text-align: right;">1.12699</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">standard</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-0.38040</td>
+<td style="text-align: right;">-0.72652</td>
+<td style="text-align: right;">-0.03428</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">standard</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.06965</td>
+<td style="text-align: right;">0.99831</td>
+<td style="text-align: right;">1.14099</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>regression$bootstrap</code> 记录随机种子、请求次数、有效次数和失败次数，<code>parameter_samples</code> 保存联合参数抽样；回归阶段给出 <code>mdl</code> 时还保存偏倚抽样。<code>bias()</code> 与 <code>predict()</code> 会复用相同方法的已存抽样。预测区间是保留的 <code>ivdtools</code> 扩展，不应与 EP09c 的回归参数或偏倚置信区间混称。</p>
+</section>
+<section id="yyt-1789.22021-附录-a参考物质偏倚" class="level3" data-number="9.2.10">
+<h3 data-number="9.2.10" class="anchored" data-anchor-id="yyt-1789.22021-附录-a参考物质偏倚"><span class="header-section-number">9.2.10</span> YY/T 1789.2—2021 附录 A：参考物质偏倚</h3>
+<p>附录 A 使用三个水平的血清胆固醇国家标准物质，每个水平在重复性条件下测量 6 次。<code>reference_bias()</code> 以测量均值的扩展不确定度和标准物质不确定度合成偏倚区间。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>yyt_a <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/009-方法学比较与参考物偏倚/std-yyt1789-2-appendix-a.csv"</span>,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>yyt_a_result <span class="ot">&lt;-</span> <span class="fu">reference_bias</span>(</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(yyt_a),</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference_uncertainty =</span> <span class="st">"reference_uncertainty"</span>,</span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="st">"level"</span>,</span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span></span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>yyt_a_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reference Material Bias
+  Standard: YY/T 1789.2-2021, Section 5.3
+  Data:     as.data.frame(yyt_a)
+  Result:   result
+  Levels:   3
+  Records:  18 valid, 0 excluded
+  Coverage factor: k = 2
+
+  Measurement and uncertainty
+  Level: L1
+    n         : 6
+    Mean      : 192.35
+    SD        : 0.60909769
+    Reference : 197.6
+    U_ref     : 2.5
+    u_X       : 0.24866309
+    U_X       : 0.49732618
+
+  Level: L2
+    n         : 6
+    Mean      : 149.8
+    SD        : 0.35777088
+    Reference : 152.4
+    U_ref     : 1.9
+    u_X       : 0.14605935
+    U_X       : 0.2921187
+
+  Level: L3
+    n         : 6
+    Mean      : 119.5
+    SD        : 0.42426407
+    Reference : 122.1
+    U_ref     : 1.6
+    u_X       : 0.17320508
+    U_X       : 0.34641016
+
+  Bias interval
+  Level: L1
+    Bias                : -5.25
+    Bias (%)            : -2.6568826
+    Interval half-width : 2.5489867
+    Lower               : -7.7989867
+    Upper               : -2.7010133
+
+  Level: L2
+    Bias                : -2.6
+    Bias (%)            : -1.7060367
+    Interval half-width : 1.922325
+    Lower               : -4.522325
+    Upper               : -0.67767502
+
+  Level: L3
+    Bias                : -2.6
+    Bias (%)            : -2.1294021
+    Interval half-width : 1.6370706
+    Lower               : -4.2370706
+    Upper               : -0.96292945
+
+  Interval: Bias +/- sqrt(U_X^2 + U_ref^2)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.2 附录 A 参考物质偏倚结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">192.35</td>
+<td style="text-align: right;">192.3500</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">0.6091</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">standard_uncertainty</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.2487</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">expanded_uncertainty</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">0.4973</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">-5.20</td>
+<td style="text-align: right;">-5.2500</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">-7.70</td>
+<td style="text-align: right;">-7.7990</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L1</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">-2.70</td>
+<td style="text-align: right;">-2.7010</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">149.80</td>
+<td style="text-align: right;">149.8000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.3578</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">standard_uncertainty</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.1461</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">expanded_uncertainty</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">0.2921</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">-2.60</td>
+<td style="text-align: right;">-2.6000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">-4.50</td>
+<td style="text-align: right;">-4.5223</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L2</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">-0.6777</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">119.50</td>
+<td style="text-align: right;">119.5000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.4243</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">standard_uncertainty</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.1732</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">expanded_uncertainty</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">0.3464</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">-2.60</td>
+<td style="text-align: right;">-2.6000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">-4.20</td>
+<td style="text-align: right;">-4.2371</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix A L3</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">-0.9629</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>三个水平的均值、SD、不确定度和偏倚区间均可由 18 个原始结果直接复算。水平 1 的精确偏倚为 −5.25 mg/dL，标准显示 −5.2 mg/dL；精确合成区间下限为 −7.80 mg/dL，标准表显示 −7.7 mg/dL，属于标准逐步显示舍入造成的差异。</p>
+</section>
+<section id="yyt-1789.22021-附录-b患者样本偏倚与回归" class="level3" data-number="9.2.11">
+<h3 data-number="9.2.11" class="anchored" data-anchor-id="yyt-1789.22021-附录-b患者样本偏倚与回归"><span class="header-section-number">9.2.11</span> YY/T 1789.2—2021 附录 B：患者样本偏倚与回归</h3>
+<p>附录 B 给出 120 份患者样本的完整配对结果，比较程序为横轴，待评价产品为纵轴。标准把比较程序结果小于 100 mg/dL 的 75 份样本按绝对差分析，把不小于 100 mg/dL 的 45 份样本按相对差分析。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>yyt_b <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/009-方法学比较与参考物偏倚/std-yyt1789-2-appendix-b.csv"</span>,</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yyt_b, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  sample comparative evaluated
+   &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+1      1          21        23
+2      2         128       130
+3      3          43        40
+4      4         125       128
+5      5         165       163
+6      6         223       228</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>yyt_b_data_list <span class="ot">&lt;-</span> <span class="fu">split_by_cutpoints</span>(</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(yyt_b),</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"comparative"</span>,</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutpoints =</span> <span class="dv">100</span>,</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"low"</span>, <span class="st">"high"</span>)</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>yyt_b_data_list</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Data split by cutpoints
+  Variable: comparative
+  Cutpoints: 100
+
+  low        [-Inf, 100)           n = 75
+  high       [100, Inf)            n = 45</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>yyt_b_mcr <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_data_list,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  \(d) <span class="fu">mcr</span>(</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>    d,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">"sample"</span>, <span class="at">candidate =</span> <span class="st">"evaluated"</span>, <span class="at">reference =</span> <span class="st">"comparative"</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>yyt_b_mcr<span class="sc">$</span>low <span class="ot">&lt;-</span> <span class="fu">describe</span>(yyt_b_mcr<span class="sc">$</span>low)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Descriptive Statistics
+  Variable               n     Mean       SD      Min       Q1   Median       Q3      Max  NA
+  --------------------------------------------------------------------------- 
+    comparative (X)     75  60.4533  24.8647  12.0000  37.5000  65.0000  81.5000  98.0000  
+    evaluated (Y)       75  62.2800  26.1847  13.0000  39.5000  67.0000  85.5000 104.0000  
+    Diff (Y-X)          75   1.8267   3.6331  -7.0000  -1.5000   3.0000   4.0000   9.0000  </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>yyt_b_mcr<span class="sc">$</span>high <span class="ot">&lt;-</span> <span class="fu">describe</span>(yyt_b_mcr<span class="sc">$</span>high)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Descriptive Statistics
+  Variable               n     Mean       SD      Min       Q1   Median       Q3      Max  NA
+  --------------------------------------------------------------------------- 
+    comparative (X)     45 173.3111  45.8782 104.0000 129.0000 182.0000 199.0000 265.0000  
+    evaluated (Y)       45 178.8444  48.9554 107.0000 132.0000 188.0000 207.0000 272.0000  
+    Diff (Y-X)          45   5.5333   5.1416  -6.0000   3.0000   5.0000   7.0000  22.0000  </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yyt_b_mcr<span class="sc">$</span>low, <span class="at">type =</span> <span class="st">"scatter"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="009-方法学比较与参考物偏倚_files/figure-html/yyt-b-data-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yyt_b_mcr<span class="sc">$</span>high, <span class="at">type =</span> <span class="st">"scatter"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="009-方法学比较与参考物偏倚_files/figure-html/yyt-b-data-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="广义-esd-离群检验" class="level4" data-number="9.2.11.1">
+<h4 data-number="9.2.11.1" class="anchored" data-anchor-id="广义-esd-离群检验"><span class="header-section-number">9.2.11.1</span> 广义 ESD 离群检验</h4>
+<p>差值分析需要“待评价产品减比较程序”，因此离群检验对象把待评价产品传给 <code>candidate</code>。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>yyt_b_low_mcr <span class="ot">&lt;-</span> yyt_b_mcr<span class="sc">$</span>low</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>yyt_b_high_mcr <span class="ot">&lt;-</span> yyt_b_mcr<span class="sc">$</span>high</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>yyt_b_low_outlier <span class="ot">&lt;-</span> <span class="fu">outlier</span>(</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>  yyt_b_low_mcr, <span class="at">method =</span> <span class="st">"esd"</span>, <span class="at">type =</span> <span class="st">"difference"</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">r =</span> <span class="dv">3</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Outlier
+  Method: esd
+  Data:   Difference (evaluated - comparative)
+  Alpha:  0.05
+
+  No outliers detected.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>yyt_b_high_outlier <span class="ot">&lt;-</span> <span class="fu">outlier</span>(</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_high_mcr, <span class="at">method =</span> <span class="st">"esd"</span>, <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">r =</span> <span class="dv">3</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Outlier
+  Method: esd
+  Data:   Percent diff ((evaluated - comparative) / comparative * 100)
+  Alpha:  0.05
+
+  No outliers detected.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.2 附录 B 广义 ESD 结论</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">区间</th>
+<th style="text-align: left;">差值尺度</th>
+<th style="text-align: right;">最大检验数</th>
+<th style="text-align: right;">检出离群数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">&lt;100 mg/dL</td>
+<td style="text-align: left;">绝对差</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;=100 mg/dL</td>
+<td style="text-align: left;">相对差</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="分段偏倚" class="level4" data-number="9.2.11.2">
+<h4 data-number="9.2.11.2" class="anchored" data-anchor-id="分段偏倚"><span class="header-section-number">9.2.11.2</span> 分段偏倚</h4>
+<p>对预处理得到的两个独立 <code>mcr</code> 对象分别调用 <code>bland_altman()</code>，得到低值区间的绝对差和高值区间的相对差。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>yyt_b_low_ba <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_low_mcr, <span class="at">type =</span> <span class="st">"difference"</span>, <span class="at">x_axis =</span> <span class="st">"mean"</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        difference
+  Y-axis:      evaluated - comparative
+  X-axis:      Mean of evaluated and comparative
+  Method:       parametric
+  n = 75
+
+  Mean diff:       1.8267
+  95% CI for mean diff: [0.9908, 2.6626]
+  SD diff:         3.6331
+  95% LoA: [-5.2940, 8.9474]
+
+  95% CI for LoA:
+    Lower LoA: [-6.7289, -3.8591]
+    Upper LoA: [7.5125, 10.3823]</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>yyt_b_high_ba <span class="ot">&lt;-</span> <span class="fu">bland_altman</span>(</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_high_mcr, <span class="at">type =</span> <span class="st">"percent"</span>, <span class="at">x_axis =</span> <span class="st">"mean"</span>,</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_denominator =</span> <span class="st">"reference"</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bland-Altman
+  Type:        percent
+  Y-axis:      (evaluated - comparative) / comparative * 100
+  X-axis:      Mean of evaluated and comparative
+  Percent base: reference
+  Method:       parametric
+  n = 45
+
+  Mean diff:       3.0020
+  95% CI for mean diff: [2.2441, 3.7600]
+  SD diff:         2.5229
+  95% LoA: [-1.9427, 7.9468]
+
+  95% CI for LoA:
+    Lower LoA: [-3.2477, -0.6377]
+    Upper LoA: [6.6418, 9.2518]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.2 附录 B 分段偏倚结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Appendix B low</td>
+<td style="text-align: left;">mean_bias</td>
+<td style="text-align: right;">1.8267</td>
+<td style="text-align: right;">1.8267</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B low</td>
+<td style="text-align: left;">sd_bias</td>
+<td style="text-align: right;">3.6331</td>
+<td style="text-align: right;">3.6331</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B low</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9908</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B low</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">2.7000</td>
+<td style="text-align: right;">2.6626</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B high</td>
+<td style="text-align: left;">mean_relative_bias</td>
+<td style="text-align: right;">3.0000</td>
+<td style="text-align: right;">3.0020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B high</td>
+<td style="text-align: left;">sd_relative_bias</td>
+<td style="text-align: right;">2.5230</td>
+<td style="text-align: right;">2.5229</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B high</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">2.6000</td>
+<td style="text-align: right;">2.2441</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B high</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">4.0000</td>
+<td style="text-align: right;">3.7600</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>因统计口径差异，置信区间存在一定差异。</p>
+</section>
+<section id="四种回归模型" class="level4" data-number="9.2.11.3">
+<h4 data-number="9.2.11.3" class="anchored" data-anchor-id="四种回归模型"><span class="header-section-number">9.2.11.3</span> 四种回归模型</h4>
+<p>回归拟合“待评价产品对比较程序”，因此待评价产品传给 <code>candidate</code>（Y），比较程序传给 <code>reference</code>（X）。WLS 用 <code>weights = "residual"</code> 按标准的绝对残差 SD 函数自动迭代四轮。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>yyt_b_reg_mcr <span class="ot">&lt;-</span> <span class="fu">mcr</span>(</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(yyt_b),</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"sample"</span>, <span class="at">candidate =</span> <span class="st">"evaluated"</span>, <span class="at">reference =</span> <span class="st">"comparative"</span></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>yyt_b_ols <span class="ot">&lt;-</span> <span class="fu">regression</span>(yyt_b_reg_mcr, <span class="at">method =</span> <span class="st">"ols"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: OLS
+  CI method: analytic
+  Intercept = -0.8416  (SE = 0.6630)
+  Slope     = 1.0395  (SE = 0.0055)
+  Intercept 95% CI: [-2.1545, 0.4713]
+  Slope     95% CI: [1.0287, 1.0503]
+    H0: slope = 1 -&gt; t = 7.2214, p = 5.448e-11
+    slope significantly different from 1 (CI excludes 1)
+  R-squared = 0.9967
+  Sigma     = 3.8533
+  n = 120</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>yyt_b_deming <span class="ot">&lt;-</span> <span class="fu">regression</span>(yyt_b_reg_mcr, <span class="at">method =</span> <span class="st">"deming"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Deming
+  CI method: jackknife
+  Intercept = -1.0230  (SE = 0.6625)
+  Slope     = 1.0413  (SE = 0.0066)
+  Intercept 95% CI: [-2.3348, 0.2889]
+  Slope     95% CI: [1.0283, 1.0542]
+    H0: slope = 1 -&gt; t = 6.2964, p = 5.403e-09
+    slope significantly different from 1 (CI excludes 1)
+  Sigma     = 3.8550
+  n = 120</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>yyt_b_pb <span class="ot">&lt;-</span> <span class="fu">regression</span>(yyt_b_reg_mcr, <span class="at">method =</span> <span class="st">"pb"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: Passing-Bablok
+  CI method: rank
+  Intercept = 0.0250  (SE = 0.7022)
+  Slope     = 1.0375  (SE = 0.0075)
+  Intercept 95% CI: [-0.8786, 1.0124]
+  Slope     95% CI: [1.0248, 1.0485]
+    H0: slope = 1 -&gt; t = 4.9790, p = 2.204e-06
+    slope significantly different from 1 (CI excludes 1)
+  Sigma     = 3.9129
+  n = 120</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>yyt_b_wls <span class="ot">&lt;-</span> <span class="fu">regression</span>(</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_reg_mcr,</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"wls"</span>, <span class="at">weights =</span> <span class="st">"residual"</span>, <span class="at">weight_iterations =</span> <span class="dv">4</span></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression
+  Method: WLS
+  Weights: residual
+  Weight updates: 4
+  CI method: analytic
+  Intercept = -0.6980  (SE = 0.6193)
+  Slope     = 1.0380  (SE = 0.0058)
+  Intercept 95% CI: [-1.9243, 0.5283]
+  Slope     95% CI: [1.0266, 1.0495]
+    H0: slope = 1 -&gt; t = 6.5761, p = 1.383e-09
+    slope significantly different from 1 (CI excludes 1)
+  R-squared = 0.9963
+  Sigma     = 1.2988
+  n = 120</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.2 附录 B 回归参数对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Appendix B OLS</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-0.842</td>
+<td style="text-align: right;">-0.8416</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B OLS</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.039</td>
+<td style="text-align: right;">1.0395</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B WLS</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-0.700</td>
+<td style="text-align: right;">-0.6980</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B WLS</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.038</td>
+<td style="text-align: right;">1.0380</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B Deming</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">-1.023</td>
+<td style="text-align: right;">-1.0230</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B Deming</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.041</td>
+<td style="text-align: right;">1.0413</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B Passing-Bablok</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">0.0250</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B Passing-Bablok</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.038</td>
+<td style="text-align: right;">1.0375</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>WLS 截距存在末位差异，来源可能是迭代停止点或显示精度；表中保留标准值和函数值。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yyt_b_deming, <span class="at">type =</span> <span class="st">"regression"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="009-方法学比较与参考物偏倚_files/figure-html/yyt-b-regression-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="mgdl-处偏倚" class="level4" data-number="9.2.11.4">
+<h4 data-number="9.2.11.4" class="anchored" data-anchor-id="mgdl-处偏倚"><span class="header-section-number">9.2.11.4</span> 125 mg/dL 处偏倚</h4>
+<p>标准报告的方向为“待评价产品减比较程序”，即 <code>intercept + (slope - 1) × 125</code>，与 <code>bias()</code> 的默认方向一致。以下分别调用 <code>bias()</code>，再直接与标准结果比较。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>yyt_b_ols_bias <span class="ot">&lt;-</span> <span class="fu">bias</span>(</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_ols, <span class="at">mdl =</span> <span class="dv">125</span>, <span class="at">level =</span> <span class="fl">0.95</span>, <span class="at">interval =</span> <span class="st">"confidence"</span></span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bias
+  Method: OLS
+  Interval: confidence (95%)
+  MDL points: 1
+  Bias range: [4.0943, 4.0943]
+
+ mdl     bias ci_lower ci_upper 
+------------------------------- 
+ 125 4.094271 3.357293 4.831248 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>yyt_b_wls_bias <span class="ot">&lt;-</span> <span class="fu">bias</span>(</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_wls, <span class="at">mdl =</span> <span class="dv">125</span>, <span class="at">level =</span> <span class="fl">0.95</span>, <span class="at">interval =</span> <span class="st">"confidence"</span></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bias
+  Method: WLS
+  Interval: confidence (95%)
+  MDL points: 1
+  Bias range: [4.0575, 4.0575]
+
+ mdl     bias ci_lower ci_upper 
+------------------------------- 
+ 125 4.057517 3.271421 4.843613 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>yyt_b_deming_bias <span class="ot">&lt;-</span> <span class="fu">bias</span>(</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  yyt_b_deming, <span class="at">mdl =</span> <span class="dv">125</span>, <span class="at">level =</span> <span class="fl">0.95</span>, <span class="at">interval =</span> <span class="st">"confidence"</span></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Bias
+  Method: Deming
+  Interval: confidence (95%)
+  MDL points: 1
+  Bias range: [4.1335, 4.1335]
+
+ mdl     bias ci_lower ci_upper 
+------------------------------- 
+ 125 4.133481 3.299802  4.96716 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.2 附录 B：125 mg/dL 处偏倚对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Appendix B OLS MDL</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">4.1</td>
+<td style="text-align: right;">4.0943</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B OLS MDL</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">3.4</td>
+<td style="text-align: right;">3.3573</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B OLS MDL</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">4.8</td>
+<td style="text-align: right;">4.8312</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B WLS MDL</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">4.1</td>
+<td style="text-align: right;">4.0575</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B WLS MDL</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3.2714</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B WLS MDL</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">4.7</td>
+<td style="text-align: right;">4.8436</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B Deming MDL</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">4.1</td>
+<td style="text-align: right;">4.1335</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appendix B Deming MDL</td>
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">3.4</td>
+<td style="text-align: right;">3.2998</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Appendix B Deming MDL</td>
+<td style="text-align: left;">upper</td>
+<td style="text-align: right;">4.9</td>
+<td style="text-align: right;">4.9672</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>WLS 和 Deming 的差异涉及置信区间构造方法：本章保留 <code>ivdtools</code> 的 EP09c 默认方法，不通过改变置信水平、随机种子或权重迭代次数来拟合标准公布值。</p>
+<p>WLS 的差异来自是否再次使用加权回归残差尺度。YY/T 1789.2 式（8）按最终权重直接计算</p>
+<p><span class="math display">\[
+SE\{\widehat B(x_c)\}
+=
+\sqrt{
+\frac{1}{\sum_i w_i}
++
+\frac{(x_c-\bar x_w)^2}{SSX_w}
+},
+\]</span></p>
+<p>没有再乘加权残差尺度 <span class="math inline">\(S_{y\cdot x}\)</span>。本例自由度为 118，<span class="math inline">\(t_{0.975,118}=1.980272\)</span>；偏倚点估计为 4.057517 mg/dL，YY/T 1789.2 式（8）的标准误为 0.305646 mg/dL，所以半宽为 <span class="math inline">\(1.980272\times0.305646=0.605262\)</span> mg/dL，复算区间为 3.4523～4.6628 mg/dL，按标准显示精度即 3.5～4.7 mg/dL。</p>
+<p><code>ivdtools</code> 的 WLS 解析区间与 EP09c 附录 H 的 H17～H18 一致，在上述标准误上乘 <span class="math inline">\(S_{y\cdot x}\)</span>。本例 <span class="math inline">\(S_{y\cdot x}=1.298770\)</span>，校正后标准误为 <span class="math inline">\(0.305646\times1.298770=0.396964\)</span> mg/dL，半宽为 0.786096 mg/dL，因此得到 3.2714～4.8436 mg/dL。两个区间半宽之比正好等于 1.298770，说明差异不是随机波动或小数舍入，而是是否采用残差尺度因子的公式差异。若权重是独立精密度研究提供的已知绝对逆方差，YY/T 1789.2 的写法有明确的模型基础；但本例权重由同一批数据的绝对残差迭代估计，继续采用残差尺度校正更为稳妥。还应注意，YY/T 1789.2 在附录 B 的 WLS 回归参数标准误中使用了 <span class="math inline">\(S_{y\cdot x}\)</span>，而在医学决定水平偏倚的式（8）中没有使用，两处尺度口径并不完全相同。</p>
+<p>Deming 的偏倚标准误均使用截距、斜率及其协方差：</p>
+<p><span class="math display">\[
+SE\{\widehat B(x_c)\}
+=
+\sqrt{
+\widehat\sigma_a^2+x_c^2\widehat\sigma_b^2
++2x_c\widehat\sigma_{ab}
+}.
+\]</span></p>
+<p>差别在于协方差的估计方法：YY/T 1789.2 附录 B 使用其列出的模型解析公式，<code>ivdtools</code> 的 <code>ci_method = "auto"</code> 则按 EP09c 附录 K1 对每个样本逐一删除、重新完成 Deming 拟合，并由 120 组删一参数样本计算方差和协方差。本例偏倚点估计为 4.133481 mg/dL，jackknife 偏倚标准误为 0.420992 mg/dL；乘 <span class="math inline">\(t_{0.975,118}=1.980272\)</span> 后半宽为 0.833679 mg/dL，得到 3.2998～4.9672 mg/dL。YY/T 1789.2 按解析协方差计算并公布为 3.4～4.9 mg/dL。两者都是有明确假设的区间算法，但不能混称为同一次公式复算；因此表中将 WLS 和 Deming 区间标记为“方法差异”，而不是“计算错误”或单纯“舍入差异”。</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./008-稀释回收与HOOK.html" class="pagination-link" aria-label="稀释回收与HOOK">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./010-质量控制.html" class="pagination-link" aria-label="质量控制">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

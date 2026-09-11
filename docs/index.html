@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="hiox-tech">
-<meta name="dcterms.date" content="2026-08-09">
+<meta name="dcterms.date" content="2026-09-11">
 
-<title>ivdtools handbook</title>
+<title>ivdtools Handbook</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./001-ivdtools-package-overview.html" rel="next">
+<link href="./001-ivdtools包总体介绍.html" rel="next">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9aab39a9d2b85c70b7d40ff480b4ebd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -111,8 +111,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
 <link rel="stylesheet" href="styles/book.css">
@@ -142,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ivdtools handbook</a> 
+      <a href="./">ivdtools Handbook</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -163,110 +161,140 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./001-ivdtools-package-overview.html" class="sidebar-item-text sidebar-link">
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./002-installing-and-using-the-analysis-environment.html" class="sidebar-item-text sidebar-link">
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./003-4plc-calibration-curve-fitting.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">4PLC Equation Calibration Curve Fitting</span></span></a>
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./004-stability-studies.html" class="sidebar-item-text sidebar-link">
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./005-precision-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./006-linearity-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./007-analytical-sensitivity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Analytical Sensitivity</span></span></a>
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./008-bottle-to-bottle-variability.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variability Analysis</span></span></a>
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./009-reference-intervals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./010-quality-control.html" class="sidebar-item-text sidebar-link">
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./011-sample-size-calculation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Sample Size Calculation</span></span></a>
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./012-method-comparison.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Method Comparison</span></span></a>
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./013-qualitative-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Qualitative Analysis</span></span></a>
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./014-roc-curve-and-cutoff-determination.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">ROC Curve and Cutoff Determination</span></span></a>
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./015-roc-curve-and-multivariate-regression.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">ROC Curve and Multivariate Regression</span></span></a>
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./016-introduction-to-algorithm-principles.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./017-ai-automated-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">AI-Automated Analysis</span></span></a>
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./018-references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">References</span></span></a>
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
   </div>
 </li>
     </ul>
@@ -280,9 +308,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#readers-guide" id="toc-readers-guide" class="nav-link" data-scroll-target="#readers-guide">Reader’s Guide</a></li>
+  <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting Help</a></li>
   <li><a href="#version-and-citation" id="toc-version-and-citation" class="nav-link" data-scroll-target="#version-and-citation">Version and Citation</a></li>
+  <li><a href="#project-information" id="toc-project-information" class="nav-link" data-scroll-target="#project-information">Project Information</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
@@ -292,7 +322,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">ivdtools handbook</h1>
+<h1 class="title">ivdtools Handbook</h1>
+<p class="subtitle lead">R toolkit for performance evaluation of IVD reagents</p>
 </div>
 
 
@@ -309,7 +340,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 9, 2026</p>
+      <p class="date">September 11, 2026</p>
     </div>
   </div>
   
@@ -323,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="welcome" class="level1 unnumbered">
 <h1 class="unnumbered">Welcome</h1>
-<p>This book is an executable, auditable usage guide for <code>ivdtools</code>, intended for IVD practitioners, statisticians, and readers new to R. It covers everything from data entering the project to result export, experimental scenarios, and the statistical algorithms actually implemented in the package source code. Pedagogical recommendations are not equivalent to regulatory or standard requirements.</p>
+<p>This book is an executable, auditable usage guide for the R package <code>ivdtools</code>, intended for IVD practitioners, statisticians, and readers new to R. It covers the workflow from bringing data into a project through exporting results, experimental scenarios, and the statistical algorithms actually used by the package source code.</p>
 <div class="callout callout-style-default callout-important callout-titled" title="Scope of Use">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -334,28 +365,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This book is for teaching statistical workflows and verifying implementations. It is not a substitute for product intended use, risk analysis, current regulations, or the original text of CLSI standards. Any performance claims should be supported by approved protocols, real samples, and independent review.</p>
+<p>This book is intended for teaching statistical workflows and checking implementations. It is not a substitute for current regulations or standards.</p>
 </div>
 </div>
 <section id="readers-guide" class="level2">
 <h2 class="anchored" data-anchor-id="readers-guide">Reader’s Guide</h2>
 <ul>
-<li>Beginners read Part 1 in sequence, then move on to the function chapters by task.</li>
-<li>Experienced analysts can directly look up function signatures, object fields, and boundary behavior.</li>
+<li>Beginners should read Part 1 and Part 2 in sequence, then enter the function chapters according to their task.</li>
+<li>Experienced analysts can go directly to function signatures, object fields, and boundary behavior.</li>
 </ul>
+</section>
+<section id="getting-help" class="level2">
+<h2 class="anchored" data-anchor-id="getting-help">Getting Help</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(mcr, <span class="st">"ivdtools"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Visit the project home page to view or download the complete function reference and this user guide.</p>
 </section>
 <section id="version-and-citation" class="level2">
 <h2 class="anchored" data-anchor-id="version-and-citation">Version and Citation</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"ivdtools"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>version <span class="ot">&lt;-</span> <span class="fu">packageVersion</span>(<span class="st">"ivdtools"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>version</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] '0.1.1'</code></pre>
+<pre><code>[1] '0.2.5'</code></pre>
 </div>
 </div>
-<p>In papers or reports, at least record: package name and version, R version, functions and key parameters, data snapshot checksums, and analysis date. The software may be cited as: hiox-tech (2026), <em>ivdtools: Statistical Tools for in Vitro Diagnostic Method Evaluation</em>, version 0.1.1. Please submit issues to the project’s issue page.</p>
+<p>The software may be cited as: hiox-tech (2026). <em>ivdtools: Statistical Tools for Evaluation of in Vitro Diagnostic Reagents</em>. R package version 0.2.5, <a href="https://github.com/hiox-tech/ivdtools" class="uri">https://github.com/hiox-tech/ivdtools</a>.</p>
+</section>
+<section id="project-information" class="level2">
+<h2 class="anchored" data-anchor-id="project-information">Project Information</h2>
+<ul>
+<li>Project home: <a href="https://github.com/hiox-tech/ivdtools" class="uri">https://github.com/hiox-tech/ivdtools</a></li>
+<li>Issue tracker: <a href="https://github.com/hiox-tech/ivdtools/issues" class="uri">https://github.com/hiox-tech/ivdtools/issues</a></li>
+<li>License: MIT</li>
+</ul>
 
 
 </section>
@@ -771,7 +821,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./001-ivdtools-package-overview.html" class="pagination-link" aria-label="ivdtools Package Overview">
+      <a href="./001-ivdtools包总体介绍.html" class="pagination-link" aria-label="ivdtools Package Overview">
         <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>

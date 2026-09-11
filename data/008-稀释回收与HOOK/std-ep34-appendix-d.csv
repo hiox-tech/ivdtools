@@ -1,0 +1,5 @@
+case,sample,dilution_factor,result,assigned
+heterophilic,heterophilic,1,5.03,5.03
+heterophilic,heterophilic,10,3.86,5.03
+nonheterophilic,nonheterophilic,1,203,203
+nonheterophilic,nonheterophilic,2,132,203

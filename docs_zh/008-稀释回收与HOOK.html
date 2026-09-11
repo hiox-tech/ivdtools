@@ -1,0 +1,3719 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>8&nbsp; 稀释回收与HOOK – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./009-方法学比较与参考物偏倚.html" rel="next">
+<link href="./007-干扰研究.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./008-稀释回收与HOOK.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">8.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#稀释回收-dilution_recovery" id="toc-稀释回收-dilution_recovery" class="nav-link" data-scroll-target="#稀释回收-dilution_recovery"><span class="header-section-number">8.1.1</span> 稀释回收 <code>dilution_recovery()</code></a></li>
+  <li><a href="#加标浓度-spike_concentration" id="toc-加标浓度-spike_concentration" class="nav-link" data-scroll-target="#加标浓度-spike_concentration"><span class="header-section-number">8.1.2</span> 加标浓度 <code>spike_concentration()</code></a></li>
+  <li><a href="#加标回收-spike_recovery" id="toc-加标回收-spike_recovery" class="nav-link" data-scroll-target="#加标回收-spike_recovery"><span class="header-section-number">8.1.3</span> 加标回收 <code>spike_recovery()</code></a></li>
+  <li><a href="#高剂量钩状效应-hook_effect" id="toc-高剂量钩状效应-hook_effect" class="nav-link" data-scroll-target="#高剂量钩状效应-hook_effect"><span class="header-section-number">8.1.4</span> 高剂量钩状效应 <code>hook_effect()</code></a></li>
+  </ul></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">8.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#clsi-ep34-表-1单样本稀释液适用性" id="toc-clsi-ep34-表-1单样本稀释液适用性" class="nav-link" data-scroll-target="#clsi-ep34-表-1单样本稀释液适用性"><span class="header-section-number">8.2.1</span> CLSI EP34 表 1：单样本稀释液适用性</a></li>
+  <li><a href="#clsi-ep34-表-2多原样本稀释" id="toc-clsi-ep34-表-2多原样本稀释" class="nav-link" data-scroll-target="#clsi-ep34-表-2多原样本稀释"><span class="header-section-number">8.2.2</span> CLSI EP34 表 2：多原样本稀释</a></li>
+  <li><a href="#clsi-ep34-表-3基础加标回收" id="toc-clsi-ep34-表-3基础加标回收" class="nav-link" data-scroll-target="#clsi-ep34-表-3基础加标回收"><span class="header-section-number">8.2.3</span> CLSI EP34 表 3：基础加标回收</a></li>
+  <li><a href="#clsi-ep34-表-4单样本多浓度加标" id="toc-clsi-ep34-表-4单样本多浓度加标" class="nav-link" data-scroll-target="#clsi-ep34-表-4单样本多浓度加标"><span class="header-section-number">8.2.4</span> CLSI EP34 表 4：单样本多浓度加标</a></li>
+  <li><a href="#clsi-ep34-表-56手工稀释方案验证" id="toc-clsi-ep34-表-56手工稀释方案验证" class="nav-link" data-scroll-target="#clsi-ep34-表-56手工稀释方案验证"><span class="header-section-number">8.2.5</span> CLSI EP34 表 5～6：手工稀释方案验证</a></li>
+  <li><a href="#clsi-ep34-表-78自动稀释方案验证" id="toc-clsi-ep34-表-78自动稀释方案验证" class="nav-link" data-scroll-target="#clsi-ep34-表-78自动稀释方案验证"><span class="header-section-number">8.2.6</span> CLSI EP34 表 7～8：自动稀释方案验证</a></li>
+  <li><a href="#clsi-ep34-附录-c两组完整稀释分析" id="toc-clsi-ep34-附录-c两组完整稀释分析" class="nav-link" data-scroll-target="#clsi-ep34-附录-c两组完整稀释分析"><span class="header-section-number">8.2.7</span> CLSI EP34 附录 C：两组完整稀释分析</a></li>
+  <li><a href="#高剂量钩状效应" id="toc-高剂量钩状效应" class="nav-link" data-scroll-target="#高剂量钩状效应"><span class="header-section-number">8.2.8</span> 高剂量钩状效应</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本文演示如何使用 <code>ivdtools</code> 包分析稀释回收、加标回收和高剂量钩状效应。稀释回收用于评价稀释后结果能否按稀释倍数还原，加标回收用于评价加入分析物后的实测增量，高剂量钩状效应用于识别高浓度样本信号下降并重新进入测量区间的风险。</p>
+<p>三个分析路径都涉及浓度或响应的变化，但输入数据、分母和结论不同：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>分析路径</th>
+<th>主要输入</th>
+<th>主要返回结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>稀释回收</td>
+<td>原样编号、测量结果、稀释倍数及可选赋值</td>
+<td>靶值、稀释校正浓度、单样本回收率及跨样本区间</td>
+</tr>
+<tr class="even">
+<td>加标回收</td>
+<td>分析物加标与等体积溶剂对照结果、理论加入浓度</td>
+<td>观测增量、单样本及跨样本回收率</td>
+</tr>
+<tr class="odd">
+<td>高剂量钩状效应</td>
+<td>已知浓度、原始响应、ULoQ 及可选试验序列</td>
+<td>浓度水平汇总、钩状效应界限和未观察到钩状效应时的下限</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>本章函数只进行数据汇总、回收率计算、区间估计和钩状效应界限识别，不内置接受标准，也不自动建立或验证扩展测量区间（EMI）。稀释液、稀释倍数、加标材料、样本类型、ULoQ、最高试验浓度和允许回收范围必须在查看结果前确定。</p>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">8.1</span> 主要函数</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>用途</th>
+<th>返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dilution_recovery()</code></td>
+<td>计算稀释靶值、校正浓度和回收率</td>
+<td><code>dilution_recovery</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>spike_concentration()</code></td>
+<td>按质量平衡计算加标后的理论浓度</td>
+<td><code>spike_concentration</code> 数据框</td>
+</tr>
+<tr class="odd">
+<td><code>spike_recovery()</code></td>
+<td>计算分析物加标相对溶剂对照的回收率</td>
+<td><code>spike_recovery</code> 对象</td>
+</tr>
+<tr class="even">
+<td><code>hook_effect()</code></td>
+<td>汇总高浓度响应并识别钩状效应界限</td>
+<td><code>hook_effect</code> 对象</td>
+</tr>
+</tbody>
+</table>
+<section id="稀释回收-dilution_recovery" class="level3" data-number="8.1.1">
+<h3 data-number="8.1.1" class="anchored" data-anchor-id="稀释回收-dilution_recovery"><span class="header-section-number">8.1.1</span> 稀释回收 <code>dilution_recovery()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dilution_recovery</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  sample,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  result,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  dilution_factor,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">diluent_value =</span> <span class="dv">0</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"recovery"</span>, <span class="st">"summary"</span>, <span class="st">"observed"</span>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>长格式数据框，每行是一项测量结果。</td>
+</tr>
+<tr class="even">
+<td><code>sample</code></td>
+<td>原样编号列的列名。</td>
+</tr>
+<tr class="odd">
+<td><code>result</code></td>
+<td>数值型测量结果列的列名。</td>
+</tr>
+<tr class="even">
+<td><code>dilution_factor</code></td>
+<td>数值型稀释倍数列的列名；未稀释为 1，1/2 稀释为 2。</td>
+</tr>
+<tr class="odd">
+<td><code>assigned</code></td>
+<td>可选的原样赋值列；省略时以每份样本未稀释结果的均值作为原样浓度。</td>
+</tr>
+<tr class="even">
+<td><code>diluent_value</code></td>
+<td>稀释液中的分析物浓度，默认为 0。</td>
+</tr>
+<tr class="odd">
+<td><code>conf.level</code></td>
+<td>同一稀释倍数跨样本平均回收率的置信水平。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回 <code>dilution_recovery</code> 类对象。<code>results</code> 保存各“样本 × 稀释倍数”的重复数、均值、SD、CV、原样赋值、靶值、稀释校正浓度和回收率；<code>summary</code> 保存各稀释倍数的样本数、平均回收率、SD、SE、自由度和置信区间；<code>data</code> 与 <code>excluded</code> 分别保存进入分析的数据和被排除的原始行号。<code>plot()</code> 的 <code>type</code> 可选择单样本回收率、跨样本汇总或实测结果图。</p>
+</section>
+<section id="加标浓度-spike_concentration" class="level3" data-number="8.1.2">
+<h3 data-number="8.1.2" class="anchored" data-anchor-id="加标浓度-spike_concentration"><span class="header-section-number">8.1.2</span> 加标浓度 <code>spike_concentration()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spike_concentration</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  sample_concentration,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  sample_volume,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  stock_concentration,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  spike_volume</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sample_concentration</code></td>
+<td>加标前样本浓度。</td>
+</tr>
+<tr class="even">
+<td><code>sample_volume</code></td>
+<td>参加混合的样本体积。</td>
+</tr>
+<tr class="odd">
+<td><code>stock_concentration</code></td>
+<td>加标材料浓度。</td>
+</tr>
+<tr class="even">
+<td><code>spike_volume</code></td>
+<td>加入的加标材料体积。</td>
+</tr>
+</tbody>
+</table>
+<p>四个参数均接受有限数值向量，并按 R 的普通向量循环规则配对；浓度单位和体积单位必须分别保持一致。</p>
+<p><strong>返回值</strong></p>
+<p>返回 <code>spike_concentration</code> 类数据框，包含输入浓度和体积、<code>total_volume</code>、<code>spike_fraction</code>、 <code>added_concentration</code> 以及混合后的 <code>final_concentration</code>。</p>
+</section>
+<section id="加标回收-spike_recovery" class="level3" data-number="8.1.3">
+<h3 data-number="8.1.3" class="anchored" data-anchor-id="加标回收-spike_recovery"><span class="header-section-number">8.1.3</span> 加标回收 <code>spike_recovery()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spike_recovery</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  sample,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  result,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  condition,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  analyte_level,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  solvent_level,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">added_concentration =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_volume =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">stock_concentration =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">spike_volume =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>长格式加标试验数据框。</td>
+</tr>
+<tr class="even">
+<td><code>sample</code></td>
+<td>样本编号列的列名。</td>
+</tr>
+<tr class="odd">
+<td><code>result</code></td>
+<td>数值型测量结果列的列名。</td>
+</tr>
+<tr class="even">
+<td><code>condition</code></td>
+<td>区分分析物加标与溶剂对照的条件列。</td>
+</tr>
+<tr class="odd">
+<td><code>analyte_level</code>、<code>solvent_level</code></td>
+<td>分别标识分析物加标和溶剂对照条件的取值。</td>
+</tr>
+<tr class="even">
+<td><code>added_concentration</code></td>
+<td>最终混合液中的理论加入浓度，可为单个数值或数据列；提供后不再由体积计算。</td>
+</tr>
+<tr class="odd">
+<td><code>sample_volume</code>、 <code>stock_concentration</code>、 <code>spike_volume</code></td>
+<td>未提供 <code>added_concentration</code> 时用于计算理论加入浓度，可为单个数值或数据列。</td>
+</tr>
+<tr class="even">
+<td><code>conf.level</code></td>
+<td>跨样本平均回收率的置信水平。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回 <code>spike_recovery</code> 类对象。<code>results</code> 保存每份样本两个条件的重复数、均值和 SD，以及观测增量、理论加入浓度和回收率；<code>summary</code> 保存跨样本平均回收率、SD、SE、自由度和置信区间；<code>data</code> 与 <code>excluded</code> 保存分析数据和被排除行号；<code>plot()</code> 返回各样本回收率图。</p>
+</section>
+<section id="高剂量钩状效应-hook_effect" class="level3" data-number="8.1.4">
+<h3 data-number="8.1.4" class="anchored" data-anchor-id="高剂量钩状效应-hook_effect"><span class="header-section-number">8.1.4</span> 高剂量钩状效应 <code>hook_effect()</code></h3>
+<p><strong>调用形式</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hook_effect</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  concentration,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  response,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  uloq,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">uloq_response =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>参数</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>含已知浓度和原始响应的数据框。</td>
+</tr>
+<tr class="even">
+<td><code>concentration</code></td>
+<td>数值型已知浓度列的列名。</td>
+</tr>
+<tr class="odd">
+<td><code>response</code></td>
+<td>数值型原始响应列的列名，不能使用仪器截断后的报告浓度替代。</td>
+</tr>
+<tr class="even">
+<td><code>series</code></td>
+<td>可选的独立钩状效应试验序列列。</td>
+</tr>
+<tr class="odd">
+<td><code>uloq</code></td>
+<td>分析测量区间上限浓度。</td>
+</tr>
+<tr class="even">
+<td><code>uloq_response</code></td>
+<td>可选的 ULoQ 原始响应；省略时每个序列必须包含 <code>concentration == uloq</code> 的记录。</td>
+</tr>
+<tr class="odd">
+<td><code>conf.level</code></td>
+<td>各浓度平均原始响应的置信水平。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回值</strong></p>
+<p>返回 <code>hook_effect</code> 类对象。<code>level_summary</code> 保存各“序列 × 浓度”的重复数、均值、SD、CV、SE 和置信区间；<code>results</code> 保存 ULoQ 响应、钩状效应界限、首次回落至 ULoQ 响应范围内的浓度以及最高试验浓度；<code>minimum_hook_concentration</code> 为所有序列中最保守的界限；<code>data</code> 与 <code>excluded</code> 保存分析数据和被排除行号。函数不在相邻浓度之间插值。</p>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">8.2</span> 分析案例</h2>
+<section id="clsi-ep34-表-1单样本稀释液适用性" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="clsi-ep34-表-1单样本稀释液适用性"><span class="header-section-number">8.2.1</span> CLSI EP34 表 1：单样本稀释液适用性</h3>
+<p>EP34 表 1 对同一份原样和 1/2、1/4、1/10、1/20 四级稀释样本各测量 3 次。未提供独立赋值，因此 <code>dilution_recovery()</code> 以未稀释结果的均值作为原样浓度。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ep34_table1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-table1-single-sample.csv"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_table1, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  sample      dilution fraction replicate observed dilution_factor
+  &lt;chr&gt;       &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;           &lt;dbl&gt;
+1 EP34-Table1 neat         1            1    624.                1
+2 EP34-Table1 1/2          0.5          1    293.                2
+3 EP34-Table1 1/4          0.25         1    156.                4
+4 EP34-Table1 1/10         0.1          1     63.1              10
+5 EP34-Table1 1/20         0.05         1     34.1              20
+6 EP34-Table1 neat         1            2    629.                1</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ep34_table1_result <span class="ot">&lt;-</span> <span class="fu">dilution_recovery</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  ep34_table1,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"observed"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dilution_factor =</span> <span class="st">"dilution_factor"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ep34_table1_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Dilution recovery
+  Samples: 1
+  Dilution factors:  1,  2,  4, 10, 20
+  Confidence level: 95.0%
+
+  Dilution factor: 1
+    Specimen content   : 100
+    Samples            : 1
+    Mean recovery      : 100
+    SD recovery        : NA
+    SE recovery        : NA
+    Degrees of freedom : NA
+    CI lower           : NA
+    CI upper           : NA
+
+  Dilution factor: 2
+    Specimen content   : 50
+    Samples            : 1
+    Mean recovery      : 95.583142
+    SD recovery        : NA
+    SE recovery        : NA
+    Degrees of freedom : NA
+    CI lower           : NA
+    CI upper           : NA
+
+  Dilution factor: 4
+    Specimen content   : 25
+    Samples            : 1
+    Mean recovery      : 101.46518
+    SD recovery        : NA
+    SE recovery        : NA
+    Degrees of freedom : NA
+    CI lower           : NA
+    CI upper           : NA
+
+  Dilution factor: 10
+    Specimen content   : 10
+    Samples            : 1
+    Mean recovery      : 105.81278
+    SD recovery        : NA
+    SE recovery        : NA
+    Degrees of freedom : NA
+    CI lower           : NA
+    CI upper           : NA
+
+  Dilution factor: 20
+    Specimen content   : 5
+    Samples            : 1
+    Mean recovery      : 99.312696
+    SD recovery        : NA
+    SE recovery        : NA
+    Degrees of freedom : NA
+    CI lower           : NA
+    CI upper           : NA
+
+  Sample results
+
+  Sample: EP34-Table1 | Dilution factor: 1
+    Replicates              : 3
+    Mean result             : 625.63333
+    SD result               : 3.1214313
+    CV result               : 0.49892343
+    Specimen content        : 100
+    Assigned value          : 625.63333
+    Target concentration    : 625.63333
+    Corrected concentration : 625.63333
+    Recovery                : 100
+
+  Sample: EP34-Table1 | Dilution factor: 2
+    Replicates              : 3
+    Mean result             : 299
+    SD result               : 6.2793312
+    CV result               : 2.1001108
+    Specimen content        : 50
+    Assigned value          : 625.63333
+    Target concentration    : 312.81667
+    Corrected concentration : 598
+    Recovery                : 95.583142
+
+  Sample: EP34-Table1 | Dilution factor: 4
+    Replicates              : 3
+    Mean result             : 158.7
+    SD result               : 2.8213472
+    CV result               : 1.7777865
+    Specimen content        : 25
+    Assigned value          : 625.63333
+    Target concentration    : 156.40833
+    Corrected concentration : 634.8
+    Recovery                : 101.46518
+
+  Sample: EP34-Table1 | Dilution factor: 10
+    Replicates              : 3
+    Mean result             : 66.2
+    SD result               : 3.6345564
+    CV result               : 5.4902664
+    Specimen content        : 10
+    Assigned value          : 625.63333
+    Target concentration    : 62.563333
+    Corrected concentration : 662
+    Recovery                : 105.81278
+
+  Sample: EP34-Table1 | Dilution factor: 20
+    Replicates              : 3
+    Mean result             : 31.066667
+    SD result               : 2.7934447
+    CV result               : 8.9917748
+    Specimen content        : 5
+    Assigned value          : 625.63333
+    Target concentration    : 31.281667
+    Corrected concentration : 621.33333
+    Recovery                : 99.312696</code></pre>
+</div>
+</div>
+<p>打印汇总结果中的 SD、SE 和置信区间是根据“同一稀释倍数下不同样本的回收率”计算的，而不是根据3次重复测量计算的。所以这些值均为 NA。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep34_table1_result, <span class="at">type =</span> <span class="st">"recovery"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/ep34-table1-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 表 1：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">neat</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/2</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">95.59</td>
+<td style="text-align: right;">95.583</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/4</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">101.47</td>
+<td style="text-align: right;">101.465</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/10</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">105.75</td>
+<td style="text-align: right;">105.813</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/20</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">99.36</td>
+<td style="text-align: right;">99.313</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>软件直接使用未舍入的三次均值，标准表则先把观测均值和靶值显示到一位小数后计算，因此回收率相差不超过 0.07 个百分点。按原文示例预设的 90%～110% 范围，五个稀释水平的点估计均在限内；该范围不是函数内置标准。</p>
+</section>
+<section id="clsi-ep34-表-2多原样本稀释" class="level3" data-number="8.2.2">
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="clsi-ep34-表-2多原样本稀释"><span class="header-section-number">8.2.2</span> CLSI EP34 表 2：多原样本稀释</h3>
+<p>表 2 给出 5 份原样在相同五级稀释下的观测均值。原文没有公布这些均值背后的全部重复结果，因此输入数据保持汇总粒度，每个“样本 × 稀释水平”一行。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ep34_table2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-table2-multiple-samples.csv"</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_table2, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  sample dilution fraction observed_mean assigned dilution_factor
+   &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;         &lt;dbl&gt;    &lt;dbl&gt;           &lt;dbl&gt;
+1      1 neat         1            506        506               1
+2      1 1/2          0.5          264.       506               2
+3      1 1/4          0.25         120.       506               4
+4      1 1/10         0.1           46        506              10
+5      1 1/20         0.05          27.2      506              20
+6      2 neat         1            598        598               1</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ep34_table2_result <span class="ot">&lt;-</span> <span class="fu">dilution_recovery</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  ep34_table2,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"observed_mean"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dilution_factor =</span> <span class="st">"dilution_factor"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>ep34_table2_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Dilution recovery
+  Samples: 5
+  Dilution factors:  1,  2,  4, 10, 20
+  Confidence level: 95.0%
+
+  Dilution factor: 1
+    Specimen content   : 100
+    Samples            : 5
+    Mean recovery      : 100
+    SD recovery        : 0
+    SE recovery        : 0
+    Degrees of freedom : 4
+    CI lower           : 100
+    CI upper           : 100
+
+  Dilution factor: 2
+    Specimen content   : 50
+    Samples            : 5
+    Mean recovery      : 100.53079
+    SD recovery        : 3.5222063
+    SE recovery        : 1.5751786
+    Degrees of freedom : 4
+    CI lower           : 96.157389
+    CI upper           : 104.90418
+
+  Dilution factor: 4
+    Specimen content   : 25
+    Samples            : 5
+    Mean recovery      : 102.74826
+    SD recovery        : 5.3015808
+    SE recovery        : 2.370939
+    Degrees of freedom : 4
+    CI lower           : 96.165478
+    CI upper           : 109.33104
+
+  Dilution factor: 10
+    Specimen content   : 10
+    Samples            : 5
+    Mean recovery      : 101.81449
+    SD recovery        : 8.2466472
+    SE recovery        : 3.6880127
+    Degrees of freedom : 4
+    CI lower           : 91.574928
+    CI upper           : 112.05406
+
+  Dilution factor: 20
+    Specimen content   : 5
+    Samples            : 5
+    Mean recovery      : 99.785763
+    SD recovery        : 8.8098638
+    SE recovery        : 3.9398909
+    Degrees of freedom : 4
+    CI lower           : 88.846872
+    CI upper           : 110.72465
+
+  Sample results
+
+  Sample: 1 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 506
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 506
+    Target concentration    : 506
+    Corrected concentration : 506
+    Recovery                : 100
+
+  Sample: 2 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 598
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 598
+    Target concentration    : 598
+    Corrected concentration : 598
+    Recovery                : 100
+
+  Sample: 3 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 570.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 570.4
+    Target concentration    : 570.4
+    Corrected concentration : 570.4
+    Recovery                : 100
+
+  Sample: 4 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 625.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 625.6
+    Target concentration    : 625.6
+    Corrected concentration : 625.6
+    Recovery                : 100
+
+  Sample: 5 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 561.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 561.2
+    Target concentration    : 561.2
+    Corrected concentration : 561.2
+    Recovery                : 100
+
+  Sample: 1 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 264.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 506
+    Target concentration    : 253
+    Corrected concentration : 529
+    Recovery                : 104.54545
+
+  Sample: 2 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 294.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 598
+    Target concentration    : 299
+    Corrected concentration : 588.8
+    Recovery                : 98.461538
+
+  Sample: 3 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 292.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 570.4
+    Target concentration    : 285.2
+    Corrected concentration : 584.2
+    Recovery                : 102.41935
+
+  Sample: 4 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 299
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 625.6
+    Target concentration    : 312.8
+    Corrected concentration : 598
+    Recovery                : 95.588235
+
+  Sample: 5 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 285.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 561.2
+    Target concentration    : 280.6
+    Corrected concentration : 570.4
+    Recovery                : 101.63934
+
+  Sample: 1 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 119.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 506
+    Target concentration    : 126.5
+    Corrected concentration : 478.4
+    Recovery                : 94.545455
+
+  Sample: 2 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 154.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 598
+    Target concentration    : 149.5
+    Corrected concentration : 616.4
+    Recovery                : 103.07692
+
+  Sample: 3 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 151.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 570.4
+    Target concentration    : 142.6
+    Corrected concentration : 607.2
+    Recovery                : 106.45161
+
+  Sample: 4 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 158.7
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 625.6
+    Target concentration    : 156.4
+    Corrected concentration : 634.8
+    Recovery                : 101.47059
+
+  Sample: 5 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 151.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 561.2
+    Target concentration    : 140.3
+    Corrected concentration : 607.2
+    Recovery                : 108.19672
+
+  Sample: 1 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 46
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 506
+    Target concentration    : 50.6
+    Corrected concentration : 460
+    Recovery                : 90.909091
+
+  Sample: 2 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 65.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 598
+    Target concentration    : 59.8
+    Corrected concentration : 653
+    Recovery                : 109.19732
+
+  Sample: 3 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 61.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 570.4
+    Target concentration    : 57.04
+    Corrected concentration : 616
+    Recovery                : 107.99439
+
+  Sample: 4 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 66.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 625.6
+    Target concentration    : 62.56
+    Corrected concentration : 662
+    Recovery                : 105.81841
+
+  Sample: 5 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 53.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 561.2
+    Target concentration    : 56.12
+    Corrected concentration : 534
+    Recovery                : 95.153243
+
+  Sample: 1 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 27.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 506
+    Target concentration    : 25.3
+    Corrected concentration : 544
+    Recovery                : 107.50988
+
+  Sample: 2 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 27
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 598
+    Target concentration    : 29.9
+    Corrected concentration : 540
+    Recovery                : 90.301003
+
+  Sample: 3 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 31.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 570.4
+    Target concentration    : 28.52
+    Corrected concentration : 626
+    Recovery                : 109.74755
+
+  Sample: 4 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 31.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 625.6
+    Target concentration    : 31.28
+    Corrected concentration : 622
+    Recovery                : 99.424552
+
+  Sample: 5 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 25.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 561.2
+    Target concentration    : 28.06
+    Corrected concentration : 516
+    Recovery                : 91.94583</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep34_table2_result, <span class="at">type =</span> <span class="st">"summary"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/ep34-table2-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 表 2：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">neat</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">neat</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">neat</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/2</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">100.53</td>
+<td style="text-align: right;">100.531</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/2</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">96.16</td>
+<td style="text-align: right;">96.157</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/2</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">104.90</td>
+<td style="text-align: right;">104.904</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/4</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">102.75</td>
+<td style="text-align: right;">102.748</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/4</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">96.17</td>
+<td style="text-align: right;">96.165</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/4</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">109.33</td>
+<td style="text-align: right;">109.331</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/10</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">101.82</td>
+<td style="text-align: right;">101.814</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/10</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">91.58</td>
+<td style="text-align: right;">91.575</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/10</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">112.06</td>
+<td style="text-align: right;">112.054</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/20</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">99.76</td>
+<td style="text-align: right;">99.786</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1/20</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">88.76</td>
+<td style="text-align: right;">88.847</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1/20</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">110.77</td>
+<td style="text-align: right;">110.725</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>1/2 和 1/4 稀释的 95% CI 位于示例的 90%～110% 范围内；1/10 和 1/20 稀释的区间越过该范围。直接计算与原文的细小差异来自原文对样本靶值和中间统计量的显示舍入。</p>
+</section>
+<section id="clsi-ep34-表-3基础加标回收" class="level3" data-number="8.2.3">
+<h3 data-number="8.2.3" class="anchored" data-anchor-id="clsi-ep34-表-3基础加标回收"><span class="header-section-number">8.2.3</span> CLSI EP34 表 3：基础加标回收</h3>
+<p>表 3 在 3 份血清样本中分别加入 0.1 mL、40 mg/dL 的钙加标液或等体积纯溶剂，每个条件测量 2 次。原文把最终混合液中的理论加入浓度显示为 3.64 mg/dL，并用该显示值计算回收率。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ep34_table3_added <span class="ot">&lt;-</span> <span class="fu">spike_concentration</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_concentration =</span> <span class="dv">0</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_volume =</span> <span class="dv">1</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stock_concentration =</span> <span class="dv">40</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">spike_volume =</span> <span class="fl">0.1</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>ep34_table3_added</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Spike concentration
+  Sample concentration: 0
+    Stock concentration : 40
+    Added concentration : 3.6363636
+    Final concentration : 3.6363636
+    Sample volume       : 1
+    Spike volume        : 0.1
+    Total volume        : 1.1
+    Spike fraction      : 0.090909091</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ep34_table3 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-table3-spike-recovery.csv"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_table3, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  sample condition replicate result
+   &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;
+1      1 solvent           1    9.7
+2      1 solvent           2    9.9
+3      1 analyte           1   12.9
+4      1 analyte           2   13.3
+5      2 solvent           1    9.5
+6      2 solvent           2    9.5</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ep34_table3_result <span class="ot">&lt;-</span> <span class="fu">spike_recovery</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  ep34_table3,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">"condition"</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">analyte_level =</span> <span class="st">"analyte"</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">solvent_level =</span> <span class="st">"solvent"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">added_concentration =</span> <span class="fl">3.64</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>ep34_table3_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Spike recovery
+  Samples: 3
+  Confidence level: 95.0%
+
+  Samples            : 3
+  Mean recovery      : 90.659341
+  SD of recovery     : 2.7472527
+  SE of recovery     : 1.5861271
+  Degrees of freedom : 2
+  CI lower           : 83.834787
+  CI upper           : 97.483895
+
+  Sample results
+
+  Sample: 1
+    Analyte replicates  : 2
+    Analyte mean        : 13.1
+    Analyte SD          : 0.28284271
+    Solvent replicates  : 2
+    Solvent mean        : 9.8
+    Solvent SD          : 0.14142136
+    Observed increase   : 3.3
+    Added concentration : 3.64
+    Recovery            : 90.659341
+
+  Sample: 2
+    Analyte replicates  : 2
+    Analyte mean        : 12.7
+    Analyte SD          : 0.14142136
+    Solvent replicates  : 2
+    Solvent mean        : 9.5
+    Solvent SD          : 0
+    Observed increase   : 3.2
+    Added concentration : 3.64
+    Recovery            : 87.912088
+
+  Sample: 3
+    Analyte replicates  : 2
+    Analyte mean        : 12.3
+    Analyte SD          : 0.14142136
+    Solvent replicates  : 2
+    Solvent mean        : 8.9
+    Solvent SD          : 0.28284271
+    Observed increase   : 3.4
+    Added concentration : 3.64
+    Recovery            : 93.406593</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep34_table3_result)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/ep34-table3-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 表 3：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">90.7</td>
+<td style="text-align: right;">90.659</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">88.0</td>
+<td style="text-align: right;">87.912</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">93.4</td>
+<td style="text-align: right;">93.407</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">all</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">90.7</td>
+<td style="text-align: right;">90.659</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>三份样本的回收率约为 90.7%、87.9% 和 93.4%，跨样本均值约为 90.7%。标准表只显示一位小数，且中间量的舍入并不完全一致，因此核对容差设为 0.1 个百分点；正式分析应使用未舍入的理论加入浓度和测量结果。</p>
+</section>
+<section id="clsi-ep34-表-4单样本多浓度加标" class="level3" data-number="8.2.4">
+<h3 data-number="8.2.4" class="anchored" data-anchor-id="clsi-ep34-表-4单样本多浓度加标"><span class="header-section-number">8.2.4</span> CLSI EP34 表 4：单样本多浓度加标</h3>
+<p>表 4 将 100 µL、浓度为 1 000 ng/mL 的患者样本与 900 µL 不同浓度的加标液混合。 <code>spike_concentration()</code> 复算质量平衡后的理论浓度；原文没有匹配的溶剂对照重复结果，因此本案例不调用 <code>spike_recovery()</code>。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ep34_table4 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-table4-single-spike.csv"</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>ep34_table4_balance <span class="ot">&lt;-</span> <span class="fu">spike_concentration</span>(</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_concentration =</span> <span class="dv">1000</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_volume =</span> <span class="fl">0.1</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">stock_concentration =</span> ep34_table4<span class="sc">$</span>spike_concentration,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">spike_volume =</span> <span class="fl">0.9</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>ep34_table4<span class="sc">$</span>computed_ivdtools <span class="ot">&lt;-</span> ep34_table4_balance<span class="sc">$</span>final_concentration</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>ep34_table4<span class="sc">$</span>recovery_ivdtools <span class="ot">&lt;-</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="dv">100</span> <span class="sc">*</span> ep34_table4<span class="sc">$</span>measured_concentration <span class="sc">/</span> ep34_table4<span class="sc">$</span>computed_ivdtools</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>ep34_table4</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 6
+  spike_concentration computed_concentration measured_concentration
+                &lt;dbl&gt;                  &lt;dbl&gt;                  &lt;dbl&gt;
+1                   0                    100                     94
+2                  10                    109                     99
+3                 100                    190                    181
+4                1000                   1000                    917
+5               10000                   9100                   9024
+# ℹ 3 more variables: standard_recovery &lt;dbl&gt;, computed_ivdtools &lt;dbl&gt;,
+#   recovery_ivdtools &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 表 4：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">computed_concentration</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">94.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">computed_concentration</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">109.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">90.826</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">computed_concentration</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">190.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">95.263</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">computed_concentration</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">1000.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">92</td>
+<td style="text-align: right;">91.700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10000</td>
+<td style="text-align: left;">computed_concentration</td>
+<td style="text-align: right;">9100</td>
+<td style="text-align: right;">9100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10000</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">99.165</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>10 000 ng/mL 加标液制得的样本理论浓度为 9 100 ng/mL，已超过示例 AMI，需要通过已建立的 EMI 测量。</p>
+</section>
+<section id="clsi-ep34-表-56手工稀释方案验证" class="level3" data-number="8.2.5">
+<h3 data-number="8.2.5" class="anchored" data-anchor-id="clsi-ep34-表-56手工稀释方案验证"><span class="header-section-number">8.2.5</span> CLSI EP34 表 5～6：手工稀释方案验证</h3>
+<p>该案例使用 5 份经参考测量程序赋值的患者样本。两名实验人员各独立制备两份 1/20 稀释样本，每份测量两次，因此每份原样共有 8 个稀释结果。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ep34_table5 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-table5-manual-validation.csv"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_table5, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  sample assigned scientist preparation replicate result dilution_factor
+   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;           &lt;dbl&gt;
+1      1     140.         1           1         1   6.99              20
+2      1     140.         1           1         2   6.51              20
+3      1     140.         1           2         1   6.37              20
+4      1     140.         1           2         2   6.12              20
+5      1     140.         2           1         1   6.53              20
+6      1     140.         2           1         2   6.74              20</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ep34_table5_result <span class="ot">&lt;-</span> <span class="fu">dilution_recovery</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  ep34_table5,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dilution_factor =</span> <span class="st">"dilution_factor"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>ep34_table5_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Dilution recovery
+  Samples: 5
+  Dilution factors: 20
+  Confidence level: 95.0%
+
+  Dilution factor: 20
+    Specimen content   : 5
+    Samples            : 5
+    Mean recovery      : 98.761501
+    SD recovery        : 4.0632964
+    SE recovery        : 1.8171614
+    Degrees of freedom : 4
+    CI lower           : 93.716252
+    CI upper           : 103.80675
+
+  Sample results
+
+  Sample: 1 | Dilution factor: 20
+    Replicates              : 8
+    Mean result             : 6.65625
+    SD result               : 0.32845689
+    CV result               : 4.9345636
+    Specimen content        : 5
+    Assigned value          : 139.68
+    Target concentration    : 6.984
+    Corrected concentration : 133.125
+    Recovery                : 95.307131
+
+  Sample: 2 | Dilution factor: 20
+    Replicates              : 8
+    Mean result             : 15.23875
+    SD result               : 0.67979908
+    CV result               : 4.4609898
+    Specimen content        : 5
+    Assigned value          : 292.04
+    Target concentration    : 14.602
+    Corrected concentration : 304.775
+    Recovery                : 104.3607
+
+  Sample: 3 | Dilution factor: 20
+    Replicates              : 8
+    Mean result             : 31.73875
+    SD result               : 2.1664879
+    CV result               : 6.8260025
+    Specimen content        : 5
+    Assigned value          : 647.32
+    Target concentration    : 32.366
+    Corrected concentration : 634.775
+    Recovery                : 98.06201
+
+  Sample: 4 | Dilution factor: 20
+    Replicates              : 8
+    Mean result             : 53.6675
+    SD result               : 1.979623
+    CV result               : 3.6886812
+    Specimen content        : 5
+    Assigned value          : 1132.45
+    Target concentration    : 56.6225
+    Corrected concentration : 1073.35
+    Recovery                : 94.781227
+
+  Sample: 5 | Dilution factor: 20
+    Replicates              : 8
+    Mean result             : 92.41375
+    SD result               : 2.4947198
+    CV result               : 2.6995115
+    Specimen content        : 5
+    Assigned value          : 1824.62
+    Target concentration    : 91.231
+    Corrected concentration : 1848.275
+    Recovery                : 101.29643</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep34_table5_result, <span class="at">type =</span> <span class="st">"observed"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/ep34-table5-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 表 5～6：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">6.66</td>
+<td style="text-align: right;">6.656</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">133.13</td>
+<td style="text-align: right;">133.125</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">95.30</td>
+<td style="text-align: right;">95.307</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">15.24</td>
+<td style="text-align: right;">15.239</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">304.78</td>
+<td style="text-align: right;">304.775</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">104.40</td>
+<td style="text-align: right;">104.361</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">31.74</td>
+<td style="text-align: right;">31.739</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">634.78</td>
+<td style="text-align: right;">634.775</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">98.10</td>
+<td style="text-align: right;">98.062</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">53.67</td>
+<td style="text-align: right;">53.667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">1073.35</td>
+<td style="text-align: right;">1073.350</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">94.80</td>
+<td style="text-align: right;">94.781</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">92.41</td>
+<td style="text-align: right;">92.414</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">1848.28</td>
+<td style="text-align: right;">1848.275</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">101.30</td>
+<td style="text-align: right;">101.296</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>五份样本的稀释回收率为 94.8%～104.4%，均位于案例预设的 90%～110% 范围内。这里的 <code>assigned</code> 是参考测量程序赋值。</p>
+</section>
+<section id="clsi-ep34-表-78自动稀释方案验证" class="level3" data-number="8.2.6">
+<h3 data-number="8.2.6" class="anchored" data-anchor-id="clsi-ep34-表-78自动稀释方案验证"><span class="header-section-number">8.2.6</span> CLSI EP34 表 7～8：自动稀释方案验证</h3>
+<p>该案例的 AMI 为 5～40 pg/mL，拟建立 40～80 pg/mL 的 EMI。5 份已通过加标回收表征的样本在两台仪器上各进行 4 次 1/2 自动稀释测量。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ep34_table7 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-table7-auto-validation.csv"</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_table7, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  sample assigned instrument replicate result dilution_factor
+   &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;           &lt;dbl&gt;
+1      1     44.9          1         1   20.3               2
+2      1     44.9          1         2   26.0               2
+3      1     44.9          1         3   24.3               2
+4      1     44.9          1         4   25.0               2
+5      1     44.9          2         1   22.5               2
+6      1     44.9          2         2   21.3               2</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ep34_table7_result <span class="ot">&lt;-</span> <span class="fu">dilution_recovery</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  ep34_table7,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dilution_factor =</span> <span class="st">"dilution_factor"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>ep34_table7_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Dilution recovery
+  Samples: 5
+  Dilution factors: 2
+  Confidence level: 95.0%
+
+  Dilution factor: 2
+    Specimen content   : 50
+    Samples            : 5
+    Mean recovery      : 104.55585
+    SD recovery        : 6.022583
+    SE recovery        : 2.693381
+    Degrees of freedom : 4
+    CI lower           : 97.077824
+    CI upper           : 112.03387
+
+  Sample results
+
+  Sample: 1 | Dilution factor: 2
+    Replicates              : 8
+    Mean result             : 23.6775
+    SD result               : 2.1002432
+    CV result               : 8.8702067
+    Specimen content        : 50
+    Assigned value          : 44.92
+    Target concentration    : 22.46
+    Corrected concentration : 47.355
+    Recovery                : 105.42075
+
+  Sample: 2 | Dilution factor: 2
+    Replicates              : 8
+    Mean result             : 26.44
+    SD result               : 1.9634299
+    CV result               : 7.4259831
+    Specimen content        : 50
+    Assigned value          : 53.78
+    Target concentration    : 26.89
+    Corrected concentration : 52.88
+    Recovery                : 98.326515
+
+  Sample: 3 | Dilution factor: 2
+    Replicates              : 8
+    Mean result             : 35.44125
+    SD result               : 1.9058139
+    CV result               : 5.3773892
+    Specimen content        : 50
+    Assigned value          : 62.32
+    Target concentration    : 31.16
+    Corrected concentration : 70.8825
+    Recovery                : 113.73957
+
+  Sample: 4 | Dilution factor: 2
+    Replicates              : 8
+    Mean result             : 35.975
+    SD result               : 1.3997653
+    CV result               : 3.8909389
+    Specimen content        : 50
+    Assigned value          : 68.34
+    Target concentration    : 34.17
+    Corrected concentration : 71.95
+    Recovery                : 105.28241
+
+  Sample: 5 | Dilution factor: 2
+    Replicates              : 8
+    Mean result             : 37.50875
+    SD result               : 1.5492066
+    CV result               : 4.1302539
+    Specimen content        : 50
+    Assigned value          : 75.01
+    Target concentration    : 37.505
+    Corrected concentration : 75.0175
+    Recovery                : 100.01</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 表 7～8：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">23.68</td>
+<td style="text-align: right;">23.678</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">47.36</td>
+<td style="text-align: right;">47.355</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">105.40</td>
+<td style="text-align: right;">105.421</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">26.44</td>
+<td style="text-align: right;">26.440</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">52.88</td>
+<td style="text-align: right;">52.880</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">98.30</td>
+<td style="text-align: right;">98.327</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">35.44</td>
+<td style="text-align: right;">35.441</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">70.88</td>
+<td style="text-align: right;">70.882</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">113.70</td>
+<td style="text-align: right;">113.740</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">35.98</td>
+<td style="text-align: right;">35.975</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">71.95</td>
+<td style="text-align: right;">71.950</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">105.30</td>
+<td style="text-align: right;">105.282</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">37.51</td>
+<td style="text-align: right;">37.509</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">corrected_concentration</td>
+<td style="text-align: right;">75.02</td>
+<td style="text-align: right;">75.018</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">recovery</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.010</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>五份样本的回收率为 98.3%～113.7%，均位于案例预设的 85%～115% 范围内。</p>
+</section>
+<section id="clsi-ep34-附录-c两组完整稀释分析" class="level3" data-number="8.2.7">
+<h3 data-number="8.2.7" class="anchored" data-anchor-id="clsi-ep34-附录-c两组完整稀释分析"><span class="header-section-number">8.2.7</span> CLSI EP34 附录 C：两组完整稀释分析</h3>
+<p>附录 C 表 C1 和 C2 只公布每份样本在各稀释水平的观测均值，没有公布均值背后的单次结果。本节按原文粒度输入，分别复算分析物 B 和分析物 C 的跨样本回收率。</p>
+<p><strong>表 C1：分析物 B</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ep34_c1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-appendix-c1.csv"</span>,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_c1, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  sample dilution dilution_factor assigned observed_mean
+   &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+1      1 neat                   1     220.         220. 
+2      1 1/2                    2     220.         115. 
+3      1 1/4                    4     220.          58.2
+4      1 1/10                  10     220.          25.6
+5      1 1/20                  20     220.          15.7
+6      2 neat                   1     260.         260. </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ep34_c1_result <span class="ot">&lt;-</span> <span class="fu">dilution_recovery</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  ep34_c1,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"observed_mean"</span>,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dilution_factor =</span> <span class="st">"dilution_factor"</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>ep34_c1_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Dilution recovery
+  Samples: 5
+  Dilution factors:  1,  2,  4, 10, 20
+  Confidence level: 95.0%
+
+  Dilution factor: 1
+    Specimen content   : 100
+    Samples            : 5
+    Mean recovery      : 100
+    SD recovery        : 0
+    SE recovery        : 0
+    Degrees of freedom : 4
+    CI lower           : 100
+    CI upper           : 100
+
+  Dilution factor: 2
+    Specimen content   : 50
+    Samples            : 5
+    Mean recovery      : 100.49583
+    SD recovery        : 3.5627839
+    SE recovery        : 1.5933254
+    Degrees of freedom : 4
+    CI lower           : 96.072052
+    CI upper           : 104.91961
+
+  Dilution factor: 4
+    Specimen content   : 25
+    Samples            : 5
+    Mean recovery      : 104.98711
+    SD recovery        : 2.8223671
+    SE recovery        : 1.2622009
+    Degrees of freedom : 4
+    CI lower           : 101.48268
+    CI upper           : 108.49154
+
+  Dilution factor: 10
+    Specimen content   : 10
+    Samples            : 5
+    Mean recovery      : 115.13247
+    SD recovery        : 3.1142636
+    SE recovery        : 1.392741
+    Degrees of freedom : 4
+    CI lower           : 111.2656
+    CI upper           : 118.99934
+
+  Dilution factor: 20
+    Specimen content   : 5
+    Samples            : 5
+    Mean recovery      : 135.48746
+    SD recovery        : 8.945831
+    SE recovery        : 4.0006973
+    Degrees of freedom : 4
+    CI lower           : 124.37974
+    CI upper           : 146.59517
+
+  Sample results
+
+  Sample: 1 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 220.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 220.3
+    Target concentration    : 220.3
+    Corrected concentration : 220.3
+    Recovery                : 100
+
+  Sample: 2 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 260.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 260.1
+    Target concentration    : 260.1
+    Corrected concentration : 260.1
+    Recovery                : 100
+
+  Sample: 3 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 248
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 248
+    Target concentration    : 248
+    Corrected concentration : 248
+    Recovery                : 100
+
+  Sample: 4 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 272.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 272.2
+    Target concentration    : 272.2
+    Corrected concentration : 272.2
+    Recovery                : 100
+
+  Sample: 5 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 244
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 244
+    Target concentration    : 244
+    Corrected concentration : 244
+    Recovery                : 100
+
+  Sample: 1 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 114.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 220.3
+    Target concentration    : 110.15
+    Corrected concentration : 229.6
+    Recovery                : 104.22152
+
+  Sample: 2 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 128.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 260.1
+    Target concentration    : 130.05
+    Corrected concentration : 256.4
+    Recovery                : 98.57747
+
+  Sample: 3 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 127.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 248
+    Target concentration    : 124
+    Corrected concentration : 254.6
+    Recovery                : 102.66129
+
+  Sample: 4 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 129.7
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 272.2
+    Target concentration    : 136.1
+    Corrected concentration : 259.4
+    Recovery                : 95.297575
+
+  Sample: 5 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 124.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 244
+    Target concentration    : 122
+    Corrected concentration : 248.2
+    Recovery                : 101.72131
+
+  Sample: 1 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 58.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 220.3
+    Target concentration    : 55.075
+    Corrected concentration : 232.8
+    Recovery                : 105.67408
+
+  Sample: 2 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 67.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 260.1
+    Target concentration    : 65.025
+    Corrected concentration : 268.4
+    Recovery                : 103.19108
+
+  Sample: 3 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 66.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 248
+    Target concentration    : 62
+    Corrected concentration : 265.2
+    Recovery                : 106.93548
+
+  Sample: 4 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 68.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 272.2
+    Target concentration    : 68.05
+    Corrected concentration : 275.2
+    Recovery                : 101.10213
+
+  Sample: 5 | Dilution factor: 4
+    Replicates              : 1
+    Mean result             : 65.9
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 25
+    Assigned value          : 244
+    Target concentration    : 61
+    Corrected concentration : 263.6
+    Recovery                : 108.03279
+
+  Sample: 1 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 25.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 220.3
+    Target concentration    : 22.03
+    Corrected concentration : 256
+    Recovery                : 116.20517
+
+  Sample: 2 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 28.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 260.1
+    Target concentration    : 26.01
+    Corrected concentration : 288
+    Recovery                : 110.72664
+
+  Sample: 3 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 29.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 248
+    Target concentration    : 24.8
+    Corrected concentration : 296
+    Recovery                : 119.35484
+
+  Sample: 4 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 31.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 272.2
+    Target concentration    : 27.22
+    Corrected concentration : 312
+    Recovery                : 114.6216
+
+  Sample: 5 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 28
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 244
+    Target concentration    : 24.4
+    Corrected concentration : 280
+    Recovery                : 114.7541
+
+  Sample: 1 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 15.7
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 220.3
+    Target concentration    : 11.015
+    Corrected concentration : 314
+    Recovery                : 142.53291
+
+  Sample: 2 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 17.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 260.1
+    Target concentration    : 13.005
+    Corrected concentration : 348
+    Recovery                : 133.79469
+
+  Sample: 3 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 15.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 248
+    Target concentration    : 12.4
+    Corrected concentration : 312
+    Recovery                : 125.80645
+
+  Sample: 4 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 17.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 272.2
+    Target concentration    : 13.61
+    Corrected concentration : 350
+    Recovery                : 128.58193
+
+  Sample: 5 | Dilution factor: 20
+    Replicates              : 1
+    Mean result             : 17.9
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 5
+    Assigned value          : 244
+    Target concentration    : 12.2
+    Corrected concentration : 358
+    Recovery                : 146.72131</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep34_c1_result, <span class="at">type =</span> <span class="st">"summary"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/ep34-c1-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>表 C2：分析物 C</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>ep34_c2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/008-稀释回收与HOOK/std-ep34-appendix-c2.csv"</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep34_c2, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  sample dilution dilution_factor assigned observed_mean
+   &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+1      1 neat                   1    1492.        1492. 
+2      1 1/2                    2    1492.         751. 
+3      1 1/10                  10    1492.         145. 
+4      1 1/50                  50    1492.          28.7
+5      1 1/200                200    1492.           7.5
+6      2 neat                   1    1386.        1386. </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ep34_c2_result <span class="ot">&lt;-</span> <span class="fu">dilution_recovery</span>(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  ep34_c2,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="st">"sample"</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"observed_mean"</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dilution_factor =</span> <span class="st">"dilution_factor"</span>,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">assigned =</span> <span class="st">"assigned"</span>,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>ep34_c2_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Dilution recovery
+  Samples: 6
+  Dilution factors:   1,   2,  10,  50, 200
+  Confidence level: 95.0%
+
+  Dilution factor: 1
+    Specimen content   : 100
+    Samples            : 6
+    Mean recovery      : 100
+    SD recovery        : 0
+    SE recovery        : 0
+    Degrees of freedom : 5
+    CI lower           : 100
+    CI upper           : 100
+
+  Dilution factor: 2
+    Specimen content   : 50
+    Samples            : 6
+    Mean recovery      : 101.33362
+    SD recovery        : 3.2217773
+    SE recovery        : 1.3152851
+    Degrees of freedom : 5
+    CI lower           : 97.952571
+    CI upper           : 104.71467
+
+  Dilution factor: 10
+    Specimen content   : 10
+    Samples            : 6
+    Mean recovery      : 101.55253
+    SD recovery        : 5.9523994
+    SE recovery        : 2.4300569
+    Degrees of freedom : 5
+    CI lower           : 95.305866
+    CI upper           : 107.79919
+
+  Dilution factor: 50
+    Specimen content   : 2
+    Samples            : 6
+    Mean recovery      : 102.34874
+    SD recovery        : 5.2080713
+    SE recovery        : 2.1261862
+    Degrees of freedom : 5
+    CI lower           : 96.883208
+    CI upper           : 107.81428
+
+  Dilution factor: 200
+    Specimen content   : 0.5
+    Samples            : 6
+    Mean recovery      : 102.55094
+    SD recovery        : 5.5420679
+    SE recovery        : 2.2625397
+    Degrees of freedom : 5
+    CI lower           : 96.734901
+    CI upper           : 108.36699
+
+  Sample results
+
+  Sample: 1 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 1492.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 1492.1
+    Target concentration    : 1492.1
+    Corrected concentration : 1492.1
+    Recovery                : 100
+
+  Sample: 2 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 1386.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 1386.5
+    Target concentration    : 1386.5
+    Corrected concentration : 1386.5
+    Recovery                : 100
+
+  Sample: 3 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 1290.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 1290.8
+    Target concentration    : 1290.8
+    Corrected concentration : 1290.8
+    Recovery                : 100
+
+  Sample: 4 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 1451.6
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 1451.6
+    Target concentration    : 1451.6
+    Corrected concentration : 1451.6
+    Recovery                : 100
+
+  Sample: 5 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 1209.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 1209.8
+    Target concentration    : 1209.8
+    Corrected concentration : 1209.8
+    Recovery                : 100
+
+  Sample: 6 | Dilution factor: 1
+    Replicates              : 1
+    Mean result             : 1326.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 100
+    Assigned value          : 1326.4
+    Target concentration    : 1326.4
+    Corrected concentration : 1326.4
+    Recovery                : 100
+
+  Sample: 1 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 750.9
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 1492.1
+    Target concentration    : 746.05
+    Corrected concentration : 1501.8
+    Recovery                : 100.65009
+
+  Sample: 2 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 680.9
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 1386.5
+    Target concentration    : 693.25
+    Corrected concentration : 1361.8
+    Recovery                : 98.218536
+
+  Sample: 3 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 648.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 1290.8
+    Target concentration    : 645.4
+    Corrected concentration : 1296.6
+    Recovery                : 100.44933
+
+  Sample: 4 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 745.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 1451.6
+    Target concentration    : 725.8
+    Corrected concentration : 1490.4
+    Recovery                : 102.67291
+
+  Sample: 5 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 598.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 1209.8
+    Target concentration    : 604.9
+    Corrected concentration : 1196.6
+    Recovery                : 98.908911
+
+  Sample: 6 | Dilution factor: 2
+    Replicates              : 1
+    Mean result             : 710.3
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 50
+    Assigned value          : 1326.4
+    Target concentration    : 663.2
+    Corrected concentration : 1420.6
+    Recovery                : 107.10193
+
+  Sample: 1 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 145.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 1492.1
+    Target concentration    : 149.21
+    Corrected concentration : 1454
+    Recovery                : 97.446552
+
+  Sample: 2 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 135.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 1386.5
+    Target concentration    : 138.65
+    Corrected concentration : 1358
+    Recovery                : 97.944464
+
+  Sample: 3 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 135.7
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 1290.8
+    Target concentration    : 129.08
+    Corrected concentration : 1357
+    Recovery                : 105.1286
+
+  Sample: 4 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 136.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 1451.6
+    Target concentration    : 145.16
+    Corrected concentration : 1365
+    Recovery                : 94.034169
+
+  Sample: 5 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 127.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 1209.8
+    Target concentration    : 120.98
+    Corrected concentration : 1272
+    Recovery                : 105.14135
+
+  Sample: 6 | Dilution factor: 10
+    Replicates              : 1
+    Mean result             : 145.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 10
+    Assigned value          : 1326.4
+    Target concentration    : 132.64
+    Corrected concentration : 1454
+    Recovery                : 109.62002
+
+  Sample: 1 | Dilution factor: 50
+    Replicates              : 1
+    Mean result             : 28.7
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 2
+    Assigned value          : 1492.1
+    Target concentration    : 29.842
+    Corrected concentration : 1435
+    Recovery                : 96.173179
+
+  Sample: 2 | Dilution factor: 50
+    Replicates              : 1
+    Mean result             : 28.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 2
+    Assigned value          : 1386.5
+    Target concentration    : 27.73
+    Corrected concentration : 1425
+    Recovery                : 102.77678
+
+  Sample: 3 | Dilution factor: 50
+    Replicates              : 1
+    Mean result             : 26.8
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 2
+    Assigned value          : 1290.8
+    Target concentration    : 25.816
+    Corrected concentration : 1340
+    Recovery                : 103.81159
+
+  Sample: 4 | Dilution factor: 50
+    Replicates              : 1
+    Mean result             : 27.9
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 2
+    Assigned value          : 1451.6
+    Target concentration    : 29.032
+    Corrected concentration : 1395
+    Recovery                : 96.100854
+
+  Sample: 5 | Dilution factor: 50
+    Replicates              : 1
+    Mean result             : 25.9
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 2
+    Assigned value          : 1209.8
+    Target concentration    : 24.196
+    Corrected concentration : 1295
+    Recovery                : 107.04249
+
+  Sample: 6 | Dilution factor: 50
+    Replicates              : 1
+    Mean result             : 28.7
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 2
+    Assigned value          : 1326.4
+    Target concentration    : 26.528
+    Corrected concentration : 1435
+    Recovery                : 108.18758
+
+  Sample: 1 | Dilution factor: 200
+    Replicates              : 1
+    Mean result             : 7.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 0.5
+    Assigned value          : 1492.1
+    Target concentration    : 7.4605
+    Corrected concentration : 1500
+    Recovery                : 100.52946
+
+  Sample: 2 | Dilution factor: 200
+    Replicates              : 1
+    Mean result             : 7.2
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 0.5
+    Assigned value          : 1386.5
+    Target concentration    : 6.9325
+    Corrected concentration : 1440
+    Recovery                : 103.85864
+
+  Sample: 3 | Dilution factor: 200
+    Replicates              : 1
+    Mean result             : 6.4
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 0.5
+    Assigned value          : 1290.8
+    Target concentration    : 6.454
+    Corrected concentration : 1280
+    Recovery                : 99.16331
+
+  Sample: 4 | Dilution factor: 200
+    Replicates              : 1
+    Mean result             : 7.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 0.5
+    Assigned value          : 1451.6
+    Target concentration    : 7.258
+    Corrected concentration : 1420
+    Recovery                : 97.823092
+
+  Sample: 5 | Dilution factor: 200
+    Replicates              : 1
+    Mean result             : 6.1
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 0.5
+    Assigned value          : 1209.8
+    Target concentration    : 6.049
+    Corrected concentration : 1220
+    Recovery                : 100.84311
+
+  Sample: 6 | Dilution factor: 200
+    Replicates              : 1
+    Mean result             : 7.5
+    SD result               : NA
+    CV result               : NA
+    Specimen content        : 0.5
+    Assigned value          : 1326.4
+    Target concentration    : 6.632
+    Corrected concentration : 1500
+    Recovery                : 113.08806</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep34_c2_result, <span class="at">type =</span> <span class="st">"summary"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/ep34-c2-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP34 附录 C：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / neat</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / neat</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / neat</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / 1/2</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">100.50</td>
+<td style="text-align: right;">100.496</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / 1/2</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">96.06</td>
+<td style="text-align: right;">96.072</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / 1/2</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">104.89</td>
+<td style="text-align: right;">104.920</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / 1/4</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">104.99</td>
+<td style="text-align: right;">104.987</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / 1/4</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">101.45</td>
+<td style="text-align: right;">101.483</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / 1/4</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">108.50</td>
+<td style="text-align: right;">108.492</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / 1/10</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">115.13</td>
+<td style="text-align: right;">115.132</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / 1/10</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">111.33</td>
+<td style="text-align: right;">111.266</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / 1/10</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">119.05</td>
+<td style="text-align: right;">118.999</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / 1/20</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">135.49</td>
+<td style="text-align: right;">135.487</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c1 / 1/20</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">124.43</td>
+<td style="text-align: right;">124.380</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c1 / 1/20</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">146.69</td>
+<td style="text-align: right;">146.595</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / neat</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / neat</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / neat</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / 1/2</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">101.33</td>
+<td style="text-align: right;">101.334</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / 1/2</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">97.95</td>
+<td style="text-align: right;">97.953</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / 1/2</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">104.71</td>
+<td style="text-align: right;">104.715</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / 1/10</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">101.55</td>
+<td style="text-align: right;">101.553</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / 1/10</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">95.31</td>
+<td style="text-align: right;">95.306</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / 1/10</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">107.80</td>
+<td style="text-align: right;">107.799</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / 1/50</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">102.35</td>
+<td style="text-align: right;">102.349</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / 1/50</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">96.88</td>
+<td style="text-align: right;">96.883</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / 1/50</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">107.81</td>
+<td style="text-align: right;">107.814</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / 1/200</td>
+<td style="text-align: left;">mean_recovery</td>
+<td style="text-align: right;">102.71</td>
+<td style="text-align: right;">102.551</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appendix_c2 / 1/200</td>
+<td style="text-align: left;">lower_ci</td>
+<td style="text-align: right;">96.82</td>
+<td style="text-align: right;">96.735</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appendix_c2 / 1/200</td>
+<td style="text-align: left;">upper_ci</td>
+<td style="text-align: right;">108.60</td>
+<td style="text-align: right;">108.367</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>表 C1 的回收率随稀释加深而明显升高，1/10 和 1/20 稀释不能满足示例要求；表 C2 在 1/200 稀释时仍保持相对稳定。表 C2 的最高稀释水平受原文只公布一位小数观测均值影响，软件由显示值重算的汇总与原文存在最多约 0.23 个百分点的差异。</p>
+</section>
+<section id="高剂量钩状效应" class="level3" data-number="8.2.8">
+<h3 data-number="8.2.8" class="anchored" data-anchor-id="高剂量钩状效应"><span class="header-section-number">8.2.8</span> 高剂量钩状效应</h3>
+<p>EP34 的钩状效应图只给出示意轨迹，没有逐浓度原始响应。下面使用教学数据演示 <code>hook_effect()</code>,这些数值不来自标准原文。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>hook_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>),</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">replicate =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">KEEP.OUT.ATTRS =</span> <span class="cn">FALSE</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>hook_mean <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100000</span>, <span class="dv">150000</span>, <span class="dv">180000</span>, <span class="dv">178000</span>, <span class="dv">183000</span>, <span class="dv">160000</span>, <span class="dv">110000</span>, <span class="dv">80000</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>hook_data<span class="sc">$</span>response <span class="ot">&lt;-</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(hook_mean, <span class="at">times =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">300</span>, <span class="dv">0</span>, <span class="dv">300</span>), <span class="at">each =</span> <span class="dv">8</span>)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hook_data, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  concentration replicate response
+1             1         1    99700
+2             2         1   149700
+3             3         1   179700
+4             4         1   177700
+5             5         1   182700
+6             6         1   159700</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>hook_result <span class="ot">&lt;-</span> <span class="fu">hook_effect</span>(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  hook_data,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="st">"concentration"</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">response =</span> <span class="st">"response"</span>,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uloq =</span> <span class="fl">1.5</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">uloq_response =</span> <span class="dv">130000</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>hook_result</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+High-dose hook-effect experiment
+  ULoQ concentration: 1.5
+  ULoQ response: supplied
+  Series: 1
+
+  Series: all
+    ULoQ concentration           : 1.5
+    ULoQ response                : 130000
+    Hook concentration           : 6
+    Hook response                : 160000
+    First in-range concentration : 7
+    First in-range response      : 110000
+    Highest tested concentration : 8
+    Hook lower bound             : NA
+
+  Concentration-level results
+
+  Series: all | Concentration: 1
+    Replicates    : 3
+    Mean response : 1e+05
+    SD response   : 300
+    CV response   : 0.3
+    SE response   : 173.20508
+    CI lower      : 99254.759
+    CI upper      : 100745.24
+
+  Series: all | Concentration: 2
+    Replicates    : 3
+    Mean response : 150000
+    SD response   : 300
+    CV response   : 0.2
+    SE response   : 173.20508
+    CI lower      : 149254.76
+    CI upper      : 150745.24
+
+  Series: all | Concentration: 3
+    Replicates    : 3
+    Mean response : 180000
+    SD response   : 300
+    CV response   : 0.16666667
+    SE response   : 173.20508
+    CI lower      : 179254.76
+    CI upper      : 180745.24
+
+  Series: all | Concentration: 4
+    Replicates    : 3
+    Mean response : 178000
+    SD response   : 300
+    CV response   : 0.16853933
+    SE response   : 173.20508
+    CI lower      : 177254.76
+    CI upper      : 178745.24
+
+  Series: all | Concentration: 5
+    Replicates    : 3
+    Mean response : 183000
+    SD response   : 300
+    CV response   : 0.16393443
+    SE response   : 173.20508
+    CI lower      : 182254.76
+    CI upper      : 183745.24
+
+  Series: all | Concentration: 6
+    Replicates    : 3
+    Mean response : 160000
+    SD response   : 300
+    CV response   : 0.1875
+    SE response   : 173.20508
+    CI lower      : 159254.76
+    CI upper      : 160745.24
+
+  Series: all | Concentration: 7
+    Replicates    : 3
+    Mean response : 110000
+    SD response   : 300
+    CV response   : 0.27272727
+    SE response   : 173.20508
+    CI lower      : 109254.76
+    CI upper      : 110745.24
+
+  Series: all | Concentration: 8
+    Replicates    : 3
+    Mean response : 80000
+    SD response   : 300
+    CV response   : 0.375
+    SE response   : 173.20508
+    CI lower      : 79254.759
+    CI upper      : 80745.241</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hook_result)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="008-稀释回收与HOOK_files/figure-html/hook-example-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>本例在 7 的已测浓度首次回落至 ULoQ 响应范围内，因此函数把前一个已测浓度 6 报告为 <code>hook_concentration</code>。该结果是由试验浓度间距限定的界限，不是转折点。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./007-干扰研究.html" class="pagination-link" aria-label="干扰研究">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./009-方法学比较与参考物偏倚.html" class="pagination-link" aria-label="方法学比较与参考物偏倚">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

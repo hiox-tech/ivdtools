@@ -1,0 +1,15 @@
+test,statistic,calculated,standard,tolerance,status,note
+OxLDL,AUC,0.799513,0.80,0.005,corresponding,
+OxLDL,SE,0.062140,0.062,0.0005,corresponding,Hanley-McNeil one-curve formula
+OxLDL,CI_lower,0.677721,0.68,0.005,corresponding,
+OxLDL,CI_upper,0.921305,0.92,0.005,corresponding,
+LDL,AUC,0.561688,0.56,0.005,corresponding,
+LDL,SE,0.081895,0.082,0.0005,corresponding,Hanley-McNeil one-curve formula
+LDL,CI_lower,0.401177,0.40,0.005,corresponding,
+LDL,CI_upper,0.722200,0.72,0.005,corresponding,
+Difference,AUC_difference,0.237825,0.24,0.005,corresponding,OxLDL minus LDL
+Difference,SE,0.079044,0.075,0.0005,method_difference,DeLong versus Hanley-McNeil
+Difference,CI_lower,0.082901,0.09,0.005,method_difference,DeLong versus Hanley-McNeil
+Difference,CI_upper,0.392749,0.39,0.005,corresponding,DeLong versus Hanley-McNeil
+Difference,z,3.008793,3.16,0.005,method_difference,DeLong versus Hanley-McNeil
+Difference,p_value,0.002623,0.0016,0.00005,method_difference,DeLong versus Hanley-McNeil

@@ -1,0 +1,33 @@
+appendix,case,statistic,calculated,standard,tolerance,status,note
+G,observers,ANA,,95.2,,not_implemented,ivdtools无ANA专用入口
+G,observers,ANA_lower,,90.4,,not_implemented,ivdtools无ANA变换区间入口
+G,observers,ANA_upper,,97.7,,not_implemented,ivdtools无ANA变换区间入口
+G,observers,APA,,78.8,,not_implemented,ivdtools无APA专用入口
+G,observers,APA_lower,,57.9,,not_implemented,ivdtools无APA精确变换区间入口
+G,observers,APA_upper,,91.7,,not_implemented,ivdtools无APA精确变换区间入口
+I,candidate,sensitivity,93.4426,93.4,0.05,corresponding,
+I,candidate,sensitivity_lower,84.3172,84.3,0.05,corresponding,Wilson interval
+I,candidate,sensitivity_upper,97.4206,97.4,0.05,corresponding,Wilson interval
+I,candidate,specificity,95.1220,95.1,0.05,corresponding,
+I,candidate,specificity_lower,83.8610,83.9,0.05,corresponding,Wilson interval
+I,candidate,specificity_upper,98.6519,98.7,0.05,corresponding,Wilson interval
+I,candidate,PPV,96.6102,96.6,0.05,corresponding,
+I,candidate,NPV,90.6977,90.7,0.05,corresponding,
+I,old,sensitivity,88.5246,88.5,0.05,corresponding,
+I,old,sensitivity_lower,78.1557,78.2,0.05,corresponding,Wilson interval
+I,old,sensitivity_upper,94.3288,94.3,0.05,corresponding,Wilson interval
+I,old,specificity,82.9268,82.9,0.05,corresponding,
+I,old,specificity_lower,68.7374,68.7,0.05,corresponding,Wilson interval
+I,old,specificity_upper,91.4748,91.5,0.05,corresponding,Wilson interval
+I,old,PPV,88.5246,88.5,0.05,corresponding,
+I,old,NPV,82.9268,82.9,0.05,corresponding,
+I,candidate_vs_old,PPA,95.3177,95.3,0.05,corresponding,
+I,candidate_vs_old,PPA_lower,92.2951,92.3,0.05,corresponding,
+I,candidate_vs_old,PPA_upper,97.1907,97.2,0.05,corresponding,
+I,candidate_vs_old,NPA,93.6709,93.7,0.05,corresponding,
+I,candidate_vs_old,NPA_lower,89.8214,89.8,0.05,corresponding,
+I,candidate_vs_old,NPA_upper,96.1273,96.1,0.05,corresponding,
+J,PCR,C95_positive,18,18,0,direct_tally,原始结果直接计数
+J,PCR,C50_positive,12,12,0,direct_tally,原始结果直接计数
+J,PCR,C5_positive,0,0,0,direct_tally,原始结果直接计数
+J,PCR,C95_cycle,,36.1,,not_implemented,固定CV公式不属于ivdtools c5_c95模型

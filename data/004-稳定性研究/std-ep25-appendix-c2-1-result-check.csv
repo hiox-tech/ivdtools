@@ -1,0 +1,11 @@
+case,statistic,standard
+low_calibrator,change_6,-3.53
+low_calibrator,change_6_upper_CL,-4.20
+low_calibrator,change_6.5,-3.83
+low_calibrator,change_6.5_upper_CL,-4.55
+low_calibrator,ci_limit_time,7.1
+high_calibrator,change_6,-3.19
+high_calibrator,change_6_upper_CL,-5.66
+high_calibrator,change_6.5,-3.46
+high_calibrator,change_6.5_upper_CL,-6.14
+high_calibrator,ci_limit_time,5.3

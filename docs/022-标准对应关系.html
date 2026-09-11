@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>22&nbsp; Standards Mapping – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./023-IVD适用R包综述.html" rel="next">
+<link href="./021-算法原理简介.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./022-标准对应关系.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#interpretation-categories" id="toc-interpretation-categories" class="nav-link active" data-scroll-target="#interpretation-categories"><span class="header-section-number">22.1</span> Interpretation Categories</a></li>
+  <li><a href="#clsi-ep-series" id="toc-clsi-ep-series" class="nav-link" data-scroll-target="#clsi-ep-series"><span class="header-section-number">22.2</span> CLSI EP Series</a>
+  <ul>
+  <li><a href="#core-statistical-tasks-implemented-or-directly-reusable" id="toc-core-statistical-tasks-implemented-or-directly-reusable" class="nav-link" data-scroll-target="#core-statistical-tasks-implemented-or-directly-reusable"><span class="header-section-number">22.2.1</span> Core Statistical Tasks Implemented or Directly Reusable</a></li>
+  <li><a href="#ep-documents-with-only-related-tools-or-not-yet-implemented" id="toc-ep-documents-with-only-related-tools-or-not-yet-implemented" class="nav-link" data-scroll-target="#ep-documents-with-only-related-tools-or-not-yet-implemented"><span class="header-section-number">22.2.2</span> EP Documents with Only Related Tools or Not Yet Implemented</a></li>
+  </ul></li>
+  <li><a href="#yyt-1789.11789.6" id="toc-yyt-1789.11789.6" class="nav-link" data-scroll-target="#yyt-1789.11789.6"><span class="header-section-number">22.3</span> YY/T 1789.1–1789.6</a></li>
+  <li><a href="#cmde-guidance-support-level" id="toc-cmde-guidance-support-level" class="nav-link" data-scroll-target="#cmde-guidance-support-level"><span class="header-section-number">22.4</span> CMDE Guidance Support Level</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This chapter answers one question: in the current <code>ivdtools</code> version, which statistical tasks from specified standards are implemented, which are available only as component calculations, which are not implemented, and which have similar names but different algorithms. “Supported” here means auditable statistical calculation capability; it does not mean that study design, sample representativeness, acceptance criteria, quality systems, or registration conclusions have been completed automatically.</p>
+<p>The Handbook covers all CLSI EP documents, YY/T 1789.1–1789.6, and the statistical tasks mentioned in the CMDE guidance. Other standards systems are outside this chapter.</p>
+<section id="interpretation-categories" class="level2" data-number="22.1">
+<h2 data-number="22.1" class="anchored" data-anchor-id="interpretation-categories"><span class="header-section-number">22.1</span> Interpretation Categories</h2>
+<p>Four statuses are used:</p>
+<ul>
+<li><strong>Implemented</strong>: a public function calculates the core statistic required by the standard, with standard data or an auditable example available for checking;</li>
+<li><strong>Partially implemented</strong>: core components can be calculated, but a standard-specific statistic, input structure, complete workflow, or final decision is missing;</li>
+<li><strong>Not implemented</strong>: the current package has no public entry point that answers the standard’s statistical question;</li>
+<li><strong>Different algorithm</strong>: both the package and the standard produce a result, but the estimator, error model, interval, rejection region, or integerization rule differs.</li>
+</ul>
+<p>“Different algorithm” can occur together with “partially implemented.” A difference in displayed digits that does not change the statistical definition is recorded as display rounding, not as an algorithm error. When the published standard value cannot be obtained from the public formula and same data, it is reported honestly as a published-value or source-material limitation; parameters are not adjusted merely to force agreement.</p>
+</section>
+<section id="clsi-ep-series" class="level2" data-number="22.2">
+<h2 data-number="22.2" class="anchored" data-anchor-id="clsi-ep-series"><span class="header-section-number">22.2</span> CLSI EP Series</h2>
+<section id="core-statistical-tasks-implemented-or-directly-reusable" class="level3" data-number="22.2.1">
+<h3 data-number="22.2.1" class="anchored" data-anchor-id="core-statistical-tasks-implemented-or-directly-reusable"><span class="header-section-number">22.2.1</span> Core Statistical Tasks Implemented or Directly Reusable</h3>
+<p><strong>EP05 (precision) — core implemented.</strong> <code>precision()</code>, <code>variance()</code>, <code>ci()</code>, <code>profile()</code>, and <code>report()</code> can estimate repeatability, within-laboratory precision, reproducibility, CVs, variance components, and intervals by day, run, lot, site, or center. Single-center and multicenter EP05-A3 examples have been checked.</p>
+<p><strong>EP06 (linearity) — core implemented.</strong> <code>linearity()</code> is the dedicated linearity entry point and supports replicate-level aggregation, straight lines, weights, deviations, and allowable deviations; <code>linearity_replicates()</code>, <code>linearity_panel()</code>, and <code>linearity_endpoints()</code> support design and endpoint checks.</p>
+<p><strong>EP07 (interference) — core implemented.</strong> Replicate planning, paired interference, dose response, patient-sample comparison, and cross-reactivity are handled by <code>interference_replicates()</code>, <code>interference_paired()</code>, <code>interference_dose_response()</code>, and <code>interference_patient()</code>.</p>
+<p><strong>EP09 (method comparison and bias) — core implemented.</strong> <code>mcr()</code>, <code>describe()</code>, <code>correlation()</code>, <code>regression()</code>, <code>bland_altman()</code>, <code>outlier()</code>, <code>bias()</code>, <code>predict()</code>, and <code>reference_bias()</code> cover OLS, WLS, Deming, weighted Deming, Passing–Bablok, difference plots, outliers, and bias at medical decision levels. Main paths in EP09c Appendices C, D, F, H, I, J, and K2 have examples.</p>
+<p><strong>EP12 (qualitative performance) — binary core implemented; standard-specific portions missing.</strong> <code>raw_to_table()</code>, <code>counts_to_table()</code>, <code>diagnostics()</code>, <code>kappa()</code>, <code>mcnemar()</code>, and <code>c5_c95()</code> support 2×2 diagnostic performance, agreement, Kappa, McNemar, and C5/C95 from a continuous response. ANA/APA, semi-quantitative R×C weighted Kappa, fixed-CV C95, and special intervals in some appendices have no corresponding entry point. Coding positive counts as 0/1 and passing them to a continuous-response VFP model changes the statistical model and is not a substitute implementation.</p>
+<p><strong>EP14 (commutability of processed samples) — core implemented.</strong> <code>commutability()</code> supports EP14-type Deming regression, clinical-sample repeatability, prediction intervals at specified reference points, and material classification. The statistical unit of samples, procedures, replicates, and prediction intervals is auditable; sample source, processing, reference procedure, and final suitability judgment are not completed automatically.</p>
+<p><strong>EP15 (user precision and bias verification) — core implemented.</strong> Precision can use the <code>precision()</code> family, and bias can use <code>reference_bias()</code> or the method-comparison workflow.</p>
+<p><strong>EP17 (detection capability) — core implemented.</strong> <code>sensitivity_lob()</code>, <code>sensitivity_lod()</code>, <code>sensitivity_loq()</code>, <code>sensitivity_verify()</code>, and <code>sensitivity_design()</code> cover parametric/nonparametric LoB, classical/Probit LoD, precision or total-error LoQ, and claim verification.</p>
+<p><strong>EP24 (ROC and diagnostic accuracy) — core implemented, with result-format differences.</strong> <code>roc()</code>, <code>auc()</code>, <code>cutoff()</code>, <code>mlr()</code>, and <code>auc_compare()</code> support empirical ROC, AUC, cutoff, multivariate logistic regression, and EP24 Hanley–McNeil and DeLong paired AUC comparisons. Single-curve intervals use the package’s fixed Hanley–McNeil path; cutoff notation between adjacent values, Youden tie handling, and standard hand tables may differ.</p>
+<p><strong>EP25 (stability) — core implemented.</strong> <code>stability_plan()</code>, <code>stability_bias()</code>, <code>stability_regression()</code>, <code>stability_time()</code>, <code>arrhenius()</code>, and <code>mkt()</code> handle node bias, trends, one-sided limits, time to exceed a limit, and accelerated stability.</p>
+<p><strong>EP28 (reference intervals) — core implemented.</strong> <code>reference_interval()</code> supports the EP28 continuous-rank nonparametric method, exact binomial-rank confidence intervals, Appendix B biweight, and type 6, parametric, and Huber extensions.</p>
+<p><strong>EP29 (measurement uncertainty) — core implemented, with path differences.</strong> Type A/B components, IQC, homogeneity, stability, characterization, covariance combination, effective degrees of freedom, general measurement models, delta, Monte Carlo, and stepwise traceability are available. The approximately 6.9%/7.1% difference between the Kragten approximation and analytic delta in EP29 Example 10 is a path difference.</p>
+<p><strong>EP30 (reference-material commutability) — core implemented.</strong> Prediction intervals, relative residuals, and material classification in EP30 Appendix B can be calculated separately.</p>
+<p><strong>EP34 (extended measurement interval) — core implemented.</strong> <code>dilution_recovery()</code>, <code>spike_concentration()</code>, <code>spike_recovery()</code>, and <code>hook_effect()</code> calculate dilution, spike recovery, mass balance, and hook effect. The standard requires precision, LoQ, recovery, and hook-effect evidence together; the package does not automatically integrate these into a final EMI decision.</p>
+</section>
+<section id="ep-documents-with-only-related-tools-or-not-yet-implemented" class="level3" data-number="22.2.2">
+<h3 data-number="22.2.2" class="anchored" data-anchor-id="ep-documents-with-only-related-tools-or-not-yet-implemented"><span class="header-section-number">22.2.2</span> EP Documents with Only Related Tools or Not Yet Implemented</h3>
+<p><strong>EP10</strong> has component tools for precision, linearity, method comparison, and outliers, but no integrated preliminary-evaluation workflow.</p>
+<p><strong>EP18</strong> has no FMEA, fault-tree, FRACAS, or risk-control monitoring interface.</p>
+<p><strong>EP19</strong> is a method-evaluation framework rather than one statistical calculation; package modules do not automatically select a Test Life Phases Model.</p>
+<p><strong>EP21</strong> can produce bias and precision separately but has no standard-defined total analytical error combination, allowable-total-error comparison, and decision workflow.</p>
+<p><strong>EP23</strong> <code>qc_chart()</code>, <code>list_westgard()</code>, and <code>youden_plot()</code> support calculation and display for specified rules only; they do not replace risk identification, QCP design, residual-risk assessment, or CAPA.</p>
+<p><strong>EP26</strong> can compare general lots or groups but has no dedicated patient-sample lot-to-lot design, critical difference, or rejection limit.</p>
+<p><strong>EP27</strong> can use <code>mcr()</code> to obtain method-comparison results but has no error-region definition, error-grid construction, or region-counting workflow.</p>
+<p><strong>EP31</strong> can analyze paired results from two procedures but has no hierarchical sampling, multicenter design, or continuing-monitoring workflow for one healthcare system.</p>
+<p><strong>EP32</strong> has uncertainty and stepwise-combination components but no dedicated management of the calibration hierarchy, reference measurement procedure, commutability, and traceability evidence chain.</p>
+<p><strong>EP33</strong> has no patient-history, time-window, rate-of-change, segmented-limit, or Delta Check investigation interface.</p>
+<p><strong>EP35</strong> can analyze method differences or interference but has no equivalence/suitability design and argument for alternative specimen types.</p>
+<p><strong>EP36</strong> is a symbols-and-formulas harmonization document and has no “EP36 statistical analysis” that the package can automate.</p>
+<p><strong>EP37</strong> is a database of interference materials, not an <code>ivdtools</code> estimator; the package does not provide its substance-selection or recommended-concentration library.</p>
+<p><strong>EP39</strong> has no workflow for alternative-sample selection hierarchy, preparation, records, and suitability justification.</p>
+<p><strong>EP43</strong> has no interface for emergency-use implementation, laboratory confirmation, information updates, and records management.</p>
+<p><strong>EP46</strong> can accept user-specified allowable limits but does not establish allowable total error from clinical outcomes, biological variation, or technical capability.</p>
+<p><strong>EP47</strong> has no risk assessment, sequence design, or carryover-quantity estimation function for reagent carryover.</p>
+<p><strong>EP49</strong> has no clinical-validity evidence framework, control of sample-selection bias, ethics workflow, or post-market evidence-management process.</p>
+</section>
+</section>
+<section id="yyt-1789.11789.6" class="level2" data-number="22.3">
+<h2 data-number="22.3" class="anchored" data-anchor-id="yyt-1789.11789.6"><span class="header-section-number">22.3</span> YY/T 1789.1–1789.6</h2>
+<p><strong>YY/T 1789.1 (precision) — core implemented.</strong> <code>precision()</code> can perform the main calculations for repeatability, within-laboratory precision, and variance components.</p>
+<p><strong>YY/T 1789.2 (trueness—method comparison) — core implemented, with explicit algorithm differences.</strong> Method comparison, reference-material bias, segmented patient-sample bias, and OLS/WLS/Deming/Passing–Bablok parameters can be calculated. Whether a WLS bias interval is multiplied again by a weighted residual scale, and whether a Deming interval uses analytic covariance or delete-one jackknife, produces different endpoints. These differences affect interval width and decisions at medical decision levels; similar point estimates do not establish complete reproduction.</p>
+<p><strong>YY/T 1789.3 (limit of detection/quantitation) — core implemented, with finite-sample algorithm differences.</strong> LoB, classical LoD, and parametric/nonparametric paths are available, but the package uses continuous ranks, its own finite-sample coefficients, and pooled SD from raw data. Some standard examples use discrete ranks, displayed SDs, and different coefficients. Intermediate values may differ even when final rounded values are close; the algorithms are not identical.</p>
+<p><strong>YY/T 1789.4 (linearity) — partially implemented with model differences.</strong> <code>linearity()</code> calculates straight lines, deviations, and allowable limits, but the standard often fits higher-order models to level means and tests higher-order terms, whereas the package’s exploratory polynomial mode is organized at the observation level. Degrees of freedom, residual standard errors, and model-selection evidence differ. There is no dedicated ADL-PctBnd critical-table entry point.</p>
+<p><strong>YY/T 1789.5 (interference) — main effects available; standard intervals differ.</strong> Paired effects, dose response, patient samples, and cross-reactivity rates can be obtained separately. The standard’s <span class="math inline">\(B_c\)</span> uses an SD from an external precision study, whereas the package’s paired interval uses observed SD from the current experimental units; the intervals therefore do not have the same decision meaning. The package does not choose interferents, concentrations, or acceptance limits automatically.</p>
+<p><strong>YY/T 1789.6 (diagnostic performance) — binary core partly implemented.</strong> Four-fold tables, diagnostic sensitivity/specificity, Wilson intervals, and some appendix data can be checked. The standard’s binomial hit-rate verification differs from the continuous internal-response/VFP model required by <code>c5_c95()</code>; they must not be treated as the same C5/C95 algorithm.</p>
+</section>
+<section id="cmde-guidance-support-level" class="level2" data-number="22.4">
+<h2 data-number="22.4" class="anchored" data-anchor-id="cmde-guidance-support-level"><span class="header-section-number">22.4</span> CMDE Guidance Support Level</h2>
+<p>Quantitative method comparison, bias, ROC, four-fold tables, recovery, precision, detection capability, interference, linearity, stability, reference intervals, and QC-material components in the CMDE guidance can be calculated separately by the corresponding modules. Not implemented or not automated are multicenter and clustered designs, semi-quantitative R×C weighted Kappa, cross-reactivity/inclusivity, grouped Z rules, reference-interval verification, complete measurement-interval evidence synthesis, transport and multi-analyte stability decisions, QC-target transfer, and database/XPT/audit-trail submission workflows.</p>
+<p>CMDE support is not equivalent to “a function exists, therefore the study complies.” For example, a recovery function can report recovery for each sample and the mean recovery, but the allowable range and clinical acceptability come from the protocol; method comparison can provide regression and bias, but it does not automatically judge sample representativeness, clinical equivalence, or a registration conclusion.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./021-算法原理简介.html" class="pagination-link" aria-label="Introduction to Algorithm Principles">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./023-IVD适用R包综述.html" class="pagination-link" aria-label="R Packages for IVD Data Analysis: A Review">
+        <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,9 @@
+case,statistic,standard
+negative_control,change_7,0.07
+negative_control,change_7_upper_CL,0.09
+negative_control,change_7.5,0.08
+negative_control,change_7.5_upper_CL,0.10
+positive_control,change_7,-2.56
+positive_control,change_7_upper_CL,-3.53
+positive_control,change_7.5,-2.74
+positive_control,change_7.5_upper_CL,-3.79

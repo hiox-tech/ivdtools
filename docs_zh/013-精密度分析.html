@@ -1,0 +1,2635 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13&nbsp; 精密度分析 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./014-线性分析.html" rel="next">
+<link href="./012-ROC曲线与多元回归.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./013-精密度分析.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">13.1</span> 主要函数</a></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">13.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#示例一ep05-2022-单样本精密度" id="toc-示例一ep05-2022-单样本精密度" class="nav-link" data-scroll-target="#示例一ep05-2022-单样本精密度"><span class="header-section-number">13.2.1</span> 示例一：EP05 20×2×2 单样本精密度</a></li>
+  <li><a href="#示例二多样本35与-sadler-剖面" id="toc-示例二多样本35与-sadler-剖面" class="nav-link" data-scroll-target="#示例二多样本35与-sadler-剖面"><span class="header-section-number">13.2.2</span> 示例二：多样本3×5与 Sadler 剖面</a></li>
+  <li><a href="#示例三多样本多中心站点精密度" id="toc-示例三多样本多中心站点精密度" class="nav-link" data-scroll-target="#示例三多样本多中心站点精密度"><span class="header-section-number">13.2.3</span> 示例三：多样本多中心（站点）精密度</a></li>
+  <li><a href="#示例四自定义的更复杂模型" id="toc-示例四自定义的更复杂模型" class="nav-link" data-scroll-target="#示例四自定义的更复杂模型"><span class="header-section-number">13.2.4</span> 示例四：自定义的更复杂模型</a></li>
+  <li><a href="#标准案例clsi-ep05-a3-附录-a-葡萄糖-2022" id="toc-标准案例clsi-ep05-a3-附录-a-葡萄糖-2022" class="nav-link" data-scroll-target="#标准案例clsi-ep05-a3-附录-a-葡萄糖-2022"><span class="header-section-number">13.2.5</span> 标准案例：CLSI EP05-A3 附录 A 葡萄糖 20×2×2</a></li>
+  <li><a href="#标准案例clsi-ep05-a3-附录-b-ca19-9-多中心研究" id="toc-标准案例clsi-ep05-a3-附录-b-ca19-9-多中心研究" class="nav-link" data-scroll-target="#标准案例clsi-ep05-a3-附录-b-ca19-9-多中心研究"><span class="header-section-number">13.2.6</span> 标准案例：CLSI EP05-A3 附录 B CA19-9 多中心研究</a></li>
+  <li><a href="#标准案例clsi-ep15-a3-铁蛋白-55-验证" id="toc-标准案例clsi-ep15-a3-铁蛋白-55-验证" class="nav-link" data-scroll-target="#标准案例clsi-ep15-a3-铁蛋白-55-验证"><span class="header-section-number">13.2.7</span> 标准案例：CLSI EP15-A3 铁蛋白 5×5 验证</a></li>
+  <li><a href="#标准案例wst-4082024-精密度验证" id="toc-标准案例wst-4082024-精密度验证" class="nav-link" data-scroll-target="#标准案例wst-4082024-精密度验证"><span class="header-section-number">13.2.8</span> 标准案例：WS/T 408—2024 精密度验证</a></li>
+  <li><a href="#标准案例yyt-1789.12021-附录-a-25-羟基维生素-d" id="toc-标准案例yyt-1789.12021-附录-a-25-羟基维生素-d" class="nav-link" data-scroll-target="#标准案例yyt-1789.12021-附录-a-25-羟基维生素-d"><span class="header-section-number">13.2.9</span> 标准案例：YY/T 1789.1—2021 附录 A 25-羟基维生素 D</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>精密度（precision）评价同一测量系统在可重复条件下对同一样品测得结果之间的一致程度， 通常用标准差（SD）或变异系数（CV%）表示。CLSI EP05 将精密度按条件细分为批内（within-run）、 批间（between-run）和日间（between-day）等方差分量，并给出各分量的估计、置信区间以及用于判定的可接受限。</p>
+<p>本文演示如何使用 <code>ivdtools</code> 包的 <code>precision()</code> 建立不精密度方差分量分析，完成异常值检查、正态性 评估、方差分量与置信区间估计、Sadler 精密度剖面拟合，并把结果重排为 EP05 风格的方差分量表。</p>
+<p>分析流程：从重复测量到精密度声明</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["核对天、站点、运行&lt;br/&gt;和重复设计"] --&gt; B["precision()&lt;br/&gt;建立方差分量对象"]
+    B --&gt; C["outlier() / normal()&lt;br/&gt;诊断"]
+    C --&gt; D["variance() / vc()&lt;br/&gt;VC、SD、CV"]
+    D --&gt; E["ci()&lt;br/&gt;分量及合成区间"]
+    E --&gt; F["profile()&lt;br/&gt;浓度相关精密度"]
+    F --&gt; G["report()&lt;br/&gt;EP05/EP15 术语表"]
+    G --&gt; H["与预设精密度限比较"]
+
+    classDef input fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef process fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef output fill:#F4EEFB,stroke:#9954BB,color:#212529
+    class A input
+    class B,C,D,E,F,G process
+    class H output
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">13.1</span> 主要函数</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>主要用途</th>
+<th>关键输入或输出</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>precision()</code></td>
+<td>创建精密度方差分量分析对象</td>
+<td>嵌套公式、<code>by</code> 分组、平衡性检查</td>
+</tr>
+<tr class="even">
+<td><code>outlier()</code></td>
+<td>逐样本异常值检测</td>
+<td>Grubbs 或 IQR 方法</td>
+</tr>
+<tr class="odd">
+<td><code>normal()</code></td>
+<td>逐样本正态性检验</td>
+<td>Shapiro-Wilk 等，<code>level</code> 控制置信水平</td>
+</tr>
+<tr class="even">
+<td><code>variance()</code> / <code>vc()</code></td>
+<td>估计方差分量</td>
+<td>VC、%Total、SD、CV%，<code>NegVC</code> 在此传入</td>
+</tr>
+<tr class="odd">
+<td><code>ci()</code></td>
+<td>模型分量及总分量 SD/CV 的置信区间</td>
+<td>Satterthwaite 近似</td>
+</tr>
+<tr class="even">
+<td><code>profile()</code></td>
+<td>Sadler 精密度剖面拟合</td>
+<td>10 个候选模型、AIC 选优</td>
+</tr>
+<tr class="odd">
+<td><code>report()</code></td>
+<td>生成 EP05 结构化报告表</td>
+<td><code>day</code>、<code>run</code>、<code>site</code> 显式映射</td>
+</tr>
+<tr class="even">
+<td><code>list_sadler()</code></td>
+<td>查看 10 个 Sadler 模型</td>
+<td>模型公式与类型</td>
+</tr>
+<tr class="odd">
+<td><code>summary()</code> / <code>plot()</code></td>
+<td>汇总与绘图</td>
+<td><code>plot(type=...)</code> 选择图形</td>
+</tr>
+</tbody>
+</table>
+<p><code>precision()</code> 创建对象后，分析结果通过 <code>outlier()</code>、<code>normal()</code>、<code>variance()</code>、<code>ci()</code>、<code>profile()</code> 逐步累积到对象中，<strong>必须重新赋值</strong>。只有已执行的分析才出现在 <code>summary()</code> 中，且 <code>plot()</code> 的某些图形依赖前置分析。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">precision</span>(data, form, <span class="at">by =</span> <span class="cn">NULL</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">variance</span>(x, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"auto"</span>, <span class="st">"anova"</span>, <span class="st">"reml"</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">NegVC =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ci</span>(x, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">profile</span>(object, <span class="at">model.no =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(x, day, <span class="at">run =</span> <span class="cn">NULL</span>, <span class="at">site =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">table =</span> <span class="fu">c</span>(<span class="st">"simple"</span>, <span class="st">"detailed"</span>, <span class="st">"CI"</span>), <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<blockquote class="blockquote">
+<p><strong>数据格式要求：</strong> <code>precision()</code> 最终调用 <code>VCA::anovaVCA()</code>，要求普通 <code>data.frame</code>。用 <code>readr::read_csv()</code> 读入的是 tibble，因此本文统一先转为 <code>data.frame</code>，再把实验因子列（天、批、复孔等）转为因子。</p>
+</blockquote>
+<p>以两层嵌套设计为例，</p>
+<p><span class="math display">\[
+Y_{d r k}=\mu+D_d+R_{r(d)}+\varepsilon_{d r k},
+\]</span></p>
+<p>并假定各随机项相互独立、均值为零。总方差、SD 和 CV 为</p>
+<p><span class="math display">\[
+\sigma_T^2=\sigma_D^2+\sigma_{R(D)}^2+\sigma_e^2,\qquad
+SD_T=\sqrt{\sigma_T^2},\qquad CV_T=100\,SD_T/\bar Y.
+\]</span></p>
+<p><code>form</code> 右侧必须真实对应随机分层；重复层通常由残差 <code>error</code> 表示。<code>by</code> 只把不同样本或浓度分别拟合，不会把它们合成一个共同方差。<code>method="auto"</code> 逐组调用 <code>VCA::isBalanced()</code>：平衡时使用 <code>anovaVCA()</code>，否则使用 <code>remlVCA()</code>。ANOVA 和 REML 的估计及自由度可能不同，报告必须保存实际 <code>Method</code>。</p>
+<p><code>variance()</code> 保存数值型 <code>results[[样本]]$vc</code>、<code>sd_comp</code> 和 <code>cv_comp</code>，而展示表 <code>vc</code> 为格式化结果；后续计算应使用前者。<code>ci()</code> 需在 <code>variance()</code> 后执行，并通过 <code>VCA::VCAinference()</code> 给出双侧 SD/CV 区间。<code>profile()</code> 在至少三个有效浓度水平上拟合 <span class="math inline">\(SD=f(\bar Y;\theta)\)</span> 的 Sadler/VFP 候选族，以 AIC 选择模型；外推到观测浓度范围之外应谨慎。</p>
+<p><code>report()</code> 是 EP05 术语映射器：单中心设计显式给出 <code>day</code> 和 <code>run</code>，多中心设计再给出 <code>site</code>；它会拒绝未映射或不符合支持结构的公式。交互项按所含因子匹配，因此 <code>site:day</code> 与 <code>day:site</code>视为同一分量。<code>table="CI"</code> 还要求已经执行 <code>ci()</code>；多中心实验室内精密度等合成量由 <code>report()</code> 利用方差分量协方差矩阵和 Satterthwaite 有效自由度计算区间，而再现性使用全部分量。</p>
+<p><code>precision()</code> 返回精密度分析对象；<code>outlier()</code>、<code>normal()</code>、<code>variance()</code>、<code>ci()</code> 和 <code>profile()</code> 返回写入相应结果槽的更新对象；<code>report()</code> 返回结构化报告表；<code>list_sadler()</code> 返回模型注册表；<code>plot()</code> 返回 <code>ggplot</code> 对象。</p>
+</section>
+<section id="分析案例" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">13.2</span> 分析案例</h2>
+<section id="示例一ep05-2022-单样本精密度" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="示例一ep05-2022-单样本精密度"><span class="header-section-number">13.2.1</span> 示例一：EP05 20×2×2 单样本精密度</h3>
+<p>20×2×2 指 20 天、每天 2 批、每批 2 个重复，共 80 个结果，是 EP05 的经典设计之一：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ep05 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/013-精密度分析/precision-ep05.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ep05 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ep05)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>实验因子列在 CSV 中为整数，读取后转换为因子：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>day)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>run)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>rep)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep05, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  day run rep  value
+1   1   1   1  96.94
+2   1   1   2  93.48
+3   1   2   1  99.28
+4   1   2   2 101.54
+5   2   1   1 102.96
+6   2   1   2 102.85</code></pre>
+</div>
+</div>
+<p><code>value ~ day/run</code> 表示方差分量按 日间（day）→ 日内的批（run）逐层嵌套。 <code>/</code> 是嵌套记法，等价于把每个深一层因子视为上一层因子的分组内因子。</p>
+<p>创建分析对象：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep05, value <span class="sc">~</span> day<span class="sc">/</span>run)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision analysis object
+  Data class          : data.frame
+  Total rows          : 80
+  Formula             : value ~ day/run
+  Samples             : 1
+
+Factor levels
+  day         : 1 (4), 2 (4), 3 (4), 4 (4), 5 (4), 6 (4), 7 (4), 8 (4), 9 (4), 10 (4), 11 (4), 12 (4), 13 (4), 14 (4), 15 (4), 16 (4), 17 (4), 18 (4), 19 (4), 20 (4)
+  run         : 1 (40), 2 (40)
+  rep         : 1 (40), 2 (40)
+
+Analysis status
+
+  [ ] outlier
+  [ ] normal
+  [ ] variance
+  [ ] ci
+  [ ] profile</code></pre>
+</div>
+</div>
+<p>平衡性检查输出提示最大/最小单元大小之比。</p>
+<p>逐样本做异常值检测和正态性检验：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">outlier</span>(p, <span class="at">method =</span> <span class="st">"grubbs"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Outlier detection -- Grubbs (alpha = 0.05)
+  No outliers detected.</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">normal</span>(p, <span class="at">method =</span> <span class="st">"shapiro"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Normality test -- Shapiro-Wilk
+  Sample               n  Method               Statistic  p-value
+  ---------------------------------------------------------------------------
+  all                 80  Shapiro-Wilk          W=0.9868  0.5858</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>参数说明：</strong> <code>outlier()</code> 的 <code>method</code> 可选 <code>"grubbs"</code>（默认）或 <code>"iqr"</code>，<code>alpha</code> 为 Grubbs 显著性水平。<code>normal()</code> 的 <code>method="auto"</code> 会根据样本量选择检验（n≤50 用 Shapiro-Wilk、更大用 Anderson-Darling 等）；指定 <code>method="shapiro"</code> 时输出的 <code>W</code> 列才是真正的 Shapiro-Wilk W 统计量。 单样本数据 n=80，两种方式均可接受，本示例显式指定以便展示。</p>
+</blockquote>
+<p>方差分量与置信区间：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">variance</span>(p)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component      VC %Total     SD  CV[%] Method
+-----------------------------------------------------
+    all       day 18.8358   42.6 4.3400 4.3788  anova
+    all   day:run 17.4343   39.4 4.1754 4.2128  anova
+    all     error  7.9482   18.0 2.8193 2.8445  anova </code></pre>
+</div>
+</div>
+<p><code>NegVC</code> 参数需要在 <code>variance()</code> 处传入：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">variance</span>(p, <span class="at">NegVC =</span> <span class="cn">TRUE</span>)   <span class="co"># 允许负方差分量（默认 FALSE）</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ci</span>(p)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.6497 5.4288 8.5842
+    all       day   4.3400 0.0000 6.2255
+    all   day:run   4.1754 2.0129 5.5513
+    all     error   2.8193 2.3147 3.6073 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.7091 5.4773 8.6609
+    all       day   4.3788 0.0000 6.2812
+    all   day:run   4.2128 2.0309 5.6009
+    all     error   2.8445 2.3353 3.6395 </code></pre>
+</div>
+</div>
+<p><code>ci()</code> 采用 Satterthwaite 有效自由度近似计算各分量 SD 与 CV 的置信区间。</p>
+<p>散点图可用于快速识别测试异常和测值分布情况：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p, <span class="at">type =</span> <span class="st">"dot"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/plot-dot-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p, <span class="at">type =</span> <span class="st">"qq"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/plot-qq-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>图形依赖：</strong> <code>plot(type="dot")</code> 为按运行顺序的散点（无需前置分析），<code>type="his"</code> 为标准直方图； <code>type="var"</code> 需要先执行 <code>variance()</code>，<code>type="qq"</code> 需要先执行 <code>normal()</code>，<code>type="profile"</code> 需要先执行 <code>profile()</code>。绘图前请确认对应分析已运行。</p>
+</blockquote>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(p)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Precision analysis -- summary
+---------------------------------------- 
+
+Precision analysis object
+  Data class          : data.frame
+  Total rows          : 80
+  Formula             : value ~ day/run
+  Samples             : 1
+
+Factor levels
+  day         : 1 (4), 2 (4), 3 (4), 4 (4), 5 (4), 6 (4), 7 (4), 8 (4), 9 (4), 10 (4), 11 (4), 12 (4), 13 (4), 14 (4), 15 (4), 16 (4), 17 (4), 18 (4), 19 (4), 20 (4)
+  run         : 1 (40), 2 (40)
+  rep         : 1 (40), 2 (40)
+
+Analysis status
+
+  [x] outlier
+  [x] normal
+  [x] variance
+  [x] ci
+  [ ] profile
+
+Outlier detection -- Grubbs (alpha = 0.05)
+  No outliers detected.
+
+Normality test -- Shapiro-Wilk
+  Sample               n  Method               Statistic  p-value
+  ---------------------------------------------------------------------------
+  all                 80  Shapiro-Wilk          W=0.9868  0.5858
+
+Variance components
+ sample component      VC %Total     SD  CV[%] Method
+-----------------------------------------------------
+    all       day 18.8358   42.6 4.3400 4.3788  anova
+    all   day:run 17.4343   39.4 4.1754 4.2128  anova
+    all     error  7.9482   18.0 2.8193 2.8445  anova 
+
+Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.6497 5.4288 8.5842
+    all       day   4.3400 0.0000 6.2255
+    all   day:run   4.1754 2.0129 5.5513
+    all     error   2.8193 2.3147 3.6073 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.7091 5.4773 8.6609
+    all       day   4.3788 0.0000 6.2812
+    all   day:run   4.2128 2.0309 5.6009
+    all     error   2.8445 2.3353 3.6395 </code></pre>
+</div>
+</div>
+</section>
+<section id="示例二多样本35与-sadler-剖面" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="示例二多样本35与-sadler-剖面"><span class="header-section-number">13.2.2</span> 示例二：多样本3×5与 Sadler 剖面</h3>
+<p>当需要评价多个浓度水平时，用 <code>by</code> 指定样本分组列，各样本分别估计方差分量：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>profile_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-profile.csv"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>sample)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>day)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>rep)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>样本方差分量：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">precision</span>(profile_data, value <span class="sc">~</span> day, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p2)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+     L1       day   0.6376   63.0  0.7985 3.9446  anova
+     L1     error   0.3750   37.0  0.6124 3.0250  anova
+     L2       day   5.7139   75.1  2.3904 4.7584  anova
+     L2     error   1.8937   24.9  1.3761 2.7393  anova
+     L3       day   3.3913   15.7  1.8415 1.8088  anova
+     L3     error  18.1466   84.3  4.2599 4.1840  anova
+     L4       day  30.5549   54.6  5.5276 2.7529  anova
+     L4     error  25.4525   45.4  5.0451 2.5126  anova
+     L5       day   0.0000    0.0  0.0000 0.0000  anova
+     L5     error 171.7986  100.0 13.1072 3.3003  anova </code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ci</span>(p2)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower   upper
+-----------------------------------------
+     L1     total   1.0063 0.6007  2.9368
+     L1       day   0.7985 0.0000  1.4267
+     L1     error   0.6124 0.4391  1.0108
+     L2     total   2.7582 1.5714  9.9889
+     L2       day   2.3904 0.0000  4.2023
+     L2     error   1.3761 0.9868  2.2716
+     L3     total   4.6409 3.2872  7.8819
+     L3       day   1.8415 0.0000  4.1779
+     L3     error   4.2599 3.0547  7.0319
+     L4     total   7.4838 4.6166 19.1652
+     L4       day   5.5276 0.0000 10.0268
+     L4     error   5.0451 3.6177  8.3280
+     L5     total  13.1072 9.5629 20.8255
+     L5       day   0.0000     NA      NA
+     L5     error  13.1072 9.3990 21.6365 
+
+Confidence intervals (%CV)
+ sample component estimate  lower   upper
+-----------------------------------------
+     L1     total   4.9710 2.9673 14.5079
+     L1       day   3.9446 0.0000  7.0480
+     L1     error   3.0250 2.1692  4.9936
+     L2     total   5.4905 3.1281 19.8843
+     L2       day   4.7584 0.0000  8.3652
+     L2     error   2.7393 1.9643  4.5219
+     L3     total   4.5583 3.2287  7.7416
+     L3       day   1.8088 0.0000  4.1035
+     L3     error   4.1840 3.0003  6.9067
+     L4     total   3.7271 2.2992  9.5447
+     L4       day   2.7529 0.0000  4.9936
+     L4     error   2.5126 1.8017  4.1476
+     L5     total   3.3003 2.4078  5.2436
+     L5       day   0.0000     NA      NA
+     L5     error   3.3003 2.3666  5.4478 </code></pre>
+</div>
+</div>
+<p>比较样本的变异比例，可用于产品优化和检验方案设计：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">"var"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/plot-var-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>profile()</code> 对每个方差分量拟合 Sadler 模型族，按 AIC 选出最优模型：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list_sadler</span>()</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sadler Precision Profile Models
+
+   1  Constant variance     sigma^2 = beta1
+   2  Constant CV           sigma^2 = beta1 * u^2
+   3  Mixed (const + prop var)  sigma^2 = beta1 + beta2 * u^2
+   4  Constrained power (const exponent)  sigma^2 = (beta1 + beta2 * u)^2
+   5  Alternative constrained power  sigma^2 = beta1 + beta2 * u^K
+   6  Unconstrained power (with min)  sigma^2 = beta1 + beta2 * u + beta3 * u^J
+   7  Alternative unconstrained power  sigma^2 = beta1 + beta2 * u^J
+   8  Unconstrained power (Sadler default)  sigma^2 = (beta1 + beta2 * u)^J
+   9  CLSI EP17-like        sigma^2 = beta1 * u^J
+  10  CLSI EP17 exact (log-log)  CV = beta1 * u^J</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">profile</span>(p2, <span class="at">model.no =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision profiles -- Sadler
+  total: sigma^2 = 0.0000 + 0.0086 * u^J  (AIC = 56.45, R^2 = 0.9847)
+  day: sigma^2 = 0.0000 + 0.0095 * u^J  (AIC = 43.46, R^2 = 0.8919)
+  error: sigma^2 = 0.0010 * u^2  (AIC = 55.96, R^2 = 0.9806)</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">"profile"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/profile-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>参数说明：</strong> <code>profile(model.no = 1:10)</code> 指定候选模型序号；<code>...</code> 可传给内部 Sadler 拟合（例如 <code>K</code>）。 每个方差分量至少需要 3 个样本具有有限 SD 才能拟合，因此多样本设计至少应设 3 个浓度水平。 剖面可用于功能灵敏度等分析中预测任意浓度下的 SD/CV。</p>
+</blockquote>
+</section>
+<section id="示例三多样本多中心站点精密度" class="level3" data-number="13.2.3">
+<h3 data-number="13.2.3" class="anchored" data-anchor-id="示例三多样本多中心站点精密度"><span class="header-section-number">13.2.3</span> 示例三：多样本多中心（站点）精密度</h3>
+<p>数据包含 2 个站点（site）、3 个样本（sample），每站点每样本 3 天 × 3 批 × 5 复孔：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>sites_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-sites.csv"</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>sites_data[] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(sites_data, <span class="cf">function</span>(x)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.numeric</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">all</span>(x <span class="sc">==</span> <span class="fu">round</span>(x))) <span class="fu">factor</span>(x) <span class="cf">else</span> x)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sites_data, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  site sample day run rep value
+1    A     S1   1   1   1 49.24
+2    A     S1   1   1   2 52.31
+3    A     S1   1   1   3 48.75
+4    A     S1   1   1   4 49.39
+5    A     S1   1   1   5 51.54
+6    A     S1   1   2   1 51.69</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">precision</span>(sites_data, value <span class="sc">~</span> site<span class="sc">/</span>day<span class="sc">/</span>run, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p3)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample    component      VC %Total     SD  CV[%] Method
+--------------------------------------------------------
+     S1         site  0.2746   10.4 0.5241 1.0550  anova
+     S1     site:day  0.0000    0.0 0.0000 0.0000  anova
+     S1 site:day:run  0.3553   13.4 0.5960 1.1998  anova
+     S1        error  2.0231   76.3 1.4223 2.8632  anova
+     S2         site  0.7117    8.6 0.8436 0.8359  anova
+     S2     site:day  0.1018    1.2 0.3191 0.3162  anova
+     S2 site:day:run  0.9106   11.0 0.9543 0.9456  anova
+     S2        error  6.5670   79.2 2.5626 2.5392  anova
+     S3         site 22.0901   42.6 4.7000 2.3517  anova
+     S3     site:day  2.6252    5.1 1.6202 0.8107  anova
+     S3 site:day:run  0.0000    0.0 0.0000 0.0000  anova
+     S3        error 27.1915   52.4 5.2145 2.6091  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(p3, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 10%">
+<col style="width: 16%">
+<col style="width: 17%">
+<col style="width: 18%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Reproducibility SD</th>
+<th style="text-align: right;">%CV Reproducibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">S1</td>
+<td style="text-align: right;">49.6766</td>
+<td style="text-align: right;">1.4223</td>
+<td style="text-align: right;">2.8632</td>
+<td style="text-align: right;">1.6288</td>
+<td style="text-align: right;">3.2788</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S2</td>
+<td style="text-align: right;">100.9203</td>
+<td style="text-align: right;">2.5626</td>
+<td style="text-align: right;">2.5392</td>
+<td style="text-align: right;">2.8794</td>
+<td style="text-align: right;">2.8532</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S3</td>
+<td style="text-align: right;">199.8592</td>
+<td style="text-align: right;">5.2145</td>
+<td style="text-align: right;">2.6091</td>
+<td style="text-align: right;">7.2046</td>
+<td style="text-align: right;">3.6049</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>按站点拆分单独分析，<code>by</code> 可接受多个列名，内部按交互作用分组，一次得到所有站点 × 样本组合：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>p3s <span class="ot">&lt;-</span> <span class="fu">precision</span>(sites_data, value <span class="sc">~</span> day<span class="sc">/</span>run, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"site"</span>, <span class="st">"sample"</span>))</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>p3s <span class="ot">&lt;-</span> <span class="fu">variance</span>(p3s)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component      VC %Total     SD  CV[%] Method
+-----------------------------------------------------
+   A.S1       day  0.0000    0.0 0.0000 0.0000  anova
+   A.S1   day:run  0.1646    6.8 0.4057 0.8231  anova
+   A.S1     error  2.2677   93.2 1.5059 3.0553  anova
+   B.S1       day  0.0000    0.0 0.0000 0.0000  anova
+   B.S1   day:run  0.5459   23.5 0.7389 1.4758  anova
+   B.S1     error  1.7784   76.5 1.3335 2.6637  anova
+   A.S2       day  0.3241    4.3 0.5693 0.5602  anova
+   A.S2   day:run  0.1523    2.0 0.3903 0.3840  anova
+   A.S2     error  7.0483   93.7 2.6549 2.6124  anova
+   B.S2       day  0.0000    0.0 0.0000 0.0000  anova
+   B.S2   day:run  1.6690   21.5 1.2919 1.2891  anova
+   B.S2     error  6.0856   78.5 2.4669 2.4616  anova
+   A.S3       day  4.4871   15.6 2.1183 1.0420  anova
+   A.S3   day:run  1.7006    5.9 1.3041 0.6415  anova
+   A.S3     error 22.5797   78.5 4.7518 2.3375  anova
+   B.S3       day  0.7633    2.3 0.8737 0.4448  anova
+   B.S3   day:run  0.0000    0.0 0.0000 0.0000  anova
+   B.S3     error 31.8033   97.7 5.6394 2.8709  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(p3s, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">day =</span> <span class="st">"day"</span>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 13%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Within-Laboratory Precision SD</th>
+<th style="text-align: right;">%CV Within-Laboratory Precision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A.S1</td>
+<td style="text-align: right;">49.2884</td>
+<td style="text-align: right;">1.5059</td>
+<td style="text-align: right;">3.0553</td>
+<td style="text-align: right;">1.5596</td>
+<td style="text-align: right;">3.1642</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S1</td>
+<td style="text-align: right;">50.0647</td>
+<td style="text-align: right;">1.3335</td>
+<td style="text-align: right;">2.6637</td>
+<td style="text-align: right;">1.5246</td>
+<td style="text-align: right;">3.0452</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A.S2</td>
+<td style="text-align: right;">101.6249</td>
+<td style="text-align: right;">2.6549</td>
+<td style="text-align: right;">2.6124</td>
+<td style="text-align: right;">2.7431</td>
+<td style="text-align: right;">2.6993</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S2</td>
+<td style="text-align: right;">100.2158</td>
+<td style="text-align: right;">2.4669</td>
+<td style="text-align: right;">2.4616</td>
+<td style="text-align: right;">2.7847</td>
+<td style="text-align: right;">2.7787</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A.S3</td>
+<td style="text-align: right;">203.2864</td>
+<td style="text-align: right;">4.7518</td>
+<td style="text-align: right;">2.3375</td>
+<td style="text-align: right;">5.3635</td>
+<td style="text-align: right;">2.6384</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S3</td>
+<td style="text-align: right;">196.4320</td>
+<td style="text-align: right;">5.6394</td>
+<td style="text-align: right;">2.8709</td>
+<td style="text-align: right;">5.7067</td>
+<td style="text-align: right;">2.9052</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="示例四自定义的更复杂模型" class="level3" data-number="13.2.4">
+<h3 data-number="13.2.4" class="anchored" data-anchor-id="示例四自定义的更复杂模型"><span class="header-section-number">13.2.4</span> 示例四：自定义的更复杂模型</h3>
+<p>除标准的天/批/重复嵌套外，<code>precision()</code> 的公式可以是任意 VCA 嵌套结构，例如再加入操作者 （operator）层：<code>value ~ operator/day/run</code>，即 操作者 → 天 → 批 逐层嵌套：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>custom_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-custom.csv"</span>,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>custom_data[] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(custom_data, <span class="cf">function</span>(x)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.numeric</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">all</span>(x <span class="sc">==</span> <span class="fu">round</span>(x))) <span class="fu">factor</span>(x) <span class="cf">else</span> x)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">precision</span>(custom_data, value <span class="sc">~</span> operator<span class="sc">/</span>day<span class="sc">/</span>run)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p4)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample        component     VC %Total     SD  CV[%] Method
+-----------------------------------------------------------
+    all         operator 2.2914   11.8 1.5137 1.4898  anova
+    all     operator:day 6.3159   32.4 2.5132 2.4734  anova
+    all operator:day:run 3.2463   16.7 1.8017 1.7733  anova
+    all            error 7.6322   39.2 2.7627 2.7190  anova </code></pre>
+</div>
+</div>
+</section>
+<section id="标准案例clsi-ep05-a3-附录-a-葡萄糖-2022" class="level3" data-number="13.2.5">
+<h3 data-number="13.2.5" class="anchored" data-anchor-id="标准案例clsi-ep05-a3-附录-a-葡萄糖-2022"><span class="header-section-number">13.2.5</span> 标准案例：CLSI EP05-A3 附录 A 葡萄糖 20×2×2</h3>
+<p>附录 A 使用一个患者血浆池，在 20 天内每天测量 2 批、每批 2 次，共 80 个葡萄糖结果。数据完整且平衡；嵌套结构明确为 <code>day/run</code>，重复测量构成残差层。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ep05_a <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep05-appendix-a-glucose.csv"</span>,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>day)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>run)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>replicate)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  ep05_a, <span class="at">form =</span> result <span class="sc">~</span> day<span class="sc">/</span>run</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep05_a_precision, <span class="at">NegVC =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       day 1.9586   15.1 1.3995 0.5731  anova
+    all   day:run 3.0750   23.8 1.7536 0.7181  anova
+    all     error 7.9000   61.1 2.8107 1.1510  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep05_a_precision)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   3.5963 3.0696 4.3430
+    all       day   1.3995 0.0000 2.4622
+    all   day:run   1.7536 0.0000 2.7858
+    all     error   2.8107 2.3076 3.5963 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   1.4727 1.2570 1.7785
+    all       day   0.5731 0.0000 1.0083
+    all   day:run   0.7181 0.0000 1.1408
+    all     error   1.1510 0.9450 1.4727 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  ep05_a_precision,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">digits =</span> <span class="dv">6</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 13%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Within-Laboratory Precision SD</th>
+<th style="text-align: right;">%CV Within-Laboratory Precision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">all</td>
+<td style="text-align: right;">244.2</td>
+<td style="text-align: right;">2.810694</td>
+<td style="text-align: right;">1.15098</td>
+<td style="text-align: right;">3.596325</td>
+<td style="text-align: right;">1.472697</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP05-A3 附录 A：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">244.20</td>
+<td style="text-align: right;">244.2000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SS_day</td>
+<td style="text-align: right;">415.80</td>
+<td style="text-align: right;">415.8000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SS_run_day</td>
+<td style="text-align: right;">281.00</td>
+<td style="text-align: right;">281.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SS_error</td>
+<td style="text-align: right;">316.00</td>
+<td style="text-align: right;">316.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">MS_day</td>
+<td style="text-align: right;">21.88</td>
+<td style="text-align: right;">21.8842</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">MS_run_day</td>
+<td style="text-align: right;">14.05</td>
+<td style="text-align: right;">14.0500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">MS_error</td>
+<td style="text-align: right;">7.90</td>
+<td style="text-align: right;">7.9000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">V_day</td>
+<td style="text-align: right;">1.96</td>
+<td style="text-align: right;">1.9586</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">V_run</td>
+<td style="text-align: right;">3.08</td>
+<td style="text-align: right;">3.0750</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">V_error</td>
+<td style="text-align: right;">7.90</td>
+<td style="text-align: right;">7.9000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SD_repeatability</td>
+<td style="text-align: right;">2.81</td>
+<td style="text-align: right;">2.8107</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SD_within_lab</td>
+<td style="text-align: right;">3.60</td>
+<td style="text-align: right;">3.5963</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">CV_repeatability</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: right;">1.1510</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">CV_within_lab</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">1.4727</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="标准案例clsi-ep05-a3-附录-b-ca19-9-多中心研究" class="level3" data-number="13.2.6">
+<h3 data-number="13.2.6" class="anchored" data-anchor-id="标准案例clsi-ep05-a3-附录-b-ca19-9-多中心研究"><span class="header-section-number">13.2.6</span> 标准案例：CLSI EP05-A3 附录 B CA19-9 多中心研究</h3>
+<p>附录 B 包含 3 个中心、6 个样品、每中心 5 天、每天 5 次重复，共 450 条结果。三个中心使用不同仪器和操作者，但使用相同试剂批与校准品批；嵌套模型为 <code>site/day</code>，重复测量构成残差层。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>ep05_b <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep05-appendix-b-ca19-9.csv"</span>,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>sample)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>site <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>site)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>day)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>replicate)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  ep05_b, <span class="at">form =</span> result <span class="sc">~</span> site<span class="sc">/</span>day, <span class="at">by =</span> <span class="st">"sample"</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep05_b_precision)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+     P1      site   0.3843   35.4  0.6199 5.1312  anova
+     P1  site:day   0.1778   16.4  0.4216 3.4899  anova
+     P1     error   0.5248   48.3  0.7244 5.9963  anova
+     P2      site   1.6189   47.9  1.2724 3.0597  anova
+     P2  site:day   0.1232    3.6  0.3509 0.8439  anova
+     P2     error   1.6348   48.4  1.2786 3.0747  anova
+     P5      site  24.9068   29.3  4.9907 1.3165  anova
+     P5  site:day   3.1861    3.7  1.7850 0.4709  anova
+     P5     error  56.9669   67.0  7.5476 1.9910  anova
+     Q3      site   3.1742   60.4  1.7816 3.1959  anova
+     Q3  site:day   0.5232   10.0  0.7233 1.2975  anova
+     Q3     error   1.5599   29.7  1.2490 2.2404  anova
+     Q4      site  30.0735   75.7  5.4839 3.3104  anova
+     Q4  site:day   1.8663    4.7  1.3661 0.8247  anova
+     Q4     error   7.8128   19.7  2.7951 1.6873  anova
+     Q6      site 164.1097   68.1 12.8105 3.0922  anova
+     Q6  site:day   3.0208    1.3  1.7380 0.4195  anova
+     Q6     error  73.9590   30.7  8.5999 2.0758  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep05_b_precision)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower   upper
+-----------------------------------------
+     P1     total   1.0425 0.7415  1.7535
+     P1      site   0.6199 0.0000  1.1178
+     P1  site:day   0.4216 0.0000  0.6380
+     P1     error   0.7244 0.6148  0.8819
+     P2     total   1.8376 1.2313  3.5995
+     P2      site   1.2724 0.0000  2.2291
+     P2  site:day   0.3509 0.0000  0.7084
+     P2     error   1.2786 1.0852  1.5566
+     P5     total   9.2228 6.9060 13.8849
+     P5      site   4.9907 0.0000  8.9156
+     P5  site:day   1.7850 0.0000  3.9426
+     P5     error   7.5476 6.4058  9.1888
+     Q3     total   2.2929 1.4259  5.7003
+     Q3      site   1.7816 0.0000  3.1184
+     Q3  site:day   0.7233 0.0000  1.0958
+     Q3     error   1.2490 1.0600  1.5205
+     Q4     total   6.3050 3.6468 21.1983
+     Q4      site   5.4839 0.0000  9.5060
+     Q4  site:day   1.3661 0.0000  2.1602
+     Q4     error   2.7951 2.3723  3.4029
+     Q6     total  15.5271 9.3516 43.6651
+     Q6      site  12.8105 0.0000 22.1981
+     Q6  site:day   1.7380 0.0000  4.2690
+     Q6     error   8.5999 7.2989 10.4699 
+
+Confidence intervals (%CV)
+ sample component estimate  lower   upper
+-----------------------------------------
+     P1     total   8.6292 6.1376 14.5139
+     P1      site   5.1312 0.0000  9.2524
+     P1  site:day   3.4899 0.0000  5.2812
+     P1     error   5.9963 5.0891  7.3001
+     P2     total   4.4191 2.9611  8.6559
+     P2      site   3.0597 0.0000  5.3606
+     P2  site:day   0.8439 0.0000  1.7036
+     P2     error   3.0747 2.6095  3.7433
+     P5     total   2.4329 1.8217  3.6627
+     P5      site   1.3165 0.0000  2.3518
+     P5  site:day   0.4709 0.0000  1.0400
+     P5     error   1.9910 1.6898  2.4239
+     Q3     total   4.1130 2.5578 10.2254
+     Q3      site   3.1959 0.0000  5.5938
+     Q3  site:day   1.2975 0.0000  1.9656
+     Q3     error   2.2404 1.9015  2.7276
+     Q4     total   3.8061 2.2014 12.7966
+     Q4      site   3.3104 0.0000  5.7384
+     Q4  site:day   0.8247 0.0000  1.3040
+     Q4     error   1.6873 1.4320  2.0542
+     Q6     total   3.7479 2.2573 10.5398
+     Q6      site   3.0922 0.0000  5.3581
+     Q6  site:day   0.4195 0.0000  1.0305
+     Q6     error   2.0758 1.7618  2.5272 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>ep05_b_report <span class="ot">&lt;-</span> <span class="fu">report</span>(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  ep05_b_precision,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>, <span class="at">table =</span> <span class="st">"detailed"</span>, <span class="at">digits =</span> <span class="dv">6</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>ep05_b_report_ci <span class="ot">&lt;-</span> <span class="fu">report</span>(</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  ep05_b_precision,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>, <span class="at">table =</span> <span class="st">"CI"</span>, <span class="at">digits =</span> <span class="dv">6</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP05-A3 附录 B：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_mean</td>
+<td style="text-align: right;">12.100</td>
+<td style="text-align: right;">12.0813</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_SD_R</td>
+<td style="text-align: right;">0.724</td>
+<td style="text-align: right;">0.7244</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_SD_WL</td>
+<td style="text-align: right;">0.838</td>
+<td style="text-align: right;">0.8382</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_SD_REP</td>
+<td style="text-align: right;">1.040</td>
+<td style="text-align: right;">1.0425</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_CV_R</td>
+<td style="text-align: right;">6.000</td>
+<td style="text-align: right;">5.9963</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_CV_WL</td>
+<td style="text-align: right;">6.900</td>
+<td style="text-align: right;">6.9379</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_CV_REP</td>
+<td style="text-align: right;">8.600</td>
+<td style="text-align: right;">8.6292</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_mean</td>
+<td style="text-align: right;">41.600</td>
+<td style="text-align: right;">41.5840</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_SD_R</td>
+<td style="text-align: right;">1.280</td>
+<td style="text-align: right;">1.2786</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_SD_WL</td>
+<td style="text-align: right;">1.330</td>
+<td style="text-align: right;">1.3259</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_SD_REP</td>
+<td style="text-align: right;">1.840</td>
+<td style="text-align: right;">1.8376</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_CV_R</td>
+<td style="text-align: right;">3.100</td>
+<td style="text-align: right;">3.0747</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_CV_WL</td>
+<td style="text-align: right;">3.200</td>
+<td style="text-align: right;">3.1884</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_CV_REP</td>
+<td style="text-align: right;">4.400</td>
+<td style="text-align: right;">4.4191</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_mean</td>
+<td style="text-align: right;">379.000</td>
+<td style="text-align: right;">379.0907</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_SD_R</td>
+<td style="text-align: right;">7.550</td>
+<td style="text-align: right;">7.5476</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_SD_WL</td>
+<td style="text-align: right;">7.760</td>
+<td style="text-align: right;">7.7558</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_SD_REP</td>
+<td style="text-align: right;">9.220</td>
+<td style="text-align: right;">9.2228</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_CV_R</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">1.9910</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_CV_WL</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">2.0459</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_CV_REP</td>
+<td style="text-align: right;">2.400</td>
+<td style="text-align: right;">2.4329</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_mean</td>
+<td style="text-align: right;">55.700</td>
+<td style="text-align: right;">55.7467</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_SD_R</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">1.2490</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_SD_WL</td>
+<td style="text-align: right;">1.440</td>
+<td style="text-align: right;">1.4433</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_SD_REP</td>
+<td style="text-align: right;">2.290</td>
+<td style="text-align: right;">2.2929</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_CV_R</td>
+<td style="text-align: right;">2.200</td>
+<td style="text-align: right;">2.2404</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_CV_WL</td>
+<td style="text-align: right;">2.600</td>
+<td style="text-align: right;">2.5890</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_CV_REP</td>
+<td style="text-align: right;">4.100</td>
+<td style="text-align: right;">4.1130</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_mean</td>
+<td style="text-align: right;">166.000</td>
+<td style="text-align: right;">165.6560</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_SD_R</td>
+<td style="text-align: right;">2.800</td>
+<td style="text-align: right;">2.7951</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_SD_WL</td>
+<td style="text-align: right;">3.110</td>
+<td style="text-align: right;">3.1111</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_SD_REP</td>
+<td style="text-align: right;">6.300</td>
+<td style="text-align: right;">6.3050</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_CV_R</td>
+<td style="text-align: right;">1.700</td>
+<td style="text-align: right;">1.6873</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_CV_WL</td>
+<td style="text-align: right;">1.900</td>
+<td style="text-align: right;">1.8781</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_CV_REP</td>
+<td style="text-align: right;">3.800</td>
+<td style="text-align: right;">3.8061</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_mean</td>
+<td style="text-align: right;">414.000</td>
+<td style="text-align: right;">414.2867</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_SD_R</td>
+<td style="text-align: right;">8.600</td>
+<td style="text-align: right;">8.5999</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_SD_WL</td>
+<td style="text-align: right;">8.770</td>
+<td style="text-align: right;">8.7738</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_SD_REP</td>
+<td style="text-align: right;">15.500</td>
+<td style="text-align: right;">15.5271</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_CV_R</td>
+<td style="text-align: right;">2.100</td>
+<td style="text-align: right;">2.0758</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_CV_WL</td>
+<td style="text-align: right;">2.100</td>
+<td style="text-align: right;">2.1178</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_CV_REP</td>
+<td style="text-align: right;">3.700</td>
+<td style="text-align: right;">3.7479</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="标准案例clsi-ep15-a3-铁蛋白-55-验证" class="level3" data-number="13.2.7">
+<h3 data-number="13.2.7" class="anchored" data-anchor-id="标准案例clsi-ep15-a3-铁蛋白-55-验证"><span class="header-section-number">13.2.7</span> 标准案例：CLSI EP15-A3 铁蛋白 5×5 验证</h3>
+<p>EP15 的完整案例含 3 个血清铁蛋白水平，每个水平连续测量 5 日，每日重复 5 次。先保留完整的原始数据，再按标准案例预先规定的 Grubbs 判定排除样品 1 第 1 日第 3 次的 30.2 µg/L。该排除是对标准案例处理的复现，不是本段代码事后自动选择的结果。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep15-ferritin.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep15_ferritin_raw<span class="sc">$</span>sample)</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep15_ferritin_raw<span class="sc">$</span>run)</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep15_ferritin_raw<span class="sc">$</span>replicate)</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>ep15_exclude <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>  ep15_ferritin_raw,</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  sample <span class="sc">==</span> <span class="dv">1</span>L <span class="sc">&amp;</span> run <span class="sc">==</span> <span class="dv">1</span>L <span class="sc">&amp;</span> replicate <span class="sc">==</span> <span class="dv">3</span>L</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw[ep15_exclude, ]</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  run replicate sample result
+7   1         3      1   30.2</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 排除该值</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>ep15_ferritin <span class="ot">&lt;-</span> ep15_ferritin_raw[<span class="sc">!</span>ep15_exclude, ]</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>排除后，样品 1 保留 24 个结果，其中第 1 日有 4 个重复；样品 2 和样品 3 各保留 25 个结果。先按样品水平拆分，再依次建立三个 <code>result ~ run</code> 单因素模型。<code>run</code> 表示日（运行）间分量，每日的重复测量落入残差 <code>error</code> 分量。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 为方便比较ANOVA与REML差异，特别将样本分开处理</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_list <span class="ot">&lt;-</span> <span class="fu">split</span>(ep15_ferritin, ep15_ferritin<span class="sc">$</span>sample)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>ep15_level_1 <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(ep15_ferritin_list[[<span class="st">"1"</span>]])</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>ep15_level_2 <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(ep15_ferritin_list[[<span class="st">"2"</span>]])</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>ep15_level_3 <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(ep15_ferritin_list[[<span class="st">"3"</span>]])</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 样品 1</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep15_level_1, result <span class="sc">~</span> run)</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 不平衡时模型会自动切换至REML</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit_r <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>  ep15_level_1_fit, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       run 0.2820   27.5 0.5311 2.0816   reml
+    all     error 0.7423   72.5 0.8616 3.3770   reml </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 为与标准案例的单因素 ANOVA 口径一致，此处需显式使用 `method = "anova"`</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  ep15_level_1_fit, <span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       run 0.2804   27.4 0.5295 2.0756  anova
+    all     error 0.7414   72.6 0.8610 3.3749  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep15_level_1_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 1.010837 0.752556 1.539604
+    all       run 0.529550 0.000000 0.944544
+    all     error 0.861028 0.654803 1.257592 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 3.962125 2.949754 6.034706
+    all       run 2.075649 0.000000 3.702279
+    all     error 3.374924 2.566597 4.929319 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 样品 2</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>ep15_level_2_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep15_level_2, result <span class="sc">~</span> run)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>ep15_level_2_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  ep15_level_2_fit, <span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       run 2.5400   44.6 1.5937 1.1374  anova
+    all     error 3.1600   55.4 1.7776 1.2687  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>ep15_level_2_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep15_level_2_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 2.387467 1.701094 3.999257
+    all       run 1.593738 0.000000 2.636950
+    all     error 1.777639 1.359999 2.567034 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 1.703873 1.214026 2.854166
+    all       run 1.137409 0.000000 1.881922
+    all     error 1.268655 0.970596 1.832025 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 样品 3</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>ep15_level_3_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep15_level_3, result <span class="sc">~</span> run)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>ep15_level_3_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  ep15_level_3_fit, <span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+    all       run 102.6080   47.5 10.1296 1.6262  anova
+    all     error 113.5200   52.5 10.6546 1.7105  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>ep15_level_3_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep15_level_3_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component  estimate     lower     upper
+-----------------------------------------------
+    all     total 14.701292 10.382650 25.141336
+    all       run 10.129561  0.000000 16.638736
+    all     error 10.654576  8.151381 15.385949 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 2.360213 1.666878 4.036305
+    all       run 1.626246 0.000000 2.671259
+    all     error 1.710534 1.308660 2.470130 </code></pre>
+</div>
+</div>
+<p>按相同顺序从每个对象中提取总均值、<code>run</code> 方差分量、<code>error</code> 重复性 SD 和 <code>total</code> 实验室内 SD，然后与标准原文的显示值对照：</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP15-A3 铁蛋白：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">样品</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">总均值</td>
+<td style="text-align: right;">25.5000</td>
+<td style="text-align: right;">25.5125</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">运行间方差</td>
+<td style="text-align: right;">0.2805</td>
+<td style="text-align: right;">0.2804</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">重复性 SD</td>
+<td style="text-align: right;">0.8600</td>
+<td style="text-align: right;">0.8610</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">实验室内 SD</td>
+<td style="text-align: right;">1.0100</td>
+<td style="text-align: right;">1.0108</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">总均值</td>
+<td style="text-align: right;">140.1000</td>
+<td style="text-align: right;">140.1200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">运行间方差</td>
+<td style="text-align: right;">2.5400</td>
+<td style="text-align: right;">2.5400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">重复性 SD</td>
+<td style="text-align: right;">1.7800</td>
+<td style="text-align: right;">1.7776</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">实验室内 SD</td>
+<td style="text-align: right;">2.4000</td>
+<td style="text-align: right;">2.3875</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 3</td>
+<td style="text-align: left;">总均值</td>
+<td style="text-align: right;">623.0000</td>
+<td style="text-align: right;">622.8800</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 3</td>
+<td style="text-align: left;">运行间方差</td>
+<td style="text-align: right;">102.6100</td>
+<td style="text-align: right;">102.6080</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 3</td>
+<td style="text-align: left;">重复性 SD</td>
+<td style="text-align: right;">10.7000</td>
+<td style="text-align: right;">10.6546</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 3</td>
+<td style="text-align: left;">实验室内 SD</td>
+<td style="text-align: right;">14.7000</td>
+<td style="text-align: right;">14.7013</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>三个水平的复算结果与标准显示值一致或接近。样品 1 排除一个结果后为不平衡设计，方差分量的微小差异来自不平衡数据的计算细节和中间舍入；样品 2 的实验室内 SD 精确复算值为 2.3875 µg/L，标准用舍入后的方差分量显示为 2.40 µg/L。标准案例根据其 PI 声明和 UVL 判定三个水平均通过；该结论只适用于案例中给定的声明和限值。</p>
+</section>
+<section id="标准案例wst-4082024-精密度验证" class="level3" data-number="13.2.8">
+<h3 data-number="13.2.8" class="anchored" data-anchor-id="标准案例wst-4082024-精密度验证"><span class="header-section-number">13.2.8</span> 标准案例：WS/T 408—2024 精密度验证</h3>
+<p>WS/T 408 附录 A.2 使用两个 HDL-C 水平，每个水平测量 5 批，每批 3 次。读入后先核对每个样品、每个批次均有 3 个结果：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>wst408_precision <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-wst408-precision.csv"</span>,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>wst408_precision<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(wst408_precision<span class="sc">$</span>sample)</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>wst408_precision<span class="sc">$</span>batch <span class="ot">&lt;-</span> <span class="fu">factor</span>(wst408_precision<span class="sc">$</span>batch)</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>wst408_precision<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(wst408_precision<span class="sc">$</span>replicate)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>wst408_precision_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  wst408_precision,</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">~</span> batch,</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"sample"</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>wst408_precision_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  wst408_precision_fit,</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"anova"</span>,</span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+  样品1     batch 0.0001   10.9 0.0080 0.7637  anova
+  样品1     error 0.0005   89.1 0.0228 2.1884  anova
+  样品2     batch 0.0001   12.1 0.0091 0.5892  anova
+  样品2     error 0.0006   87.9 0.0246 1.5898  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>wst408_precision_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(wst408_precision_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate    lower    upper
+--------------------------------------------
+  样品1     total 0.024152 0.017523 0.038843
+  样品1     batch 0.007958 0.000000 0.020611
+  样品1     error 0.022804 0.015933 0.040019
+  样品2     total 0.026268 0.019035 0.042360
+  样品2     batch 0.009129 0.000000 0.022737
+  样品2     error 0.024631 0.017210 0.043225 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+  样品1     total 2.317879 1.681694 3.727688
+  样品1     batch 0.763745 0.000000 1.978014
+  样品1     error 2.188437 1.529098 3.840561
+  样品2     total 1.695429 1.228567 2.734049
+  样品2     batch 0.589202 0.000000 1.467529
+  样品2     error 1.589755 1.110789 2.789914 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>WS/T 408 附录 A.2：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">样品</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">总均值</td>
+<td style="text-align: right;">1.0420</td>
+<td style="text-align: right;">1.0420</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">s_WR</td>
+<td style="text-align: right;">0.0228</td>
+<td style="text-align: right;">0.0228</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">s_WL</td>
+<td style="text-align: right;">0.0242</td>
+<td style="text-align: right;">0.0242</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 1</td>
+<td style="text-align: left;">CV_WL (%)</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">2.3179</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">总均值</td>
+<td style="text-align: right;">1.5493</td>
+<td style="text-align: right;">1.5493</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">s_WR</td>
+<td style="text-align: right;">0.0246</td>
+<td style="text-align: right;">0.0246</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">s_WL</td>
+<td style="text-align: right;">0.0263</td>
+<td style="text-align: right;">0.0263</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">样品 2</td>
+<td style="text-align: left;">CV_WL (%)</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1.6954</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="标准案例yyt-1789.12021-附录-a-25-羟基维生素-d" class="level3" data-number="13.2.9">
+<h3 data-number="13.2.9" class="anchored" data-anchor-id="标准案例yyt-1789.12021-附录-a-25-羟基维生素-d"><span class="header-section-number">13.2.9</span> 标准案例：YY/T 1789.1—2021 附录 A 25-羟基维生素 D</h3>
+<p>附录 A 给出完整的 20 天×2 批×2 重复数据，共 80 个结果。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>yyt1789_1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-yyt1789-1-appendix-a.csv"</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>yyt1789_1<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(yyt1789_1<span class="sc">$</span>day)</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>yyt1789_1<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(yyt1789_1<span class="sc">$</span>run)</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>yyt1789_1_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(yyt1789_1, result <span class="sc">~</span> day<span class="sc">/</span>run)</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>yyt1789_1_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>  yyt1789_1_fit, <span class="at">method =</span> <span class="st">"anova"</span></span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       day 0.1769   36.2 0.4206 2.4324  anova
+    all   day:run 0.0648   13.2 0.2545 1.4721  anova
+    all     error 0.2475   50.6 0.4975 2.8773  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>yyt1789_1_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(yyt1789_1_fit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   0.6994 0.5861 0.8674
+    all       day   0.4206 0.0000 0.5991
+    all   day:run   0.2545 0.0000 0.4400
+    all     error   0.4975 0.4084 0.6365 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   4.0450 3.3897 5.0170
+    all       day   2.4324 0.0000 3.4650
+    all   day:run   1.4721 0.0000 2.5448
+    all     error   2.8773 2.3623 3.6815 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.1—2021 附录 A：ivdtools 与标准结果对照</caption>
+<colgroup>
+<col style="width: 31%">
+<col style="width: 37%">
+<col style="width: 12%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">标准位置</th>
+<th style="text-align: left;">统计量</th>
+<th style="text-align: right;">标准结果</th>
+<th style="text-align: right;">ivdtools结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">17.290</td>
+<td style="text-align: right;">17.2898</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability SD</td>
+<td style="text-align: right;">0.497</td>
+<td style="text-align: right;">0.4975</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory SD</td>
+<td style="text-align: right;">0.699</td>
+<td style="text-align: right;">0.6994</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability CV (%)</td>
+<td style="text-align: right;">2.900</td>
+<td style="text-align: right;">2.8773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory CV (%)</td>
+<td style="text-align: right;">4.000</td>
+<td style="text-align: right;">4.0450</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability CI lower</td>
+<td style="text-align: right;">0.408</td>
+<td style="text-align: right;">0.4084</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability CI upper</td>
+<td style="text-align: right;">0.637</td>
+<td style="text-align: right;">0.6365</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory CI lower</td>
+<td style="text-align: right;">0.586</td>
+<td style="text-align: right;">0.5861</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory CI upper</td>
+<td style="text-align: right;">0.867</td>
+<td style="text-align: right;">0.8674</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./012-ROC曲线与多元回归.html" class="pagination-link" aria-label="ROC 曲线与多元回归">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./014-线性分析.html" class="pagination-link" aria-label="线性分析">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

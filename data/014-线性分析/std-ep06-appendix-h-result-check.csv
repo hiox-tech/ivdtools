@@ -1,0 +1,7 @@
+"analysis","statistic","calculated","standard","tolerance","difference","status"
+"combined","slope",0.9685915,0.9686,0.00005,-0.0000085,"对应"
+"combined","max_abs_deviation_percent",14.4759223,14.5,0.05,-0.0240777,"对应"
+"HIGH1","slope",0.9495537,0.9496,0.00005,-0.0000463,"对应"
+"HIGH1","max_abs_deviation_percent",12.7612361,12.8,0.05,-0.0387639,"对应"
+"HIGH2","slope",1.0012910,1.0013,0.00005,-0.0000090,"对应"
+"HIGH2","max_abs_deviation_percent",9.2133730,9.2,0.05,0.0133730,"对应"

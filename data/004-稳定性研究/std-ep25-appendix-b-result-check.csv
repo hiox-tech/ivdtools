@@ -1,0 +1,9 @@
+case,statistic,standard
+40C,rate,0.0027257
+45C,rate,0.0045154
+50C,rate,0.0070087
+55C,rate,0.011243
+Arrhenius,slope,-9632
+Arrhenius,intercept,24.874
+25C,target_rate,0.00058252
+25C,shelf_life,383

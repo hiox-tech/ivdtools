@@ -1,0 +1,6 @@
+spike_concentration,computed_concentration,measured_concentration,standard_recovery
+0,100,94,94
+10,109,99,91
+100,190,181,95
+1000,1000,917,92
+10000,9100,9024,99

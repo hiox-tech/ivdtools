@@ -1,0 +1,2721 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Interference Studies – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./008-稀释回收与HOOK.html" rel="next">
+<link href="./006-基质效应与互换性.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./007-干扰研究.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#main-functions" id="toc-main-functions" class="nav-link active" data-scroll-target="#main-functions"><span class="header-section-number">7.1</span> Main Functions</a>
+  <ul>
+  <li><a href="#replicate-planning" id="toc-replicate-planning" class="nav-link" data-scroll-target="#replicate-planning"><span class="header-section-number">7.1.1</span> Replicate Planning</a></li>
+  <li><a href="#paired-preparation-studies" id="toc-paired-preparation-studies" class="nav-link" data-scroll-target="#paired-preparation-studies"><span class="header-section-number">7.1.2</span> Paired-Preparation Studies</a></li>
+  <li><a href="#doseresponse-studies" id="toc-doseresponse-studies" class="nav-link" data-scroll-target="#doseresponse-studies"><span class="header-section-number">7.1.3</span> Dose–Response Studies</a></li>
+  <li><a href="#patient-sample-comparison" id="toc-patient-sample-comparison" class="nav-link" data-scroll-target="#patient-sample-comparison"><span class="header-section-number">7.1.4</span> Patient-Sample Comparison</a></li>
+  </ul></li>
+  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">7.2</span> Analysis Examples</a>
+  <ul>
+  <li><a href="#ep07-replicate-planning-and-paired-screening" id="toc-ep07-replicate-planning-and-paired-screening" class="nav-link" data-scroll-target="#ep07-replicate-planning-and-paired-screening"><span class="header-section-number">7.2.1</span> EP07 Replicate Planning and Paired Screening</a></li>
+  <li><a href="#ep07-dose-response" id="toc-ep07-dose-response" class="nav-link" data-scroll-target="#ep07-dose-response"><span class="header-section-number">7.2.2</span> EP07 Dose Response</a></li>
+  <li><a href="#patient-sample-comparison-1" id="toc-patient-sample-comparison-1" class="nav-link" data-scroll-target="#patient-sample-comparison-1"><span class="header-section-number">7.2.3</span> Patient-Sample Comparison</a></li>
+  </ul></li>
+  <li><a href="#interpretation-and-reporting" id="toc-interpretation-and-reporting" class="nav-link" data-scroll-target="#interpretation-and-reporting"><span class="header-section-number">7.3</span> Interpretation and Reporting</a></li>
+  <li><a href="#full-standard-cases" id="toc-full-standard-cases" class="nav-link" data-scroll-target="#full-standard-cases"><span class="header-section-number">7.4</span> Full Standard Cases</a>
+  <ul>
+  <li><a href="#clsi-ep07-third-edition-section-5.1-replicate-count-design" id="toc-clsi-ep07-third-edition-section-5.1-replicate-count-design" class="nav-link" data-scroll-target="#clsi-ep07-third-edition-section-5.1-replicate-count-design"><span class="header-section-number">7.4.1</span> CLSI EP07 Third Edition Section 5.1: Replicate-Count Design</a></li>
+  <li><a href="#clsi-ep07-third-edition-table-3-paired-screening" id="toc-clsi-ep07-third-edition-table-3-paired-screening" class="nav-link" data-scroll-target="#clsi-ep07-third-edition-table-3-paired-screening"><span class="header-section-number">7.4.2</span> CLSI EP07 Third Edition Table 3: Paired Screening</a></li>
+  <li><a href="#clsi-ep07-third-edition-table-4-curved-doseresponse-and-point-to-point-interpolation" id="toc-clsi-ep07-third-edition-table-4-curved-doseresponse-and-point-to-point-interpolation" class="nav-link" data-scroll-target="#clsi-ep07-third-edition-table-4-curved-doseresponse-and-point-to-point-interpolation"><span class="header-section-number">7.4.3</span> CLSI EP07 Third Edition Table 4: Curved Dose–Response and Point-to-Point Interpolation</a></li>
+  <li><a href="#clsi-ep07-third-edition-table-5-linear-doseresponse" id="toc-clsi-ep07-third-edition-table-5-linear-doseresponse" class="nav-link" data-scroll-target="#clsi-ep07-third-edition-table-5-linear-doseresponse"><span class="header-section-number">7.4.4</span> CLSI EP07 Third Edition Table 5: Linear Dose–Response</a></li>
+  <li><a href="#yyt-1789.52023-appendix-a-interferent-spike-screening" id="toc-yyt-1789.52023-appendix-a-interferent-spike-screening" class="nav-link" data-scroll-target="#yyt-1789.52023-appendix-a-interferent-spike-screening"><span class="header-section-number">7.4.5</span> YY/T 1789.5–2023 Appendix A: Interferent-Spike Screening</a></li>
+  <li><a href="#yyt-1789.52023-appendix-b-hemoglobin-doseresponse" id="toc-yyt-1789.52023-appendix-b-hemoglobin-doseresponse" class="nav-link" data-scroll-target="#yyt-1789.52023-appendix-b-hemoglobin-doseresponse"><span class="header-section-number">7.4.6</span> YY/T 1789.5–2023 Appendix B: Hemoglobin Dose–Response</a></li>
+  <li><a href="#yyt-1789.52023-appendix-c-patient-sample-evaluation" id="toc-yyt-1789.52023-appendix-c-patient-sample-evaluation" class="nav-link" data-scroll-target="#yyt-1789.52023-appendix-c-patient-sample-evaluation"><span class="header-section-number">7.4.7</span> YY/T 1789.5–2023 Appendix C: Patient-Sample Evaluation</a></li>
+  <li><a href="#yyt-1789.52023-appendix-d-cross-reactivity-evaluation" id="toc-yyt-1789.52023-appendix-d-cross-reactivity-evaluation" class="nav-link" data-scroll-target="#yyt-1789.52023-appendix-d-cross-reactivity-evaluation"><span class="header-section-number">7.4.8</span> YY/T 1789.5–2023 Appendix D: Cross-Reactivity Evaluation</a></li>
+  </ul></li>
+  <li><a href="#detailed-function-reference" id="toc-detailed-function-reference" class="nav-link" data-scroll-target="#detailed-function-reference"><span class="header-section-number">7.5</span> Detailed Function Reference</a>
+  <ul>
+  <li><a href="#replicate-planning-with-interference_replicates" id="toc-replicate-planning-with-interference_replicates" class="nav-link" data-scroll-target="#replicate-planning-with-interference_replicates"><span class="header-section-number">7.5.1</span> Replicate Planning with interference_replicates()</a></li>
+  <li><a href="#paired-preparation-with-interference_paired" id="toc-paired-preparation-with-interference_paired" class="nav-link" data-scroll-target="#paired-preparation-with-interference_paired"><span class="header-section-number">7.5.2</span> Paired Preparation with interference_paired()</a></li>
+  <li><a href="#doseresponse-with-interference_dose_response" id="toc-doseresponse-with-interference_dose_response" class="nav-link" data-scroll-target="#doseresponse-with-interference_dose_response"><span class="header-section-number">7.5.3</span> Dose–Response with interference_dose_response()</a></li>
+  <li><a href="#patient-sample-comparison-with-interference_patient" id="toc-patient-sample-comparison-with-interference_patient" class="nav-link" data-scroll-target="#patient-sample-comparison-with-interference_patient"><span class="header-section-number">7.5.4</span> Patient-Sample Comparison with interference_patient()</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Interference studies ask whether a potential interferent changes a measurement, how the effect changes with interferent concentration, and whether patient samples containing the factor show a larger method difference or dispersion. These are different analysis paths and should not be collapsed into one summary number.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Path</th>
+<th>Main question</th>
+<th>Main result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Paired preparation screen</td>
+<td>Is the test sample sufficiently different from the solvent control at specified analyte/interferent levels?</td>
+<td>Absolute/relative effect and confidence interval</td>
+</tr>
+<tr class="even">
+<td>Dose response</td>
+<td>How does the effect change with interferent concentration?</td>
+<td>Baseline-relative effect, monotonicity, interpolation</td>
+</tr>
+<tr class="odd">
+<td>Patient-sample comparison</td>
+<td>Do patient samples with the factor show method differences or increased dispersion?</td>
+<td>Per-sample difference, group summary, difference–interferent regression</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled" title="Scope of Use">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Scope of Use
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Interference conclusions require prespecified interferents, concentrations, replicates, direction, and allowable effect. A statistical difference is not automatically clinically or analytically important. Keep the preparation design, solvent control, patient grouping, and method-difference direction explicit.</p>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="main-functions" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="main-functions"><span class="header-section-number">7.1</span> Main Functions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>interference_replicates()</code></td>
+<td>Calculate required test and control replicates</td>
+<td><code>interference_replicates</code> data frame</td>
+</tr>
+<tr class="even">
+<td><code>interference_paired()</code></td>
+<td>Analyze paired-preparation interference</td>
+<td><code>interference_paired</code> object</td>
+</tr>
+<tr class="odd">
+<td><code>interference_dose_response()</code></td>
+<td>Analyze interferent dose response</td>
+<td><code>interference_dose_response</code> object</td>
+</tr>
+<tr class="even">
+<td><code>predict()</code></td>
+<td>Forward or inverse prediction from a dose-response result</td>
+<td>Prediction data frame</td>
+</tr>
+<tr class="odd">
+<td><code>interference_patient()</code></td>
+<td>Analyze method differences in patient samples</td>
+<td><code>interference_patient</code> object</td>
+</tr>
+</tbody>
+</table>
+<section id="replicate-planning" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="replicate-planning"><span class="header-section-number">7.1.1</span> Replicate Planning</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_replicates</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  sd, detectable_difference, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.90</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>), <span class="at">min_replicates =</span> <span class="dv">5</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="cn">NULL</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>sd</code> is expected repeatability SD, or repeatability CV on a relative scale. <code>detectable_difference</code> uses the same scale and compatible length. <code>alpha</code> and <code>power</code> must be finite values between 0 and 1; <code>alternative</code> determines one- or two-sided planning. The result is a design quantity, not an acceptance decision.</p>
+</section>
+<section id="paired-preparation-studies" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="paired-preparation-studies"><span class="header-section-number">7.1.2</span> Paired-Preparation Studies</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_paired</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  data, result, <span class="at">design =</span> <span class="fu">c</span>(<span class="st">"ep07"</span>, <span class="st">"analyte_spike"</span>, <span class="st">"blank"</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="cn">NULL</span>, <span class="at">condition =</span> <span class="cn">NULL</span>, <span class="at">test_level =</span> <span class="cn">NULL</span>, <span class="at">control_level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">matrix =</span> <span class="cn">NULL</span>, <span class="at">normal_level =</span> <span class="cn">NULL</span>, <span class="at">interferent_level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">spike =</span> <span class="cn">NULL</span>, <span class="at">unspiked_level =</span> <span class="cn">NULL</span>, <span class="at">spiked_level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The data are long format, one replicate per row. For <code>ep07</code>, identify test and solvent-control conditions; for <code>analyte_spike</code>, identify normal/interferent matrix and unspiked/spiked analyte; for <code>blank</code>, identify the relevant condition. The returned object contains paired effects, relative effects, standard errors, intervals, and group summaries.</p>
+</section>
+<section id="doseresponse-studies" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="doseresponse-studies"><span class="header-section-number">7.1.3</span> Dose–Response Studies</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_dose_response</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data, result, concentration, <span class="at">by =</span> <span class="cn">NULL</span>, baseline,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"point_to_point"</span>, <span class="st">"linear"</span>), <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>baseline</code> must be an observed interferent concentration in every stratum. <code>point_to_point</code> interpolates adjacent concentration means; <code>linear</code> fits a straight line to individual results. The object preserves the baseline-relative effect, model coefficients, and predictions.</p>
+</section>
+<section id="patient-sample-comparison" class="level3" data-number="7.1.4">
+<h3 data-number="7.1.4" class="anchored" data-anchor-id="patient-sample-comparison"><span class="header-section-number">7.1.4</span> Patient-Sample Comparison</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_patient</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  data, id, group, method, result,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  test_group, control_group, evaluated_method, comparative_method,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">interferent_cols =</span> <span class="cn">NULL</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The difference is defined as evaluated method minus comparative method. Optional interferent columns are fitted one at a time; group summaries and regression intervals use the specified confidence level.</p>
+</section>
+</section>
+<section id="analysis-examples" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">7.2</span> Analysis Examples</h2>
+<section id="ep07-replicate-planning-and-paired-screening" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="ep07-replicate-planning-and-paired-screening"><span class="header-section-number">7.2.1</span> EP07 Replicate Planning and Paired Screening</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ep07_paired <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-ep07-table3-paired.csv"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ep07_fit <span class="ot">&lt;-</span> <span class="fu">interference_paired</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  ep07_paired, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">design =</span> <span class="st">"ep07"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"level"</span>, <span class="at">condition =</span> <span class="st">"condition"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_level =</span> <span class="st">"test"</span>, <span class="at">control_level =</span> <span class="st">"control"</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ep07_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interference paired-difference analysis
+  Design: ep07
+  Confidence level: 95%
+  level: low
+    stratum             : level=low
+    design              : ep07
+    n_test              : 5
+    n_control           : 5
+    test_mean           : 0.3
+    control_mean        : 0.5
+    absolute_difference : -0.2
+    absolute_se         : 0.033166248
+    df                  : 8
+    absolute_ci_lower   : -0.2764815
+    absolute_ci_upper   : -0.1235185
+    percent_difference  : -40
+    percent_se          : 6.6332496
+    percent_ci_lower    : -55.296301
+    percent_ci_upper    : -24.703699
+
+  level: high
+    stratum             : level=high
+    design              : ep07
+    n_test              : 5
+    n_control           : 5
+    test_mean           : 4.55
+    control_mean        : 5
+    absolute_difference : -0.45
+    absolute_se         : 0.096436508
+    df                  : 8
+    absolute_ci_lower   : -0.67238299
+    absolute_ci_upper   : -0.22761701
+    percent_difference  : -9
+    percent_se          : 1.9287302
+    percent_ci_lower    : -13.44766
+    percent_ci_upper    : -4.5523403</code></pre>
+</div>
+</div>
+</section>
+<section id="ep07-dose-response" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="ep07-dose-response"><span class="header-section-number">7.2.2</span> EP07 Dose Response</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ep07_dose <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-ep07-table4-dose-response.csv"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ep07_dose_fit <span class="ot">&lt;-</span> <span class="fu">interference_dose_response</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  ep07_dose, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">concentration =</span> <span class="st">"concentration"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">baseline =</span> <span class="dv">0</span>, <span class="at">method =</span> <span class="st">"point_to_point"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ep07_dose_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interference dose-response analysis
+  Method: point_to_point
+  Baseline concentration: 0
+  Stratum: all | Concentration: 0
+    Observations        : 5
+    Mean                : 200.02
+    SD                  : 1.7753873
+    SE                  : 0.79397733
+    Absolute difference : 0
+    Percent difference  : 0
+    CV percent          : 0.88760488
+
+  Stratum: all | Concentration: 10
+    Observations        : 5
+    Mean                : 223.9
+    SD                  : 4.645966
+    SE                  : 2.0777392
+    Absolute difference : 23.88
+    Percent difference  : 11.938806
+    CV percent          : 2.0750183
+
+  Stratum: all | Concentration: 20
+    Observations        : 5
+    Mean                : 240.08
+    SD                  : 3.3536547
+    SE                  : 1.4998
+    Absolute difference : 40.06
+    Percent difference  : 20.027997
+    CV percent          : 1.3968905
+
+  Stratum: all | Concentration: 30
+    Observations        : 5
+    Mean                : 245.72
+    SD                  : 4.7892588
+    SE                  : 2.1418217
+    Absolute difference : 45.7
+    Percent difference  : 22.847715
+    CV percent          : 1.9490716
+
+  Stratum: all | Concentration: 40
+    Observations        : 5
+    Mean                : 251.88
+    SD                  : 4.4549972
+    SE                  : 1.9923353
+    Absolute difference : 51.86
+    Percent difference  : 25.927407
+    CV percent          : 1.7686983</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep07_dose_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="007-干扰研究_files/figure-html/ep07-dose-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="patient-sample-comparison-1" class="level3" data-number="7.2.3">
+<h3 data-number="7.2.3" class="anchored" data-anchor-id="patient-sample-comparison-1"><span class="header-section-number">7.2.3</span> Patient-Sample Comparison</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>patient_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-yyt1789-5-appendix-c-patient.csv"</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>patient_fit <span class="ot">&lt;-</span> <span class="fu">interference_patient</span>(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  patient_data, <span class="at">id =</span> <span class="st">"id"</span>, <span class="at">group =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"method"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">test_group =</span> <span class="st">"test"</span>, <span class="at">control_group =</span> <span class="st">"control"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">evaluated_method =</span> <span class="st">"evaluated"</span>, <span class="at">comparative_method =</span> <span class="st">"comparative"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(patient_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Patient-specimen interference evaluation
+  Evaluated - comparative: evaluated - comparative
+  Group: test
+    Observations            : 20
+    Mean difference         : -1.1835
+    SD difference           : 2.3930541
+    SE difference           : 0.53510317
+    Median difference       : -0.49
+    25th percentile         : -1.3425
+    75th percentile         : -0.32
+    CI lower                : -2.3034838
+    CI upper                : -0.063516183
+    Mean percent difference : -17.916419
+    SD percent difference   : 18.774944
+    Percent CI lower        : -26.703363
+    Percent CI upper        : -9.1294749
+
+  Group: control
+    Observations            : 20
+    Mean difference         : -1.039
+    SD difference           : 2.1614978
+    SE difference           : 0.4833256
+    Median difference       : -0.415
+    25th percentile         : -0.835
+    75th percentile         : -0.075
+    CI lower                : -2.0506121
+    CI upper                : -0.027387902
+    Mean percent difference : -11.712959
+    SD percent difference   : 24.21947
+    Percent CI lower        : -23.04802
+    Percent CI upper        : -0.37789805</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="interpretation-and-reporting" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="interpretation-and-reporting"><span class="header-section-number">7.3</span> Interpretation and Reporting</h2>
+<p>Report the design, interferent and concentration, control preparation, replicate count, effect definition, confidence method, and allowable effect. A dose-response line can describe an association without proving mechanism. A patient-sample regression can be confounded by disease severity, sample matrix, or method range. EP07 and YY/T 1789.5 standard examples in the supplied data directory can be cross-checked with the same functions, but standard-specific acceptance limits and study conclusions remain external to the package.</p>
+</section>
+<section id="full-standard-cases" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="full-standard-cases"><span class="header-section-number">7.4</span> Full Standard Cases</h2>
+<section id="clsi-ep07-third-edition-section-5.1-replicate-count-design" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="clsi-ep07-third-edition-section-5.1-replicate-count-design"><span class="header-section-number">7.4.1</span> CLSI EP07 Third Edition Section 5.1: Replicate-Count Design</h3>
+<p>Section 5.1.1 of EP07 uses a two-sided example with repeatability SD 1.0 mg/dL, 95% confidence, 95% power, and a detectable effect of 1.5 mg/dL. Section 5.1.4 assumes a repeatability CV of 5% and detects effects of 7% and 10% with 95% confidence and 90% power. SD and difference, or CV and percentage difference, are on matching scales, so the same formula can be used.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ep07_replicates_511 <span class="ot">&lt;-</span> <span class="fu">interference_replicates</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="dv">1</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">detectable_difference =</span> <span class="fl">1.5</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.95</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"5.1.1 two-sided"</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>ep07_replicates_514 <span class="ot">&lt;-</span> <span class="fu">interference_replicates</span>(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">detectable_difference =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">10</span>),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.90</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="fu">c</span>(<span class="st">"5.1.4 7%"</span>, <span class="st">"5.1.4 10%"</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(ep07_replicates_511, ep07_replicates_514)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>EP07 paired-difference replicate design
+  Label: 5.1.1 two-sided
+    SD                    : 1
+    Detectable difference : 1.5
+    Difference / SD       : 1.5
+    Alpha                 : 0.05
+    Power                 : 0.95
+    Alternative           : two.sided
+    Z alpha               : 1.959964
+    Z power               : 1.6448536
+    Calculated replicates : 11.550853
+    Replicates per sample : 12
+    Minimum replicates    : 5
+
+  Label: 5.1.4 7%
+    SD                    : 5
+    Detectable difference : 7
+    Difference / SD       : 1.4
+    Alpha                 : 0.05
+    Power                 : 0.9
+    Alternative           : two.sided
+    Z alpha               : 1.959964
+    Z power               : 1.2815516
+    Calculated replicates : 10.72186
+    Replicates per sample : 11
+    Minimum replicates    : 5
+
+  Label: 5.1.4 10%
+    SD                    : 5
+    Detectable difference : 10
+    Difference / SD       : 2
+    Alpha                 : 0.05
+    Power                 : 0.9
+    Alternative           : two.sided
+    Z alpha               : 1.959964
+    Z power               : 1.2815516
+    Calculated replicates : 5.2537115
+    Replicates per sample : 6
+    Minimum replicates    : 5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP07 Section 5.1: replicate-count comparison</caption>
+<colgroup>
+<col style="width: 18%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard position</th>
+<th style="text-align: right;">Standard calculated</th>
+<th style="text-align: right;">ivdtools calculated</th>
+<th style="text-align: right;">Standard replicates</th>
+<th style="text-align: right;">ivdtools replicates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">5.1.1 two-sided</td>
+<td style="text-align: right;">11.550853</td>
+<td style="text-align: right;">11.550853</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">5.1.4 7%</td>
+<td style="text-align: right;">10.721860</td>
+<td style="text-align: right;">10.721860</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5.1.4 10%</td>
+<td style="text-align: right;">5.253712</td>
+<td style="text-align: right;">5.253712</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The replicate count must be satisfied separately for every test sample and control sample; the two groups must not be added together and interpreted as one total sample size.</p>
+</section>
+<section id="clsi-ep07-third-edition-table-3-paired-screening" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="clsi-ep07-third-edition-table-3-paired-screening"><span class="header-section-number">7.4.2</span> CLSI EP07 Third Edition Table 3: Paired Screening</h3>
+<p>EP07 Table 3 compares five test replicates with five solvent-control replicates at analyte levels 0.50 and 5.00 mg/dL and an interferent concentration of 500 mg/dL. The effect direction is consistently test − control; use the absolute difference at the low level and the percentage difference relative to the control mean at the high level.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ep07_table3 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-ep07-table3-paired.csv"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep07_table3, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  level condition replicate result unit 
+  &lt;chr&gt; &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;
+1 low   control           1   0.45 mg/dL
+2 low   control           2   0.56 mg/dL
+3 low   control           3   0.48 mg/dL
+4 low   control           4   0.54 mg/dL
+5 low   control           5   0.47 mg/dL
+6 low   test              1   0.24 mg/dL</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ep07_table3_result <span class="ot">&lt;-</span> <span class="fu">interference_paired</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(ep07_table3),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="st">"ep07"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">"condition"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_level =</span> <span class="st">"test"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">control_level =</span> <span class="st">"control"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"level"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>ep07_table3_result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interference paired-difference analysis
+  Design: ep07
+  Confidence level: 95%
+  level: low
+    stratum             : level=low
+    design              : ep07
+    n_test              : 5
+    n_control           : 5
+    test_mean           : 0.3
+    control_mean        : 0.5
+    absolute_difference : -0.2
+    absolute_se         : 0.033166248
+    df                  : 8
+    absolute_ci_lower   : -0.2764815
+    absolute_ci_upper   : -0.1235185
+    percent_difference  : -40
+    percent_se          : 6.6332496
+    percent_ci_lower    : -55.296301
+    percent_ci_upper    : -24.703699
+
+  level: high
+    stratum             : level=high
+    design              : ep07
+    n_test              : 5
+    n_control           : 5
+    test_mean           : 4.55
+    control_mean        : 5
+    absolute_difference : -0.45
+    absolute_se         : 0.096436508
+    df                  : 8
+    absolute_ci_lower   : -0.67238299
+    absolute_ci_upper   : -0.22761701
+    percent_difference  : -9
+    percent_se          : 1.9287302
+    percent_ci_lower    : -13.44766
+    percent_ci_upper    : -4.5523403</code></pre>
+</div>
+</div>
+<p>The recalculated low-level control/test means are 0.50/0.30 mg/dL, with an absolute effect of −0.20 mg/dL and a 95% CI of −0.28 to −0.12 mg/dL. The high-level means are 5.00/4.55 mg/dL, with a relative effect of −9.0% and a 95% CI of −13.4% to −4.6% in ascending order. The standard prints the high-level interval in reverse order; only the display order is changed here.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP07 Third Edition Table 3: comparison of ivdtools and standard results</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">level</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">0.500</td>
+<td style="text-align: right;">0.5000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">0.300</td>
+<td style="text-align: right;">0.3000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">control_sd</td>
+<td style="text-align: right;">0.047</td>
+<td style="text-align: right;">0.0474</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">test_sd</td>
+<td style="text-align: right;">0.057</td>
+<td style="text-align: right;">0.0570</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">-0.200</td>
+<td style="text-align: right;">-0.2000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">ci_lower</td>
+<td style="text-align: right;">-0.280</td>
+<td style="text-align: right;">-0.2765</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">ci_upper</td>
+<td style="text-align: right;">-0.120</td>
+<td style="text-align: right;">-0.1235</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">5.000</td>
+<td style="text-align: right;">5.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">4.550</td>
+<td style="text-align: right;">4.5500</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">control_sd</td>
+<td style="text-align: right;">0.141</td>
+<td style="text-align: right;">0.1409</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">test_sd</td>
+<td style="text-align: right;">0.163</td>
+<td style="text-align: right;">0.1632</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">difference_percent</td>
+<td style="text-align: right;">-9.000</td>
+<td style="text-align: right;">-9.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">ci_lower_percent</td>
+<td style="text-align: right;">-13.400</td>
+<td style="text-align: right;">-13.4477</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">ci_upper_percent</td>
+<td style="text-align: right;">-4.600</td>
+<td style="text-align: right;">-4.5523</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Under the case’s prespecified limits, the low-level point estimate of −0.20 mg/dL exceeds ±0.10 mg/dL, while the high-level point estimate of −9.0% is within ±10%; this screening case therefore reports interference only at the low level. If equivalence is prespecified, the entire confidence interval should instead be required to lie within the allowable difference.</p>
+</section>
+<section id="clsi-ep07-third-edition-table-4-curved-doseresponse-and-point-to-point-interpolation" class="level3" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="clsi-ep07-third-edition-table-4-curved-doseresponse-and-point-to-point-interpolation"><span class="header-section-number">7.4.3</span> CLSI EP07 Third Edition Table 4: Curved Dose–Response and Point-to-Point Interpolation</h3>
+<p>EP07 Table 4 presents simulated dose–response data: interferent concentrations of 0, 10, 20, 30, and 40 mg/dL, with five measurements at each concentration. The analyte results are expressed in nmol/L. The means increase monotonically with interferent concentration but gradually flatten at high concentrations, so the main text uses a point-to-point method between adjacent means rather than summarizing the full range with one straight line.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ep07_table4 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-ep07-table4-dose-response.csv"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep07_table4, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  sample replicate concentration result concentration_unit result_unit
+   &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;      
+1      1         1             0   201. mg/dL              nmol/L     
+2      1         2             0   199. mg/dL              nmol/L     
+3      1         3             0   198. mg/dL              nmol/L     
+4      1         4             0   200. mg/dL              nmol/L     
+5      1         5             0   202. mg/dL              nmol/L     
+6      2         1            10   218. mg/dL              nmol/L     </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ep07_table4_result <span class="ot">&lt;-</span> <span class="fu">interference_dose_response</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  ep07_table4,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="st">"concentration"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">baseline =</span> <span class="dv">0</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"point_to_point"</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>ep07_table4_result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interference dose-response analysis
+  Method: point_to_point
+  Baseline concentration: 0
+  Stratum: all | Concentration: 0
+    Observations        : 5
+    Mean                : 200.02
+    SD                  : 1.7753873
+    SE                  : 0.79397733
+    Absolute difference : 0
+    Percent difference  : 0
+    CV percent          : 0.88760488
+
+  Stratum: all | Concentration: 10
+    Observations        : 5
+    Mean                : 223.9
+    SD                  : 4.645966
+    SE                  : 2.0777392
+    Absolute difference : 23.88
+    Percent difference  : 11.938806
+    CV percent          : 2.0750183
+
+  Stratum: all | Concentration: 20
+    Observations        : 5
+    Mean                : 240.08
+    SD                  : 3.3536547
+    SE                  : 1.4998
+    Absolute difference : 40.06
+    Percent difference  : 20.027997
+    CV percent          : 1.3968905
+
+  Stratum: all | Concentration: 30
+    Observations        : 5
+    Mean                : 245.72
+    SD                  : 4.7892588
+    SE                  : 2.1418217
+    Absolute difference : 45.7
+    Percent difference  : 22.847715
+    CV percent          : 1.9490716
+
+  Stratum: all | Concentration: 40
+    Observations        : 5
+    Mean                : 251.88
+    SD                  : 4.4549972
+    SE                  : 1.9923353
+    Absolute difference : 51.86
+    Percent difference  : 25.927407
+    CV percent          : 1.7686983</code></pre>
+</div>
+</div>
+<p>Using the mean at 0 mg/dL, <span class="math inline">\(M_0=200.02\)</span> nmol/L, as the baseline, calculate the absolute and relative effects at each concentration. The main text also asks at which interferent concentration the mean effect reaches 10%. This can be obtained by reverse interpolation between the measured 0 and 10 mg/dL nodes:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ep07_table4_limit <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  ep07_table4_result,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> <span class="dv">10</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="st">"percent"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>ep07_table4_limit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  stratum direction  metric input estimate within_observed_range
+1     all   inverse percent    10 8.376047                  TRUE</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep07_table4_result, <span class="at">type =</span> <span class="st">"percent"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="007-干扰研究_files/figure-html/ep07-table4-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Compare the recalculated values with EP07 Table 4 and Section 6.2.4.3:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP07 Third Edition Table 4: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">200.020</td>
+<td style="text-align: right;">200.02000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">223.900</td>
+<td style="text-align: right;">223.90000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">240.080</td>
+<td style="text-align: right;">240.08000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">245.720</td>
+<td style="text-align: right;">245.72000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">251.880</td>
+<td style="text-align: right;">251.88000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">0.900</td>
+<td style="text-align: right;">0.88760</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">2.100</td>
+<td style="text-align: right;">2.07502</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.400</td>
+<td style="text-align: right;">1.39689</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.900</td>
+<td style="text-align: right;">1.94907</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.800</td>
+<td style="text-align: right;">1.76870</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">absolute_difference</td>
+<td style="text-align: right;">23.880</td>
+<td style="text-align: right;">23.88000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">absolute_difference</td>
+<td style="text-align: right;">40.060</td>
+<td style="text-align: right;">40.06000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">absolute_difference</td>
+<td style="text-align: right;">45.700</td>
+<td style="text-align: right;">45.70000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">absolute_difference</td>
+<td style="text-align: right;">51.860</td>
+<td style="text-align: right;">51.86000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">percent_difference</td>
+<td style="text-align: right;">11.940</td>
+<td style="text-align: right;">11.93881</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">percent_difference</td>
+<td style="text-align: right;">20.030</td>
+<td style="text-align: right;">20.02800</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">percent_difference</td>
+<td style="text-align: right;">22.850</td>
+<td style="text-align: right;">22.84772</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">percent_difference</td>
+<td style="text-align: right;">25.930</td>
+<td style="text-align: right;">25.92741</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">all</td>
+<td style="text-align: left;">interference_at_10_percent</td>
+<td style="text-align: right;">8.375</td>
+<td style="text-align: right;">8.37605</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Reverse interpolation gives 8.376 mg/dL. The main text reports 8.375 mg/dL when calculated from the rounded 11.94% value in the table, and recommends reporting at most one decimal place after considering study uncertainty, or approximately 8.4 mg/dL. The estimate lies within the measured range but remains an estimate between two nodes; for a critical claim, samples should be prepared and tested near this concentration.</p>
+<p>EP07 Section 6.2.5.4 also uses these data to illustrate the limitation of a quadratic curve. Following the main text, fit a quadratic polynomial to all 25 individual results:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ep07_table4_quadratic <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">~</span> concentration <span class="sc">+</span> <span class="fu">I</span>(concentration<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ep07_table4</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>ep07_table4_quadratic_coef <span class="ot">&lt;-</span> <span class="fu">coef</span>(ep07_table4_quadratic)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                term     estimate
+1        (Intercept) 200.64342857
+2      concentration   2.56911429
+3 I(concentration^2)  -0.03284286</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Quadratic-curve recalculation for EP07 Section 6.2.5.4</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP07 6.2.5.4</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">200.640000</td>
+<td style="text-align: right;">200.643429</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP07 6.2.5.4</td>
+<td style="text-align: left;">linear_term</td>
+<td style="text-align: right;">2.569100</td>
+<td style="text-align: right;">2.569114</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP07 6.2.5.4</td>
+<td style="text-align: left;">quadratic_term</td>
+<td style="text-align: right;">-0.032843</td>
+<td style="text-align: right;">-0.032843</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP07 6.2.5.4</td>
+<td style="text-align: left;">turning_point</td>
+<td style="text-align: right;">39.100000</td>
+<td style="text-align: right;">39.112223</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The quadratic model suggests that the effect turns downward after approximately 39.1 mg/dL. This is mainly a shape imposed by the function, not a mechanism demonstrated by the experiment. The quadratic fit is therefore retained here to reproduce the warning in the standard text, while interpretation continues to use the point-to-point result.</p>
+</section>
+<section id="clsi-ep07-third-edition-table-5-linear-doseresponse" class="level3" data-number="7.4.4">
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="clsi-ep07-third-edition-table-5-linear-doseresponse"><span class="header-section-number">7.4.4</span> CLSI EP07 Third Edition Table 5: Linear Dose–Response</h3>
+<p>Table 5 uses the same five interferent concentrations and five measurements per concentration, but the data follow an approximately linear trajectory. In this case, method = “linear” fits the analyte result against interferent concentration using all 25 individual results, rather than regressing only the five concentration means.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ep07_table5 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-ep07-table5-dose-response.csv"</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep07_table5, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  sample replicate concentration result concentration_unit result_unit
+   &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;      
+1      1         1             0   200. mg/dL              nmol/L     
+2      1         2             0   200. mg/dL              nmol/L     
+3      1         3             0   203. mg/dL              nmol/L     
+4      1         4             0   198. mg/dL              nmol/L     
+5      1         5             0   206. mg/dL              nmol/L     
+6      2         1            10   212. mg/dL              nmol/L     </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ep07_table5_result <span class="ot">&lt;-</span> <span class="fu">interference_dose_response</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  ep07_table5,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="st">"concentration"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">baseline =</span> <span class="dv">0</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"linear"</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>ep07_table5_result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interference dose-response analysis
+  Method: linear
+  Baseline concentration: 0
+  Stratum: all | Concentration: 0
+    Observations        : 5
+    Mean                : 201.44
+    SD                  : 3.1101447
+    SE                  : 1.390899
+    Absolute difference : 0
+    Percent difference  : 0
+    CV percent          : 1.5439559
+
+  Stratum: all | Concentration: 10
+    Observations        : 5
+    Mean                : 212.28
+    SD                  : 2.2785961
+    SE                  : 1.0190191
+    Absolute difference : 10.84
+    Percent difference  : 5.381255
+    CV percent          : 1.0733918
+
+  Stratum: all | Concentration: 20
+    Observations        : 5
+    Mean                : 226.56
+    SD                  : 5.2122932
+    SE                  : 2.3310084
+    Absolute difference : 25.12
+    Percent difference  : 12.470214
+    CV percent          : 2.3006237
+
+  Stratum: all | Concentration: 30
+    Observations        : 5
+    Mean                : 239.2
+    SD                  : 2.9597297
+    SE                  : 1.3236314
+    Absolute difference : 37.76
+    Percent difference  : 18.745036
+    CV percent          : 1.2373452
+
+  Stratum: all | Concentration: 40
+    Observations        : 5
+    Mean                : 249.6
+    SD                  : 2.9732137
+    SE                  : 1.3296616
+    Absolute difference : 48.16
+    Percent difference  : 23.907863
+    CV percent          : 1.1911914</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ep07_table5_result, <span class="at">type =</span> <span class="st">"absolute"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="007-干扰研究_files/figure-html/ep07-table5-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP07 Third Edition Table 5: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">201.4400</td>
+<td style="text-align: right;">201.44000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">212.2800</td>
+<td style="text-align: right;">212.28000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">226.5600</td>
+<td style="text-align: right;">226.56000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">239.2000</td>
+<td style="text-align: right;">239.20000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">249.6000</td>
+<td style="text-align: right;">249.60000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.5000</td>
+<td style="text-align: right;">1.54396</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.1000</td>
+<td style="text-align: right;">1.07339</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">2.3000</td>
+<td style="text-align: right;">2.30062</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.2000</td>
+<td style="text-align: right;">1.23735</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">cv_percent</td>
+<td style="text-align: right;">1.2000</td>
+<td style="text-align: right;">1.19119</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">all</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">201.1700</td>
+<td style="text-align: right;">201.16800</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">all</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">1.2324</td>
+<td style="text-align: right;">1.23240</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">all</td>
+<td style="text-align: left;">difference_intercept</td>
+<td style="text-align: right;">-0.2720</td>
+<td style="text-align: right;">-0.27200</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Using the five replicates at 0 mg/dL gives <span class="math inline">\(M_0=201.44\)</span> nmol/L. Regression of all individual results gives <span class="math inline">\(Y=1.2324X+201.168\)</span>; the main text writes the intercept as 201.17 nmol/L. If the results are first converted to absolute effects using <span class="math inline">\(M_0\)</span>, the equation is <span class="math inline">\(d=1.2324X-0.272\)</span>. The regression intercept and the measured baseline mean are two different estimates of the no-interferent result and should not be mixed. The linear method is appropriate only when the scatter is approximately linear across the measured range; a high goodness of fit does not justify ignoring local curvature or extrapolating beyond the observed range.</p>
+</section>
+<section id="yyt-1789.52023-appendix-a-interferent-spike-screening" class="level3" data-number="7.4.5">
+<h3 data-number="7.4.5" class="anchored" data-anchor-id="yyt-1789.52023-appendix-a-interferent-spike-screening"><span class="header-section-number">7.4.5</span> YY/T 1789.5–2023 Appendix A: Interferent-Spike Screening</h3>
+<p>Appendix A uses low- and high-level thyroid-stimulating hormone (TSH) samples, at 0.3 and 5.0 µIU/mL, respectively. It screens 2,000 mg/dL hemoglobin and 2,000 IU/mL rheumatoid factor. Test preparations receive interferent stock solution, while control preparations receive the same volume of physiological saline; each preparation is measured three times.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>yyt1789_a_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-yyt1789-5-appendix-a-paired.csv"</span>,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yyt1789_a_data, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  interferent analyte_level condition interferent_concentration replicate result
+  &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;                         &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+1 hemoglobin  low           control                           0         1  0.272
+2 hemoglobin  low           control                           0         2  0.279
+3 hemoglobin  low           control                           0         3  0.278
+4 hemoglobin  low           test                           2000         1  0.347
+5 hemoglobin  low           test                           2000         2  0.358
+6 hemoglobin  low           test                           2000         3  0.354
+# ℹ 1 more variable: unit &lt;chr&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>yyt1789_a <span class="ot">&lt;-</span> <span class="fu">interference_paired</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  yyt1789_a_data,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="st">"ep07"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">"condition"</span>,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_level =</span> <span class="st">"test"</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">control_level =</span> <span class="st">"control"</span>,</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"interferent"</span>, <span class="st">"analyte_level"</span>),</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yyt1789_a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="007-干扰研究_files/figure-html/yyt1789-a-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Compare the results with the standard text:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.5 Appendix A: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">hemoglobin_low</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">0.276</td>
+<td style="text-align: right;">0.2763</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hemoglobin_low</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">0.353</td>
+<td style="text-align: right;">0.3530</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">hemoglobin_low</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.077</td>
+<td style="text-align: right;">0.0767</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hemoglobin_high</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">5.303</td>
+<td style="text-align: right;">5.3033</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">hemoglobin_high</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">5.747</td>
+<td style="text-align: right;">5.7467</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hemoglobin_high</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.443</td>
+<td style="text-align: right;">0.4433</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rheumatoid_factor_low</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">0.266</td>
+<td style="text-align: right;">0.2660</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rheumatoid_factor_low</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">0.261</td>
+<td style="text-align: right;">0.2610</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rheumatoid_factor_low</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">-0.005</td>
+<td style="text-align: right;">-0.0050</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rheumatoid_factor_high</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">5.483</td>
+<td style="text-align: right;">5.4833</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rheumatoid_factor_high</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">5.643</td>
+<td style="text-align: right;">5.6433</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rheumatoid_factor_high</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.160</td>
+<td style="text-align: right;">0.1600</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The hemoglobin effects at the low and high levels are 0.0767 and 0.4433 µIU/mL, respectively. The critical bias values <span class="math inline">\(B_c\)</span> in Table A.3 are 0.024 and 0.432 µIU/mL, so both levels proceed to further dose–response evaluation under the statistical rule in the standard text. The rheumatoid-factor effects are −0.0050 and 0.1600 µIU/mL, within the case’s technical limits of ±0.03 and ±0.5 µIU/mL, respectively.</p>
+<p>The confidence intervals from the paired-interference analysis use the observed SD of the preparation units. Table A.3 of YY/T 1789.5 instead uses the repeatability SD from a prior precision study and a standard-specific formula for <span class="math inline">\(B_c\)</span>. This case therefore compares preparation-unit means and effects with the standard table without misrepresenting the software interval as the standard’s <span class="math inline">\(B_c\)</span> decision.</p>
+</section>
+<section id="yyt-1789.52023-appendix-b-hemoglobin-doseresponse" class="level3" data-number="7.4.6">
+<h3 data-number="7.4.6" class="anchored" data-anchor-id="yyt-1789.52023-appendix-b-hemoglobin-doseresponse"><span class="header-section-number">7.4.6</span> YY/T 1789.5–2023 Appendix B: Hemoglobin Dose–Response</h3>
+<p>Appendix B prepares low- and high-level TSH samples at five hemoglobin concentrations: 0, 500, 1,000, 1,500, and 2,000 mg/dL, with three measurements at each concentration. The standard uses the mean at 0 mg/dL as the control and uses point-to-point interpolation to determine the interferent concentration at which the allowable bias is reached.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>yyt1789_b_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-yyt1789-5-appendix-b-dose.csv"</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yyt1789_b_data, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  interferent analyte_level concentration replicate result result_unit
+  &lt;chr&gt;       &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      
+1 hemoglobin  low                       0         1  0.282 uIU/mL     
+2 hemoglobin  low                       0         2  0.29  uIU/mL     
+3 hemoglobin  low                       0         3  0.263 uIU/mL     
+4 hemoglobin  low                     500         1  0.274 uIU/mL     
+5 hemoglobin  low                     500         2  0.307 uIU/mL     
+6 hemoglobin  low                     500         3  0.31  uIU/mL     
+# ℹ 1 more variable: concentration_unit &lt;chr&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>yyt1789_b <span class="ot">&lt;-</span> <span class="fu">interference_dose_response</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  yyt1789_b_data,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="st">"concentration"</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"analyte_level"</span>,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">baseline =</span> <span class="dv">0</span>,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"point_to_point"</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The allowable bias for the low-level sample is ±0.03 µIU/mL. Reverse-interpolate the absolute effect at 0.03 µIU/mL:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>yyt1789_b_limit <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  yyt1789_b,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> <span class="fl">0.03</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="st">"absolute"</span>,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stratum =</span> <span class="st">"analyte_level=low"</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yyt1789_b, <span class="at">type =</span> <span class="st">"absolute"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="007-干扰研究_files/figure-html/yyt1789-b-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Compare the results with the standard text:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.5 Appendix B: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">low_0</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">0.278</td>
+<td style="text-align: right;">0.2783</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low_0</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low_500</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">0.297</td>
+<td style="text-align: right;">0.2970</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low_500</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.019</td>
+<td style="text-align: right;">0.0187</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low_1000</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">0.333</td>
+<td style="text-align: right;">0.3327</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low_1000</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.054</td>
+<td style="text-align: right;">0.0543</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low_1500</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">0.354</td>
+<td style="text-align: right;">0.3537</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low_1500</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.075</td>
+<td style="text-align: right;">0.0753</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low_2000</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">0.364</td>
+<td style="text-align: right;">0.3637</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low_2000</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.085</td>
+<td style="text-align: right;">0.0853</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high_0</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">5.273</td>
+<td style="text-align: right;">5.2733</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_0</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high_500</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">5.237</td>
+<td style="text-align: right;">5.2367</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_500</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">-0.037</td>
+<td style="text-align: right;">-0.0367</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high_1000</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">5.313</td>
+<td style="text-align: right;">5.3133</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_1000</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.040</td>
+<td style="text-align: right;">0.0400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high_1500</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">5.440</td>
+<td style="text-align: right;">5.4400</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_1500</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.167</td>
+<td style="text-align: right;">0.1667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high_2000</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">5.603</td>
+<td style="text-align: right;">5.6033</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high_2000</td>
+<td style="text-align: left;">difference</td>
+<td style="text-align: right;">0.330</td>
+<td style="text-align: right;">0.3300</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">interference_concentration</td>
+<td style="text-align: right;">658.880</td>
+<td style="text-align: right;">658.8785</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The low-level effect crosses 0.03 µIU/mL between 500 and 1,000 mg/dL, giving 658.88 mg/dL by point-to-point reverse interpolation. At the high level, the absolute effect remains within ±0.5 µIU/mL at all measured concentrations. The case therefore reports 658.88 mg/dL as the hemoglobin concentration resisted by the evaluated system, taking the lower result of the two analyte levels. This is an interpolation between measured nodes, not a result measured directly at 658.88 mg/dL.</p>
+</section>
+<section id="yyt-1789.52023-appendix-c-patient-sample-evaluation" class="level3" data-number="7.4.7">
+<h3 data-number="7.4.7" class="anchored" data-anchor-id="yyt-1789.52023-appendix-c-patient-sample-evaluation"><span class="header-section-number">7.4.7</span> YY/T 1789.5–2023 Appendix C: Patient-Sample Evaluation</h3>
+<p>Appendix C uses EDTA-anticoagulated plasma as the test group and serum as the control group, with 20 patient samples in each group. Every sample is measured by both the evaluated measurement procedure and a comparative procedure claimed for serum and EDTA plasma. The source Table C.1 lists one procedure result per sample, rather than single-replicate records, so the input has one row per sample-by-procedure combination.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>yyt1789_c_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-yyt1789-5-appendix-c-patient.csv"</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yyt1789_c_data, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  id    group   method      result unit  
+  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt; 
+1 C01   control comparative  23.3  uIU/mL
+2 C01   control evaluated    23.5  uIU/mL
+3 C02   control comparative   8    uIU/mL
+4 C02   control evaluated     2.73 uIU/mL
+5 C03   control comparative   5.35 uIU/mL
+6 C03   control evaluated     4.47 uIU/mL</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>yyt1789_c <span class="ot">&lt;-</span> <span class="fu">interference_patient</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  yyt1789_c_data,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span>,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"group"</span>,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"method"</span>,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_group =</span> <span class="st">"test"</span>,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">control_group =</span> <span class="st">"control"</span>,</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">evaluated_method =</span> <span class="st">"evaluated"</span>,</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparative_method =</span> <span class="st">"comparative"</span>,</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>yyt1789_c</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Patient-specimen interference evaluation
+  Evaluated - comparative: evaluated - comparative
+  Group: test
+    Observations            : 20
+    Mean difference         : -1.1835
+    SD difference           : 2.3930541
+    SE difference           : 0.53510317
+    Median difference       : -0.49
+    25th percentile         : -1.3425
+    75th percentile         : -0.32
+    CI lower                : -2.3034838
+    CI upper                : -0.063516183
+    Mean percent difference : -17.916419
+    SD percent difference   : 18.774944
+    Percent CI lower        : -26.703363
+    Percent CI upper        : -9.1294749
+
+  Group: control
+    Observations            : 20
+    Mean difference         : -1.039
+    SD difference           : 2.1614978
+    SE difference           : 0.4833256
+    Median difference       : -0.415
+    25th percentile         : -0.835
+    75th percentile         : -0.075
+    CI lower                : -2.0506121
+    CI upper                : -0.027387902
+    Mean percent difference : -11.712959
+    SD percent difference   : 24.21947
+    Percent CI lower        : -23.04802
+    Percent CI upper        : -0.37789805</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yyt1789_c, <span class="at">type =</span> <span class="st">"difference"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="007-干扰研究_files/figure-html/yyt1789-c-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Compare the results with the standard text:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.5 Appendix C: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">mean_difference</td>
+<td style="text-align: right;">-1.04</td>
+<td style="text-align: right;">-1.0390</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">sd_difference</td>
+<td style="text-align: right;">2.16</td>
+<td style="text-align: right;">2.1615</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">ci_lower</td>
+<td style="text-align: right;">-2.05</td>
+<td style="text-align: right;">-2.0506</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">ci_upper</td>
+<td style="text-align: right;">-0.03</td>
+<td style="text-align: right;">-0.0274</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">test</td>
+<td style="text-align: left;">mean_difference</td>
+<td style="text-align: right;">-1.18</td>
+<td style="text-align: right;">-1.1835</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">test</td>
+<td style="text-align: left;">sd_difference</td>
+<td style="text-align: right;">2.39</td>
+<td style="text-align: right;">2.3931</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">test</td>
+<td style="text-align: left;">ci_lower</td>
+<td style="text-align: right;">-2.30</td>
+<td style="text-align: right;">-2.3035</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">test</td>
+<td style="text-align: left;">ci_upper</td>
+<td style="text-align: right;">-0.06</td>
+<td style="text-align: right;">-0.0635</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The mean difference for the control group is −1.039 µIU/mL, with a 95% CI of −2.051 to −0.027 µIU/mL. For the test group, the mean is −1.184 µIU/mL, with a 95% CI of −2.303 to −0.064 µIU/mL. The intervals overlap, so Appendix C concludes that the EDTA anticoagulant does not interfere with this TSH measurement. Both groups show negative bias relative to the comparative procedure; the decision is based on overlap between the two group intervals, not on whether either interval contains zero.</p>
+</section>
+<section id="yyt-1789.52023-appendix-d-cross-reactivity-evaluation" class="level3" data-number="7.4.8">
+<h3 data-number="7.4.8" class="anchored" data-anchor-id="yyt-1789.52023-appendix-d-cross-reactivity-evaluation"><span class="header-section-number">7.4.8</span> YY/T 1789.5–2023 Appendix D: Cross-Reactivity Evaluation</h3>
+<p>Appendix D adds 200,000 µIU/mL luteinizing hormone (LH) to low- and high-level TSH base samples and uses controls with the same volume of diluent. First obtain the test-minus-control effect with paired interference analysis, then calculate the standard-defined cross-reactivity rate:</p>
+<p><span class="math display">\[\text{Cross-reactivity rate}=\frac{\bar{x}_{T}-\bar{x}_{C}}{C_{interferent}}\times100\%.\]</span></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>yyt1789_d_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/007-干扰研究/std-yyt1789-5-appendix-d-cross-reactivity.csv"</span>,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yyt1789_d_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+  interferent analyte_level condition interferent_concentration replicate result
+  &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;                         &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+1 LH          low           control                           0         1  0.281
+2 LH          low           control                           0         2  0.283
+3 LH          low           control                           0         3  0.282
+4 LH          low           test                         200000         1  0.312
+5 LH          low           test                         200000         2  0.305
+6 LH          low           test                         200000         3  0.298
+# ℹ 2 more variables: result_unit &lt;chr&gt;, concentration_unit &lt;chr&gt;</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>yyt1789_d <span class="ot">&lt;-</span> <span class="fu">interference_paired</span>(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  yyt1789_d_data,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="st">"ep07"</span>,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">"condition"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_level =</span> <span class="st">"test"</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">control_level =</span> <span class="st">"control"</span>,</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"analyte_level"</span>,</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>yyt1789_d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interference paired-difference analysis
+  Design: ep07
+  Confidence level: 95%
+  analyte_level: low
+    stratum             : analyte_level=low
+    design              : ep07
+    n_test              : 3
+    n_control           : 3
+    test_mean           : 0.305
+    control_mean        : 0.282
+    absolute_difference : 0.023
+    absolute_se         : 0.0040824829
+    df                  : 4
+    absolute_ci_lower   : 0.01166521
+    absolute_ci_upper   : 0.03433479
+    percent_difference  : 8.1560284
+    percent_se          : 1.447689
+    percent_ci_lower    : 4.1365994
+    percent_ci_upper    : 12.175457
+
+  analyte_level: high
+    stratum             : analyte_level=high
+    design              : ep07
+    n_test              : 3
+    n_control           : 3
+    test_mean           : 5.2366667
+    control_mean        : 5.04
+    absolute_difference : 0.19666667
+    absolute_se         : 0.04772607
+    df                  : 4
+    absolute_ci_lower   : 0.064157853
+    absolute_ci_upper   : 0.32917548
+    percent_difference  : 3.9021164
+    percent_se          : 0.94694584
+    percent_ci_lower    : 1.2729733
+    percent_ci_upper    : 6.5312595</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>yyt1789_d_effects <span class="ot">&lt;-</span> yyt1789_d<span class="sc">$</span>effects</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>yyt1789_d_effects<span class="sc">$</span>cross_reactivity_percent <span class="ot">&lt;-</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">100</span> <span class="sc">*</span> yyt1789_d_effects<span class="sc">$</span>absolute_difference <span class="sc">/</span> <span class="dv">200000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Compare the results with the standard text:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.5 Appendix D: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">0.28200</td>
+<td style="text-align: right;">0.282000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">0.30500</td>
+<td style="text-align: right;">0.305000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">low</td>
+<td style="text-align: left;">cross_reactivity_percent</td>
+<td style="text-align: right;">0.00001</td>
+<td style="text-align: right;">0.000012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">control_mean</td>
+<td style="text-align: right;">5.04000</td>
+<td style="text-align: right;">5.040000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">test_mean</td>
+<td style="text-align: right;">5.24000</td>
+<td style="text-align: right;">5.236667</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">high</td>
+<td style="text-align: left;">cross_reactivity_percent</td>
+<td style="text-align: right;">0.00010</td>
+<td style="text-align: right;">0.000098</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The cross-reactivity rates for the low- and high-level samples are approximately 0.00001% and 0.00010%, respectively, both within the case’s prespecified range of −0.1% to 0.1%. This conversion is appropriate only when the unit relationship between analyte result and interferent concentration has a clear scientific meaning. The report must state both units and the interferent concentration used in the experiment.</p>
+</section>
+</section>
+<section id="detailed-function-reference" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="detailed-function-reference"><span class="header-section-number">7.5</span> Detailed Function Reference</h2>
+<section id="replicate-planning-with-interference_replicates" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="replicate-planning-with-interference_replicates"><span class="header-section-number">7.5.1</span> Replicate Planning with interference_replicates()</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_replicates</span>(</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  sd,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  detectable_difference,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.90</span>,</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>),</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_replicates =</span> <span class="dv">5</span>L,</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="cn">NULL</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>sd is expected repeatability SD; for relative-scale planning it is repeatability CV. detectable_difference uses the same scale and a compatible length. alpha is the type-I error probability, power is the target power, alternative selects a two- or one-sided design, min_replicates is the minimum number of test and control replicates per preparation, and label optionally names each calculation.</p>
+<p>The result is an interference_replicates data frame with one row per design. It includes the inputs, difference_over_sd, z_alpha, z_power, calculated_replicates before rounding, and the final replicates_per_sample. The final count applies separately to each test and control preparation.</p>
+</section>
+<section id="paired-preparation-with-interference_paired" class="level3" data-number="7.5.2">
+<h3 data-number="7.5.2" class="anchored" data-anchor-id="paired-preparation-with-interference_paired"><span class="header-section-number">7.5.2</span> Paired Preparation with interference_paired()</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_paired</span>(</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  result,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="fu">c</span>(<span class="st">"ep07"</span>, <span class="st">"analyte_spike"</span>, <span class="st">"blank"</span>),</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="cn">NULL</span>,</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="cn">NULL</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_level =</span> <span class="st">"test"</span>,</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">control_level =</span> <span class="st">"control"</span>,</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">matrix =</span> <span class="cn">NULL</span>,</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">normal_level =</span> <span class="st">"normal"</span>,</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">interferent_level =</span> <span class="st">"interferent"</span>,</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">spike =</span> <span class="cn">NULL</span>,</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">unspiked_level =</span> <span class="st">"unspiked"</span>,</span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">spiked_level =</span> <span class="st">"spiked"</span>,</span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>data is a long-format data frame with one replicate result per row. result names the numeric measurement column. design can be ep07, analyte_spike, or blank. by optionally supplies stratification columns such as interferent and analyte level. condition identifies test/control conditions for ep07 and optionally blank designs. test_level and control_level identify those values. matrix identifies the matrix column for analyte_spike; normal_level and interferent_level identify normal and interferent matrices; spike identifies analyte-spike status, and unspiked_level and spiked_level identify the two states. conf.level is the effect-interval confidence level.</p>
+<p>For ep07, use condition with test_level and control_level. For analyte_spike, use matrix and spike settings. For blank, use condition to distinguish interferent blank and control, or compare with a theoretical zero when no control records exist.</p>
+<p>The returned interference_paired object contains effects by stratum, including sample sizes, test/control means, absolute and relative effects, SEs, and intervals. cell_summary contains preparation-unit n, mean, SD, and SE; issues records data problems; excluded_rows stores omitted input rows; analysis_data stores analyzed rows. plot() returns preparation-unit and effect figures.</p>
+</section>
+<section id="doseresponse-with-interference_dose_response" class="level3" data-number="7.5.3">
+<h3 data-number="7.5.3" class="anchored" data-anchor-id="doseresponse-with-interference_dose_response"><span class="header-section-number">7.5.3</span> Dose–Response with interference_dose_response()</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_dose_response</span>(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  result,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  concentration,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="cn">NULL</span>,</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">baseline =</span> <span class="dv">0</span>,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"point_to_point"</span>, <span class="st">"linear"</span>),</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  object,</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="cn">NULL</span>,</span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> <span class="cn">NULL</span>,</span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="fu">c</span>(<span class="st">"result"</span>, <span class="st">"absolute"</span>, <span class="st">"percent"</span>),</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">stratum =</span> <span class="cn">NULL</span></span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"response"</span>, <span class="st">"absolute"</span>, <span class="st">"percent"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>data is a long-format dose-response data frame. result and concentration name the numeric result and interferent concentration columns. by optionally defines strata. baseline is the measured interferent concentration used for the baseline mean and must occur in every stratum. point_to_point interpolates between adjacent concentration means; linear fits a line to individual results. conf.level is the regression-coefficient confidence level.</p>
+<p>predict() takes a dose-response object. Supply newdata to predict a result or effect at interferent concentrations, or target to reverse-predict the interferent concentration at a specified result/effect; exactly one of newdata and target is required. metric selects result, absolute effect, or percentage effect; stratum selects one or more strata. The function does not extrapolate and returns missing values outside the observed range. plot() selects result, absolute-effect, or percentage-effect figures.</p>
+<p>The returned interference_dose_response object contains a summary of n, mean, SD, SE, CV, absolute effect, and percentage effect at each concentration; diagnostics for baseline, level count, replicate range, and monotonicity; coefficients and models for the linear method; and issues, excluded_rows, and analysis_data. predict() returns stratum, direction, metric, input, estimate, and within_observed_range.</p>
+</section>
+<section id="patient-sample-comparison-with-interference_patient" class="level3" data-number="7.5.4">
+<h3 data-number="7.5.4" class="anchored" data-anchor-id="patient-sample-comparison-with-interference_patient"><span class="header-section-number">7.5.4</span> Patient-Sample Comparison with interference_patient()</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interference_patient</span>(</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  data,</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  id,</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  group,</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  method,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  result,</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  test_group,</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  control_group,</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>  evaluated_method,</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  comparative_method,</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">interferent_cols =</span> <span class="cn">NULL</span>,</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>  x,</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"difference"</span>, <span class="st">"interferent"</span>),</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">interferent =</span> <span class="cn">NULL</span></span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>data is a long-format patient-sample result data frame. id names the sample identifier, group the patient test/control group, method the measurement procedure, and result the numeric result. test_group and control_group identify the two patient groups. evaluated_method and comparative_method define the difference direction as evaluated minus comparative. interferent_cols optionally names numeric interferent columns; each is fitted in a separate univariate model. conf.level controls group summaries and regression coefficients.</p>
+<p>For plot(), type = “difference” plots method difference against the comparative-procedure mean; type = “interferent” plots difference against a selected interferent concentration. When several interferent columns exist, interferent selects the column to plot.</p>
+<p>The returned interference_patient object contains method_summary for sample-by-method n, mean, and SD; specimen_results for complete method pairs and absolute/relative differences; group_summary for group-level differences and intervals; regressions and models for each interferent; and issues, incomplete_ids, and excluded_rows. plot() returns the corresponding figure.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./006-基质效应与互换性.html" class="pagination-link" aria-label="Matrix Effects and Commutability">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./008-稀释回收与HOOK.html" class="pagination-link" aria-label="Dilution Recovery, Spike Recovery, and Hook Effect">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13&nbsp; Precision Analysis – ivdtools Handbook</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./014-线性分析.html" rel="next">
+<link href="./012-ROC曲线与多元回归.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./013-精密度分析.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ivdtools Handbook</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools Package Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installing and Using the Analysis Environment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calibration Curve Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Stability Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Uncertainty Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Matrix Effects and Commutability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Interference Studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dilution Recovery, Spike Recovery, and Hook Effect</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Method Comparison and Reference-Material Bias</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Quality Control</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC Curves and Cutoff Determination</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Qualitative Analysis and C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Limits of Blank, Detection, and Quantitation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reference Intervals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bottle-to-Bottle Variation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Clinical Sample-Size Calculation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Outlier and Normality Tests</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Introduction to Algorithm Principles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Standards Mapping</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">R Packages for IVD Data Analysis: A Review</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#main-functions" id="toc-main-functions" class="nav-link active" data-scroll-target="#main-functions"><span class="header-section-number">13.1</span> Main Functions</a></li>
+  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">13.2</span> Analysis Examples</a>
+  <ul>
+  <li><a href="#ep05-2022-single-sample-precision" id="toc-ep05-2022-single-sample-precision" class="nav-link" data-scroll-target="#ep05-2022-single-sample-precision"><span class="header-section-number">13.2.1</span> EP05 20×2×2 Single-Sample Precision</a></li>
+  <li><a href="#multiple-samples-and-a-sadler-profile" id="toc-multiple-samples-and-a-sadler-profile" class="nav-link" data-scroll-target="#multiple-samples-and-a-sadler-profile"><span class="header-section-number">13.2.2</span> Multiple Samples and a Sadler Profile</a></li>
+  <li><a href="#multicenter-precision" id="toc-multicenter-precision" class="nav-link" data-scroll-target="#multicenter-precision"><span class="header-section-number">13.2.3</span> Multicenter Precision</a></li>
+  <li><a href="#more-complex-nested-models" id="toc-more-complex-nested-models" class="nav-link" data-scroll-target="#more-complex-nested-models"><span class="header-section-number">13.2.4</span> More Complex Nested Models</a></li>
+  <li><a href="#standard-data-cross-checks" id="toc-standard-data-cross-checks" class="nav-link" data-scroll-target="#standard-data-cross-checks"><span class="header-section-number">13.2.5</span> Standard-Data Cross-Checks</a></li>
+  </ul></li>
+  <li><a href="#complete-standard-cases" id="toc-complete-standard-cases" class="nav-link" data-scroll-target="#complete-standard-cases"><span class="header-section-number">13.3</span> Complete Standard Cases</a>
+  <ul>
+  <li><a href="#clsi-ep05-a3-appendix-a-glucose-2022" id="toc-clsi-ep05-a3-appendix-a-glucose-2022" class="nav-link" data-scroll-target="#clsi-ep05-a3-appendix-a-glucose-2022"><span class="header-section-number">13.3.1</span> CLSI EP05-A3 Appendix A: Glucose 20×2×2</a></li>
+  <li><a href="#clsi-ep05-a3-appendix-b-ca19-9-multicenter-study" id="toc-clsi-ep05-a3-appendix-b-ca19-9-multicenter-study" class="nav-link" data-scroll-target="#clsi-ep05-a3-appendix-b-ca19-9-multicenter-study"><span class="header-section-number">13.3.2</span> CLSI EP05-A3 Appendix B: CA19-9 Multicenter Study</a></li>
+  <li><a href="#clsi-ep15-a3-ferritin-55-verification" id="toc-clsi-ep15-a3-ferritin-55-verification" class="nav-link" data-scroll-target="#clsi-ep15-a3-ferritin-55-verification"><span class="header-section-number">13.3.3</span> CLSI EP15-A3: Ferritin 5×5 Verification</a></li>
+  <li><a href="#wst-4082024-precision-verification" id="toc-wst-4082024-precision-verification" class="nav-link" data-scroll-target="#wst-4082024-precision-verification"><span class="header-section-number">13.3.4</span> WS/T 408–2024: Precision Verification</a></li>
+  <li><a href="#yyt-1789.12021-appendix-a-25-hydroxyvitamin-d" id="toc-yyt-1789.12021-appendix-a-25-hydroxyvitamin-d" class="nav-link" data-scroll-target="#yyt-1789.12021-appendix-a-25-hydroxyvitamin-d"><span class="header-section-number">13.3.5</span> YY/T 1789.1–2021 Appendix A: 25-Hydroxyvitamin D</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Precision Analysis</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Precision evaluates agreement among results obtained from the same measurement system under repeatable conditions, usually expressed as SD or CV%. CLSI EP05 separates within-run, between-run, between-day, and related variance components and reports their estimates and confidence intervals for comparison with acceptance limits.</p>
+<p>This chapter demonstrates how to use <code>precision()</code> to build a variance-component analysis, perform outlier and normality checks, estimate variance components and intervals, fit a Sadler precision profile, and rearrange results into EP05-style tables.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["Check day, site, run,&lt;br/&gt;and replicate design"] --&gt; B["precision()&lt;br/&gt;Create VC object"]
+    B --&gt; C["outlier() / normal()&lt;br/&gt;Diagnostics"]
+    C --&gt; D["variance() / vc()&lt;br/&gt;VC, SD, CV"]
+    D --&gt; E["ci()&lt;br/&gt;Component and total intervals"]
+    E --&gt; F["profile()&lt;br/&gt;Concentration-related precision"]
+    F --&gt; G["report()&lt;br/&gt;EP05/EP15 terminology"]
+    G --&gt; H["Compare with prespecified limits"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="main-functions" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="main-functions"><span class="header-section-number">13.1</span> Main Functions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Main purpose</th>
+<th>Key input or output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>precision()</code></td>
+<td>Create a precision variance-component object</td>
+<td>Nested formula, <code>by</code>, balance checks</td>
+</tr>
+<tr class="even">
+<td><code>outlier()</code></td>
+<td>Detect outliers by sample</td>
+<td>Grubbs or IQR</td>
+</tr>
+<tr class="odd">
+<td><code>normal()</code></td>
+<td>Test normality by sample</td>
+<td>Shapiro–Wilk and related methods</td>
+</tr>
+<tr class="even">
+<td><code>variance()</code> / <code>vc()</code></td>
+<td>Estimate variance components</td>
+<td>VC, % total, SD, CV%, <code>NegVC</code></td>
+</tr>
+<tr class="odd">
+<td><code>ci()</code></td>
+<td>Confidence intervals for components and total SD/CV</td>
+<td>Satterthwaite approximation</td>
+</tr>
+<tr class="even">
+<td><code>profile()</code></td>
+<td>Fit a Sadler precision profile</td>
+<td>Ten candidate models, AIC selection</td>
+</tr>
+<tr class="odd">
+<td><code>report()</code></td>
+<td>Generate EP05-structured tables</td>
+<td>Explicit <code>day</code>, <code>run</code>, and <code>site</code> mapping</td>
+</tr>
+<tr class="even">
+<td><code>list_sadler()</code></td>
+<td>View the ten Sadler models</td>
+<td>Model formulas and types</td>
+</tr>
+<tr class="odd">
+<td><code>summary()</code> / <code>plot()</code></td>
+<td>Summaries and figures</td>
+<td><code>plot(type=...)</code></td>
+</tr>
+</tbody>
+</table>
+<p>After creating an object, analysis results accumulate through <code>outlier()</code>, <code>normal()</code>, <code>variance()</code>, <code>ci()</code>, and <code>profile()</code>. <strong>Reassign the object after every call.</strong> Only completed analyses appear in <code>summary()</code>, and some plots require a preceding analysis.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">precision</span>(data, form, <span class="at">by =</span> <span class="cn">NULL</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">variance</span>(x, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"auto"</span>, <span class="st">"anova"</span>, <span class="st">"reml"</span>), <span class="at">NegVC =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ci</span>(x, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">profile</span>(object, <span class="at">model.no =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(x, day, <span class="at">run =</span> <span class="cn">NULL</span>, <span class="at">site =</span> <span class="cn">NULL</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">table =</span> <span class="fu">c</span>(<span class="st">"simple"</span>, <span class="st">"detailed"</span>, <span class="st">"CI"</span>), <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><code>precision()</code> ultimately calls <code>VCA::anovaVCA()</code> and requires an ordinary <code>data.frame</code>; convert <code>readr::read_csv()</code> tibbles before use and convert design factors such as day, lot, and replicate to factors.</p>
+<p>For a two-level nested design,</p>
+<p><span class="math display">\[
+Y_{drk}=\mu+D_d+R_{r(d)}+\varepsilon_{drk},
+\]</span></p>
+<p>with independent random terms of mean zero,</p>
+<p><span class="math display">\[
+\sigma_T^2=\sigma_D^2+\sigma_{R(D)}^2+\sigma_e^2,\qquad
+SD_T=\sqrt{\sigma_T^2},\qquad CV_T=100\,SD_T/\bar Y.
+\]</span></p>
+<p>The right side of <code>form</code> must represent the actual random hierarchy; the replicate layer is usually the residual <code>error</code>. <code>by</code> fits different samples or concentrations separately and does not combine them into one common variance. With <code>method="auto"</code>, <code>VCA::isBalanced()</code> selects <code>anovaVCA()</code> for balanced data and <code>remlVCA()</code> otherwise; estimates and degrees of freedom can differ, so preserve the actual <code>Method</code> in reports.</p>
+<p><code>variance()</code> stores numeric values in <code>results[[sample]]$vc</code>, <code>sd_comp</code>, and <code>cv_comp</code>; formatted display tables are separate. Use the numeric components for later calculations. Run <code>ci()</code> after <code>variance()</code>; it uses <code>VCA::VCAinference()</code> for two-sided SD/CV intervals. <code>profile()</code> fits <span class="math inline">\(SD=f(\bar Y;\theta)\)</span> across at least three valid levels and selects a Sadler/VFP candidate by AIC; extrapolation outside observed concentrations requires caution. <code>report()</code> maps components to EP05 terminology and can calculate within-laboratory and reproducibility intervals from component covariances and Satterthwaite degrees of freedom.</p>
+</section>
+<section id="analysis-examples" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">13.2</span> Analysis Examples</h2>
+<section id="ep05-2022-single-sample-precision" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="ep05-2022-single-sample-precision"><span class="header-section-number">13.2.1</span> EP05 20×2×2 Single-Sample Precision</h3>
+<p>Twenty days, two runs per day, and two replicates per run produce 80 results:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ep05 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./data/013-精密度分析/precision-ep05.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ep05 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ep05)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>day)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>run)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ep05<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05<span class="sc">$</span>rep)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep05, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  day run rep  value
+1   1   1   1  96.94
+2   1   1   2  93.48
+3   1   2   1  99.28
+4   1   2   2 101.54
+5   2   1   1 102.96
+6   2   1   2 102.85</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep05, value <span class="sc">~</span> day<span class="sc">/</span>run)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">outlier</span>(p, <span class="at">method =</span> <span class="st">"grubbs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Outlier detection -- Grubbs (alpha = 0.05)
+  No outliers detected.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">normal</span>(p, <span class="at">method =</span> <span class="st">"shapiro"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Normality test -- Shapiro-Wilk
+  Sample               n  Method               Statistic  p-value
+  ---------------------------------------------------------------------------
+  all                 80  Shapiro-Wilk          W=0.9868  0.5858</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">variance</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component      VC %Total     SD  CV[%] Method
+-----------------------------------------------------
+    all       day 18.8358   42.6 4.3400 4.3788  anova
+    all   day:run 17.4343   39.4 4.1754 4.2128  anova
+    all     error  7.9482   18.0 2.8193 2.8445  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ci</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.6497 5.4288 8.5842
+    all       day   4.3400 0.0000 6.2255
+    all   day:run   4.1754 2.0129 5.5513
+    all     error   2.8193 2.3147 3.6073 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.7091 5.4773 8.6609
+    all       day   4.3788 0.0000 6.2812
+    all   day:run   4.2128 2.0309 5.6009
+    all     error   2.8445 2.3353 3.6395 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Precision analysis -- summary
+---------------------------------------- 
+
+Precision analysis object
+  Data class          : data.frame
+  Total rows          : 80
+  Formula             : value ~ day/run
+  Samples             : 1
+
+Factor levels
+  day         : 1 (4), 2 (4), 3 (4), 4 (4), 5 (4), 6 (4), 7 (4), 8 (4), 9 (4), 10 (4), 11 (4), 12 (4), 13 (4), 14 (4), 15 (4), 16 (4), 17 (4), 18 (4), 19 (4), 20 (4)
+  run         : 1 (40), 2 (40)
+  rep         : 1 (40), 2 (40)
+
+Analysis status
+
+  [x] outlier
+  [x] normal
+  [x] variance
+  [x] ci
+  [ ] profile
+
+Outlier detection -- Grubbs (alpha = 0.05)
+  No outliers detected.
+
+Normality test -- Shapiro-Wilk
+  Sample               n  Method               Statistic  p-value
+  ---------------------------------------------------------------------------
+  all                 80  Shapiro-Wilk          W=0.9868  0.5858
+
+Variance components
+ sample component      VC %Total     SD  CV[%] Method
+-----------------------------------------------------
+    all       day 18.8358   42.6 4.3400 4.3788  anova
+    all   day:run 17.4343   39.4 4.1754 4.2128  anova
+    all     error  7.9482   18.0 2.8193 2.8445  anova 
+
+Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.6497 5.4288 8.5842
+    all       day   4.3400 0.0000 6.2255
+    all   day:run   4.1754 2.0129 5.5513
+    all     error   2.8193 2.3147 3.6073 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   6.7091 5.4773 8.6609
+    all       day   4.3788 0.0000 6.2812
+    all   day:run   4.2128 2.0309 5.6009
+    all     error   2.8445 2.3353 3.6395 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p, <span class="at">type =</span> <span class="st">"dot"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/precision-ep05-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p, <span class="at">type =</span> <span class="st">"qq"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/precision-ep05-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>value ~ day/run</code> means day, nested run within day, and replicate residual error. <code>outlier()</code> accepts <code>"grubbs"</code> or <code>"iqr"</code>; <code>normal(method="auto")</code> selects by sample size. <code>NegVC</code> is supplied to <code>variance()</code>, not to <code>precision()</code>:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">variance</span>(p, <span class="at">NegVC =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="multiple-samples-and-a-sadler-profile" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="multiple-samples-and-a-sadler-profile"><span class="header-section-number">13.2.2</span> Multiple Samples and a Sadler Profile</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>profile_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-profile.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>sample)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>day)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>profile_data<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(profile_data<span class="sc">$</span>rep)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">precision</span>(profile_data, value <span class="sc">~</span> day, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+     L1       day   0.6376   63.0  0.7985 3.9446  anova
+     L1     error   0.3750   37.0  0.6124 3.0250  anova
+     L2       day   5.7139   75.1  2.3904 4.7584  anova
+     L2     error   1.8937   24.9  1.3761 2.7393  anova
+     L3       day   3.3913   15.7  1.8415 1.8088  anova
+     L3     error  18.1466   84.3  4.2599 4.1840  anova
+     L4       day  30.5549   54.6  5.5276 2.7529  anova
+     L4     error  25.4525   45.4  5.0451 2.5126  anova
+     L5       day   0.0000    0.0  0.0000 0.0000  anova
+     L5     error 171.7986  100.0 13.1072 3.3003  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ci</span>(p2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower   upper
+-----------------------------------------
+     L1     total   1.0063 0.6007  2.9368
+     L1       day   0.7985 0.0000  1.4267
+     L1     error   0.6124 0.4391  1.0108
+     L2     total   2.7582 1.5714  9.9889
+     L2       day   2.3904 0.0000  4.2023
+     L2     error   1.3761 0.9868  2.2716
+     L3     total   4.6409 3.2872  7.8819
+     L3       day   1.8415 0.0000  4.1779
+     L3     error   4.2599 3.0547  7.0319
+     L4     total   7.4838 4.6166 19.1652
+     L4       day   5.5276 0.0000 10.0268
+     L4     error   5.0451 3.6177  8.3280
+     L5     total  13.1072 9.5629 20.8255
+     L5       day   0.0000     NA      NA
+     L5     error  13.1072 9.3990 21.6365 
+
+Confidence intervals (%CV)
+ sample component estimate  lower   upper
+-----------------------------------------
+     L1     total   4.9710 2.9673 14.5079
+     L1       day   3.9446 0.0000  7.0480
+     L1     error   3.0250 2.1692  4.9936
+     L2     total   5.4905 3.1281 19.8843
+     L2       day   4.7584 0.0000  8.3652
+     L2     error   2.7393 1.9643  4.5219
+     L3     total   4.5583 3.2287  7.7416
+     L3       day   1.8088 0.0000  4.1035
+     L3     error   4.1840 3.0003  6.9067
+     L4     total   3.7271 2.2992  9.5447
+     L4       day   2.7529 0.0000  4.9936
+     L4     error   2.5126 1.8017  4.1476
+     L5     total   3.3003 2.4078  5.2436
+     L5       day   0.0000     NA      NA
+     L5     error   3.3003 2.3666  5.4478 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">"var"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/read-profile-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list_sadler</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sadler Precision Profile Models
+
+   1  Constant variance     sigma^2 = beta1
+   2  Constant CV           sigma^2 = beta1 * u^2
+   3  Mixed (const + prop var)  sigma^2 = beta1 + beta2 * u^2
+   4  Constrained power (const exponent)  sigma^2 = (beta1 + beta2 * u)^2
+   5  Alternative constrained power  sigma^2 = beta1 + beta2 * u^K
+   6  Unconstrained power (with min)  sigma^2 = beta1 + beta2 * u + beta3 * u^J
+   7  Alternative unconstrained power  sigma^2 = beta1 + beta2 * u^J
+   8  Unconstrained power (Sadler default)  sigma^2 = (beta1 + beta2 * u)^J
+   9  CLSI EP17-like        sigma^2 = beta1 * u^J
+  10  CLSI EP17 exact (log-log)  CV = beta1 * u^J</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">profile</span>(p2, <span class="at">model.no =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision profiles -- Sadler
+  total: sigma^2 = 0.0000 + 0.0086 * u^J  (AIC = 56.45, R^2 = 0.9847)
+  day: sigma^2 = 0.0000 + 0.0095 * u^J  (AIC = 43.46, R^2 = 0.8919)
+  error: sigma^2 = 0.0010 * u^2  (AIC = 55.96, R^2 = 0.9806)</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">"profile"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="013-精密度分析_files/figure-html/read-profile-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Each variance component needs at least three finite-SD concentrations for profile fitting. The profile can predict SD/CV at arbitrary concentrations for applications such as functional sensitivity, but predictions outside the observed range are extrapolations.</p>
+</section>
+<section id="multicenter-precision" class="level3" data-number="13.2.3">
+<h3 data-number="13.2.3" class="anchored" data-anchor-id="multicenter-precision"><span class="header-section-number">13.2.3</span> Multicenter Precision</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>sites_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-sites.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">precision</span>(sites_data, value <span class="sc">~</span> site<span class="sc">/</span>day<span class="sc">/</span>run, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample    component      VC %Total     SD  CV[%] Method
+--------------------------------------------------------
+     S1         site  0.2746   10.4 0.5241 1.0550  anova
+     S1     site:day  0.0000    0.0 0.0000 0.0000  anova
+     S1 site:day:run  0.3553   13.4 0.5960 1.1998  anova
+     S1        error  2.0231   76.3 1.4223 2.8632  anova
+     S2         site  0.7117    8.6 0.8436 0.8359  anova
+     S2     site:day  0.1018    1.2 0.3191 0.3162  anova
+     S2 site:day:run  0.9106   11.0 0.9543 0.9456  anova
+     S2        error  6.5670   79.2 2.5626 2.5392  anova
+     S3         site 22.0901   42.6 4.7000 2.3517  anova
+     S3     site:day  2.6252    5.1 1.6202 0.8107  anova
+     S3 site:day:run  0.0000    0.0 0.0000 0.0000  anova
+     S3        error 27.1915   52.4 5.2145 2.6091  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(p3, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 10%">
+<col style="width: 16%">
+<col style="width: 17%">
+<col style="width: 18%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Reproducibility SD</th>
+<th style="text-align: right;">%CV Reproducibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">S1</td>
+<td style="text-align: right;">49.6766</td>
+<td style="text-align: right;">1.4223</td>
+<td style="text-align: right;">2.8632</td>
+<td style="text-align: right;">1.6288</td>
+<td style="text-align: right;">3.2788</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S2</td>
+<td style="text-align: right;">100.9203</td>
+<td style="text-align: right;">2.5626</td>
+<td style="text-align: right;">2.5392</td>
+<td style="text-align: right;">2.8794</td>
+<td style="text-align: right;">2.8532</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S3</td>
+<td style="text-align: right;">199.8592</td>
+<td style="text-align: right;">5.2145</td>
+<td style="text-align: right;">2.6091</td>
+<td style="text-align: right;">7.2046</td>
+<td style="text-align: right;">3.6049</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>To analyze each site separately, use multiple grouping columns while retaining all runs within each subset:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>p3s <span class="ot">&lt;-</span> <span class="fu">precision</span>(sites_data, value <span class="sc">~</span> day<span class="sc">/</span>run, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"site"</span>, <span class="st">"sample"</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>p3s <span class="ot">&lt;-</span> <span class="fu">variance</span>(p3s)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component      VC %Total     SD  CV[%] Method
+-----------------------------------------------------
+   A.S1       day  0.0000    0.0 0.0000 0.0000  anova
+   A.S1   day:run  0.1646    6.8 0.4057 0.8231  anova
+   A.S1     error  2.2677   93.2 1.5059 3.0553  anova
+   B.S1       day  0.0000    0.0 0.0000 0.0000  anova
+   B.S1   day:run  0.5459   23.5 0.7389 1.4758  anova
+   B.S1     error  1.7784   76.5 1.3335 2.6637  anova
+   A.S2       day  0.3241    4.3 0.5693 0.5602  anova
+   A.S2   day:run  0.1523    2.0 0.3903 0.3840  anova
+   A.S2     error  7.0483   93.7 2.6549 2.6124  anova
+   B.S2       day  0.0000    0.0 0.0000 0.0000  anova
+   B.S2   day:run  1.6690   21.5 1.2919 1.2891  anova
+   B.S2     error  6.0856   78.5 2.4669 2.4616  anova
+   A.S3       day  4.4871   15.6 2.1183 1.0420  anova
+   A.S3   day:run  1.7006    5.9 1.3041 0.6415  anova
+   A.S3     error 22.5797   78.5 4.7518 2.3375  anova
+   B.S3       day  0.7633    2.3 0.8737 0.4448  anova
+   B.S3   day:run  0.0000    0.0 0.0000 0.0000  anova
+   B.S3     error 31.8033   97.7 5.6394 2.8709  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(p3s, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">day =</span> <span class="st">"day"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 13%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Within-Laboratory Precision SD</th>
+<th style="text-align: right;">%CV Within-Laboratory Precision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A.S1</td>
+<td style="text-align: right;">49.2884</td>
+<td style="text-align: right;">1.5059</td>
+<td style="text-align: right;">3.0553</td>
+<td style="text-align: right;">1.5596</td>
+<td style="text-align: right;">3.1642</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S1</td>
+<td style="text-align: right;">50.0647</td>
+<td style="text-align: right;">1.3335</td>
+<td style="text-align: right;">2.6637</td>
+<td style="text-align: right;">1.5246</td>
+<td style="text-align: right;">3.0452</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A.S2</td>
+<td style="text-align: right;">101.6249</td>
+<td style="text-align: right;">2.6549</td>
+<td style="text-align: right;">2.6124</td>
+<td style="text-align: right;">2.7431</td>
+<td style="text-align: right;">2.6993</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S2</td>
+<td style="text-align: right;">100.2158</td>
+<td style="text-align: right;">2.4669</td>
+<td style="text-align: right;">2.4616</td>
+<td style="text-align: right;">2.7847</td>
+<td style="text-align: right;">2.7787</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A.S3</td>
+<td style="text-align: right;">203.2864</td>
+<td style="text-align: right;">4.7518</td>
+<td style="text-align: right;">2.3375</td>
+<td style="text-align: right;">5.3635</td>
+<td style="text-align: right;">2.6384</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S3</td>
+<td style="text-align: right;">196.4320</td>
+<td style="text-align: right;">5.6394</td>
+<td style="text-align: right;">2.8709</td>
+<td style="text-align: right;">5.7067</td>
+<td style="text-align: right;">2.9052</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="more-complex-nested-models" class="level3" data-number="13.2.4">
+<h3 data-number="13.2.4" class="anchored" data-anchor-id="more-complex-nested-models"><span class="header-section-number">13.2.4</span> More Complex Nested Models</h3>
+<p><code>precision()</code> can represent other VCA hierarchies, for example operator, day, and run:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>custom_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/precision-custom.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">precision</span>(custom_data, value <span class="sc">~</span> operator<span class="sc">/</span>day<span class="sc">/</span>run)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">variance</span>(p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample        component     VC %Total     SD  CV[%] Method
+-----------------------------------------------------------
+    all         operator 2.2914   11.8 1.5137 1.4898  anova
+    all     operator:day 6.3159   32.4 2.5132 2.4734  anova
+    all operator:day:run 3.2463   16.7 1.8017 1.7733  anova
+    all            error 7.6322   39.2 2.7627 2.7190  anova </code></pre>
+</div>
+</div>
+</section>
+<section id="standard-data-cross-checks" class="level3" data-number="13.2.5">
+<h3 data-number="13.2.5" class="anchored" data-anchor-id="standard-data-cross-checks"><span class="header-section-number">13.2.5</span> Standard-Data Cross-Checks</h3>
+<p>The supplied EP05-A3 Appendix A and B files can be analyzed using the same pattern. Appendix A is a balanced <code>day/run</code> design; Appendix B is a multicenter <code>site/day</code> design with samples grouped by <code>by = "sample"</code>:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ep05_a <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep05-appendix-a-glucose.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>day)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>run)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep05_a, result <span class="sc">~</span> day<span class="sc">/</span>run)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep05_a_precision, <span class="at">NegVC =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       day 1.9586   15.1 1.3995 0.5731  anova
+    all   day:run 3.0750   23.8 1.7536 0.7181  anova
+    all     error 7.9000   61.1 2.8107 1.1510  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep05_a_precision)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   3.5963 3.0696 4.3430
+    all       day   1.3995 0.0000 2.4622
+    all   day:run   1.7536 0.0000 2.7858
+    all     error   2.8107 2.3076 3.5963 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   1.4727 1.2570 1.7785
+    all       day   0.5731 0.0000 1.0083
+    all   day:run   0.7181 0.0000 1.1408
+    all     error   1.1510 0.9450 1.4727 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(ep05_a_precision, <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">digits =</span> <span class="dv">6</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 13%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Within-Laboratory Precision SD</th>
+<th style="text-align: right;">%CV Within-Laboratory Precision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">all</td>
+<td style="text-align: right;">244.2</td>
+<td style="text-align: right;">2.810694</td>
+<td style="text-align: right;">1.15098</td>
+<td style="text-align: right;">3.596325</td>
+<td style="text-align: right;">1.472697</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ep05_b <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep05-appendix-b-ca19-9.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep05_b, result <span class="sc">~</span> site<span class="sc">/</span>day, <span class="at">by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep05_b_precision)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+     P1      site   0.3843   35.4  0.6199 5.1312  anova
+     P1  site:day   0.1778   16.4  0.4216 3.4899  anova
+     P1     error   0.5248   48.3  0.7244 5.9963  anova
+     P2      site   1.6189   47.9  1.2724 3.0597  anova
+     P2  site:day   0.1232    3.6  0.3509 0.8439  anova
+     P2     error   1.6348   48.4  1.2786 3.0747  anova
+     P5      site  24.9068   29.3  4.9907 1.3165  anova
+     P5  site:day   3.1861    3.7  1.7850 0.4709  anova
+     P5     error  56.9669   67.0  7.5476 1.9910  anova
+     Q3      site   3.1742   60.4  1.7816 3.1959  anova
+     Q3  site:day   0.5232   10.0  0.7233 1.2975  anova
+     Q3     error   1.5599   29.7  1.2490 2.2404  anova
+     Q4      site  30.0735   75.7  5.4839 3.3104  anova
+     Q4  site:day   1.8663    4.7  1.3661 0.8247  anova
+     Q4     error   7.8128   19.7  2.7951 1.6873  anova
+     Q6      site 164.1097   68.1 12.8105 3.0922  anova
+     Q6  site:day   3.0208    1.3  1.7380 0.4195  anova
+     Q6     error  73.9590   30.7  8.5999 2.0758  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep05_b_precision)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower   upper
+-----------------------------------------
+     P1     total   1.0425 0.7415  1.7535
+     P1      site   0.6199 0.0000  1.1178
+     P1  site:day   0.4216 0.0000  0.6380
+     P1     error   0.7244 0.6148  0.8819
+     P2     total   1.8376 1.2313  3.5995
+     P2      site   1.2724 0.0000  2.2291
+     P2  site:day   0.3509 0.0000  0.7084
+     P2     error   1.2786 1.0852  1.5566
+     P5     total   9.2228 6.9060 13.8849
+     P5      site   4.9907 0.0000  8.9156
+     P5  site:day   1.7850 0.0000  3.9426
+     P5     error   7.5476 6.4058  9.1888
+     Q3     total   2.2929 1.4259  5.7003
+     Q3      site   1.7816 0.0000  3.1184
+     Q3  site:day   0.7233 0.0000  1.0958
+     Q3     error   1.2490 1.0600  1.5205
+     Q4     total   6.3050 3.6468 21.1983
+     Q4      site   5.4839 0.0000  9.5060
+     Q4  site:day   1.3661 0.0000  2.1602
+     Q4     error   2.7951 2.3723  3.4029
+     Q6     total  15.5271 9.3516 43.6651
+     Q6      site  12.8105 0.0000 22.1981
+     Q6  site:day   1.7380 0.0000  4.2690
+     Q6     error   8.5999 7.2989 10.4699 
+
+Confidence intervals (%CV)
+ sample component estimate  lower   upper
+-----------------------------------------
+     P1     total   8.6292 6.1376 14.5139
+     P1      site   5.1312 0.0000  9.2524
+     P1  site:day   3.4899 0.0000  5.2812
+     P1     error   5.9963 5.0891  7.3001
+     P2     total   4.4191 2.9611  8.6559
+     P2      site   3.0597 0.0000  5.3606
+     P2  site:day   0.8439 0.0000  1.7036
+     P2     error   3.0747 2.6095  3.7433
+     P5     total   2.4329 1.8217  3.6627
+     P5      site   1.3165 0.0000  2.3518
+     P5  site:day   0.4709 0.0000  1.0400
+     P5     error   1.9910 1.6898  2.4239
+     Q3     total   4.1130 2.5578 10.2254
+     Q3      site   3.1959 0.0000  5.5938
+     Q3  site:day   1.2975 0.0000  1.9656
+     Q3     error   2.2404 1.9015  2.7276
+     Q4     total   3.8061 2.2014 12.7966
+     Q4      site   3.3104 0.0000  5.7384
+     Q4  site:day   0.8247 0.0000  1.3040
+     Q4     error   1.6873 1.4320  2.0542
+     Q6     total   3.7479 2.2573 10.5398
+     Q6      site   3.0922 0.0000  5.3581
+     Q6  site:day   0.4195 0.0000  1.0305
+     Q6     error   2.0758 1.7618  2.5272 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(ep05_b_precision, <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>, <span class="at">table =</span> <span class="st">"detailed"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 4%">
+<col style="width: 1%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Between-Run SD</th>
+<th style="text-align: right;">%CV Between-Run</th>
+<th style="text-align: right;">Between-Day SD</th>
+<th style="text-align: right;">%CV Between-Day</th>
+<th style="text-align: right;">Between-Site SD</th>
+<th style="text-align: right;">%CV Between-Site</th>
+<th style="text-align: right;">Within-Laboratory Precision SD</th>
+<th style="text-align: right;">%CV Within-Laboratory Precision</th>
+<th style="text-align: right;">Reproducibility SD</th>
+<th style="text-align: right;">%CV Reproducibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">P1</td>
+<td style="text-align: right;">12.0813</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">0.7244</td>
+<td style="text-align: right;">5.9963</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.4216</td>
+<td style="text-align: right;">3.4899</td>
+<td style="text-align: right;">0.6199</td>
+<td style="text-align: right;">5.1312</td>
+<td style="text-align: right;">0.8382</td>
+<td style="text-align: right;">6.9379</td>
+<td style="text-align: right;">1.0425</td>
+<td style="text-align: right;">8.6292</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P2</td>
+<td style="text-align: right;">41.5840</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1.2786</td>
+<td style="text-align: right;">3.0747</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.3509</td>
+<td style="text-align: right;">0.8439</td>
+<td style="text-align: right;">1.2724</td>
+<td style="text-align: right;">3.0597</td>
+<td style="text-align: right;">1.3259</td>
+<td style="text-align: right;">3.1884</td>
+<td style="text-align: right;">1.8376</td>
+<td style="text-align: right;">4.4191</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P5</td>
+<td style="text-align: right;">379.0907</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">7.5476</td>
+<td style="text-align: right;">1.9910</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1.7850</td>
+<td style="text-align: right;">0.4709</td>
+<td style="text-align: right;">4.9907</td>
+<td style="text-align: right;">1.3165</td>
+<td style="text-align: right;">7.7558</td>
+<td style="text-align: right;">2.0459</td>
+<td style="text-align: right;">9.2228</td>
+<td style="text-align: right;">2.4329</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Q3</td>
+<td style="text-align: right;">55.7467</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1.2490</td>
+<td style="text-align: right;">2.2404</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.7233</td>
+<td style="text-align: right;">1.2975</td>
+<td style="text-align: right;">1.7816</td>
+<td style="text-align: right;">3.1959</td>
+<td style="text-align: right;">1.4433</td>
+<td style="text-align: right;">2.5890</td>
+<td style="text-align: right;">2.2929</td>
+<td style="text-align: right;">4.1130</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Q4</td>
+<td style="text-align: right;">165.6560</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">2.7951</td>
+<td style="text-align: right;">1.6873</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1.3661</td>
+<td style="text-align: right;">0.8247</td>
+<td style="text-align: right;">5.4839</td>
+<td style="text-align: right;">3.3104</td>
+<td style="text-align: right;">3.1111</td>
+<td style="text-align: right;">1.8781</td>
+<td style="text-align: right;">6.3050</td>
+<td style="text-align: right;">3.8061</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Q6</td>
+<td style="text-align: right;">414.2867</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8.5999</td>
+<td style="text-align: right;">2.0758</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1.7380</td>
+<td style="text-align: right;">0.4195</td>
+<td style="text-align: right;">12.8105</td>
+<td style="text-align: right;">3.0922</td>
+<td style="text-align: right;">8.7738</td>
+<td style="text-align: right;">2.1178</td>
+<td style="text-align: right;">15.5271</td>
+<td style="text-align: right;">3.7479</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Standard examples can still differ because of exclusion rules, displayed intermediate values, ANOVA versus REML, and the exact degrees-of-freedom convention. Disclose the path used rather than treating similar rounded values as identical algorithms.</p>
+</section>
+</section>
+<section id="complete-standard-cases" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="complete-standard-cases"><span class="header-section-number">13.3</span> Complete Standard Cases</h2>
+<section id="clsi-ep05-a3-appendix-a-glucose-2022" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="clsi-ep05-a3-appendix-a-glucose-2022"><span class="header-section-number">13.3.1</span> CLSI EP05-A3 Appendix A: Glucose 20×2×2</h3>
+<p>Appendix A uses one patient-plasma pool measured in two runs per day on 20 days, with two replicates per run, for 80 glucose results. The data are complete and balanced; the nested structure is day/run, with replicate measurements forming the residual layer.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>ep05_a <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep05-appendix-a-glucose.csv"</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>day)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>run)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>ep05_a<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_a<span class="sc">$</span>replicate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  ep05_a, <span class="at">form =</span> result <span class="sc">~</span> day<span class="sc">/</span>run</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep05_a_precision, <span class="at">NegVC =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       day 1.9586   15.1 1.3995 0.5731  anova
+    all   day:run 3.0750   23.8 1.7536 0.7181  anova
+    all     error 7.9000   61.1 2.8107 1.1510  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>ep05_a_precision <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep05_a_precision)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   3.5963 3.0696 4.3430
+    all       day   1.3995 0.0000 2.4622
+    all   day:run   1.7536 0.0000 2.7858
+    all     error   2.8107 2.3076 3.5963 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   1.4727 1.2570 1.7785
+    all       day   0.5731 0.0000 1.0083
+    all   day:run   0.7181 0.0000 1.1408
+    all     error   1.1510 0.9450 1.4727 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">report</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  ep05_a_precision,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">run =</span> <span class="st">"run"</span>, <span class="at">digits =</span> <span class="dv">6</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 13%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample Description</th>
+<th style="text-align: right;">Mean Value</th>
+<th style="text-align: right;">Repeatability SD</th>
+<th style="text-align: right;">%CV Repeatability</th>
+<th style="text-align: right;">Within-Laboratory Precision SD</th>
+<th style="text-align: right;">%CV Within-Laboratory Precision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">all</td>
+<td style="text-align: right;">244.2</td>
+<td style="text-align: right;">2.810694</td>
+<td style="text-align: right;">1.15098</td>
+<td style="text-align: right;">3.596325</td>
+<td style="text-align: right;">1.472697</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP05-A3 Appendix A: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">244.20</td>
+<td style="text-align: right;">244.2000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SS_day</td>
+<td style="text-align: right;">415.80</td>
+<td style="text-align: right;">415.8000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SS_run_day</td>
+<td style="text-align: right;">281.00</td>
+<td style="text-align: right;">281.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SS_error</td>
+<td style="text-align: right;">316.00</td>
+<td style="text-align: right;">316.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">MS_day</td>
+<td style="text-align: right;">21.88</td>
+<td style="text-align: right;">21.8842</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">MS_run_day</td>
+<td style="text-align: right;">14.05</td>
+<td style="text-align: right;">14.0500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">MS_error</td>
+<td style="text-align: right;">7.90</td>
+<td style="text-align: right;">7.9000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">V_day</td>
+<td style="text-align: right;">1.96</td>
+<td style="text-align: right;">1.9586</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">V_run</td>
+<td style="text-align: right;">3.08</td>
+<td style="text-align: right;">3.0750</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">V_error</td>
+<td style="text-align: right;">7.90</td>
+<td style="text-align: right;">7.9000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SD_repeatability</td>
+<td style="text-align: right;">2.81</td>
+<td style="text-align: right;">2.8107</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">SD_within_lab</td>
+<td style="text-align: right;">3.60</td>
+<td style="text-align: right;">3.5963</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">CV_repeatability</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: right;">1.1510</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix A</td>
+<td style="text-align: left;">CV_within_lab</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">1.4727</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="clsi-ep05-a3-appendix-b-ca19-9-multicenter-study" class="level3" data-number="13.3.2">
+<h3 data-number="13.3.2" class="anchored" data-anchor-id="clsi-ep05-a3-appendix-b-ca19-9-multicenter-study"><span class="header-section-number">13.3.2</span> CLSI EP05-A3 Appendix B: CA19-9 Multicenter Study</h3>
+<p>Appendix B contains three sites, six samples, five days per site, and five replicates per day, for 450 results. The sites use different instruments and operators but the same reagent and calibrator lots. The nested model is site/day, with replicate measurements as the residual layer.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ep05_b <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep05-appendix-b-ca19-9.csv"</span>,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>sample)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>site <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>site)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>day)</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>ep05_b<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep05_b<span class="sc">$</span>replicate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  ep05_b, <span class="at">form =</span> result <span class="sc">~</span> site<span class="sc">/</span>day, <span class="at">by =</span> <span class="st">"sample"</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">variance</span>(ep05_b_precision)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+     P1      site   0.3843   35.4  0.6199 5.1312  anova
+     P1  site:day   0.1778   16.4  0.4216 3.4899  anova
+     P1     error   0.5248   48.3  0.7244 5.9963  anova
+     P2      site   1.6189   47.9  1.2724 3.0597  anova
+     P2  site:day   0.1232    3.6  0.3509 0.8439  anova
+     P2     error   1.6348   48.4  1.2786 3.0747  anova
+     P5      site  24.9068   29.3  4.9907 1.3165  anova
+     P5  site:day   3.1861    3.7  1.7850 0.4709  anova
+     P5     error  56.9669   67.0  7.5476 1.9910  anova
+     Q3      site   3.1742   60.4  1.7816 3.1959  anova
+     Q3  site:day   0.5232   10.0  0.7233 1.2975  anova
+     Q3     error   1.5599   29.7  1.2490 2.2404  anova
+     Q4      site  30.0735   75.7  5.4839 3.3104  anova
+     Q4  site:day   1.8663    4.7  1.3661 0.8247  anova
+     Q4     error   7.8128   19.7  2.7951 1.6873  anova
+     Q6      site 164.1097   68.1 12.8105 3.0922  anova
+     Q6  site:day   3.0208    1.3  1.7380 0.4195  anova
+     Q6     error  73.9590   30.7  8.5999 2.0758  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>ep05_b_precision <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep05_b_precision)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower   upper
+-----------------------------------------
+     P1     total   1.0425 0.7415  1.7535
+     P1      site   0.6199 0.0000  1.1178
+     P1  site:day   0.4216 0.0000  0.6380
+     P1     error   0.7244 0.6148  0.8819
+     P2     total   1.8376 1.2313  3.5995
+     P2      site   1.2724 0.0000  2.2291
+     P2  site:day   0.3509 0.0000  0.7084
+     P2     error   1.2786 1.0852  1.5566
+     P5     total   9.2228 6.9060 13.8849
+     P5      site   4.9907 0.0000  8.9156
+     P5  site:day   1.7850 0.0000  3.9426
+     P5     error   7.5476 6.4058  9.1888
+     Q3     total   2.2929 1.4259  5.7003
+     Q3      site   1.7816 0.0000  3.1184
+     Q3  site:day   0.7233 0.0000  1.0958
+     Q3     error   1.2490 1.0600  1.5205
+     Q4     total   6.3050 3.6468 21.1983
+     Q4      site   5.4839 0.0000  9.5060
+     Q4  site:day   1.3661 0.0000  2.1602
+     Q4     error   2.7951 2.3723  3.4029
+     Q6     total  15.5271 9.3516 43.6651
+     Q6      site  12.8105 0.0000 22.1981
+     Q6  site:day   1.7380 0.0000  4.2690
+     Q6     error   8.5999 7.2989 10.4699 
+
+Confidence intervals (%CV)
+ sample component estimate  lower   upper
+-----------------------------------------
+     P1     total   8.6292 6.1376 14.5139
+     P1      site   5.1312 0.0000  9.2524
+     P1  site:day   3.4899 0.0000  5.2812
+     P1     error   5.9963 5.0891  7.3001
+     P2     total   4.4191 2.9611  8.6559
+     P2      site   3.0597 0.0000  5.3606
+     P2  site:day   0.8439 0.0000  1.7036
+     P2     error   3.0747 2.6095  3.7433
+     P5     total   2.4329 1.8217  3.6627
+     P5      site   1.3165 0.0000  2.3518
+     P5  site:day   0.4709 0.0000  1.0400
+     P5     error   1.9910 1.6898  2.4239
+     Q3     total   4.1130 2.5578 10.2254
+     Q3      site   3.1959 0.0000  5.5938
+     Q3  site:day   1.2975 0.0000  1.9656
+     Q3     error   2.2404 1.9015  2.7276
+     Q4     total   3.8061 2.2014 12.7966
+     Q4      site   3.3104 0.0000  5.7384
+     Q4  site:day   0.8247 0.0000  1.3040
+     Q4     error   1.6873 1.4320  2.0542
+     Q6     total   3.7479 2.2573 10.5398
+     Q6      site   3.0922 0.0000  5.3581
+     Q6  site:day   0.4195 0.0000  1.0305
+     Q6     error   2.0758 1.7618  2.5272 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>ep05_b_report <span class="ot">&lt;-</span> <span class="fu">report</span>(</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  ep05_b_precision,</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>, <span class="at">table =</span> <span class="st">"detailed"</span>, <span class="at">digits =</span> <span class="dv">6</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>ep05_b_report_ci <span class="ot">&lt;-</span> <span class="fu">report</span>(</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  ep05_b_precision,</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="st">"day"</span>, <span class="at">site =</span> <span class="st">"site"</span>, <span class="at">table =</span> <span class="st">"CI"</span>, <span class="at">digits =</span> <span class="dv">6</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP05-A3 Appendix B: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_mean</td>
+<td style="text-align: right;">12.100</td>
+<td style="text-align: right;">12.0813</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_SD_R</td>
+<td style="text-align: right;">0.724</td>
+<td style="text-align: right;">0.7244</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_SD_WL</td>
+<td style="text-align: right;">0.838</td>
+<td style="text-align: right;">0.8382</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_SD_REP</td>
+<td style="text-align: right;">1.040</td>
+<td style="text-align: right;">1.0425</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_CV_R</td>
+<td style="text-align: right;">6.000</td>
+<td style="text-align: right;">5.9963</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_CV_WL</td>
+<td style="text-align: right;">6.900</td>
+<td style="text-align: right;">6.9379</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P1_CV_REP</td>
+<td style="text-align: right;">8.600</td>
+<td style="text-align: right;">8.6292</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_mean</td>
+<td style="text-align: right;">41.600</td>
+<td style="text-align: right;">41.5840</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_SD_R</td>
+<td style="text-align: right;">1.280</td>
+<td style="text-align: right;">1.2786</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_SD_WL</td>
+<td style="text-align: right;">1.330</td>
+<td style="text-align: right;">1.3259</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_SD_REP</td>
+<td style="text-align: right;">1.840</td>
+<td style="text-align: right;">1.8376</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_CV_R</td>
+<td style="text-align: right;">3.100</td>
+<td style="text-align: right;">3.0747</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_CV_WL</td>
+<td style="text-align: right;">3.200</td>
+<td style="text-align: right;">3.1884</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P2_CV_REP</td>
+<td style="text-align: right;">4.400</td>
+<td style="text-align: right;">4.4191</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_mean</td>
+<td style="text-align: right;">379.000</td>
+<td style="text-align: right;">379.0907</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_SD_R</td>
+<td style="text-align: right;">7.550</td>
+<td style="text-align: right;">7.5476</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_SD_WL</td>
+<td style="text-align: right;">7.760</td>
+<td style="text-align: right;">7.7558</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_SD_REP</td>
+<td style="text-align: right;">9.220</td>
+<td style="text-align: right;">9.2228</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_CV_R</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">1.9910</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_CV_WL</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">2.0459</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">P5_CV_REP</td>
+<td style="text-align: right;">2.400</td>
+<td style="text-align: right;">2.4329</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_mean</td>
+<td style="text-align: right;">55.700</td>
+<td style="text-align: right;">55.7467</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_SD_R</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">1.2490</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_SD_WL</td>
+<td style="text-align: right;">1.440</td>
+<td style="text-align: right;">1.4433</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_SD_REP</td>
+<td style="text-align: right;">2.290</td>
+<td style="text-align: right;">2.2929</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_CV_R</td>
+<td style="text-align: right;">2.200</td>
+<td style="text-align: right;">2.2404</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_CV_WL</td>
+<td style="text-align: right;">2.600</td>
+<td style="text-align: right;">2.5890</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q3_CV_REP</td>
+<td style="text-align: right;">4.100</td>
+<td style="text-align: right;">4.1130</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_mean</td>
+<td style="text-align: right;">166.000</td>
+<td style="text-align: right;">165.6560</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_SD_R</td>
+<td style="text-align: right;">2.800</td>
+<td style="text-align: right;">2.7951</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_SD_WL</td>
+<td style="text-align: right;">3.110</td>
+<td style="text-align: right;">3.1111</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_SD_REP</td>
+<td style="text-align: right;">6.300</td>
+<td style="text-align: right;">6.3050</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_CV_R</td>
+<td style="text-align: right;">1.700</td>
+<td style="text-align: right;">1.6873</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_CV_WL</td>
+<td style="text-align: right;">1.900</td>
+<td style="text-align: right;">1.8781</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q4_CV_REP</td>
+<td style="text-align: right;">3.800</td>
+<td style="text-align: right;">3.8061</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_mean</td>
+<td style="text-align: right;">414.000</td>
+<td style="text-align: right;">414.2867</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_SD_R</td>
+<td style="text-align: right;">8.600</td>
+<td style="text-align: right;">8.5999</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_SD_WL</td>
+<td style="text-align: right;">8.770</td>
+<td style="text-align: right;">8.7738</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_SD_REP</td>
+<td style="text-align: right;">15.500</td>
+<td style="text-align: right;">15.5271</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_CV_R</td>
+<td style="text-align: right;">2.100</td>
+<td style="text-align: right;">2.0758</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_CV_WL</td>
+<td style="text-align: right;">2.100</td>
+<td style="text-align: right;">2.1178</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP05-A3 Appendix B</td>
+<td style="text-align: left;">Q6_CV_REP</td>
+<td style="text-align: right;">3.700</td>
+<td style="text-align: right;">3.7479</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="clsi-ep15-a3-ferritin-55-verification" class="level3" data-number="13.3.3">
+<h3 data-number="13.3.3" class="anchored" data-anchor-id="clsi-ep15-a3-ferritin-55-verification"><span class="header-section-number">13.3.3</span> CLSI EP15-A3: Ferritin 5×5 Verification</h3>
+<p>The complete EP15 case contains three serum ferritin levels, measured for five days with five replicates per day. Keep the raw data intact, then reproduce the standard case’s prespecified Grubbs exclusion of 30.2 µg/L from Level 1, Day 1, Replicate 3. This exclusion reproduces the standard case and is not selected retrospectively by the code.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-ep15-ferritin.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep15_ferritin_raw<span class="sc">$</span>sample)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep15_ferritin_raw<span class="sc">$</span>run)</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(ep15_ferritin_raw<span class="sc">$</span>replicate)</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>ep15_exclude <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  ep15_ferritin_raw,</span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  sample <span class="sc">==</span> <span class="dv">1</span>L <span class="sc">&amp;</span> run <span class="sc">==</span> <span class="dv">1</span>L <span class="sc">&amp;</span> replicate <span class="sc">==</span> <span class="dv">3</span>L</span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_raw[ep15_exclude, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  run replicate sample result
+7   1         3      1   30.2</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exclude the prespecified result.</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>ep15_ferritin <span class="ot">&lt;-</span> ep15_ferritin_raw[<span class="sc">!</span>ep15_exclude, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>After exclusion, Level 1 has 24 results, with four replicates on Day 1; Levels 2 and 3 each retain 25 results. Split by sample and fit one result ~ run model for each level. run represents the between-run component, while daily replicates form the residual error component.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate levels to compare ANOVA and REML explicitly.</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>ep15_ferritin_list <span class="ot">&lt;-</span> <span class="fu">split</span>(ep15_ferritin, ep15_ferritin<span class="sc">$</span>sample)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>ep15_level_1 <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(ep15_ferritin_list[[<span class="st">"1"</span>]])</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>ep15_level_2 <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(ep15_ferritin_list[[<span class="st">"2"</span>]])</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>ep15_level_3 <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(ep15_ferritin_list[[<span class="st">"3"</span>]])</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Level 1</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep15_level_1, result <span class="sc">~</span> run)</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="co"># The unbalanced design automatically switches to REML.</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit_r <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>  ep15_level_1_fit, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       run 0.2820   27.5 0.5311 2.0816   reml
+    all     error 0.7423   72.5 0.8616 3.3770   reml </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use ANOVA explicitly to match the standard case.</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  ep15_level_1_fit, <span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       run 0.2804   27.4 0.5295 2.0756  anova
+    all     error 0.7414   72.6 0.8610 3.3749  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>ep15_level_1_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep15_level_1_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 1.010837 0.752556 1.539604
+    all       run 0.529550 0.000000 0.944544
+    all     error 0.861028 0.654803 1.257592 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 3.962125 2.949754 6.034706
+    all       run 2.075649 0.000000 3.702279
+    all     error 3.374924 2.566597 4.929319 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Level 2</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>ep15_level_2_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep15_level_2, result <span class="sc">~</span> run)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>ep15_level_2_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  ep15_level_2_fit, <span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       run 2.5400   44.6 1.5937 1.1374  anova
+    all     error 3.1600   55.4 1.7776 1.2687  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>ep15_level_2_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep15_level_2_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 2.387467 1.701094 3.999257
+    all       run 1.593738 0.000000 2.636950
+    all     error 1.777639 1.359999 2.567034 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 1.703873 1.214026 2.854166
+    all       run 1.137409 0.000000 1.881922
+    all     error 1.268655 0.970596 1.832025 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Level 3</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>ep15_level_3_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(ep15_level_3, result <span class="sc">~</span> run)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>ep15_level_3_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  ep15_level_3_fit, <span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component       VC %Total      SD  CV[%] Method
+-------------------------------------------------------
+    all       run 102.6080   47.5 10.1296 1.6262  anova
+    all     error 113.5200   52.5 10.6546 1.7105  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>ep15_level_3_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(ep15_level_3_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component  estimate     lower     upper
+-----------------------------------------------
+    all     total 14.701292 10.382650 25.141336
+    all       run 10.129561  0.000000 16.638736
+    all     error 10.654576  8.151381 15.385949 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+    all     total 2.360213 1.666878 4.036305
+    all       run 1.626246 0.000000 2.671259
+    all     error 1.710534 1.308660 2.470130 </code></pre>
+</div>
+</div>
+<p>Extract the total mean, run variance component, repeatability SD, and total within-laboratory SD from each object and compare them with the displayed standard values:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP15-A3 ferritin: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">overall mean</td>
+<td style="text-align: right;">25.5000</td>
+<td style="text-align: right;">25.5125</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">between-run variance</td>
+<td style="text-align: right;">0.2805</td>
+<td style="text-align: right;">0.2804</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">repeatability SD</td>
+<td style="text-align: right;">0.8600</td>
+<td style="text-align: right;">0.8610</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">within-laboratory SD</td>
+<td style="text-align: right;">1.0100</td>
+<td style="text-align: right;">1.0108</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">overall mean</td>
+<td style="text-align: right;">140.1000</td>
+<td style="text-align: right;">140.1200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">between-run variance</td>
+<td style="text-align: right;">2.5400</td>
+<td style="text-align: right;">2.5400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">repeatability SD</td>
+<td style="text-align: right;">1.7800</td>
+<td style="text-align: right;">1.7776</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">within-laboratory SD</td>
+<td style="text-align: right;">2.4000</td>
+<td style="text-align: right;">2.3875</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 3</td>
+<td style="text-align: left;">overall mean</td>
+<td style="text-align: right;">623.0000</td>
+<td style="text-align: right;">622.8800</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 3</td>
+<td style="text-align: left;">between-run variance</td>
+<td style="text-align: right;">102.6100</td>
+<td style="text-align: right;">102.6080</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 3</td>
+<td style="text-align: left;">repeatability SD</td>
+<td style="text-align: right;">10.7000</td>
+<td style="text-align: right;">10.6546</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 3</td>
+<td style="text-align: left;">within-laboratory SD</td>
+<td style="text-align: right;">14.7000</td>
+<td style="text-align: right;">14.7013</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The recalculated results for all three levels agree with or are close to the displayed standard values. Level 1 is unbalanced after exclusion, so small differences in variance components arise from unbalanced-data calculation details and intermediate rounding. For Level 2, the exact within-laboratory SD is 2.3875 µg/L, while the standard displays 2.40 µg/L after rounding its variance components. The standard case passes all three levels under its stated PI and UVL criteria; that conclusion applies only to the stated claims and limits.</p>
+</section>
+<section id="wst-4082024-precision-verification" class="level3" data-number="13.3.4">
+<h3 data-number="13.3.4" class="anchored" data-anchor-id="wst-4082024-precision-verification"><span class="header-section-number">13.3.4</span> WS/T 408–2024: Precision Verification</h3>
+<p>WS/T 408 Appendix A.2 uses two HDL-C levels, five batches per level, and three replicates per batch. After import, verify that each sample and batch contains three results.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>wst408_precision <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_csv</span>(</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-wst408-precision.csv"</span>,</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>wst408_precision<span class="sc">$</span>sample <span class="ot">&lt;-</span> <span class="fu">factor</span>(wst408_precision<span class="sc">$</span>sample)</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>wst408_precision<span class="sc">$</span>batch <span class="ot">&lt;-</span> <span class="fu">factor</span>(wst408_precision<span class="sc">$</span>batch)</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>wst408_precision<span class="sc">$</span>replicate <span class="ot">&lt;-</span> <span class="fu">factor</span>(wst408_precision<span class="sc">$</span>replicate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>wst408_precision_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  wst408_precision,</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">~</span> batch,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"sample"</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>wst408_precision_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  wst408_precision_fit,</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"anova"</span>,</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">NegVC =</span> <span class="cn">FALSE</span></span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+  样品1     batch 0.0001   10.9 0.0080 0.7637  anova
+  样品1     error 0.0005   89.1 0.0228 2.1884  anova
+  样品2     batch 0.0001   12.1 0.0091 0.5892  anova
+  样品2     error 0.0006   87.9 0.0246 1.5898  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>wst408_precision_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(wst408_precision_fit, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate    lower    upper
+--------------------------------------------
+  样品1     total 0.024152 0.017523 0.038843
+  样品1     batch 0.007958 0.000000 0.020611
+  样品1     error 0.022804 0.015933 0.040019
+  样品2     total 0.026268 0.019035 0.042360
+  样品2     batch 0.009129 0.000000 0.022737
+  样品2     error 0.024631 0.017210 0.043225 
+
+Confidence intervals (%CV)
+ sample component estimate    lower    upper
+--------------------------------------------
+  样品1     total 2.317879 1.681694 3.727688
+  样品1     batch 0.763745 0.000000 1.978014
+  样品1     error 2.188437 1.529098 3.840561
+  样品2     total 1.695429 1.228567 2.734049
+  样品2     batch 0.589202 0.000000 1.467529
+  样品2     error 1.589755 1.110789 2.789914 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>WS/T 408 Appendix A.2: ivdtools compared with the standard text</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sample</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">overall mean</td>
+<td style="text-align: right;">1.0420</td>
+<td style="text-align: right;">1.0420</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">s_WR</td>
+<td style="text-align: right;">0.0228</td>
+<td style="text-align: right;">0.0228</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">s_WL</td>
+<td style="text-align: right;">0.0242</td>
+<td style="text-align: right;">0.0242</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 1</td>
+<td style="text-align: left;">CV_WL (%)</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">2.3179</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">overall mean</td>
+<td style="text-align: right;">1.5493</td>
+<td style="text-align: right;">1.5493</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">s_WR</td>
+<td style="text-align: right;">0.0246</td>
+<td style="text-align: right;">0.0246</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">s_WL</td>
+<td style="text-align: right;">0.0263</td>
+<td style="text-align: right;">0.0263</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Level 2</td>
+<td style="text-align: left;">CV_WL (%)</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1.6954</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="yyt-1789.12021-appendix-a-25-hydroxyvitamin-d" class="level3" data-number="13.3.5">
+<h3 data-number="13.3.5" class="anchored" data-anchor-id="yyt-1789.12021-appendix-a-25-hydroxyvitamin-d"><span class="header-section-number">13.3.5</span> YY/T 1789.1–2021 Appendix A: 25-Hydroxyvitamin D</h3>
+<p>Appendix A provides complete 20-day × 2-run × 2-replicate data, for 80 results.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>yyt1789_1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/013-精密度分析/std-yyt1789-1-appendix-a.csv"</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>yyt1789_1<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">factor</span>(yyt1789_1<span class="sc">$</span>day)</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>yyt1789_1<span class="sc">$</span>run <span class="ot">&lt;-</span> <span class="fu">factor</span>(yyt1789_1<span class="sc">$</span>run)</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>yyt1789_1_fit <span class="ot">&lt;-</span> <span class="fu">precision</span>(yyt1789_1, result <span class="sc">~</span> day<span class="sc">/</span>run)</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>yyt1789_1_fit <span class="ot">&lt;-</span> <span class="fu">variance</span>(</span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  yyt1789_1_fit, <span class="at">method =</span> <span class="st">"anova"</span></span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variance components
+ sample component     VC %Total     SD  CV[%] Method
+----------------------------------------------------
+    all       day 0.1769   36.2 0.4206 2.4324  anova
+    all   day:run 0.0648   13.2 0.2545 1.4721  anova
+    all     error 0.2475   50.6 0.4975 2.8773  anova </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>yyt1789_1_fit <span class="ot">&lt;-</span> <span class="fu">ci</span>(yyt1789_1_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confidence intervals (SD)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   0.6994 0.5861 0.8674
+    all       day   0.4206 0.0000 0.5991
+    all   day:run   0.2545 0.0000 0.4400
+    all     error   0.4975 0.4084 0.6365 
+
+Confidence intervals (%CV)
+ sample component estimate  lower  upper
+----------------------------------------
+    all     total   4.0450 3.3897 5.0170
+    all       day   2.4324 0.0000 3.4650
+    all   day:run   1.4721 0.0000 2.5448
+    all     error   2.8773 2.3623 3.6815 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1789.1–2021 Appendix A: ivdtools compared with the standard text</caption>
+<colgroup>
+<col style="width: 33%">
+<col style="width: 39%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Standard location</th>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">17.290</td>
+<td style="text-align: right;">17.2898</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability SD</td>
+<td style="text-align: right;">0.497</td>
+<td style="text-align: right;">0.4975</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory SD</td>
+<td style="text-align: right;">0.699</td>
+<td style="text-align: right;">0.6994</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability CV (%)</td>
+<td style="text-align: right;">2.900</td>
+<td style="text-align: right;">2.8773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory CV (%)</td>
+<td style="text-align: right;">4.000</td>
+<td style="text-align: right;">4.0450</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability CI lower</td>
+<td style="text-align: right;">0.408</td>
+<td style="text-align: right;">0.4084</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">repeatability CI upper</td>
+<td style="text-align: right;">0.637</td>
+<td style="text-align: right;">0.6365</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory CI lower</td>
+<td style="text-align: right;">0.586</td>
+<td style="text-align: right;">0.5861</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YY/T 1789.1 Appendix A</td>
+<td style="text-align: left;">within-laboratory CI upper</td>
+<td style="text-align: right;">0.867</td>
+<td style="text-align: right;">0.8674</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./012-ROC曲线与多元回归.html" class="pagination-link" aria-label="ROC Curves and Multivariate Regression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC Curves and Multivariate Regression</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./014-线性分析.html" class="pagination-link" aria-label="Linearity Analysis">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Linearity Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

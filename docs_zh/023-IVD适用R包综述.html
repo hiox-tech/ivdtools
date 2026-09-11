@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>23&nbsp; IVD 适用 R 包综述 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./022-标准对应关系.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./023-IVD适用R包综述.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#资料分类框架" id="toc-资料分类框架" class="nav-link active" data-scroll-target="#资料分类框架"><span class="header-section-number">23.1</span> 资料分类框架</a></li>
+  <li><a href="#分析性能评价" id="toc-分析性能评价" class="nav-link" data-scroll-target="#分析性能评价"><span class="header-section-number">23.2</span> 分析性能评价</a>
+  <ul>
+  <li><a href="#综合型-ivd-工具" id="toc-综合型-ivd-工具" class="nav-link" data-scroll-target="#综合型-ivd-工具"><span class="header-section-number">23.2.1</span> 综合型 IVD 工具</a></li>
+  <li><a href="#方法比较偏倚与一致性" id="toc-方法比较偏倚与一致性" class="nav-link" data-scroll-target="#方法比较偏倚与一致性"><span class="header-section-number">23.2.2</span> 方法比较、偏倚与一致性</a></li>
+  <li><a href="#精密度方差分量与重复性" id="toc-精密度方差分量与重复性" class="nav-link" data-scroll-target="#精密度方差分量与重复性"><span class="header-section-number">23.2.3</span> 精密度、方差分量与重复性</a></li>
+  <li><a href="#校准曲线线性剂量反应与检测能力" id="toc-校准曲线线性剂量反应与检测能力" class="nav-link" data-scroll-target="#校准曲线线性剂量反应与检测能力"><span class="header-section-number">23.2.4</span> 校准曲线、线性、剂量反应与检测能力</a></li>
+  <li><a href="#参考区间" id="toc-参考区间" class="nav-link" data-scroll-target="#参考区间"><span class="header-section-number">23.2.5</span> 参考区间</a></li>
+  <li><a href="#稳定性干扰回收批间差与质量控制" id="toc-稳定性干扰回收批间差与质量控制" class="nav-link" data-scroll-target="#稳定性干扰回收批间差与质量控制"><span class="header-section-number">23.2.6</span> 稳定性、干扰、回收、批间差与质量控制</a></li>
+  </ul></li>
+  <li><a href="#临床诊断性能" id="toc-临床诊断性能" class="nav-link" data-scroll-target="#临床诊断性能"><span class="header-section-number">23.3</span> 临床诊断性能</a>
+  <ul>
+  <li><a href="#二分类诊断指标roc-与-cutoff" id="toc-二分类诊断指标roc-与-cutoff" class="nav-link" data-scroll-target="#二分类诊断指标roc-与-cutoff"><span class="header-section-number">23.3.1</span> 二分类诊断指标、ROC 与 cutoff</a></li>
+  <li><a href="#配对试验多分类无金标准与观察者一致性" id="toc-配对试验多分类无金标准与观察者一致性" class="nav-link" data-scroll-target="#配对试验多分类无金标准与观察者一致性"><span class="header-section-number">23.3.2</span> 配对试验、多分类、无金标准与观察者一致性</a></li>
+  </ul></li>
+  <li><a href="#诊断准确性与一般-meta-分析" id="toc-诊断准确性与一般-meta-分析" class="nav-link" data-scroll-target="#诊断准确性与一般-meta-分析"><span class="header-section-number">23.4</span> 诊断准确性与一般 meta 分析</a>
+  <ul>
+  <li><a href="#诊断准确性研究的-meta-分析" id="toc-诊断准确性研究的-meta-分析" class="nav-link" data-scroll-target="#诊断准确性研究的-meta-分析"><span class="header-section-number">23.4.1</span> 诊断准确性研究的 meta 分析</a></li>
+  <li><a href="#一般效应量预后和-ipd-meta-分析" id="toc-一般效应量预后和-ipd-meta-分析" class="nav-link" data-scroll-target="#一般效应量预后和-ipd-meta-分析"><span class="header-section-number">23.4.2</span> 一般效应量、预后和 IPD meta 分析</a></li>
+  </ul></li>
+  <li><a href="#生存与事件结局分析" id="toc-生存与事件结局分析" class="nav-link" data-scroll-target="#生存与事件结局分析"><span class="header-section-number">23.5</span> 生存与事件结局分析</a></li>
+  <li><a href="#多元分析化学计量学与高维标志物" id="toc-多元分析化学计量学与高维标志物" class="nav-link" data-scroll-target="#多元分析化学计量学与高维标志物"><span class="header-section-number">23.6</span> 多元分析、化学计量学与高维标志物</a>
+  <ul>
+  <li><a href="#探索性多元分析与降维" id="toc-探索性多元分析与降维" class="nav-link" data-scroll-target="#探索性多元分析与降维"><span class="header-section-number">23.6.1</span> 探索性多元分析与降维</a></li>
+  <li><a href="#化学计量学光谱和多指标定量" id="toc-化学计量学光谱和多指标定量" class="nav-link" data-scroll-target="#化学计量学光谱和多指标定量"><span class="header-section-number">23.6.2</span> 化学计量学、光谱和多指标定量</a></li>
+  <li><a href="#判别预测建模与机器学习" id="toc-判别预测建模与机器学习" class="nav-link" data-scroll-target="#判别预测建模与机器学习"><span class="header-section-number">23.6.3</span> 判别、预测建模与机器学习</a></li>
+  </ul></li>
+  <li><a href="#回归临床预测与临床效用" id="toc-回归临床预测与临床效用" class="nav-link" data-scroll-target="#回归临床预测与临床效用"><span class="header-section-number">23.7</span> 回归、临床预测与临床效用</a></li>
+  <li><a href="#样本量缺失数据与统计支撑" id="toc-样本量缺失数据与统计支撑" class="nav-link" data-scroll-target="#样本量缺失数据与统计支撑"><span class="header-section-number">23.8</span> 样本量、缺失数据与统计支撑</a>
+  <ul>
+  <li><a href="#样本量和研究设计" id="toc-样本量和研究设计" class="nav-link" data-scroll-target="#样本量和研究设计"><span class="header-section-number">23.8.1</span> 样本量和研究设计</a></li>
+  <li><a href="#缺失异常分布与多重性" id="toc-缺失异常分布与多重性" class="nav-link" data-scroll-target="#缺失异常分布与多重性"><span class="header-section-number">23.8.2</span> 缺失、异常、分布与多重性</a></li>
+  </ul></li>
+  <li><a href="#数据管理报告与可复现性" id="toc-数据管理报告与可复现性" class="nav-link" data-scroll-target="#数据管理报告与可复现性"><span class="header-section-number">23.9</span> 数据管理、报告与可复现性</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>体外诊断（in vitro diagnostic，IVD）数据分析并不只等于分析性能评价。一个完整的 IVD 研究可能同时涉及试剂和仪器的分析性能、临床诊断准确性、观察者一致性、参考区间、临床预测、随访结局、证据合成以及高维生物标志物数据。因此，本文综述 CRAN 上可用于 IVD 数据分析的 R 包。</p>
+<p>本文所称“综述”采用以下可复核的范围：</p>
+<ol type="1">
+<li>纳入 2026-09-01 前可从 CRAN 获取、功能直接面向 IVD/实验室医学，或为 IVD 研究提供核心统计方法的包。R 自带的 <code>stats</code>、<code>survival</code>、<code>MASS</code>、<code>nlme</code> 等基础或推荐包也纳入。</li>
+<li>覆盖从分析性能、临床性能到 meta 分析、生存分析、多元分析和预测建模的主要任务；同一包可出现在多个类别。</li>
+<li>不把所有数据整理、绘图、数据库连接或任意通用统计包都称为“IVD 包”，否则“所有能够用于 IVD 的包”将没有有限边界。</li>
+<li>不纳入仅在 Bioconductor、GitHub 或其他仓库发布的包；已从 CRAN 撤下的包也不列入当前清单。组学分析中大量专用工具位于 Bioconductor，实际项目应另行检索。</li>
+</ol>
+<p>这是一份截至上述日期的主题性全量目录，而不是软件质量排名或监管认可清单。包是否仍在 CRAN、版本、默认算法和维护状态都可能变化。CRAN Task View 本身也强调其用途是按明确主题提供导航，而不是为包背书。</p>
+<section id="资料分类框架" class="level2" data-number="23.1">
+<h2 data-number="23.1" class="anchored" data-anchor-id="资料分类框架"><span class="header-section-number">23.1</span> 资料分类框架</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>分析层级</th>
+<th>典型研究问题</th>
+<th>本章对应部分</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>分析性能</td>
+<td>方法是否精密、线性、稳定，偏倚和检测能力如何</td>
+<td>方法比较；精密度；校准与灵敏度；稳定性与质量控制</td>
+</tr>
+<tr class="even">
+<td>临床性能</td>
+<td>能否区分目标状态，cutoff 如何确定，不同试验是否等效</td>
+<td>诊断准确性；ROC；配对比较；一致性</td>
+</tr>
+<tr class="odd">
+<td>临床效用</td>
+<td>检测结果是否改善风险分层、决策或长期结局预测</td>
+<td>回归与预测；生存分析；决策曲线</td>
+</tr>
+<tr class="even">
+<td>证据整合</td>
+<td>多项诊断研究的灵敏度和特异度如何合并</td>
+<td>诊断准确性 meta 分析；一般 meta 分析</td>
+</tr>
+<tr class="odd">
+<td>生物标志物发现</td>
+<td>多指标、高维或多平台数据中有哪些结构和判别信号</td>
+<td>多元分析；化学计量学；机器学习</td>
+</tr>
+<tr class="even">
+<td>研究支撑</td>
+<td>如何处理缺失、异常、重复测量、样本量和可复现性</td>
+<td>通用统计支撑；研究设计；报告与审计</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="分析性能评价" class="level2" data-number="23.2">
+<h2 data-number="23.2" class="anchored" data-anchor-id="分析性能评价"><span class="header-section-number">23.2</span> 分析性能评价</h2>
+<section id="综合型-ivd-工具" class="level3" data-number="23.2.1">
+<h3 data-number="23.2.1" class="anchored" data-anchor-id="综合型-ivd-工具"><span class="header-section-number">23.2.1</span> 综合型 IVD 工具</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>适用说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>方法比较、可互换性、Bland–Altman、ROC、定性一致性、精密度、线性、干扰、稀释、稳定性、质量控制、参考区间、不确定度和样本量等工作流</td>
+<td>面向 IVD 试剂评价的综合工具；适合把多个分析性能模块组织成可复核的统一流程</td>
+</tr>
+<tr class="even">
+<td><code>mcradds</code></td>
+<td>方法比较、Bland–Altman、诊断四格表、ROC 比较、精密度、参考区间和样本量</td>
+<td>面向 IVD 临床与分析性能评价的综合工具；部分功能依赖 <code>mcr</code>、<code>pROC</code></td>
+</tr>
+</tbody>
+</table>
+<p>综合包便于形成连贯工作流，但“提供某项计算”不表示完整实现某一 CLSI 文件。研究设计、样本选择、接受限和报告要求仍需从适用标准或方案中确定。</p>
+</section>
+<section id="方法比较偏倚与一致性" class="level3" data-number="23.2.2">
+<h3 data-number="23.2.2" class="anchored" data-anchor-id="方法比较偏倚与一致性"><span class="header-section-number">23.2.2</span> 方法比较、偏倚与一致性</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要方法</th>
+<th>IVD 中的典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>OLS/WLS、Deming、加权 Deming、Passing–Bablok、Bland–Altman、偏倚和可互换性分析</td>
+<td>从方法比较到参考物偏倚、临床样本偏倚及可互换性评价的统一工作流</td>
+</tr>
+<tr class="even">
+<td><code>mcr</code></td>
+<td>Deming、加权 Deming、Passing–Bablok、Theil–Sen、bootstrap 区间</td>
+<td>候选方法与比较方法的回归、医学决定水平处偏倚</td>
+</tr>
+<tr class="odd">
+<td><code>MethComp</code></td>
+<td>方法比较回归、重复测量方法比较、Bland–Altman</td>
+<td>多方法或重复测量的一致性评价</td>
+</tr>
+<tr class="even">
+<td><code>deming</code></td>
+<td>Deming 回归及重复测量扩展</td>
+<td>两个方法均有测量误差时的线性关系估计</td>
+</tr>
+<tr class="odd">
+<td><code>blandr</code></td>
+<td>Bland–Altman 统计量、置信区间和 <code>ggplot2</code> 图形</td>
+<td>一致性界限、比例偏倚和报告制图</td>
+</tr>
+<tr class="even">
+<td><code>BlandAltmanLeh</code></td>
+<td>Bland–Altman、sunflower plot</td>
+<td>重合点较多时的可视化和基础统计量</td>
+</tr>
+<tr class="odd">
+<td><code>SimplyAgree</code></td>
+<td>连续和分类结局的一致性分析、等效性思路</td>
+<td>方法、设备或观察者的一致性评价</td>
+</tr>
+<tr class="even">
+<td><code>mcradds</code></td>
+<td>对 <code>mcr</code> 的方法比较封装、偏倚和绘图</td>
+<td>需要同时衔接其他 IVD 性能模块时</td>
+</tr>
+</tbody>
+</table>
+<p>相关系数只描述线性关联，不能替代一致性评价。不同包对误差比、重复测量、加权、bootstrap、异常值和置信区间的处理可能不同，交叉验证时必须显式统一这些设定。</p>
+</section>
+<section id="精密度方差分量与重复性" class="level3" data-number="23.2.3">
+<h3 data-number="23.2.3" class="anchored" data-anchor-id="精密度方差分量与重复性"><span class="header-section-number">23.2.3</span> 精密度、方差分量与重复性</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>适用说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>嵌套/重复测量精密度、方差分量、精密度轮廓和 C5/C95</td>
+<td>分析重复性、实验室内精密度、再现性以及定性检出概率；可与 <code>VCA</code>、<code>VFP</code> 结果衔接</td>
+</tr>
+<tr class="even">
+<td><code>VCA</code></td>
+<td>交叉/嵌套设计的 ANOVA、REML 方差分量和区间</td>
+<td>重复性、实验室内精密度和再现性</td>
+</tr>
+<tr class="odd">
+<td><code>VFP</code></td>
+<td>不精密度轮廓及 LoQ</td>
+<td>多浓度水平的 CV/SD–浓度关系</td>
+</tr>
+<tr class="even">
+<td><code>lme4</code></td>
+<td>线性和广义线性混合模型</td>
+<td>日、批次、仪器、中心和操作者等随机效应</td>
+</tr>
+<tr class="odd">
+<td><code>nlme</code></td>
+<td>线性/非线性混合模型、相关与异方差结构</td>
+<td>方差随浓度变化或重复测量相关时</td>
+</tr>
+<tr class="even">
+<td><code>glmmTMB</code></td>
+<td>灵活的 GLMM、离散度和零膨胀模型</td>
+<td>定性、计数或复杂分布的精密度/重复性资料</td>
+</tr>
+<tr class="odd">
+<td><code>rptR</code></td>
+<td>重复性和组内相关系数</td>
+<td>操作者、设备或读片者重复性</td>
+</tr>
+</tbody>
+</table>
+<p>专用方差分量包更接近常见 IVD 输出，混合模型包则更适合不平衡数据和复杂随机结构。模型更灵活并不自动意味着符合特定精密度指南，尤其要核对自由度、方差分量区间和负估计的处理。</p>
+</section>
+<section id="校准曲线线性剂量反应与检测能力" class="level3" data-number="23.2.4">
+<h3 data-number="23.2.4" class="anchored" data-anchor-id="校准曲线线性剂量反应与检测能力"><span class="header-section-number">23.2.4</span> 校准曲线、线性、剂量反应与检测能力</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>IVD 中的典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>线性、加权回归、曲线拟合、分析灵敏度、稀释回收、加标回收和高剂量钩状效应</td>
+<td>测量区间、剂量–反应、LoD/LoB/LoQ 相关研究及扩展测量区间评价</td>
+</tr>
+<tr class="even">
+<td><code>stats</code></td>
+<td><code>lm()</code>、<code>glm()</code>、<code>nls()</code>、多项式和等渗回归基础函数</td>
+<td>线性、偏离线性、加权回归、定性反应概率</td>
+</tr>
+<tr class="odd">
+<td><code>drc</code></td>
+<td>多种剂量–反应和非线性模型、有效剂量</td>
+<td>免疫分析、C5/C50/C95、浓度–反应曲线</td>
+</tr>
+<tr class="even">
+<td><code>dr4pl</code></td>
+<td>四参数 Logistic 曲线</td>
+<td>4PL 校准及剂量–反应分析</td>
+</tr>
+<tr class="odd">
+<td><code>chemCal</code></td>
+<td>分析化学校准、反预测、检测限</td>
+<td>线性校准和 LoD 相关计算</td>
+</tr>
+<tr class="even">
+<td><code>minpack.lm</code></td>
+<td>稳健的非线性最小二乘求解</td>
+<td>4PL/5PL 等模型难以收敛时</td>
+</tr>
+<tr class="odd">
+<td><code>investr</code></td>
+<td>逆估计和校准区间</td>
+<td>从响应估计未知浓度</td>
+</tr>
+<tr class="even">
+<td><code>segmented</code></td>
+<td>分段回归和断点估计</td>
+<td>可分析测量区间、平台期、钩状效应转折点</td>
+</tr>
+<tr class="odd">
+<td><code>isotone</code></td>
+<td>单调约束回归</td>
+<td>校准响应应保持单调时</td>
+</tr>
+<tr class="even">
+<td><code>NADA</code>、<code>NADA2</code></td>
+<td>左删失数据方法</td>
+<td>低于检出限结果的描述和回归分析</td>
+</tr>
+<tr class="odd">
+<td><code>EnvStats</code></td>
+<td>分布、删失值、异常值和区间方法</td>
+<td>LoB/LoD 前的数据分布与删失处理补充</td>
+</tr>
+</tbody>
+</table>
+<p>LoB、LoD 和 LoQ 的定义依赖实验设计与声明目标，不能仅凭软件函数名判断是否适用。<code>VFP</code> 偏重从不精密度轮廓确定 LoQ；<code>chemCal</code> 偏重分析化学校准与检测限；Probit/Logistic 法的检出概率曲线可由 <code>glm()</code>、<code>drc</code>、<code>brglm2</code> 或 <code>logistf</code> 实现。</p>
+</section>
+<section id="参考区间" class="level3" data-number="23.2.5">
+<h3 data-number="23.2.5" class="anchored" data-anchor-id="参考区间"><span class="header-section-number">23.2.5</span> 参考区间</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>适用说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>参数法、非参数法、稳健法、离群值和参考限区间</td>
+<td>建立参考区间</td>
+</tr>
+<tr class="even">
+<td><code>referenceIntervals</code></td>
+<td>参数法、非参数法、稳健法、离群值和参考限区间</td>
+<td>建立参考区间</td>
+</tr>
+<tr class="odd">
+<td><code>mcradds</code></td>
+<td>直接法参考区间及相关图形</td>
+<td>建立参考区间</td>
+</tr>
+<tr class="even">
+<td><code>refineR</code></td>
+<td>从常规实验室大数据间接估计参考区间</td>
+<td>含一定比例非健康个体的混合分布</td>
+</tr>
+<tr class="odd">
+<td><code>reflimR</code></td>
+<td>基于截断 Q–Q 思路的间接参考限估计与验证</td>
+<td>常规实验室历史数据的快速分析</td>
+</tr>
+<tr class="even">
+<td><code>RIbench</code></td>
+<td>间接法算法的模拟与基准评价</td>
+<td>比较不同间接参考区间算法，而非直接替代研究方案</td>
+</tr>
+<tr class="odd">
+<td><code>mclust</code></td>
+<td>高斯有限混合模型</td>
+<td>探索健康/非健康亚群混合分布</td>
+</tr>
+<tr class="even">
+<td><code>quantreg</code>、<code>gamlss</code></td>
+<td>条件分位数和分布回归</td>
+<td>年龄、性别等连续协变量相关的参考曲线</td>
+</tr>
+</tbody>
+</table>
+<p>直接法与间接法回答的问题不同。间接法结果尤其依赖数据来源、病理值比例、分层、截断和分布假设，不能把算法输出直接解释为已完成参考区间建立或转移验证。</p>
+</section>
+<section id="稳定性干扰回收批间差与质量控制" class="level3" data-number="23.2.6">
+<h3 data-number="23.2.6" class="anchored" data-anchor-id="稳定性干扰回收批间差与质量控制"><span class="header-section-number">23.2.6</span> 稳定性、干扰、回收、批间差与质量控制</h3>
+<p>这类任务在 CRAN 上缺少统一的 IVD 专用包，通常由通用模型组合完成。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>可支持的 IVD 任务</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>稳定性回归、干扰/回收、稀释、批间偏倚、测量不确定度和 Westgard 质量控制图</td>
+<td>直接提供部分 IVD 专用分析模块；复杂设计仍可能需要 <code>nlme</code>、<code>lme4</code> 或通用模型包</td>
+</tr>
+<tr class="even">
+<td><code>stats</code>、<code>nlme</code>、<code>lme4</code></td>
+<td>回归、方差分析、重复测量和混合模型</td>
+<td>稳定性趋势、干扰配对设计、稀释/加标回收、批次和仪器比较</td>
+</tr>
+<tr class="odd">
+<td><code>emmeans</code>、<code>multcomp</code></td>
+<td>边际均值、对比和多重比较</td>
+<td>各干扰水平、批次或时间点与对照比较</td>
+</tr>
+<tr class="even">
+<td><code>segmented</code>、 <code>strucchange</code>、 <code>changepoint</code></td>
+<td>断点和结构变化</td>
+<td>稳定期、钩状效应或漂移转折探索</td>
+</tr>
+<tr class="odd">
+<td><code>qcc</code></td>
+<td>Shewhart、CUSUM、EWMA、过程能力</td>
+<td>实验室质量控制和过程监测</td>
+</tr>
+<tr class="even">
+<td><code>IQCC</code></td>
+<td>单变量和多变量质量控制图</td>
+<td>多水平或多指标 QC</td>
+</tr>
+<tr class="odd">
+<td><code>qicharts2</code>、<code>SixSigma</code>、<code>spc</code></td>
+<td>质量改进图、控制图和过程能力</td>
+<td>常规 QC 可视化与持续改进</td>
+</tr>
+<tr class="even">
+<td><code>metRology</code></td>
+<td>计量学统计、稳健估计和测量不确定度</td>
+<td>赋值、能力验证和不确定度评价</td>
+</tr>
+<tr class="odd">
+<td><code>propagate</code>、<code>errors</code>、<code>units</code></td>
+<td>不确定度传播、带误差量和单位</td>
+<td>测量模型和结果表达</td>
+</tr>
+</tbody>
+</table>
+<p>稳定性、干扰和批间差不仅是“比较均值”。时间相关性、样品配对、浓度依赖偏倚、允许误差和最差情形通常需要在模型中明确表达。</p>
+</section>
+</section>
+<section id="临床诊断性能" class="level2" data-number="23.3">
+<h2 data-number="23.3" class="anchored" data-anchor-id="临床诊断性能"><span class="header-section-number">23.3</span> 临床诊断性能</h2>
+<section id="二分类诊断指标roc-与-cutoff" class="level3" data-number="23.3.1">
+<h3 data-number="23.3.1" class="anchored" data-anchor-id="二分类诊断指标roc-与-cutoff"><span class="header-section-number">23.3.1</span> 二分类诊断指标、ROC 与 cutoff</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>适用说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>ROC、AUC、cutoff、C5/C95、定性一致性和分类结果汇总</td>
+<td>适合把连续结果、定性结果和分析灵敏度评价放在同一 IVD 工作流中；cutoff 仍需预先规定并独立验证</td>
+</tr>
+<tr class="even">
+<td><code>epiR</code></td>
+<td>灵敏度、特异度、预测值、似然比、患病率校正</td>
+<td>四格表及流行病学解释</td>
+</tr>
+<tr class="odd">
+<td><code>pROC</code></td>
+<td>ROC、AUC/pAUC、DeLong/bootstrap 区间和 ROC 比较</td>
+<td>连续标志物和配对 ROC 的常用实现</td>
+</tr>
+<tr class="even">
+<td><code>ROCR</code>、<code>ROCit</code></td>
+<td>多种分类性能曲线和阈值指标</td>
+<td>模型/标志物性能可视化</td>
+</tr>
+<tr class="odd">
+<td><code>cutpointr</code></td>
+<td>多种 cutoff 指标、bootstrap 和亚组分析</td>
+<td>探索和验证阈值</td>
+</tr>
+<tr class="even">
+<td><code>OptimalCutpoints</code>、 <code>ThresholdROC</code>、 <code>nsROC</code></td>
+<td>最优阈值、ROC 推断和非参数 ROC</td>
+<td>对 cutoff 方法作敏感性分析</td>
+</tr>
+<tr class="odd">
+<td><code>PRROC</code>、<code>precrec</code></td>
+<td>precision–recall 曲线及相关指标</td>
+<td>低患病率或类别不平衡资料</td>
+</tr>
+<tr class="even">
+<td><code>yardstick</code>、<code>mlr3measures</code></td>
+<td>统一的分类和概率预测指标接口</td>
+<td>重采样、机器学习和模型比较</td>
+</tr>
+<tr class="odd">
+<td><code>EvalTest</code></td>
+<td>诊断指标、cutoff、ROC 和交互界面</td>
+<td>快速形成探索性诊断性能报告</td>
+</tr>
+<tr class="even">
+<td><code>bdpv</code></td>
+<td>基于患病率的贝叶斯预测值</td>
+<td>PPV/NPV 及患病率不确定性分析</td>
+</tr>
+<tr class="odd">
+<td><code>presize</code></td>
+<td>灵敏度、特异度、预测值和 AUC 的精度设计</td>
+<td>按目标区间宽度进行样本量规划</td>
+</tr>
+</tbody>
+</table>
+<p>cutoff 是研究问题的一部分，不是 ROC 图的附属输出。应预先说明目标人群、阳性方向、参考标准、错误代价以及内部/外部验证安排；同一数据既选 cutoff 又报告其性能会产生乐观偏倚。</p>
+</section>
+<section id="配对试验多分类无金标准与观察者一致性" class="level3" data-number="23.3.2">
+<h3 data-number="23.3.2" class="anchored" data-anchor-id="配对试验多分类无金标准与观察者一致性"><span class="header-section-number">23.3.2</span> 配对试验、多分类、无金标准与观察者一致性</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>子问题</th>
+<th>包</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>配对二元试验</td>
+<td><code>DTComPair</code>、 <code>testCompareR</code>、 <code>CompareTests</code></td>
+<td>比较配对试验的灵敏度、特异度、预测值或总体准确度</td>
+</tr>
+<tr class="even">
+<td>三分类/多分类 ROC</td>
+<td><code>bcROCsurface</code>、<code>ROCpsych</code></td>
+<td>ROC surface、VUS、多分类 ROC 和基础率调整</td>
+</tr>
+<tr class="odd">
+<td>无完善金标准</td>
+<td><code>poLCA</code>、<code>randomLCA</code>、<code>BayesLCA</code></td>
+<td>用潜在类别模型估计潜在状态与试验特征</td>
+</tr>
+<tr class="even">
+<td>二分类一致性</td>
+<td><code>vcd</code>、<code>DescTools</code>、<code>irr</code>、<code>irrCAC</code></td>
+<td>Kappa、加权 Kappa、配对分类和观察者一致性</td>
+</tr>
+<tr class="odd">
+<td>连续读数一致性</td>
+<td><code>psych</code>、<code>irr</code>、<code>SimplyAgree</code></td>
+<td>ICC、重复性和观察者/设备一致性</td>
+</tr>
+<tr class="even">
+<td>多读者多病例</td>
+<td><code>RJafroc</code>、<code>MRMCaov</code></td>
+<td>影像或人工判读试验的 MRMC 设计与分析</td>
+</tr>
+</tbody>
+</table>
+<p>潜在类别模型不能凭空创造金标准，其可识别性依赖条件独立等假设。多读者多病例资料也不能把每次判读当作相互独立的普通观测。</p>
+</section>
+</section>
+<section id="诊断准确性与一般-meta-分析" class="level2" data-number="23.4">
+<h2 data-number="23.4" class="anchored" data-anchor-id="诊断准确性与一般-meta-分析"><span class="header-section-number">23.4</span> 诊断准确性与一般 meta 分析</h2>
+<section id="诊断准确性研究的-meta-分析" class="level3" data-number="23.4.1">
+<h3 data-number="23.4.1" class="anchored" data-anchor-id="诊断准确性研究的-meta-分析"><span class="header-section-number">23.4.1</span> 诊断准确性研究的 meta 分析</h3>
+<p>单独合并灵敏度和特异度会忽略二者的相关性与阈值效应。诊断试验 meta 分析通常需要双变量随机效应模型、HSROC 类模型或多阈值模型。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>适用情形</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>mada</code></td>
+<td>诊断比值比、双变量 Reitsma 模型、meta 回归、SROC</td>
+<td>常规诊断准确性 meta 分析</td>
+</tr>
+<tr class="even">
+<td><code>meta4diag</code></td>
+<td>贝叶斯双变量诊断 meta 分析及图形</td>
+<td>需要贝叶斯推断时</td>
+</tr>
+<tr class="odd">
+<td><code>bamdit</code></td>
+<td>基于 JAGS 的贝叶斯双变量随机效应模型</td>
+<td>双变量贝叶斯 DTA 模型</td>
+</tr>
+<tr class="even">
+<td><code>diagmeta</code></td>
+<td>同一研究报告多个 cutoff 的模型</td>
+<td>多阈值诊断研究</td>
+</tr>
+<tr class="odd">
+<td><code>CopulaREMADA</code></td>
+<td>Copula 双变量混合模型</td>
+<td>灵敏度与特异度依赖结构更复杂时</td>
+</tr>
+<tr class="even">
+<td><code>DTAplots</code></td>
+<td>森林图、SROC 等诊断研究图形</td>
+<td>结果展示和探索</td>
+</tr>
+<tr class="odd">
+<td><code>MVPBT</code></td>
+<td>诊断 meta 分析中的小样本研究效应检验</td>
+<td>发表偏倚/小样本效应的补充分析</td>
+</tr>
+<tr class="even">
+<td><code>dmetatools</code></td>
+<td>SROC AUC 区间等方法</td>
+<td>汇总 ROC 的补充推断</td>
+</tr>
+</tbody>
+</table>
+<p>模型选择前应核对每项研究的 TP、FP、FN、TN、阈值、受试者谱和参考标准。零单元连续性校正、多个 cutoff 的选择、病例对照设计和研究间阈值差异都可能改变结论。</p>
+</section>
+<section id="一般效应量预后和-ipd-meta-分析" class="level3" data-number="23.4.2">
+<h3 data-number="23.4.2" class="anchored" data-anchor-id="一般效应量预后和-ipd-meta-分析"><span class="header-section-number">23.4.2</span> 一般效应量、预后和 IPD meta 分析</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>任务</th>
+<th>包</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通用框架</td>
+<td><code>meta</code>、<code>metafor</code>、<code>rmeta</code></td>
+<td>固定/随机效应、异质性、meta 回归、森林图和漏斗图</td>
+</tr>
+<tr class="even">
+<td>敏感性与偏倚</td>
+<td><code>metasens</code>、<code>robustmeta</code></td>
+<td>小样本研究效应、选择模型和稳健分析</td>
+</tr>
+<tr class="odd">
+<td>网络 meta</td>
+<td><code>netmeta</code></td>
+<td>多干预或多检测策略的频率学网络模型</td>
+</tr>
+<tr class="even">
+<td>多变量/结构方程</td>
+<td><code>mvmeta</code>、<code>metaSEM</code>、<code>metavcov</code></td>
+<td>相关结局、多变量效应量和 meta 分析 SEM</td>
+</tr>
+<tr class="odd">
+<td>依赖效应量</td>
+<td><code>robumeta</code>、<code>clubSandwich</code></td>
+<td>稳健方差估计和小样本修正</td>
+</tr>
+<tr class="even">
+<td>贝叶斯分析</td>
+<td><code>bayesmeta</code>、<code>MetaStan</code></td>
+<td>贝叶斯随机效应和模型化 meta 分析</td>
+</tr>
+<tr class="odd">
+<td>预后研究</td>
+<td><code>metamisc</code></td>
+<td>预后因子和预测模型研究的 meta 分析</td>
+</tr>
+<tr class="even">
+<td>生存曲线重建/合并</td>
+<td><code>metaSurvival</code></td>
+<td>从研究公布的生存信息估计汇总生存曲线</td>
+</tr>
+<tr class="odd">
+<td>系统综述流程</td>
+<td><code>metagear</code>、 <code>revtools</code>、 <code>citationchaser</code>、 <code>PRISMA2020</code></td>
+<td>文献筛选、引文追踪和流程图</td>
+</tr>
+<tr class="even">
+<td>效应量转换</td>
+<td><code>metafor</code>、 <code>effectsize</code>、 <code>esc</code>、 <code>compute.es</code>、 <code>metaConvert</code></td>
+<td>将不同报告统计量转换为可合并效应量</td>
+</tr>
+</tbody>
+</table>
+<p>汇总诊断性能、治疗效应和预后效应是三类不同问题，不能因为都称为 meta 分析就使用同一数据结构和模型。IPD meta 分析还需显式处理研究层级，常与 <code>lme4</code>、<code>nlme</code>、<code>survival</code> 或贝叶斯层级模型联合使用。</p>
+</section>
+</section>
+<section id="生存与事件结局分析" class="level2" data-number="23.5">
+<h2 data-number="23.5" class="anchored" data-anchor-id="生存与事件结局分析"><span class="header-section-number">23.5</span> 生存与事件结局分析</h2>
+<p>IVD 标志物常用于预后分层、伴随诊断或疗效监测，此时结局不是简单的阳性/阴性，而是带删失的复发、进展或死亡时间。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>子领域</th>
+<th>包</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>基础生存分析</td>
+<td><code>survival</code>、<code>prodlim</code>、<code>rms</code></td>
+<td>Kaplan–Meier、Cox 模型、生存概率和回归建模</td>
+</tr>
+<tr class="even">
+<td>展示与摘要</td>
+<td><code>survminer</code>、<code>ggsurvfit</code></td>
+<td>生存曲线、风险表和辅助统计</td>
+</tr>
+<tr class="odd">
+<td>灵活参数模型</td>
+<td><code>flexsurv</code>、<code>rstpm2</code>、<code>eha</code></td>
+<td>参数模型、Royston–Parmar 模型和多状态参数模型</td>
+</tr>
+<tr class="even">
+<td>非比例风险</td>
+<td><code>timereg</code>、<code>coxphw</code>、<code>nph</code></td>
+<td>加性风险、加权 Cox 和非比例风险方法</td>
+</tr>
+<tr class="odd">
+<td>竞争风险</td>
+<td><code>cmprsk</code>、<code>riskRegression</code></td>
+<td>累积发生函数、原因别/Fine–Gray 模型和预测评价</td>
+</tr>
+<tr class="even">
+<td>多状态模型</td>
+<td><code>mstate</code>、<code>etm</code>、<code>msm</code></td>
+<td>疾病进展、复发和死亡等状态转移</td>
+</tr>
+<tr class="odd">
+<td>时间依赖 ROC</td>
+<td><code>timeROC</code>、 <code>survivalROC</code>、 <code>riskRegression</code></td>
+<td>指定时间点的 AUC、ROC 和预测准确性</td>
+</tr>
+<tr class="even">
+<td>预测误差与验证</td>
+<td><code>pec</code>、<code>riskRegression</code>、<code>rms</code></td>
+<td>Brier 分数、校准、重采样和外部验证</td>
+</tr>
+<tr class="odd">
+<td>惩罚与机器学习</td>
+<td><code>glmnet</code>、<code>randomForestSRC</code>、<code>ranger</code></td>
+<td>高维 Cox、随机生存森林和标志物筛选</td>
+</tr>
+<tr class="even">
+<td>脆弱性/聚类事件</td>
+<td><code>coxme</code>、<code>frailtypack</code>、<code>frailtyEM</code></td>
+<td>中心、家庭或重复事件的相关性</td>
+</tr>
+<tr class="odd">
+<td>区间删失</td>
+<td><code>icenReg</code>、<code>interval</code></td>
+<td>事件只知发生于某时间区间时</td>
+</tr>
+<tr class="even">
+<td>治愈模型</td>
+<td><code>smcure</code>、<code>flexsurvcure</code></td>
+<td>存在长期无事件/治愈亚群时</td>
+</tr>
+<tr class="odd">
+<td>联合模型</td>
+<td><code>JMbayes2</code>、 <code>joineR</code>、 <code>joineRML</code>、 <code>rstanarm</code></td>
+<td>纵向标志物与事件时间的联合分析、动态预测</td>
+</tr>
+<tr class="even">
+<td>样本量与设计</td>
+<td><code>powerSurvEpi</code>、<code>gsDesign</code>、<code>rpact</code></td>
+<td>生存研究功效、事件数和序贯设计</td>
+</tr>
+</tbody>
+</table>
+<p>标志物的基线预后价值、随时间变化的标志物、治疗效果修饰和诊断准确性不是同一 estimand。报告时应说明时间原点、删失机制、竞争事件、预测时点、内部验证和比例风险假设。</p>
+</section>
+<section id="多元分析化学计量学与高维标志物" class="level2" data-number="23.6">
+<h2 data-number="23.6" class="anchored" data-anchor-id="多元分析化学计量学与高维标志物"><span class="header-section-number">23.6</span> 多元分析、化学计量学与高维标志物</h2>
+<section id="探索性多元分析与降维" class="level3" data-number="23.6.1">
+<h3 data-number="23.6.1" class="anchored" data-anchor-id="探索性多元分析与降维"><span class="header-section-number">23.6.1</span> 探索性多元分析与降维</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>任务</th>
+<th>包</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PCA/因子分析</td>
+<td><code>stats</code>、 <code>FactoMineR</code>、 <code>factoextra</code>、 <code>psych</code>、 <code>GPArotation</code></td>
+<td>主成分、因子旋转、缺失值辅助和结果可视化</td>
+</tr>
+<tr class="even">
+<td>对应分析/多表分析</td>
+<td><code>FactoMineR</code>、<code>ade4</code>、<code>RGCCA</code></td>
+<td>分类变量、多个数据块或多平台数据整合</td>
+</tr>
+<tr class="odd">
+<td>聚类</td>
+<td><code>cluster</code>、<code>mclust</code>、<code>dbscan</code>、<code>fpc</code></td>
+<td>层次/k-means、模型聚类、密度聚类和稳定性评价</td>
+</tr>
+<tr class="even">
+<td>组成数据</td>
+<td><code>compositions</code>、<code>robCompositions</code></td>
+<td>比例或相对丰度数据的 log-ratio 与稳健方法</td>
+</tr>
+<tr class="odd">
+<td>多元异常值/稳健估计</td>
+<td><code>rrcov</code>、<code>robustbase</code>、<code>mvoutlier</code></td>
+<td>稳健协方差、稳健 PCA 和多元异常点</td>
+</tr>
+<tr class="even">
+<td>多元正态与检验</td>
+<td><code>MVN</code>、<code>mvnormtest</code>、<code>ICSNP</code></td>
+<td>多元正态性、位置/散布和非参数多元推断</td>
+</tr>
+</tbody>
+</table>
+<p>PCA、聚类和热图主要用于探索结构，不能直接证明某组标志物具有可推广的诊断性能。若据此选择变量并在同一数据上报告 AUC，必须通过嵌套重采样或独立数据纠正选择偏倚。</p>
+</section>
+<section id="化学计量学光谱和多指标定量" class="level3" data-number="23.6.2">
+<h3 data-number="23.6.2" class="anchored" data-anchor-id="化学计量学光谱和多指标定量"><span class="header-section-number">23.6.2</span> 化学计量学、光谱和多指标定量</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>IVD 场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pls</code></td>
+<td>PLS/PCR 回归和交叉验证</td>
+<td>多波长、多峰或高度共线的定量校准</td>
+</tr>
+<tr class="even">
+<td><code>mdatools</code></td>
+<td>PCA、SIMCA、PLS/PLS-DA、预处理和验证</td>
+<td>光谱、代谢物或多指标化学计量学</td>
+</tr>
+<tr class="odd">
+<td><code>chemometrics</code></td>
+<td>多元校准、变量选择和稳健化学计量方法</td>
+<td>分析化学与生物标志物面板</td>
+</tr>
+<tr class="even">
+<td><code>prospectr</code></td>
+<td>光谱平滑、导数、散射校正和样本选择</td>
+<td>光谱预处理</td>
+</tr>
+<tr class="odd">
+<td><code>ChemoSpec</code>、<code>ChemoSpec2D</code></td>
+<td>光谱数据的探索、PCA 和聚类</td>
+<td>NMR/IR 等谱图分析</td>
+</tr>
+<tr class="even">
+<td><code>hyperSpec</code></td>
+<td>光谱/高光谱数据对象和处理</td>
+<td>多通道仪器信号管理与分析</td>
+</tr>
+<tr class="odd">
+<td><code>ALS</code></td>
+<td>多元曲线分辨 MCR–ALS</td>
+<td>重叠信号的组分分解</td>
+</tr>
+</tbody>
+</table>
+<p>预处理、峰选择、批次校正和模型调参都属于分析管线的一部分，必须放进交叉验证内部；先用全数据选择波长或变量再交叉验证会泄漏结局信息。</p>
+</section>
+<section id="判别预测建模与机器学习" class="level3" data-number="23.6.3">
+<h3 data-number="23.6.3" class="anchored" data-anchor-id="判别预测建模与机器学习"><span class="header-section-number">23.6.3</span> 判别、预测建模与机器学习</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法族</th>
+<th>包</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>经典判别</td>
+<td><code>MASS</code>、<code>klaR</code>、<code>mda</code>、<code>nnet</code></td>
+<td>LDA/QDA、正则判别、灵活判别和多项 Logistic</td>
+</tr>
+<tr class="even">
+<td>正则化模型</td>
+<td><code>glmnet</code></td>
+<td>Lasso、Ridge、Elastic Net 的线性/Logistic/Cox 模型</td>
+</tr>
+<tr class="odd">
+<td>核方法</td>
+<td><code>e1071</code>、<code>kernlab</code></td>
+<td>SVM、核分类和概率预测</td>
+</tr>
+<tr class="even">
+<td>树与集成</td>
+<td><code>rpart</code>、 <code>randomForest</code>、 <code>ranger</code>、 <code>xgboost</code></td>
+<td>决策树、随机森林和梯度提升</td>
+</tr>
+<tr class="odd">
+<td>统一建模框架</td>
+<td><code>caret</code>、<code>tidymodels</code>、<code>mlr3</code></td>
+<td>预处理、调参、重采样、指标和工作流</td>
+</tr>
+<tr class="even">
+<td>类别不平衡</td>
+<td><code>themis</code>、<code>ROSE</code></td>
+<td>上/下采样和合成样本；应仅在训练折内执行</td>
+</tr>
+<tr class="odd">
+<td>可解释性</td>
+<td><code>iml</code>、<code>DALEX</code></td>
+<td>变量重要性、局部解释和模型诊断</td>
+</tr>
+</tbody>
+</table>
+<p>机器学习包通常优化预测，不自动满足诊断研究对目标人群、阈值、可解释性、校准和外部验证的要求。比较多个算法时，数据拆分、预处理、变量筛选和阈值选择必须使用相同且无信息泄漏的重采样方案。</p>
+</section>
+</section>
+<section id="回归临床预测与临床效用" class="level2" data-number="23.7">
+<h2 data-number="23.7" class="anchored" data-anchor-id="回归临床预测与临床效用"><span class="header-section-number">23.7</span> 回归、临床预测与临床效用</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>任务</th>
+<th>包</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>常规回归</td>
+<td><code>stats</code>、<code>MASS</code></td>
+<td>线性、Logistic、Poisson 和扩展回归</td>
+</tr>
+<tr class="even">
+<td>小样本/分离</td>
+<td><code>logistf</code>、<code>brglm2</code></td>
+<td>Firth 或偏倚减少 Logistic 回归</td>
+</tr>
+<tr class="odd">
+<td>非线性效应</td>
+<td><code>mgcv</code>、<code>rms</code></td>
+<td>平滑项、限制性立方样条和完整建模策略</td>
+</tr>
+<tr class="even">
+<td>重复测量/中心效应</td>
+<td><code>geepack</code>、<code>lme4</code>、<code>nlme</code>、<code>glmmTMB</code></td>
+<td>GEE、混合模型和复杂分布</td>
+</tr>
+<tr class="odd">
+<td>调整后比较</td>
+<td><code>emmeans</code>、 <code>multcomp</code>、 <code>sandwich</code>、 <code>clubSandwich</code></td>
+<td>边际估计、同时推断和稳健标准误</td>
+</tr>
+<tr class="even">
+<td>模型性能</td>
+<td><code>pROC</code>、 <code>yardstick</code>、 <code>rms</code>、 <code>riskRegression</code>、 <code>pec</code></td>
+<td>区分度、校准、Brier 分数和重采样验证</td>
+</tr>
+<tr class="odd">
+<td>校准评价</td>
+<td><code>pmcalibration</code>、<code>rms</code></td>
+<td>校准曲线、校准截距/斜率和误差度量</td>
+</tr>
+<tr class="even">
+<td>临床效用</td>
+<td><code>dcurves</code></td>
+<td>决策曲线和净获益</td>
+</tr>
+<tr class="odd">
+<td>因果调整</td>
+<td><code>MatchIt</code>、 <code>WeightIt</code>、 <code>survey</code>、 <code>cobalt</code></td>
+<td>匹配、加权、平衡诊断和加权结局模型</td>
+</tr>
+</tbody>
+</table>
+<p>把新 IVD 指标加入模型后，只报告 AUC 增量通常不够。应根据用途同时考虑校准、临床阈值下的灵敏度/特异度、净获益、过拟合和外部验证；因果问题还需区别预测变量、混杂因素和中介变量。</p>
+</section>
+<section id="样本量缺失数据与统计支撑" class="level2" data-number="23.8">
+<h2 data-number="23.8" class="anchored" data-anchor-id="样本量缺失数据与统计支撑"><span class="header-section-number">23.8</span> 样本量、缺失数据与统计支撑</h2>
+<section id="样本量和研究设计" class="level3" data-number="23.8.1">
+<h3 data-number="23.8.1" class="anchored" data-anchor-id="样本量和研究设计"><span class="header-section-number">23.8.1</span> 样本量和研究设计</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>包</th>
+<th>主要能力</th>
+<th>IVD 中的典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ivdtools</code></td>
+<td>方法比较、精密度、线性、ROC、参考区间、稳定性、QC 和样本量计算</td>
+<td>面向 IVD 性能评价的模块化样本量与分析工作流；具体设计参数仍需依据研究目标和适用标准设定</td>
+</tr>
+<tr class="even">
+<td><code>presize</code></td>
+<td>以置信区间精度为目标的样本量</td>
+<td>Se、Sp、PPV、NPV、AUC、均值和比例</td>
+</tr>
+<tr class="odd">
+<td><code>pROC</code></td>
+<td>ROC/AUC 比较的功效和样本量</td>
+<td>单条或两条 ROC 曲线</td>
+</tr>
+<tr class="even">
+<td><code>MKmisc</code></td>
+<td>诊断试验及常用设计的功效工具</td>
+<td>灵敏度/特异度等基础规划</td>
+</tr>
+<tr class="odd">
+<td><code>pmsampsize</code></td>
+<td>多变量预测模型开发样本量</td>
+<td>连续、二分类和生存结局预测模型</td>
+</tr>
+<tr class="even">
+<td><code>WebPower</code>、<code>pwr</code></td>
+<td>常用检验和回归功效</td>
+<td>初步方案估算与敏感性分析</td>
+</tr>
+<tr class="odd">
+<td><code>longpower</code>、<code>powerSurvEpi</code></td>
+<td>纵向和生存结局功效</td>
+<td>重复测量标志物和事件结局</td>
+</tr>
+<tr class="even">
+<td><code>gsDesign</code>、<code>rpact</code></td>
+<td>组序贯、适应性和事件驱动设计</td>
+<td>前瞻性临床性能或临床效用研究</td>
+</tr>
+</tbody>
+</table>
+<p>诊断研究的总样本量必须进一步分解为目标状态阳性和阴性人数；患病率、失访、无效样本、聚类、配对设计及多重主要终点都可能增加样本量。</p>
+</section>
+<section id="缺失异常分布与多重性" class="level3" data-number="23.8.2">
+<h3 data-number="23.8.2" class="anchored" data-anchor-id="缺失异常分布与多重性"><span class="header-section-number">23.8.2</span> 缺失、异常、分布与多重性</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>任务</th>
+<th>包</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>缺失模式检查</td>
+<td><code>naniar</code>、<code>VIM</code></td>
+<td>缺失结构的汇总和可视化</td>
+</tr>
+<tr class="even">
+<td>多重插补</td>
+<td><code>mice</code>、<code>Amelia</code></td>
+<td>链式方程或联合模型插补</td>
+</tr>
+<tr class="odd">
+<td>非参数/高维插补</td>
+<td><code>missForest</code>、<code>missMDA</code></td>
+<td>随机森林和多元降维插补</td>
+</tr>
+<tr class="even">
+<td>单变量异常值和分布</td>
+<td><code>outliers</code>、<code>EnvStats</code>、<code>nortest</code></td>
+<td>异常值候选、正态性和分布检验</td>
+</tr>
+<tr class="odd">
+<td>多元异常值</td>
+<td><code>rrcov</code>、<code>mvoutlier</code>、<code>robustbase</code></td>
+<td>稳健距离、协方差和回归</td>
+</tr>
+<tr class="even">
+<td>重采样</td>
+<td><code>boot</code>、<code>rsample</code></td>
+<td>bootstrap、交叉验证和数据划分</td>
+</tr>
+<tr class="odd">
+<td>多重比较</td>
+<td><code>stats</code>、<code>multcomp</code>、<code>emmeans</code></td>
+<td>p 值调整、对比和同时置信区间</td>
+</tr>
+</tbody>
+</table>
+<p>低于检测限、仪器错误、失访和随机缺失不是同一种“NA”。插补模型应包含结局、设计变量和辅助变量，并与主分析模型相容；异常值应先查明技术原因，再决定保留、排除或进行敏感性分析。</p>
+</section>
+</section>
+<section id="数据管理报告与可复现性" class="level2" data-number="23.9">
+<h2 data-number="23.9" class="anchored" data-anchor-id="数据管理报告与可复现性"><span class="header-section-number">23.9</span> 数据管理、报告与可复现性</h2>
+<p>这些包不决定统计方法，但决定分析能否复核。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>环节</th>
+<th>包</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>数据导入和整理</td>
+<td><code>readr</code>、 <code>readxl</code>、 <code>haven</code>、 <code>data.table</code>、 <code>dplyr</code>、 <code>tidyr</code></td>
+<td>仪器导出文件、EDC 数据和分析数据集整理</td>
+</tr>
+<tr class="even">
+<td>数据校验</td>
+<td><code>checkmate</code>、 <code>pointblank</code>、 <code>validate</code>、 <code>assertr</code></td>
+<td>类型、范围、唯一性、逻辑和跨字段规则</td>
+</tr>
+<tr class="odd">
+<td>模型整理</td>
+<td><code>broom</code>、 <code>parameters</code>、 <code>performance</code></td>
+<td>将模型结果转为可追踪表格并检查模型</td>
+</tr>
+<tr class="even">
+<td>医学统计表格</td>
+<td><code>gtsummary</code>、 <code>tableone</code>、 <code>arsenal</code>、 <code>finalfit</code></td>
+<td>基线表、回归表和组间汇总</td>
+</tr>
+<tr class="odd">
+<td>图形</td>
+<td><code>ggplot2</code>、 <code>patchwork</code>、 <code>forestplot</code></td>
+<td>性能图、组合图和森林图</td>
+</tr>
+<tr class="even">
+<td>动态报告</td>
+<td><code>knitr</code>、<code>rmarkdown</code></td>
+<td>代码、结果和文字一体化输出</td>
+</tr>
+<tr class="odd">
+<td>环境锁定</td>
+<td><code>renv</code>、<code>sessioninfo</code></td>
+<td>记录依赖版本和运行环境</td>
+</tr>
+<tr class="even">
+<td>流程编排</td>
+<td><code>targets</code></td>
+<td>建立可增量运行、可审计的分析管线</td>
+</tr>
+</tbody>
+</table>
+<p>正式 IVD 项目至少应保存原始数据只读副本、分析数据生成规则、包版本、函数参数、随机种子、排除记录、输出对象和最终报告。CRAN 发布状态不等同于软件已经过项目级验证。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./022-标准对应关系.html" class="pagination-link" aria-label="标准对应关系">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

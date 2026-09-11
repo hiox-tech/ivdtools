@@ -1,191 +1,81 @@
-
 ![ivdtools logo](logo.jpeg)
 
-# R Package "ivdtools"
+# R Package "ivdtools" 
 
-*Statistical Tools for Evaluation of in Vitro Diagnostic Reagents - R Package*
+## What is ivdtools · 功能介绍
 
-*体外诊断试剂性能评估统计工具 — R 语言工具集*
+`ivdtools` is an R package providing statistical workflows used in the evaluation of in vitro diagnostic (IVD) reagents, covering data inspection, statistical analysis, result summarization, and visualization. The current version requires R >= 4.1.0 and is distributed under the MIT license.
 
-----
+`ivdtools` 是一个用于体外诊断（IVD）试剂评价的 R 软件包，提供数据检查、统计分析、结果汇总和可视化等统计工作流程。当前版本要求 R >= 4.1.0，并采用 MIT 许可证发布。
 
-## Overview · 概述
+The package provides the following analysis modules:
 
-**ivdtools** is an R toolset for **in vitro diagnostic (IVD) reagent performance verification and method comparison**, covering the full workflow from data exploration to statistical analysis and visualization. It follows the **S3 generic + slots** design pattern, providing a unified, consistent API and slot-based result storage.
+该软件包提供以下分析模块：
 
-**ivdtools** 是一套面向**体外诊断（IVD）试剂性能验证与方法学比较**的 R 工具集，覆盖从数据探索、统计分析到可视化呈现的完整工作流。采用 **S3 泛型 + 槽位存储**设计模式，接口风格统一，分析结果自动存入对象槽位。
+| Module · 模块 | Main entry points · 主要入口函数 | Related CLSI guideline · 相关 CLSI 指南 |
+| :---: | :---: | :---: |
+| Method comparison · 方法学比较 | `mcr()` | EP09 |
+| Reference-material commutability · 参考物质互换性 | `commutability()` | EP14, EP30, and IFCC Part 2 |
+| Precision · 精密度 | `precision()` | EP05 and EP15 |
+| Qualitative agreement · 定性一致性 | `raw_to_table()` and others | EP12 |
+| C5/C95 estimation · C5/C95 估计 | `c5_c95()` | EP12 |
+| Reference interval · 参考区间 | `reference_interval()` | EP28 |
+| Stability · 稳定性 | `stability_*()`, `arrhenius()`, `mkt()` | EP25 |
+| Linearity · 线性 | `linearity()` and `linearity_*()` | EP06 |
+| Curve fitting · 曲线拟合 | `fit_equation()` family | General · 通用 |
+| Interference · 干扰 | `interference_*()` | EP07 |
+| Dilution, spiking, and hook effect · 稀释、加标和钩状效应 | `dilution_recovery()`, `spike_recovery()`, `hook_effect()` | EP34 |
+| Measurement uncertainty · 测量不确定度 | `uncertainty_*()` | EP29 |
+| Reference-material bias · 参考物质偏倚 | `reference_bias()` | YY/T 1789.2 |
+| LoB/LoD/LoQ · 空白限、检出限、定量限| `sensitivity_lob()` / `sensitivity_lod()` / `sensitivity_loq()` | EP17 |
+| Bottle-to-bottle ANOVA · 瓶间差方差分析 | `bottle_anova()` | EP15 |
+| ROC analysis · ROC 分析 | `roc()` family | EP24 |
+| Quality control · 质量控制 | `qc_chart()`, `youden_plot()` | Westgard rules · Westgard 规则 |
+| Outliers and normality tests · 异常值与正态性检验 | `outliers_test()`, `normal_test()` | General · 通用 |
+| Sample size · 样本量 | `sample_size_*()` | General · 通用 |
 
-----
+Statistical results should be interpreted in the context of a pre-specified study protocol, applicable standards, and clinical or analytical acceptance limits; they are not a substitute for professional judgment.
 
-## Modules · 模块一览
+统计结果应结合预先规定的研究方案、适用标准以及临床或分析性能接受限进行解释；统计结果不能替代专业判断。
 
-| Module · 模块 | CLSI Standard | S3 Class | Key Functions · 核心函数 | Description · 功能描述 |
-|----|----|----|----|----|
-| **MCR** | EP09 | `mcr` | `mcr()`, `describe()`, `correlation()`, `regression()`, `bland_altman()`, `bias()`, `outlier()`, `plot()`, `summary()` | Method comparison regression (OLS / Deming / Passing-Bablok), Bland-Altman analysis, bias analysis · 方法学比较回归分析，Bland-Altman 分析，偏差分析 |
-| **Precision** | EP05 | `precision` | `precision()`, `variance()`, `ci()`, `profile()`, `outlier()`, `normal()`, `plot()`, `summary()` | Variance component analysis (ANOVA-based VCA), Sadler precision profile fitting · 精密度方差分量分析，Sadler 精密度剖面拟合 |
-| **Qualitative** | EP12 | `fourfold_table` | `raw_to_table()`, `counts_to_table()`, `describe()`, `diagnostics()`, `kappa()`, `mcnemar()`, `summary()` | 2×2 contingency table, diagnostic parameters (sensitivity, specificity, etc.), Kappa agreement, McNemar test · 2×2 四格表、诊断参数、Kappa 一致性、McNemar 检验 |
-| **ROC** | General · 通用 | `roc` | `roc()`, `describe()`, `auc()`, `cutoff()`, `mlr()`, `plot()`, `summary()` | ROC curve, AUC (95% CI), optimal cutoff (Youden index / closest-to-(0,1)), multivariate logistic regression · ROC 曲线、AUC、最佳截断值、多变量 Logistic 回归 |
-| **Reference Interval** | EP28 | `reference_interval` | `reference_interval()`, `print()`, `plot()` | Non-parametric (percentile), parametric (normal), robust (Horn & Pesce) methods · 非参数（百分位数）、参数法（正态）、稳健法 |
-| **Stability** | EP25 | — | `stability_bias()`, `stability_regression()`, `stability_time()`, `mkt()`, `arrhenius()`, `stability_plan()` | Bias analysis, stability regression, time-to-out-of-spec prediction, mean kinetic temperature (MKT), Arrhenius accelerated model · 偏差分析、稳定性回归、超期预测、平均动力学温度、Arrhenius 加速模型 |
-| **Fit/Regression** | EP06 | `fit_equation` | `fit_equation()`, `list_equation()`, `coef()`, `predict()`, `residuals()`, `plot()`, `compare_equation()` | Response curve fitting (linear, exponential, 4PLC, 5PLC, etc.), Sadler variance function, weighted fitting · 响应曲线拟合、权重拟合、参数约束 |
-| **Bottle/Batch ANOVA** | EP15 | `bottle_anova` | `bottle_anova()`, `tukey()`, `print()` | One-way & nested ANOVA, post-hoc Tukey HSD, compact letter display · 单向和嵌套 ANOVA、事后 Tukey HSD、紧凑字母标记 |
-| **QC** | Westgard | — | `list_westgard()`, `qc_chart()`, `youden_plot()` | Westgard rules, Levey-Jennings chart, Youden plot · Westgard 规则、Levey-Jennings 图、Youden 图 |
-| **Analytical Sensitivity** | EP17 | `sensitivity` | `lob_lod_loq()` | LoB, LoD, LoQ 空白限、检出限、定量限 |
-| **Sample Size** | General · 通用 | — | `sample_size_bland_altman()`, `sample_size_proportion_ci()`, `sample_size_proportion()` | Bland-Altman agreement sample size (Lu et al.), single proportion CI, one-arm target value test · Bland-Altman 一致性样本量、单比例置信区间、单臂目标值检验 |
-| **Outliers & Normality** | General · 通用 | — | `outliers_test()`, `normal_test()` | Grubbs / ESD / Dixon Q / IQR outlier tests; Shapiro-Wilk / AD / Lilliefors / Cramer–von Mises normality tests with QQ plots · 离群值检测和正态性检验（含 QQ 图） |
+## Online documentation · 在线文档
 
-----
+Detailed tutorials covering data import, analysis environment setup, and complete worked examples for every analysis module are available:
 
-## Design Philosophy · 设计理念
+这里提供涵盖数据导入、分析环境配置以及各分析模块完整操作示例的详细教程：
 
-### S3 Generics + Slot Storage · S3 泛型 + 槽位存储
+English handbook · 英文手册：<https://hiox-tech.github.io/ivdtools/>
 
-Each analysis module centers on an **S3 class** object. Results from every analysis step are automatically stored in **named slots** within the object, allowing:
+Chinese handbook · 中文手册：<https://ivdtools.hiox-tech.cn/>
 
-- **Step-by-step pipelining**: run analyses incrementally, results accumulate in the object
-- **Unified plotting**: `plot()` provides a single entry point for all visualizations
-- **Summary output**: `summary()` prints all stored results at once
+Manual · 软件包手册：<https://cran.r-project.org/web/packages/ivdtools/refman/ivdtools.html>
 
-每个分析模块围绕一个 **S3 类对象**构建。每次分析的中间与最终结果自动存入对象的命名**槽位**中，支持：
+## Homepage · 项目主页
 
-- **逐步流水线式分析**：分析结果不断追加到对象中
-- **统一绘图入口**：所有可视化通过 `plot()` 统一调用
-- **一键汇总输出**：`summary()` 打印全部已存储的分析结果
+For PDF manuals, cheatsheets and more resources, visit:
 
-### Module Structure · 模块结构
+如需获取 PDF 手册、速查表及其他资源，请访问：
 
-```         
-Constructor        → S3 object with print slot auto-filled
-  ↓
-Generics           → describe / regression / correlation / … (each fills one slot)
-  ↓
-summary()          → prints all filled slots (does not fill any itself)
-plot()             → unified plotting entry (requires prior analysis for some plot types)
-```
+GitHub · 英文：<https://github.com/hiox-tech/ivdtools>
 
-----
+Gitee · 中文：<https://gitee.com/hiox-tech/ivdtools>
 
-## Getting Started · 快速开始
+CRAN：<https://CRAN.R-project.org/package=ivdtools>
 
-``` r
-install.packages("ivdtools")
-library("ivdtools")
-```
+## Feedback · 反馈
 
-### Example: MCR (Method Comparison) · 方法学比较示例
+Bug reports, feature requests, and feedback:
 
-``` r
-# Load data and create mcr object · 载入数据并创建对象
-data <- read.csv("comparison_data.csv")
-obj <- mcr(data, id = "sample_id",
-           candidate = "new_method",
-           reference = "standard_method")
+如需报告错误、提出功能请求或反馈意见，请访问：
 
-# Step-by-step analysis · 逐步分析
-obj <- describe(obj)           # data description · 数据描述
-obj <- correlation(obj)        # correlation analysis · 相关分析
-obj <- regression(obj)         # regression (OLS/Deming/PB) · 回归分析
-obj <- bland_altman(obj)       # Bland-Altman analysis · BA 分析
-obj <- outlier(obj)            # outlier detection · 离群值检测
-obj <- bias(obj)               # bias analysis · 偏差分析
+<https://github.com/hiox-tech/ivdtools/issues>
 
-# Unified outputs · 统一输出
-summary(obj)                   # print all results · 打印全部结果
-plot(obj)
-plot(obj, type = "regression") # specific plot · 指定绘图类型
-plot(obj, type = "bland_altman")
-```
+## Author · 作者与联系方式
 
-### Example: Precision (VCA) · 精密度分析示例
-
-``` r
-obj <- precision(data, form = y ~ day/run, by = "sample")
-
-obj <- outlier(obj)            # outlier detection · 离群值检测
-obj <- normal(obj)             # normality test · 正态性检验
-obj <- variance(obj)           # VCA · 方差分量分析
-obj <- ci(obj)                 # confidence intervals · 置信区间
-obj <- profile(obj)            # Sadler precision profile · 精密度剖面
-
-summary(obj)
-plot(obj, type = "dot")        # run-order scatter · 运行顺序散点图
-plot(obj, type = "var")    # VCA bar chart · VCA 条形图
-plot(obj, type = "profile")    # precision profile · 精密度剖面图
-```
-
-### Example: ROC · ROC 曲线示例
-
-``` r
-obj <- roc(data, cols = c("marker1", "marker2"),
-           reference = "gold_standard")
-
-obj <- describe(obj)           # data description · 数据描述
-obj <- auc(obj)                # AUC · AUC 计算
-obj <- cutoff(obj)             # optimal cutoff · 最佳截断值
-obj <- mlr(obj)                # multivariate logistic regression · 多变量 Logistic 回归
-
-summary(obj)
-plot(obj)
-```
-
-### Example: Qualitative Analysis · 定性分析示例
-
-``` r
-# From raw data · 从原始数据构建
-obj <- raw_to_table(data,
-                    candidate = "method_new",
-                    reference = "method_standard",
-                    positive = "positive")
-
-# Or from counts · 或从计数值构建  
-obj <- counts_to_table(tp = 45, fp = 3, tn = 97, fn = 5,
-                       positive = "positive")
-
-obj <- describe(obj)           # data summary · 数据描述
-obj <- diagnostics(obj)        # diagnostic parameters · 诊断参数
-obj <- kappa(obj)              # Kappa agreement · Kappa 一致性
-obj <- mcnemar(obj)            # McNemar test · McNemar 检验
-
-summary(obj)
-```
+**hiox-tech** <GeorgeBinDragon@outlook.com>
 
 ---
-## AI Skills (Codex, Claude) · AI自动分析
-
-The `ivdtools` R package provides statistical functions, while the `ivdtools-analysis` Skill provides a constrained automated analysis workflow for AI. Once the user supplies the data file, study design, and analysis requirements, the Skill uses `ivdtools` as its statistical engine to organize data pre-check, parameter confirmation, statistical analysis, result verification, and Chinese report generation.
-
-`ivdtools` R 包提供统计函数，`ivdtools-analysis` Skill 则面向 AI 提供一套受约束的 自动分析工作流。用户给出数据文件、研究设计和分析要求后，Skill 以 `ivdtools` 为统计 引擎，组织数据预检、参数确认、统计分析、结果核验和中文报告生成。
-
-The value of using the Skill in a conversation is not to "replace statistical judgment" but to standardize repetitive technical steps, and to save the data source, analysis parameters, excluded records, warnings, result tables, figures, and software environment together, reducing the risk of omissions and manual copy errors.
-
-在对话中使用 Skill 的价值不是“替代统计判断”，而是把重复的技术步骤标准化，并将数据 来源、分析参数、排除记录、警告、结果表、图形和软件环境一起保存，降低遗漏和手工复制 错误的风险。
-
----
-
-## Dependencies · 依赖
-
-| Package | Module | Purpose |
-|----|----|----|
-| `ggplot2` | QC, Fit, Stability, Reference Interval, MCR, ROC | Visualization · 可视化 |
-| `VCA` | Precision | Variance component analysis · 方差分量分析 |
-| `VFP` | Precision, Fit | Sadler precision profile fitting · Sadler 精密度剖面拟合 |
-| `minpack.lm` | Fit | Nonlinear least squares (Levenberg-Marquardt) · 非线性最小二乘 |
-| `nloptr` | Fit | Constrained optimization · 约束优化 |
-| `nls2` | Fit | Robust starting values for NLS · NLS 稳健初值 |
-
-----
-
-## License · 许可
-
-MIT License
-
-## Author · 作者
-
-[hiox-tech](https://github.com/hiox-tech)
-
-----
 
 *Built for IVD reagent evaluation — designed for reproducibility and clarity.*
 
-*为 IVD 试剂评估构建 — 追求清晰可复现。*
-
+*为 IVD 试剂评估构建——追求清晰与可复现。*

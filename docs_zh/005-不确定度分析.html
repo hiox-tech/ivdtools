@@ -1,0 +1,2541 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; 不确定度分析 – “ivdtools” 使用指引</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./006-基质效应与互换性.html" rel="next">
+<link href="./004-稳定性研究.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-644e816dc738f354856c0b4d61e2aec4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/book.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-不确定度分析.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">“ivdtools” 使用指引</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hiox-tech/ivdtools" title="源代码" class="quarto-navigation-tool px-1" aria-label="源代码"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-ivdtools包总体介绍.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">ivdtools包总体介绍</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-分析环境安装与使用.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">分析环境安装与使用</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-校准曲线拟合.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">校准曲线拟合</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-稳定性研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-不确定度分析.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-基质效应与互换性.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-干扰研究.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">干扰研究</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-稀释回收与HOOK.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">稀释回收与HOOK</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-方法学比较与参考物偏倚.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">方法学比较与参考物偏倚</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-质量控制.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">质量控制</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-ROC曲线与cutoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ROC 曲线与 cutoff</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-ROC曲线与多元回归.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">ROC 曲线与多元回归</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-精密度分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">精密度分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-线性分析.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">线性分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-定性分析与C5C95.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">定性分析与 C5/C95</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-检出限定量限.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">检出限/定量限</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-参考区间.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">参考区间</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./018-瓶间差.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">瓶间差分析</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./019-临床样本量计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">临床样本量计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./020-异常值与正态检验.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">异常值与正态检验</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./021-算法原理简介.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">算法原理简介</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./022-标准对应关系.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">标准对应关系</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./023-IVD适用R包综述.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">IVD 适用 R 包综述</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#主要函数" id="toc-主要函数" class="nav-link active" data-scroll-target="#主要函数"><span class="header-section-number">5.1</span> 主要函数</a>
+  <ul>
+  <li><a href="#重复测量的-a-类分量-uncertainty_type_a" id="toc-重复测量的-a-类分量-uncertainty_type_a" class="nav-link" data-scroll-target="#重复测量的-a-类分量-uncertainty_type_a"><span class="header-section-number">5.1.1</span> 重复测量的 A 类分量 <code>uncertainty_type_a()</code></a></li>
+  <li><a href="#证书或规格的-b-类分量-uncertainty_type_b" id="toc-证书或规格的-b-类分量-uncertainty_type_b" class="nav-link" data-scroll-target="#证书或规格的-b-类分量-uncertainty_type_b"><span class="header-section-number">5.1.2</span> 证书或规格的 B 类分量 <code>uncertainty_type_b()</code></a></li>
+  <li><a href="#长期-iqc-分量-uncertainty_iqc" id="toc-长期-iqc-分量-uncertainty_iqc" class="nav-link" data-scroll-target="#长期-iqc-分量-uncertainty_iqc"><span class="header-section-number">5.1.3</span> 长期 IQC 分量 <code>uncertainty_iqc()</code></a></li>
+  <li><a href="#瓶间均匀性分量-uncertainty_homogeneity" id="toc-瓶间均匀性分量-uncertainty_homogeneity" class="nav-link" data-scroll-target="#瓶间均匀性分量-uncertainty_homogeneity"><span class="header-section-number">5.1.4</span> 瓶间均匀性分量 <code>uncertainty_homogeneity()</code></a></li>
+  <li><a href="#稳定性趋势分量-uncertainty_stability" id="toc-稳定性趋势分量-uncertainty_stability" class="nav-link" data-scroll-target="#稳定性趋势分量-uncertainty_stability"><span class="header-section-number">5.1.5</span> 稳定性趋势分量 <code>uncertainty_stability()</code></a></li>
+  <li><a href="#多实验室定值分量-uncertainty_characterization" id="toc-多实验室定值分量-uncertainty_characterization" class="nav-link" data-scroll-target="#多实验室定值分量-uncertainty_characterization"><span class="header-section-number">5.1.6</span> 多实验室定值分量 <code>uncertainty_characterization()</code></a></li>
+  <li><a href="#单节点合成-uncertainty_combine" id="toc-单节点合成-uncertainty_combine" class="nav-link" data-scroll-target="#单节点合成-uncertainty_combine"><span class="header-section-number">5.1.7</span> 单节点合成 <code>uncertainty_combine()</code></a></li>
+  <li><a href="#非线性测量模型-uncertainty_propagate" id="toc-非线性测量模型-uncertainty_propagate" class="nav-link" data-scroll-target="#非线性测量模型-uncertainty_propagate"><span class="header-section-number">5.1.8</span> 非线性测量模型 <code>uncertainty_propagate()</code></a></li>
+  <li><a href="#计量溯源链累计-uncertainty_traceability" id="toc-计量溯源链累计-uncertainty_traceability" class="nav-link" data-scroll-target="#计量溯源链累计-uncertainty_traceability"><span class="header-section-number">5.1.9</span> 计量溯源链累计 <code>uncertainty_traceability()</code></a></li>
+  </ul></li>
+  <li><a href="#分析案例" id="toc-分析案例" class="nav-link" data-scroll-target="#分析案例"><span class="header-section-number">5.2</span> 分析案例</a>
+  <ul>
+  <li><a href="#clsi-ep29-a-附录-atype-b-限值转换" id="toc-clsi-ep29-a-附录-atype-b-限值转换" class="nav-link" data-scroll-target="#clsi-ep29-a-附录-atype-b-限值转换"><span class="header-section-number">5.2.1</span> CLSI EP29-A 附录 A：Type B 限值转换</a></li>
+  <li><a href="#clsi-ep29-a-附录-b胆固醇-iqc" id="toc-clsi-ep29-a-附录-b胆固醇-iqc" class="nav-link" data-scroll-target="#clsi-ep29-a-附录-b胆固醇-iqc"><span class="header-section-number">5.2.2</span> CLSI EP29-A 附录 B：胆固醇 IQC</a></li>
+  <li><a href="#clsi-ep29-a-example-13测量模型传播" id="toc-clsi-ep29-a-example-13测量模型传播" class="nav-link" data-scroll-target="#clsi-ep29-a-example-13测量模型传播"><span class="header-section-number">5.2.3</span> CLSI EP29-A Example 1～3：测量模型传播</a></li>
+  <li><a href="#clsi-ep29-a-example-4单因素-anova-与-iqc-不确定度" id="toc-clsi-ep29-a-example-4单因素-anova-与-iqc-不确定度" class="nav-link" data-scroll-target="#clsi-ep29-a-example-4单因素-anova-与-iqc-不确定度"><span class="header-section-number">5.2.4</span> CLSI EP29-A Example 4：单因素 ANOVA 与 IQC 不确定度</a></li>
+  <li><a href="#clsi-ep29-a-example-56偏倚估计及偏倚校正不确定度" id="toc-clsi-ep29-a-example-56偏倚估计及偏倚校正不确定度" class="nav-link" data-scroll-target="#clsi-ep29-a-example-56偏倚估计及偏倚校正不确定度"><span class="header-section-number">5.2.5</span> CLSI EP29-A Example 5～6：偏倚估计及偏倚校正不确定度</a></li>
+  <li><a href="#clsi-ep29-a-example-10肌酐清除率不确定度传播" id="toc-clsi-ep29-a-example-10肌酐清除率不确定度传播" class="nav-link" data-scroll-target="#clsi-ep29-a-example-10肌酐清除率不确定度传播"><span class="header-section-number">5.2.6</span> CLSI EP29-A Example 10：肌酐清除率不确定度传播</a></li>
+  <li><a href="#clsi-ep29-a-example-11线性回归预测方程" id="toc-clsi-ep29-a-example-11线性回归预测方程" class="nav-link" data-scroll-target="#clsi-ep29-a-example-11线性回归预测方程"><span class="header-section-number">5.2.7</span> CLSI EP29-A Example 11：线性回归预测方程</a></li>
+  <li><a href="#yyt-1709校准物均匀性稳定性和定值不确定度" id="toc-yyt-1709校准物均匀性稳定性和定值不确定度" class="nav-link" data-scroll-target="#yyt-1709校准物均匀性稳定性和定值不确定度"><span class="header-section-number">5.2.8</span> YY/T 1709：校准物均匀性、稳定性和定值不确定度</a>
+  <ul class="collapse">
+  <li><a href="#附录-a均匀性引入的不确定度" id="toc-附录-a均匀性引入的不确定度" class="nav-link" data-scroll-target="#附录-a均匀性引入的不确定度"><span class="header-section-number">5.2.8.1</span> 附录 A：均匀性引入的不确定度</a></li>
+  <li><a href="#附录-b稳定性引入的不确定度" id="toc-附录-b稳定性引入的不确定度" class="nav-link" data-scroll-target="#附录-b稳定性引入的不确定度"><span class="header-section-number">5.2.8.2</span> 附录 B：稳定性引入的不确定度</a></li>
+  <li><a href="#附录-c定值不确定度合成" id="toc-附录-c定值不确定度合成" class="nav-link" data-scroll-target="#附录-c定值不确定度合成"><span class="header-section-number">5.2.8.3</span> 附录 C：定值不确定度合成</a></li>
+  <li><a href="#附录-ac与-yyt-1709-原文结果对照" id="toc-附录-ac与-yyt-1709-原文结果对照" class="nav-link" data-scroll-target="#附录-ac与-yyt-1709-原文结果对照"><span class="header-section-number">5.2.8.4</span> 附录 A～C：与 YY/T 1709 原文结果对照</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">不确定度分析</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本文演示如何使用 ivdtools 包建立测量不确定度分量、传播测量模型、合成不确定度预算，并沿计量溯源阶段汇总结果。内容覆盖 A 类和 B 类评价、长期 IQC、瓶间均匀性、稳定性、多实验室定值以及单节点和逐级预算。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="使用边界">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>使用边界
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>本文中的普通数据和标准案例数据仅用于验证分析流程。uncertainty_* 系列函数计算标准不确定度、合成不确定度和扩展不确定度，不替代被测量定义、实验设计、临床接受标准、法规评价或产品放行结论。正式报告必须说明被测量、单位、结果是单次值还是均值、各分量的来源、分布、自由度、覆盖因子和相关性假设。</p>
+<p>标准案例的数值以标准原文为依据；每个案例均将 ivdtools 计算结果与标准原文结果逐项比较。标准原文的中间舍入、统计口径或近似方法与函数默认计算不同而产生的差异，会在对照表后单独说明。</p>
+</div>
+</div>
+<p>测量不确定度分析首先明确输出量和测量模型，再把不同来源的信息转换为标准不确定度分量：</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {"theme":"base","themeVariables":{"primaryColor":"#EAF2FB","primaryBorderColor":"#2780E3","primaryTextColor":"#212529","lineColor":"#6C757D","secondaryColor":"#EAF7E6","tertiaryColor":"#FFF4E8","fontSize":"13px"},"flowchart":{"nodeSpacing":18,"rankSpacing":24,"padding":6}}}%%
+
+flowchart LR
+    A["重复、证书、IQC&lt;br/&gt;均匀性、稳定性、定值"]
+    B["各 uncertainty_*() 函数&lt;br/&gt;转换为标准不确定度分量"]
+    C["uncertainty_combine()&lt;br/&gt;单节点预算"]
+    D["uncertainty_propagate()&lt;br/&gt;测量模型传播"]
+    E["uncertainty_traceability()&lt;br/&gt;逐级溯源预算"]
+
+    A --&gt; B
+    B --&gt; C
+    B --&gt; D --&gt; C
+    C --&gt; E
+
+    classDef source fill:#EAF2FB,stroke:#2780E3,color:#212529
+    classDef function fill:#EAF7E6,stroke:#3FB618,color:#212529
+    classDef result fill:#F4EEFB,stroke:#9954BB,color:#212529
+
+    class A source
+    class B,C,D function
+    class E result
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>设输入量的标准不确定度为 <span class="math inline">\(u_i\)</span>，灵敏度系数为 <span class="math inline">\(c_i\)</span>，则在独立假设下，合成标准不确定度可表示为：</p>
+<p><span class="math display">\[u_c = \sqrt{\sum_i (c_i u_i)^2}\]</span></p>
+<p>有相关性时还应加入协方差项。扩展不确定度为：</p>
+<p><span class="math display">\[U = k u_c\]</span></p>
+<p>其中 <span class="math inline">\(k\)</span> 为覆盖因子。relative = TRUE 保存相对标准不确定度；相对分量和绝对分量混合时，应向 uncertainty_combine() 提供结果量值 value。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ivdtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="主要函数" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="主要函数"><span class="header-section-number">5.1</span> 主要函数</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>函数</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>uncertainty_type_a()</td>
+<td>由重复测量估计 A 类分量</td>
+</tr>
+<tr class="even">
+<td>uncertainty_type_b()</td>
+<td>由证书、上下限或分布估计 B 类分量</td>
+</tr>
+<tr class="odd">
+<td>uncertainty_iqc()</td>
+<td>从长期 IQC 提取批内、批间和综合分量</td>
+</tr>
+<tr class="even">
+<td>uncertainty_homogeneity()</td>
+<td>评价瓶间或单元间均匀性</td>
+</tr>
+<tr class="odd">
+<td>uncertainty_stability()</td>
+<td>由时间趋势估计货架期稳定性分量</td>
+</tr>
+<tr class="even">
+<td>uncertainty_characterization()</td>
+<td>由多实验室结果估计定值分量</td>
+</tr>
+<tr class="odd">
+<td>uncertainty_combine()</td>
+<td>合成一个结果节点的不确定度预算</td>
+</tr>
+<tr class="even">
+<td>uncertainty_propagate()</td>
+<td>传播除法、乘法或其他测量模型</td>
+</tr>
+<tr class="odd">
+<td>uncertainty_traceability()</td>
+<td>沿溯源阶段逐级累计新增分量</td>
+</tr>
+</tbody>
+</table>
+<section id="重复测量的-a-类分量-uncertainty_type_a" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="重复测量的-a-类分量-uncertainty_type_a"><span class="header-section-number">5.1.1</span> 重复测量的 A 类分量 <code>uncertainty_type_a()</code></h3>
+<p>quantity = “single” 使用重复结果的样本标准差，描述未来单次结果；quantity = “mean” 使用标准误，描述这组重复结果的均值。二者对应的被报告量不同。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>repeatability <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_a</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">99.5</span>, <span class="fl">100.2</span>, <span class="fl">100.0</span>, <span class="fl">99.8</span>, <span class="fl">100.1</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"重复测量"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="st">"mean"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>repeatability</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Uncertainty component
+  Name                 : 重复测量
+  Estimate             : 99.92
+  Standard uncertainty : 0.0012419609
+  Relative uncertainty : 0.0012419609
+  Degrees of freedom   : 4
+  Evaluation type      : A
+  Distribution         : normal
+  Source               : replicate measurements: mean
+  Relative             : TRUE</code></pre>
+</div>
+</div>
+<p>返回对象包含估计值、标准不确定度、相对标准不确定度、自由度、评价类型、分布和来源等字段。非有限值会被排除，但正式分析仍应保存原始数据和排除记录。</p>
+</section>
+<section id="证书或规格的-b-类分量-uncertainty_type_b" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="证书或规格的-b-类分量-uncertainty_type_b"><span class="header-section-number">5.1.2</span> 证书或规格的 B 类分量 <code>uncertainty_type_b()</code></h3>
+<p>当证书直接给出扩展不确定度时，必须提供证书对应的 k；当只有上下限时，应根据证书、规格或科学依据选择分布。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>certificate <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"校准品证书"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="dv">100</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">uncertainty =</span> <span class="dv">2</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"normal"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>pipette <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"移液器容量"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="dv">10</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="fl">9.9</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> <span class="fl">10.1</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"rectangular"</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>certificate</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Uncertainty component
+  Name                 : 校准品证书
+  Estimate             : 100
+  Standard uncertainty : 0.01
+  Relative uncertainty : 0.01
+  Degrees of freedom   : Inf
+  Evaluation type      : B
+  Distribution         : normal
+  Source               : expanded uncertainty
+  Relative             : TRUE</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pipette</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Uncertainty component
+  Name                 : 移液器容量
+  Estimate             : 10
+  Standard uncertainty : 0.057735027
+  Relative uncertainty : 0.0057735027
+  Degrees of freedom   : Inf
+  Evaluation type      : B
+  Distribution         : rectangular
+  Source               : interval limits
+  Relative             : FALSE</code></pre>
+</div>
+</div>
+<p>区间分布的标准不确定度由区间半宽和分布假设共同决定。正态或 Student t 区间还需要明确覆盖概率和自由度。</p>
+</section>
+<section id="长期-iqc-分量-uncertainty_iqc" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="长期-iqc-分量-uncertainty_iqc"><span class="header-section-number">5.1.3</span> 长期 IQC 分量 <code>uncertainty_iqc()</code></h3>
+<p>有运行批次和批内重复时，函数使用单因素随机效应 ANOVA 分解批内和批间变异；没有 run 列或每个运行只有一个结果时，直接使用长期结果的离散程度。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>iqc_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="fu">c</span>(<span class="dv">99</span>, <span class="dv">101</span>, <span class="dv">100</span>, <span class="dv">102</span>, <span class="dv">98</span>, <span class="dv">100</span>, <span class="dv">101</span>, <span class="dv">103</span>, <span class="dv">99</span>, <span class="dv">100</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>iqc_component <span class="ot">&lt;-</span> <span class="fu">uncertainty_iqc</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  iqc_data,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="st">"single"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"长期 IQC"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>iqc_component</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+IQC uncertainty
+  Method                    : one-way ANOVA
+  Observations              : 10
+  Runs                      : 5
+  Within-run SD             : 1.3038405
+  Between-run SD            : 0.77459667
+  Single-result uncertainty : 1.5165751
+  Mean uncertainty          : 0.53851648</code></pre>
+</div>
+</div>
+<p>IQC 水平应代表被报告结果的浓度水平。失控期间是否排除必须由预先规定的质量程序决定；如果 IQC 已包含某个校准或批间来源，不应把相同来源再次作为独立分量加入。</p>
+</section>
+<section id="瓶间均匀性分量-uncertainty_homogeneity" class="level3" data-number="5.1.4">
+<h3 data-number="5.1.4" class="anchored" data-anchor-id="瓶间均匀性分量-uncertainty_homogeneity"><span class="header-section-number">5.1.4</span> 瓶间均匀性分量 <code>uncertainty_homogeneity()</code></h3>
+<p>数据应为长格式，每个包装单元通常包含多次重复测量。函数返回均方、重复性标准差、观察到的单元间标准差、隐含不均匀性和最终的 u_bb。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>homogeneity_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">bottle =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"B"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="fu">c</span>(<span class="dv">99</span>, <span class="dv">100</span>, <span class="dv">101</span>, <span class="dv">100</span>, <span class="dv">98</span>, <span class="dv">99</span>, <span class="dv">102</span>, <span class="dv">101</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>homogeneity_component <span class="ot">&lt;-</span> <span class="fu">uncertainty_homogeneity</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  homogeneity_data,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">"bottle"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"瓶间均匀性"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>homogeneity_component</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Between-unit homogeneity uncertainty
+  Units                             : 4
+  Results                           : 8
+  Mean                              : 100
+  Effective degrees of freedom      : 2
+  Average replicates                : 2
+  Within-unit mean square           : 0.5
+  Between-unit mean square          : 3.3333333
+  Within-unit degrees of freedom    : 4
+  Between-unit degrees of freedom   : 3
+  Repeatability SD                  : 0.70710678
+  Between-unit SD                   : 1.1902381
+  Hidden inhomogeneity              : 0.42044821
+  Between-unit uncertainty          : 1.1902381
+  Relative repeatability            : 0.0070710678
+  Relative between-unit             : 0.011902381
+  Relative hidden inhomogeneity     : 0.0042044821
+  Relative between-unit uncertainty : 0.011902381</code></pre>
+</div>
+</div>
+<p>均匀性结果还取决于抽样方式、测量顺序和最小取样量。函数不会自动证明取样方案足以代表整批产品。</p>
+</section>
+<section id="稳定性趋势分量-uncertainty_stability" class="level3" data-number="5.1.5">
+<h3 data-number="5.1.5" class="anchored" data-anchor-id="稳定性趋势分量-uncertainty_stability"><span class="header-section-number">5.1.5</span> 稳定性趋势分量 <code>uncertainty_stability()</code></h3>
+<p>函数拟合：</p>
+<p><span class="math display">\[result = intercept + slope \times time\]</span></p>
+<p>目标货架期上的趋势不确定度为斜率标准误乘以货架期。shelf_life 与 time 必须使用同一时间单位。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>stability_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">rep</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="fu">c</span>(<span class="fl">100.1</span>, <span class="fl">99.9</span>, <span class="fl">100.0</span>, <span class="fl">99.8</span>, <span class="fl">99.7</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>             <span class="fl">99.9</span>, <span class="fl">99.6</span>, <span class="fl">99.8</span>, <span class="fl">99.5</span>, <span class="fl">99.7</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>stability_component <span class="ot">&lt;-</span> <span class="fu">uncertainty_stability</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  stability_data,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="st">"time"</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">shelf_life =</span> <span class="dv">6</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"6个月长期稳定性"</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>stability_component</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Stability uncertainty
+  Condition                      : all
+  Observations                   : 10
+  Minimum time                   : 0
+  Maximum time                   : 4
+  Shelf life                     : 6
+  Intercept                      : 100
+  Slope                          : -0.1
+  Mean                           : 99.8
+  Slope SE                       : 0.025
+  Residual SD                    : 0.1118034
+  Degrees of freedom             : 8
+  Long-term uncertainty          : 0.15
+  Relative long-term uncertainty : 0.001503006</code></pre>
+</div>
+</div>
+<p>严重超出实际观察范围的外推需要单独论证。多个储存条件通常表示不同情景，不能不加判断地把所有条件的组件同时相加。</p>
+</section>
+<section id="多实验室定值分量-uncertainty_characterization" class="level3" data-number="5.1.6">
+<h3 data-number="5.1.6" class="anchored" data-anchor-id="多实验室定值分量-uncertainty_characterization"><span class="header-section-number">5.1.6</span> 多实验室定值分量 <code>uncertainty_characterization()</code></h3>
+<p>函数先计算每个实验室的均值，再对实验室均值等权汇总。某个实验室重复次数更多不会自动获得更大权重。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>characterization_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">laboratory =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"Lab"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">each =</span> <span class="dv">3</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="fu">c</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">99</span>, <span class="dv">100</span>, <span class="dv">101</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">100</span>, <span class="dv">101</span>, <span class="dv">100</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">98</span>, <span class="dv">99</span>, <span class="dv">100</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">101</span>, <span class="dv">102</span>, <span class="dv">101</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>characterization_component <span class="ot">&lt;-</span> <span class="fu">uncertainty_characterization</span>(</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  characterization_data,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">laboratory =</span> <span class="st">"laboratory"</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"多实验室定值"</span>,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>characterization_component</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Characterization uncertainty
+  laboratories         : 4
+  assigned_value       : 100.16667
+  laboratory_sd        : 0.96225045
+  standard_uncertainty : 0.48112522</code></pre>
+</div>
+</div>
+</section>
+<section id="单节点合成-uncertainty_combine" class="level3" data-number="5.1.7">
+<h3 data-number="5.1.7" class="anchored" data-anchor-id="单节点合成-uncertainty_combine"><span class="header-section-number">5.1.7</span> 单节点合成 <code>uncertainty_combine()</code></h3>
+<p>uncertainty_combine() 适用于组件已经表达在同一输出尺度的情况。sensitivity 表示输入变化对输出的局部影响；correlation 用于提供输入量之间的相关矩阵。默认相关矩阵为单位矩阵，即假设分量相互独立。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>budget <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  repeatability,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  certificate,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  homogeneity_component<span class="sc">$</span>component,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">100</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">coverage =</span> <span class="fl">0.95</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>budget</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Combined uncertainty budget
+  Scale: absolute
+  Combined standard uncertainty: 1.55952
+  Expanded uncertainty: 3.11903 (k = 2, 95.0%)
+
+  Component: 重复测量
+    Estimate                     : 99.92
+    Standard uncertainty         : 0.0012419609
+    Relative uncertainty         : 0.0012419609
+    Degrees of freedom           : 4
+    Evaluation type              : A
+    Distribution                 : normal
+    Source                       : replicate measurements: mean
+    Relative                     : TRUE
+    Sensitivity                  : 1
+    Uncertainty on output scale  : 0.12419609
+    Signed variance contribution : 0.01542467
+    Contribution percent         : 0.63421424
+
+  Component: 校准品证书
+    Estimate                     : 100
+    Standard uncertainty         : 0.01
+    Relative uncertainty         : 0.01
+    Degrees of freedom           : Inf
+    Evaluation type              : B
+    Distribution                 : normal
+    Source                       : expanded uncertainty
+    Relative                     : TRUE
+    Sensitivity                  : 1
+    Uncertainty on output scale  : 1
+    Signed variance contribution : 1
+    Contribution percent         : 41.116877
+
+  Component: 瓶间均匀性
+    Estimate                     : 100
+    Standard uncertainty         : 0.011902381
+    Relative uncertainty         : 0.011902381
+    Degrees of freedom           : 3
+    Evaluation type              : A
+    Distribution                 : normal
+    Source                       : EP30 homogeneity ANOVA
+    Relative                     : TRUE
+    Sensitivity                  : 1
+    Uncertainty on output scale  : 1.1902381
+    Signed variance contribution : 1.4166667
+    Contribution percent         : 58.248909</code></pre>
+</div>
+</div>
+<p>预算对象还保存有效自由度、覆盖因子、协方差矩阵和各分量在输出尺度上的贡献。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(budget)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-不确定度分析_files/figure-html/combine-budget-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="非线性测量模型-uncertainty_propagate" class="level3" data-number="5.1.8">
+<h3 data-number="5.1.8" class="anchored" data-anchor-id="非线性测量模型-uncertainty_propagate"><span class="header-section-number">5.1.8</span> 非线性测量模型 <code>uncertainty_propagate()</code></h3>
+<p>对于比值、乘积、幂函数、对数或其他非线性测量模型，可用 uncertainty_propagate() 自动计算灵敏度并传播输入不确定度。组件名称必须与测量模型的形参名一致且唯一。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mass <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mass"</span>, <span class="at">estimate =</span> <span class="dv">20</span>, <span class="at">uncertainty =</span> <span class="fl">0.2</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>volume <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"volume"</span>, <span class="at">estimate =</span> <span class="dv">4</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>concentration_delta <span class="ot">&lt;-</span> <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="cf">function</span>(mass, volume) mass <span class="sc">/</span> volume,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">components =</span> <span class="fu">list</span>(mass, volume),</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"delta"</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>concentration_delta</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Uncertainty propagation
+  Method: delta
+  Model estimate: 5
+  Standard uncertainty: 0.134629
+  95.0% interval: [4.73613, 5.26387]</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>concentration_mc <span class="ot">&lt;-</span> <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="cf">function</span>(mass, volume) mass <span class="sc">/</span> volume,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">components =</span> <span class="fu">list</span>(mass, volume),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"monte_carlo"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">simulations =</span> <span class="dv">10000</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">20260901</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>concentration_mc</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Uncertainty propagation
+  Method: monte_carlo
+  Model estimate: 5
+  Standard uncertainty: 0.13615
+  95.0% interval: [4.75089, 5.28508]</code></pre>
+</div>
+</div>
+<p>delta 方法适合输入不确定度较小且模型在估计值附近近似线性的情况。Monte Carlo 可用于输出分布明显偏斜或需要非对称覆盖区间的场景；正式报告应保存模拟次数、随机种子、分布和相关结构。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(concentration_delta, <span class="at">type =</span> <span class="st">"contribution"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-不确定度分析_files/figure-html/propagate-budget-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(concentration_mc, <span class="at">type =</span> <span class="st">"distribution"</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-不确定度分析_files/figure-html/propagate-budget-plot-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="计量溯源链累计-uncertainty_traceability" class="level3" data-number="5.1.9">
+<h3 data-number="5.1.9" class="anchored" data-anchor-id="计量溯源链累计-uncertainty_traceability"><span class="header-section-number">5.1.9</span> 计量溯源链累计 <code>uncertainty_traceability()</code></h3>
+<p>uncertainty_traceability() 按阶段记录新增分量，并返回每个阶段的累计预算。阶段名称应与质量体系中的校准链节点保持一致。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>trace <span class="ot">&lt;-</span> <span class="fu">uncertainty_traceability</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">stages =</span> <span class="fu">list</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference =</span> <span class="fu">list</span>(certificate),</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">assignment =</span> <span class="fu">list</span>(repeatability),</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">release =</span> <span class="fu">list</span>(homogeneity_component<span class="sc">$</span>component)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">100</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">coverage =</span> <span class="fl">0.95</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>trace</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Traceability-chain uncertainty
+  Stage: reference
+    Introduced components           : 1
+    Cumulative components           : 1
+    Cumulative standard uncertainty : 1
+    Relative standard uncertainty   : 0.01
+    Coverage factor                 : 2
+    Expanded uncertainty            : 2
+
+  Stage: assignment
+    Introduced components           : 1
+    Cumulative components           : 2
+    Cumulative standard uncertainty : 1.0076828
+    Relative standard uncertainty   : 0.010076828
+    Coverage factor                 : 2
+    Expanded uncertainty            : 2.0153656
+
+  Stage: release
+    Introduced components           : 1
+    Cumulative components           : 3
+    Cumulative standard uncertainty : 1.5595164
+    Relative standard uncertainty   : 0.015595164
+    Coverage factor                 : 2
+    Expanded uncertainty            : 3.1190328</code></pre>
+</div>
+</div>
+<p>uncertainty_traceability() 当前按阶段使用单位灵敏度和独立分量假设；如果某一阶段存在复杂测量模型或相关输入，应先用 uncertainty_propagate() 或 uncertainty_combine() 正确建模，再决定如何把节点结果传给后续阶段。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trace)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="005-不确定度分析_files/figure-html/traceability-budget-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="分析案例" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="分析案例"><span class="header-section-number">5.2</span> 分析案例</h2>
+<section id="clsi-ep29-a-附录-atype-b-限值转换" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="clsi-ep29-a-附录-atype-b-限值转换"><span class="header-section-number">5.2.1</span> CLSI EP29-A 附录 A：Type B 限值转换</h3>
+<p>CLSI EP29-A 附录 A 比较矩形、三角形和正态分布下，将 90～180 的限值区间转换为标准不确定度的结果，并给出称量规格、天平线性和重复性案例。以下使用 uncertainty_type_b() 和 uncertainty_combine() 重新计算；正态案例按标准原文的“±3 个标准差”解释，设置 coverage = 0.9973。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ep29_a_rectangular <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EP29 rectangular limits"</span>, <span class="at">estimate =</span> <span class="dv">135</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="dv">90</span>, <span class="at">upper =</span> <span class="dv">180</span>, <span class="at">distribution =</span> <span class="st">"rectangular"</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>ep29_a_triangular <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EP29 triangular limits"</span>, <span class="at">estimate =</span> <span class="dv">135</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="dv">90</span>, <span class="at">upper =</span> <span class="dv">180</span>, <span class="at">distribution =</span> <span class="st">"triangular"</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>ep29_a_normal <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EP29 normal limits"</span>, <span class="at">estimate =</span> <span class="dv">135</span>,</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="dv">90</span>, <span class="at">upper =</span> <span class="dv">180</span>, <span class="at">distribution =</span> <span class="st">"normal"</span>,</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">coverage =</span> <span class="fl">0.9973</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>ep29_a_weighing <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EP29 weighing specification"</span>, <span class="at">estimate =</span> <span class="dv">156</span>,</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="dv">155</span>, <span class="at">upper =</span> <span class="dv">157</span>, <span class="at">distribution =</span> <span class="st">"rectangular"</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>ep29_a_linearity <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">"linearity "</span>, i), <span class="at">estimate =</span> <span class="dv">0</span>,</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">uncertainty =</span> <span class="fl">0.02</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">6</span>), <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>ep29_a_repeatability <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i) <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">"repeatability "</span>, i), <span class="at">estimate =</span> <span class="dv">0</span>,</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">uncertainty =</span> <span class="fl">0.01</span> <span class="sc">/</span> <span class="dv">3</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>ep29_a_balance <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>  ep29_a_linearity[[<span class="dv">1</span>]], ep29_a_linearity[[<span class="dv">2</span>]],</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>  ep29_a_repeatability[[<span class="dv">1</span>]], ep29_a_repeatability[[<span class="dv">2</span>]],</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>ep29_a_tight <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">"EP29 tight specification"</span>, <span class="at">estimate =</span> <span class="dv">156</span>,</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> <span class="fl">155.9</span>, <span class="at">upper =</span> <span class="fl">156.1</span>, <span class="at">distribution =</span> <span class="st">"rectangular"</span></span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"EP29 rounded balance"</span>, <span class="at">estimate =</span> <span class="dv">0</span>,</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">uncertainty =</span> <span class="fl">0.013</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>从标准 PDF 附录 A 的原文结果检查表读取标准值，并逐项合并比较：</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A 附录 A：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">rectangular_90_180</td>
+<td style="text-align: right;">26.000</td>
+<td style="text-align: right;">25.9807621</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">triangular_90_180</td>
+<td style="text-align: right;">18.400</td>
+<td style="text-align: right;">18.3711731</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">gaussian_90_180</td>
+<td style="text-align: right;">15.000</td>
+<td style="text-align: right;">15.0001150</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">weighing_specification_u</td>
+<td style="text-align: right;">0.577</td>
+<td style="text-align: right;">0.5773503</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">balance_u</td>
+<td style="text-align: right;">0.013</td>
+<td style="text-align: right;">0.0124722</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">tight_combined_u</td>
+<td style="text-align: right;">0.059</td>
+<td style="text-align: right;">0.0591805</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>balance_u</code> 使用未舍入的线性和重复性分量；紧限值案例按标准原文使用已舍入的 0.013 继续计算，因此末位差异来自中间舍入。</p>
+</section>
+<section id="clsi-ep29-a-附录-b胆固醇-iqc" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="clsi-ep29-a-附录-b胆固醇-iqc"><span class="header-section-number">5.2.2</span> CLSI EP29-A 附录 B：胆固醇 IQC</h3>
+<p>附录 B 包含 42 个运行、每运行 3 次结果；标准将第 4 运行判定为技术可疑并排除，保留 41 个运行和 123 个结果。以下使用 uncertainty_iqc() 重新执行同一排除规则。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ep29_b_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/005-不确定度分析/std-ep29-appendix-b.csv"</span>,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>ep29_b_valid <span class="ot">&lt;-</span> <span class="fu">subset</span>(ep29_b_data, run <span class="sc">!=</span> <span class="dv">4</span>L)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ep29_b_data, <span class="dv">6</span>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+    run reagent_lot technician replicate cholesterol
+  &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;       &lt;dbl&gt;
+1     1 A           AK                 1         7.9
+2     1 A           AK                 2         7.9
+3     1 A           AK                 3         8.1
+4     2 A           AK                 1         7.5
+5     2 A           AK                 2         7.3
+6     2 A           AK                 3         7.6</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ep29_b_iqc <span class="ot">&lt;-</span> <span class="fu">uncertainty_iqc</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  ep29_b_valid,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"cholesterol"</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="st">"single"</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"EP29 cholesterol IQC"</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>提取 uncertainty_iqc() 返回的 ANOVA 统计量、综合标准不确定度和扩展不确定度，与 EP29-A 附录 B 的标准原文结果比较：</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A 附录 B：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">lot_A_rep1_mean</td>
+<td style="text-align: right;">7.60000</td>
+<td style="text-align: right;">7.6500000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">lot_A_rep1_sd</td>
+<td style="text-align: right;">0.33000</td>
+<td style="text-align: right;">0.2438723</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">lot_B_rep1_mean</td>
+<td style="text-align: right;">7.71000</td>
+<td style="text-align: right;">7.7142857</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">lot_B_rep1_sd</td>
+<td style="text-align: right;">0.20000</td>
+<td style="text-align: right;">0.2031889</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">all_rep1_mean</td>
+<td style="text-align: right;">7.66000</td>
+<td style="text-align: right;">7.6571429</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">all_rep1_sd</td>
+<td style="text-align: right;">0.28000</td>
+<td style="text-align: right;">0.2768665</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">valid_rep1_mean</td>
+<td style="text-align: right;">7.68000</td>
+<td style="text-align: right;">7.6829268</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">valid_rep1_sd</td>
+<td style="text-align: right;">0.22000</td>
+<td style="text-align: right;">0.2234977</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">between_ss</td>
+<td style="text-align: right;">6.09000</td>
+<td style="text-align: right;">6.0882927</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">within_ss</td>
+<td style="text-align: right;">0.58000</td>
+<td style="text-align: right;">0.5800000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">between_ms</td>
+<td style="text-align: right;">0.15200</td>
+<td style="text-align: right;">0.1522073</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">within_ms</td>
+<td style="text-align: right;">0.00707</td>
+<td style="text-align: right;">0.0070732</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">21.50000</td>
+<td style="text-align: right;">21.5189655</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">p_value</td>
+<td style="text-align: right;">0.00000</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">within_sd</td>
+<td style="text-align: right;">0.08400</td>
+<td style="text-align: right;">0.0841021</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">between_variance</td>
+<td style="text-align: right;">0.04830</td>
+<td style="text-align: right;">0.0483780</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">between_sd</td>
+<td style="text-align: right;">0.22000</td>
+<td style="text-align: right;">0.2199501</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">combined_u</td>
+<td style="text-align: right;">0.23500</td>
+<td style="text-align: right;">0.2354808</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">expanded_U</td>
+<td style="text-align: right;">0.47000</td>
+<td style="text-align: right;">0.4709617</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grand_mean</td>
+<td style="text-align: right;">7.69000</td>
+<td style="text-align: right;">7.6902439</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">relative_expanded_percent</td>
+<td style="text-align: right;">6.10000</td>
+<td style="text-align: right;">6.1241445</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>标准原文在批间方差和扩展不确定度计算中使用了已舍入的均方或分量，<code>ivdtools</code> 使用未舍入结果，因此个别末位存在中间量舍入差异。</p>
+</section>
+<section id="clsi-ep29-a-example-13测量模型传播" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="clsi-ep29-a-example-13测量模型传播"><span class="header-section-number">5.2.3</span> CLSI EP29-A Example 1～3：测量模型传播</h3>
+<p>EP29-A Example 1～3 分别展示加减、乘法以及加乘除混合模型。它们适合用 uncertainty_combine() 和 uncertainty_propagate() 验证灵敏度系数、相关性和相对不确定度的处理。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ep29_ex1_v1 <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"V1"</span>, <span class="at">estimate =</span> <span class="dv">100</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>ep29_ex1_v2 <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"V2"</span>, <span class="at">estimate =</span> <span class="dv">90</span>, <span class="at">uncertainty =</span> <span class="fl">0.2</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>ep29_ex1_independent <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  ep29_ex1_v1, ep29_ex1_v2, <span class="at">value =</span> <span class="dv">190</span>, <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>ep29_ex1_equal <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(<span class="st">"V1 equal"</span>, <span class="at">estimate =</span> <span class="dv">100</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>                     <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(<span class="st">"V2 equal"</span>, <span class="at">estimate =</span> <span class="dv">100</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>,</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>                     <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">200</span>, <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>ep29_ex1_correlated <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(<span class="st">"V1 same pipette"</span>, <span class="at">estimate =</span> <span class="dv">100</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>,</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(<span class="st">"V2 same pipette"</span>, <span class="at">estimate =</span> <span class="dv">100</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>,</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">200</span>,</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>),</span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>ep29_ex2 <span class="ot">&lt;-</span> <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="cf">function</span>(protein, volume) protein <span class="sc">*</span> volume,</span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">components =</span> <span class="fu">list</span>(</span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"protein"</span>, <span class="at">estimate =</span> <span class="dv">150</span>, <span class="at">uncertainty =</span> <span class="dv">3</span>,</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"volume"</span>, <span class="at">estimate =</span> <span class="fl">1.5</span>, <span class="at">uncertainty =</span> <span class="fl">0.015</span>,</span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>)</span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>ep29_ex3_staged <span class="ot">&lt;-</span> <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="cf">function</span>(numerator, denominator) numerator <span class="sc">/</span> denominator,</span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">components =</span> <span class="fu">list</span>(</span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"numerator"</span>, <span class="at">estimate =</span> <span class="dv">330</span>, <span class="at">uncertainty =</span> <span class="fl">11.1</span>,</span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"denominator"</span>, <span class="at">estimate =</span> <span class="dv">100</span>, <span class="at">uncertainty =</span> <span class="dv">3</span>,</span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>)</span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>ep29_ex3_full <span class="ot">&lt;-</span> <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="cf">function</span>(c1, v1, c2, v2) (c1 <span class="sc">*</span> v1 <span class="sc">+</span> c2 <span class="sc">*</span> v2) <span class="sc">/</span> (v1 <span class="sc">+</span> v2),</span>
+<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">components =</span> <span class="fu">list</span>(</span>
+<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"c1"</span>, <span class="at">estimate =</span> <span class="dv">15</span>, <span class="at">uncertainty =</span> <span class="fl">0.2</span>,</span>
+<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-56"><a href="#cb32-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"v1"</span>, <span class="at">estimate =</span> <span class="dv">10</span>, <span class="at">uncertainty =</span> <span class="fl">0.11</span>,</span>
+<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"c2"</span>, <span class="at">estimate =</span> <span class="dv">2</span>, <span class="at">uncertainty =</span> <span class="fl">0.1</span>,</span>
+<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(<span class="st">"v2"</span>, <span class="at">estimate =</span> <span class="dv">90</span>, <span class="at">uncertainty =</span> <span class="dv">3</span>,</span>
+<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a>                       <span class="at">distribution =</span> <span class="st">"standard"</span>)</span>
+<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A Example 1～3：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 1</td>
+<td style="text-align: left;">independent_unequal_u</td>
+<td style="text-align: right;">0.2200</td>
+<td style="text-align: right;">0.2236068</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 1</td>
+<td style="text-align: left;">same_pipette_equal_u</td>
+<td style="text-align: right;">0.2000</td>
+<td style="text-align: right;">0.2000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 1</td>
+<td style="text-align: left;">independent_equal_u</td>
+<td style="text-align: right;">0.1400</td>
+<td style="text-align: right;">0.1414214</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 2</td>
+<td style="text-align: left;">relative_u</td>
+<td style="text-align: right;">0.0224</td>
+<td style="text-align: right;">0.0223607</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 2</td>
+<td style="text-align: left;">absolute_u</td>
+<td style="text-align: right;">5.0300</td>
+<td style="text-align: right;">5.0311529</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 3</td>
+<td style="text-align: left;">independent_staged_u</td>
+<td style="text-align: right;">0.1490</td>
+<td style="text-align: right;">0.1487347</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 3</td>
+<td style="text-align: left;">correlated_u</td>
+<td style="text-align: right;">0.1000</td>
+<td style="text-align: right;">0.1009289</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Example 3 直接对原始混合模型传播时，重复出现在分子和分母中的体积量会自然产生协方差，因而得到约 0.10 mmol/L；标准原文把分子和分母先视为独立节点，给出约 0.149 mmol/L。两者采用的依赖结构不同，不能把这一差异归为显示舍入。</p>
+</section>
+<section id="clsi-ep29-a-example-4单因素-anova-与-iqc-不确定度" class="level3" data-number="5.2.4">
+<h3 data-number="5.2.4" class="anchored" data-anchor-id="clsi-ep29-a-example-4单因素-anova-与-iqc-不确定度"><span class="header-section-number">5.2.4</span> CLSI EP29-A Example 4：单因素 ANOVA 与 IQC 不确定度</h3>
+<p>Example 4 给出 5 个运行、每运行 5 次的血浆肌酐结果。它与 uncertainty_iqc() 的输入结构一致，适合检查批内、批间方差和单次结果综合不确定度。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ep29_ex4_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">each =</span> <span class="dv">5</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">replicate =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">times =</span> <span class="dv">5</span>),</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">creatinine =</span> <span class="fu">c</span>(</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">140</span>, <span class="dv">140</span>, <span class="dv">140</span>, <span class="dv">141</span>, <span class="dv">140</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">138</span>, <span class="dv">139</span>, <span class="dv">138</span>, <span class="dv">137</span>, <span class="dv">139</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">143</span>, <span class="dv">144</span>, <span class="dv">144</span>, <span class="dv">145</span>, <span class="dv">143</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">143</span>, <span class="dv">143</span>, <span class="dv">142</span>, <span class="dv">143</span>, <span class="dv">142</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">142</span>, <span class="dv">143</span>, <span class="dv">141</span>, <span class="dv">142</span>, <span class="dv">143</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>ep29_ex4_iqc <span class="ot">&lt;-</span> <span class="fu">uncertainty_iqc</span>(</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  ep29_ex4_data,</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"creatinine"</span>,</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">run =</span> <span class="st">"run"</span>,</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="st">"single"</span>,</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"EP29 Example 4 P-Creatinine"</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A Example 4：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 4</td>
+<td style="text-align: left;">ms_between</td>
+<td style="text-align: right;">24.40</td>
+<td style="text-align: right;">24.4000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 4</td>
+<td style="text-align: left;">ms_within</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.5200000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 4</td>
+<td style="text-align: left;">within_sd</td>
+<td style="text-align: right;">0.72</td>
+<td style="text-align: right;">0.7211103</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 4</td>
+<td style="text-align: left;">between_sd</td>
+<td style="text-align: right;">2.19</td>
+<td style="text-align: right;">2.1854061</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 4</td>
+<td style="text-align: left;">combined_u</td>
+<td style="text-align: right;">2.30</td>
+<td style="text-align: right;">2.3013040</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 4</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">46.90</td>
+<td style="text-align: right;">46.9230769</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>F</code> 值的末位差异来自标准原文的显示舍入，函数使用未舍入均方计算。</p>
+</section>
+<section id="clsi-ep29-a-example-56偏倚估计及偏倚校正不确定度" class="level3" data-number="5.2.5">
+<h3 data-number="5.2.5" class="anchored" data-anchor-id="clsi-ep29-a-example-56偏倚估计及偏倚校正不确定度"><span class="header-section-number">5.2.5</span> CLSI EP29-A Example 5～6：偏倚估计及偏倚校正不确定度</h3>
+<p>Example 5 只有汇总统计量，没有原始差值数据，因此用 uncertainty_type_b() 保存标准原文给出的汇总标准不确定度，再用 uncertainty_combine() 合成。Example 6a 使用有证参考物质的赋值不确定度和实验室均值不确定度。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ep29_ex5_make <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"test method imprecision"</span>, <span class="at">estimate =</span> <span class="dv">0</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">uncertainty =</span> <span class="fl">0.71</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste0</span>(<span class="st">"bias estimate n="</span>, n), <span class="at">estimate =</span> <span class="dv">0</span>,</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">uncertainty =</span> <span class="fl">1.2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(n), <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>ep29_ex5_n144 <span class="ot">&lt;-</span> <span class="fu">ep29_ex5_make</span>(<span class="dv">144</span>)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>ep29_ex5_n16 <span class="ot">&lt;-</span> <span class="fu">ep29_ex5_make</span>(<span class="dv">16</span>)</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>ep29_ex6a_lab_mean <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CRM laboratory mean"</span>, <span class="at">estimate =</span> <span class="fl">6.04</span>,</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">uncertainty =</span> <span class="fl">0.045</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>ep29_ex6a_crm <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CRM certified value"</span>, <span class="at">estimate =</span> <span class="fl">6.3</span>,</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">uncertainty =</span> <span class="fl">0.1</span>, <span class="at">k =</span> <span class="dv">2</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>ep29_ex6a_bias <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>  ep29_ex6a_lab_mean, ep29_ex6a_crm, <span class="at">value =</span> <span class="fl">6.04</span> <span class="sc">-</span> <span class="fl">6.3</span>, <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>ep29_ex6b_claim <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"future result, literature claim"</span>, <span class="at">estimate =</span> <span class="fl">6.04</span>,</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">uncertainty =</span> <span class="fl">0.035</span> <span class="sc">*</span> <span class="fl">6.04</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bias correction"</span>, <span class="at">estimate =</span> <span class="dv">0</span>, <span class="at">uncertainty =</span> <span class="fl">0.068</span>,</span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a>ep29_ex6b_lab <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">"future result, local ANOVA"</span>, <span class="at">estimate =</span> <span class="fl">6.04</span>,</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">uncertainty =</span> <span class="fl">0.151</span>, <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bias correction"</span>, <span class="at">estimate =</span> <span class="dv">0</span>, <span class="at">uncertainty =</span> <span class="fl">0.068</span>,</span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A Example 5～6：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 5</td>
+<td style="text-align: left;">n144_bias_u</td>
+<td style="text-align: right;">0.100</td>
+<td style="text-align: right;">0.1000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 5</td>
+<td style="text-align: left;">n144_combined_u</td>
+<td style="text-align: right;">0.720</td>
+<td style="text-align: right;">0.7170077</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 5</td>
+<td style="text-align: left;">n16_bias_u</td>
+<td style="text-align: right;">0.300</td>
+<td style="text-align: right;">0.3000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 5</td>
+<td style="text-align: left;">n16_combined_u</td>
+<td style="text-align: right;">0.770</td>
+<td style="text-align: right;">0.7707788</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 6a</td>
+<td style="text-align: left;">measured_mean</td>
+<td style="text-align: right;">6.040</td>
+<td style="text-align: right;">6.0400000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 6a</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">-0.260</td>
+<td style="text-align: right;">-0.2600000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 6a</td>
+<td style="text-align: left;">bias_u</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">0.0672681</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 6a</td>
+<td style="text-align: left;">bias_expanded</td>
+<td style="text-align: right;">0.140</td>
+<td style="text-align: right;">0.1345362</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 6b</td>
+<td style="text-align: left;">claim_combined_u</td>
+<td style="text-align: right;">0.220</td>
+<td style="text-align: right;">0.2220675</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 6b</td>
+<td style="text-align: left;">lab_combined_u</td>
+<td style="text-align: right;">0.165</td>
+<td style="text-align: right;">0.1656050</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Example 6a 的偏倚及其不确定度同时纳入实验室均值和有证参考物质赋值的不确定度；Example 6b 分别采用文献精密度和本实验室精密度，因此两个情景不可互换。</p>
+</section>
+<section id="clsi-ep29-a-example-10肌酐清除率不确定度传播" class="level3" data-number="5.2.6">
+<h3 data-number="5.2.6" class="anchored" data-anchor-id="clsi-ep29-a-example-10肌酐清除率不确定度传播"><span class="header-section-number">5.2.6</span> CLSI EP29-A Example 10：肌酐清除率不确定度传播</h3>
+<p>EP29-A Example 10 给出肌酐清除率的测量模型，并分别提供尿肌酐、血清肌酐、尿液体积、收集时间和前分析体积的不确定度。以下将原文输入量建立为 B 类组件，并用 uncertainty_propagate(method = “delta”) 传播：</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ep29_u_crea <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"u_crea"</span>, <span class="at">estimate =</span> <span class="dv">15</span>, <span class="at">uncertainty =</span> <span class="fl">0.45</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>ep29_u_vol <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"u_vol"</span>, <span class="at">estimate =</span> <span class="dv">1500</span>, <span class="at">uncertainty =</span> <span class="fl">22.5</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>ep29_s_crea <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"s_crea"</span>, <span class="at">estimate =</span> <span class="fl">0.115</span>, <span class="at">uncertainty =</span> <span class="fl">0.00575</span>,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>ep29_time <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"time"</span>, <span class="at">estimate =</span> <span class="dv">1440</span>, <span class="at">uncertainty =</span> <span class="dv">15</span>,</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>ep29_u_vol_prea <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"u_vol_prea"</span>, <span class="at">estimate =</span> <span class="dv">100</span>,</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="dv">200</span>,</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"rectangular"</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>ep29_creatinine_clearance <span class="ot">&lt;-</span> <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="cf">function</span>(u_crea, u_vol, s_crea, time, u_vol_prea) {</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>    (u_vol <span class="sc">+</span> u_vol_prea) <span class="sc">*</span> u_crea <span class="sc">/</span> (s_crea <span class="sc">*</span> time)</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">components =</span> <span class="fu">list</span>(</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>    ep29_u_crea, ep29_u_vol, ep29_s_crea,</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>    ep29_time, ep29_u_vol_prea</span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"delta"</span></span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A Example 10：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 10</td>
+<td style="text-align: left;">estimate</td>
+<td style="text-align: right;">145.0</td>
+<td style="text-align: right;">144.927536</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 10</td>
+<td style="text-align: left;">relative_percent</td>
+<td style="text-align: right;">7.1</td>
+<td style="text-align: right;">7.076966</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>EP29-A Figure 4 的 Kragten 数值近似给出约 6.9% 的相对合成不确定度，而 <code>uncertainty_propagate()</code> 的一阶 delta 结果约为 7.1%。这一差异来自数值近似路径，不是输入数据差异。</p>
+</section>
+<section id="clsi-ep29-a-example-11线性回归预测方程" class="level3" data-number="5.2.7">
+<h3 data-number="5.2.7" class="anchored" data-anchor-id="clsi-ep29-a-example-11线性回归预测方程"><span class="header-section-number">5.2.7</span> CLSI EP29-A Example 11：线性回归预测方程</h3>
+<p>Example 11 用 A1C 预测 eAG，测量模型为 <span class="math inline">\(eAG = \alpha + \beta A1C + \epsilon\)</span>。以下使用 uncertainty_propagate() 传播截距、斜率、A1C 测量值和预测误差的不确定度，并按标准 Table 4 的参数在 A1C = 7% 处计算三个情景。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ep29_ex11_make <span class="ot">&lt;-</span> <span class="cf">function</span>(relative_a1c_u) {</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  a1c <span class="ot">&lt;-</span> <span class="dv">7</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncertainty_propagate</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="cf">function</span>(alpha, beta, A1C, epsilon) {</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>      alpha <span class="sc">+</span> beta <span class="sc">*</span> A1C <span class="sc">+</span> epsilon</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">components =</span> <span class="fu">list</span>(</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">uncertainty_type_b</span>(<span class="st">"alpha"</span>, <span class="at">estimate =</span> <span class="sc">-</span><span class="fl">46.6</span>, <span class="at">uncertainty =</span> <span class="fl">3.8</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">uncertainty_type_b</span>(<span class="st">"beta"</span>, <span class="at">estimate =</span> <span class="fl">28.7</span>, <span class="at">uncertainty =</span> <span class="fl">0.6</span>,</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">uncertainty_type_b</span>(<span class="st">"A1C"</span>, <span class="at">estimate =</span> a1c,</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">uncertainty =</span> relative_a1c_u <span class="sc">*</span> a1c,</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>                         <span class="at">distribution =</span> <span class="st">"standard"</span>),</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">uncertainty_type_b</span>(<span class="st">"epsilon"</span>, <span class="at">estimate =</span> <span class="dv">0</span>,</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>                         <span class="at">uncertainty =</span> <span class="fl">2.21</span> <span class="sc">*</span> a1c,</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>                         <span class="at">distribution =</span> <span class="st">"standard"</span>)</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>ep29_ex11_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.02</span>, <span class="fl">0.05</span>), ep29_ex11_make)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>EP29-A Example 11：ivdtools 与标准公式结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 11</td>
+<td style="text-align: left;">A1C_7_U_0pct</td>
+<td style="text-align: right;">30.8</td>
+<td style="text-align: right;">32.94850</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EP29 Example 11</td>
+<td style="text-align: left;">A1C_7_U_2pct</td>
+<td style="text-align: right;">31.8</td>
+<td style="text-align: right;">33.91432</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EP29 Example 11</td>
+<td style="text-align: left;">A1C_7_U_5pct</td>
+<td style="text-align: right;">36.8</td>
+<td style="text-align: right;">38.59031</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>标准 Table 4 的截距—斜率协方差项因原文参数已舍入，直接构造的相关矩阵不满足正半定条件；因此表中 <code>ivdtools</code> 列采用独立输入的 delta 传播，<code>standard</code> 列采用标准 Equation 32 的协方差公式重算结果，差异来自相关项处理方式。</p>
+</section>
+<section id="yyt-1709校准物均匀性稳定性和定值不确定度" class="level3" data-number="5.2.8">
+<h3 data-number="5.2.8" class="anchored" data-anchor-id="yyt-1709校准物均匀性稳定性和定值不确定度"><span class="header-section-number">5.2.8</span> YY/T 1709：校准物均匀性、稳定性和定值不确定度</h3>
+<section id="附录-a均匀性引入的不确定度" class="level4" data-number="5.2.8.1">
+<h4 data-number="5.2.8.1" class="anchored" data-anchor-id="附录-a均匀性引入的不确定度"><span class="header-section-number">5.2.8.1</span> 附录 A：均匀性引入的不确定度</h4>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>yyt1709_homogeneity_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/005-不确定度分析/std-yyt1709-homogeneity.csv"</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>yyt1709_homogeneity <span class="ot">&lt;-</span> <span class="fu">uncertainty_homogeneity</span>(</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  yyt1709_homogeneity_data,</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">"bottle"</span>,</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">result =</span> <span class="st">"result"</span>,</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"YY/T 1709 瓶间均匀性"</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="附录-b稳定性引入的不确定度" class="level4" data-number="5.2.8.2">
+<h4 data-number="5.2.8.2" class="anchored" data-anchor-id="附录-b稳定性引入的不确定度"><span class="header-section-number">5.2.8.2</span> 附录 B：稳定性引入的不确定度</h4>
+<p>标准原文按各时间点的均值进行线性趋势计算。为保持与标准相同的统计口径，先按时间点汇总，再将汇总结果传给 uncertainty_stability()；如果把所有瓶内重复直接作为独立回归行，斜率标准误会采用不同的信息量。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>yyt1709_stability_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/005-不确定度分析/std-yyt1709-stability.csv"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>yyt1709_timepoint_means <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aggregate</span>(result <span class="sc">~</span> time, <span class="at">data =</span> data, <span class="at">FUN =</span> mean)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>yyt1709_stability_results <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  长期 <span class="ot">=</span> <span class="fu">uncertainty_stability</span>(</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">yyt1709_timepoint_means</span>(<span class="fu">subset</span>(yyt1709_stability_data, study <span class="sc">==</span> <span class="st">"长期"</span>)),</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="st">"time"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">shelf_life =</span> <span class="dv">18</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"长期稳定性"</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  运输室温 <span class="ot">=</span> <span class="fu">uncertainty_stability</span>(</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">yyt1709_timepoint_means</span>(<span class="fu">subset</span>(yyt1709_stability_data, study <span class="sc">==</span> <span class="st">"运输室温"</span>)),</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="st">"time"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">shelf_life =</span> <span class="dv">7</span>,</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"运输稳定性（室温）"</span></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>  运输37C <span class="ot">=</span> <span class="fu">uncertainty_stability</span>(</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">yyt1709_timepoint_means</span>(<span class="fu">subset</span>(yyt1709_stability_data, study <span class="sc">==</span> <span class="st">"运输37C"</span>)),</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="st">"time"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">shelf_life =</span> <span class="dv">7</span>,</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"运输稳定性（37 C）"</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>  复溶 <span class="ot">=</span> <span class="fu">uncertainty_stability</span>(</span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">yyt1709_timepoint_means</span>(<span class="fu">subset</span>(yyt1709_stability_data, study <span class="sc">==</span> <span class="st">"复溶"</span>)),</span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="st">"time"</span>, <span class="at">result =</span> <span class="st">"result"</span>, <span class="at">shelf_life =</span> <span class="dv">7</span>,</span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"复溶稳定性"</span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="附录-c定值不确定度合成" class="level4" data-number="5.2.8.3">
+<h4 data-number="5.2.8.3" class="anchored" data-anchor-id="附录-c定值不确定度合成"><span class="header-section-number">5.2.8.3</span> 附录 C：定值不确定度合成</h4>
+<p>工作校准品证书和复溶信息先转换为 B 类组件，赋值重复性由 uncertainty_type_a() 估计，最终使用 uncertainty_combine() 合成相对和绝对不确定度。</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>代码</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>yyt1709_assignment <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./data/005-不确定度分析/std-yyt1709-assignment.csv"</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>yyt1709_assignment_u <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_a</span>(</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  yyt1709_assignment<span class="sc">$</span>result,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"赋值重复性"</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="st">"mean"</span>,</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>yyt1709_assigned_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(yyt1709_assignment<span class="sc">$</span>result)</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>yyt1709_working_calibration <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"工作校准品"</span>,</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fl">178.06</span>,</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">uncertainty =</span> <span class="fl">6.01</span>,</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span>,</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span>,</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>yyt1709_reconstitution_1 <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"工作校准品复溶"</span>,</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="dv">1</span>,</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">uncertainty =</span> <span class="fl">0.00003</span> <span class="sc">/</span> (<span class="fu">sqrt</span>(<span class="dv">3</span>) <span class="sc">*</span> <span class="fl">0.99758</span>),</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span>,</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>yyt1709_reconstitution_2 <span class="ot">&lt;-</span> <span class="fu">uncertainty_type_b</span>(</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"产品校准品复溶"</span>,</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="dv">1</span>,</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">uncertainty =</span> <span class="fl">0.01</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">3</span>),</span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"standard"</span>,</span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">relative =</span> <span class="cn">TRUE</span></span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a>yyt1709_reconstitution <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a>  yyt1709_reconstitution_1,</span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a>  yyt1709_reconstitution_2,</span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">1</span></span>
+<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a>yyt1709_characterization_budget <span class="ot">&lt;-</span> <span class="fu">uncertainty_combine</span>(</span>
+<span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a>  yyt1709_working_calibration,</span>
+<span id="cb39-47"><a href="#cb39-47" aria-hidden="true" tabindex="-1"></a>  yyt1709_assignment_u,</span>
+<span id="cb39-48"><a href="#cb39-48" aria-hidden="true" tabindex="-1"></a>  yyt1709_reconstitution_1,</span>
+<span id="cb39-49"><a href="#cb39-49" aria-hidden="true" tabindex="-1"></a>  yyt1709_reconstitution_2,</span>
+<span id="cb39-50"><a href="#cb39-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> yyt1709_assigned_mean,</span>
+<span id="cb39-51"><a href="#cb39-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">coverage =</span> <span class="fl">0.95</span>,</span>
+<span id="cb39-52"><a href="#cb39-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">2</span></span>
+<span id="cb39-53"><a href="#cb39-53" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>这里传入的 <code>uncertainty</code> 已是标准不确定度，因此使用 <code>distribution = "standard"</code> 表示函数不再进行分布换算。两个式子中的 <code>sqrt(3)</code> 用于将矩形分布的允许半宽换算为标准不确定度；第一项中的 <code>0.99758</code> 是实际称量质量，用于把绝对称量误差转换为相对误差，不是分布参数。</p>
+</section>
+<section id="附录-ac与-yyt-1709-原文结果对照" class="level4" data-number="5.2.8.4">
+<h4 data-number="5.2.8.4" class="anchored" data-anchor-id="附录-ac与-yyt-1709-原文结果对照"><span class="header-section-number">5.2.8.4</span> 附录 A～C：与 YY/T 1709 原文结果对照</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>YY/T 1709 附录 A～C：ivdtools 与标准原文结果对照</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">appendix</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: right;">standard</th>
+<th style="text-align: right;">ivdtools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A（均匀性）</td>
+<td style="text-align: left;">SS_between</td>
+<td style="text-align: right;">0.2114405</td>
+<td style="text-align: right;">0.2114405</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A（均匀性）</td>
+<td style="text-align: left;">SS_within</td>
+<td style="text-align: right;">0.3556000</td>
+<td style="text-align: right;">0.3556000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A（均匀性）</td>
+<td style="text-align: left;">MS_between</td>
+<td style="text-align: right;">0.0162647</td>
+<td style="text-align: right;">0.0162647</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A（均匀性）</td>
+<td style="text-align: left;">MS_within</td>
+<td style="text-align: right;">0.0127000</td>
+<td style="text-align: right;">0.0127000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A（均匀性）</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">1.2806810</td>
+<td style="text-align: right;">1.2806813</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A（均匀性）</td>
+<td style="text-align: left;">u_bb</td>
+<td style="text-align: right;">0.0344916</td>
+<td style="text-align: right;">0.0344705</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C（定值）</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">179.7300000</td>
+<td style="text-align: right;">179.7294000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C（定值）</td>
+<td style="text-align: left;">u_REP_rel</td>
+<td style="text-align: right;">0.0012560</td>
+<td style="text-align: right;">0.0012556</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C（定值）</td>
+<td style="text-align: left;">u_wcal_rel</td>
+<td style="text-align: right;">0.0168763</td>
+<td style="text-align: right;">0.0168763</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C（定值）</td>
+<td style="text-align: left;">u_sol_rel</td>
+<td style="text-align: right;">0.0057735</td>
+<td style="text-align: right;">0.0057735</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C（定值）</td>
+<td style="text-align: left;">u_char_rel</td>
+<td style="text-align: right;">0.0178900</td>
+<td style="text-align: right;">0.0178807</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C（定值）</td>
+<td style="text-align: left;">u_char</td>
+<td style="text-align: right;">3.2200000</td>
+<td style="text-align: right;">3.2136942</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C（赋值确认）</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">107.7200000</td>
+<td style="text-align: right;">107.7240000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C（赋值确认）</td>
+<td style="text-align: left;">bias</td>
+<td style="text-align: right;">-0.3800000</td>
+<td style="text-align: right;">-0.3760000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（长期）</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">-0.0137000</td>
+<td style="text-align: right;">-0.0137302</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（长期）</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">50.0114000</td>
+<td style="text-align: right;">50.0114286</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（长期）</td>
+<td style="text-align: left;">residual_sd</td>
+<td style="text-align: right;">0.3238000</td>
+<td style="text-align: right;">0.3237945</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（长期）</td>
+<td style="text-align: left;">slope_se</td>
+<td style="text-align: right;">0.0204000</td>
+<td style="text-align: right;">0.0203971</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（长期）</td>
+<td style="text-align: left;">u_stability</td>
+<td style="text-align: right;">0.3672000</td>
+<td style="text-align: right;">0.3671484</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（运输室温）</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">-0.0487000</td>
+<td style="text-align: right;">-0.0486706</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（运输室温）</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">50.3568000</td>
+<td style="text-align: right;">50.3568056</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（运输室温）</td>
+<td style="text-align: left;">residual_sd</td>
+<td style="text-align: right;">0.5451000</td>
+<td style="text-align: right;">0.5297030</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（运输室温）</td>
+<td style="text-align: left;">slope_se</td>
+<td style="text-align: right;">0.0841000</td>
+<td style="text-align: right;">0.0817349</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（运输室温）</td>
+<td style="text-align: left;">u_stability</td>
+<td style="text-align: right;">0.5887000</td>
+<td style="text-align: right;">0.5721446</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（运输37C）</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">-0.0330000</td>
+<td style="text-align: right;">-0.0329960</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（运输37C）</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">50.3936000</td>
+<td style="text-align: right;">50.3936111</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（运输37C）</td>
+<td style="text-align: left;">residual_sd</td>
+<td style="text-align: right;">0.4310000</td>
+<td style="text-align: right;">0.4220273</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（运输37C）</td>
+<td style="text-align: left;">slope_se</td>
+<td style="text-align: right;">0.0665000</td>
+<td style="text-align: right;">0.0651202</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（运输37C）</td>
+<td style="text-align: left;">u_stability</td>
+<td style="text-align: right;">0.4655000</td>
+<td style="text-align: right;">0.4558416</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（复溶）</td>
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">0.0433000</td>
+<td style="text-align: right;">0.0432540</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（复溶）</td>
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">49.6536000</td>
+<td style="text-align: right;">49.6536111</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（复溶）</td>
+<td style="text-align: left;">residual_sd</td>
+<td style="text-align: right;">0.6319000</td>
+<td style="text-align: right;">0.6214551</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B（复溶）</td>
+<td style="text-align: left;">slope_se</td>
+<td style="text-align: right;">0.0975000</td>
+<td style="text-align: right;">0.0958926</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B（复溶）</td>
+<td style="text-align: left;">u_stability</td>
+<td style="text-align: right;">0.6825000</td>
+<td style="text-align: right;">0.6712482</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./004-稳定性研究.html" class="pagination-link" aria-label="稳定性研究">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">稳定性研究</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./006-基质效应与互换性.html" class="pagination-link" aria-label="基质效应与互换性">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">基质效应与互换性</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hiox-tech/ivdtools/issues/new" class="toc-action"><i class="bi bi-github"></i>反馈问题</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,17 @@
+case,statistic,standard,tolerance,status
+low_absolute,estimate,0.020,0.0005,对应
+low_absolute,lower,-0.010,0.0005,对应
+low_absolute,upper,0.051,0.0005,对应
+high_percent,estimate,0.43,0.005,对应
+high_percent,lower,-1.83,0.005,对应
+high_percent,upper,2.69,0.005,对应
+OLS,intercept,-0.38,0.005,对应
+OLS,slope,1.07,0.005,对应
+WLS,intercept,0.01,0.005,对应
+WLS,slope,0.92,0.005,对应
+Deming,intercept,-0.42,0.005,对应
+Deming,slope,1.07,0.005,对应
+Weighted Deming,intercept,0.00,0.006,对应
+Weighted Deming,slope,1.04,0.006,对应
+Passing-Bablok,intercept,0.0055,0.00005,对应
+Passing-Bablok,slope,1.0028,0.00005,对应
