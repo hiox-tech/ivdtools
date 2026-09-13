@@ -1,0 +1,61 @@
+---
+title: "Introduction to ivdtools"
+output:
+  rmarkdown::html_vignette:
+vignette: >
+  %\VignetteIndexEntry{Introduction to ivdtools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## What is ivdtools
+
+`ivdtools` is an R package providing statistical workflows used in the evaluation of in vitro diagnostic (IVD) reagents, covering data inspection, statistical analysis, result summarization, and visualization. The current version requires R >= 4.1.0 and is distributed under the MIT license.
+
+The package provides the following analysis modules:
+
+| Module | Main entry points | Related CLSI guideline |
+| :---: | :---: | :---: |
+| Method comparison | `mcr()` | EP09 |
+| Reference-material commutability | `commutability()` | EP14  EP30 and IFCC Part 2 |
+| Precision | `precision()` | EP05 and EP15 |
+| Qualitative agreement | `raw_to_table()` and others | EP12 |
+| C5/C95 estimation | `c5_c95()` | EP12 |
+| Reference interval | `reference_interval()` | EP28 |
+| Stability | `stability_*()`, `arrhenius()`, `mkt()` | EP25 |
+| Linearity | `linearity()` and `linearity_*()` | EP06 |
+| Curve fitting | `fit_equation()` family | General |
+| Interference | `interference_*()` | EP07 |
+| Dilution, spiking, and hook effect | `dilution_recovery()`, `spike_recovery()`, `hook_effect()` | EP34 |
+| Measurement uncertainty | `uncertainty_*()` | EP29 |
+| Reference-material bias | `reference_bias()` | YY/T 1789.2 |
+| Analytical sensitivity | `sensitivity_lob()` / `sensitivity_lod()` / `sensitivity_loq()` | EP17 |
+| Bottle-to-bottle ANOVA | `bottle_anova()` | EP15 |
+| ROC analysis | `roc()` family | EP24 |
+| Quality control | `qc_chart()`, `youden_plot()` | Westgard rules |
+| Outliers and normal test | `outliers_test()`、`normal_test()` | General |
+| Sample size | `sample_size_*()` | General |
+
+Statistical results should be interpreted in the context of a pre-specified study protocol, applicable standards, and clinical or analytical acceptance limits; they are not a substitute for professional judgment.
+
+## Detailed tutorials
+
+Detailed tutorials covering data import, analysis environment setup, and complete worked examples for every analysis module are available on the project homepage:
+
+<https://github.com/hiox-tech/ivdtools>
+
+## Feedback
+
+Bug reports, feature requests, and feedback:
+
+<https://github.com/hiox-tech/ivdtools/issues>
